@@ -1,9 +1,0 @@
-{
-	"name": "DataIngestionTest",
-	"location": "eastus",
-	"identity": {
-		"type": "SystemAssigned",
-		"principalId": "c8e33c01-d72a-433f-8102-ad22c67ec8c2",
-		"tenantId": "9e857255-df57-4c47-a0c0-0546460380cb"
-	}
-}
