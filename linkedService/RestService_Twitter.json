@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "RestService",
 		"typeProperties": {
-			"url": "https://api.twitter.com/",
+			"url": "https://pendragondevapptest.com",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Anonymous"
 		}
