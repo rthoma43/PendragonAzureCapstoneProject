@@ -15,6 +15,16 @@
 					"type": "LinkedServiceReference"
 				},
 				"secretName": "Brandwatch-AccessToken"
+			},
+			"authHeaders": {
+				"Authorization": {
+					"type": "AzureKeyVaultSecret",
+					"store": {
+						"referenceName": "AzureKeyVaultRedditAppTest",
+						"type": "LinkedServiceReference"
+					},
+					"secretName": "Brandwatch-AccessToken"
+				}
 			}
 		}
 	}
