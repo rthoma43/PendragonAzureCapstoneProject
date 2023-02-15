@@ -6,13 +6,21 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "RedditAppTestService",
+						"referenceName": "RedditAppTestStorage",
 						"type": "DatasetReference"
 					},
 					"name": "RedditRaw"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "RedditCSV",
+						"type": "DatasetReference"
+					},
+					"name": "RedditSink"
+				}
+			],
 			"transformations": [],
 			"scriptLines": [
 				"source(output(",
@@ -22,7 +30,17 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     documentForm: 'documentPerLine') ~> RedditRaw"
+				"     documentForm: 'documentPerLine') ~> RedditRaw",
+				"RedditRaw sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     header: (['Author','Title','Text']),",
+				"     mapColumn(",
+				"          Name = data.children[1].data.author_fullname,",
+				"          Title = data.children[1].data.title,",
+				"          Text = data.children[1].data.selftext",
+				"     )) ~> RedditSink"
 			]
 		}
 	}
