@@ -2,14 +2,14 @@
 	"name": "RedditAppTestBlobStorage",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureBlobStorageRedditAppTest",
+			"referenceName": "RedditAppTestDataLakeStorage",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
 		"type": "Json",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobStorageLocation"
+				"type": "AzureBlobFSLocation"
 			}
 		},
 		"schema": {}
