@@ -1,0 +1,21 @@
+{
+	"name": "RedditAppTest",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "HttpRedditServer",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"limit": 10
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "r/dataengineering/top.json"
+			}
+		},
+		"schema": {}
+	}
+}
