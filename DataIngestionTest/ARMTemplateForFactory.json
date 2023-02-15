@@ -76,7 +76,7 @@
 							"sink": {
 								"type": "JsonSink",
 								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
+									"type": "AzureBlobStorageWriteSettings"
 								},
 								"formatSettings": {
 									"type": "JsonWriteSettings"
@@ -88,122 +88,10 @@
 								"mappings": [
 									{
 										"source": {
-											"path": "$['kind']"
-										},
-										"sink": {
-											"path": "$['kind']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']['after']"
-										},
-										"sink": {
-											"path": "$['data']['after']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']['dist']"
-										},
-										"sink": {
-											"path": "$['data']['dist']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']['modhash']"
-										},
-										"sink": {
-											"path": "$['data']['modhash']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']['geo_filter']"
-										},
-										"sink": {
-											"path": "$['data']['geo_filter']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']['before']"
-										},
-										"sink": {
-											"path": "$['data']['before']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']['children'][0]['kind']"
-										},
-										"sink": {
-											"path": "$['data']['children']['kind']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']['children'][0]['data']['approved_at_utc']"
-										},
-										"sink": {
-											"path": "$['data']['children']['data']['approved_at_utc']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']['children'][0]['data']['subreddit']"
-										},
-										"sink": {
-											"path": "$['data']['children']['data']['subreddit']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']['children'][0]['data']['selftext']"
+											"path": "$['Text']"
 										},
 										"sink": {
 											"path": "$['data']['children']['data']['selftext']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']['children'][0]['data']['author_fullname']"
-										},
-										"sink": {
-											"path": "$['data']['children']['data']['author_fullname']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']['children'][0]['data']['saved']"
-										},
-										"sink": {
-											"path": "$['data']['children']['data']['saved']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']['children'][0]['data']['mod_reason_title']"
-										},
-										"sink": {
-											"path": "$['data']['children']['data']['mod_reason_title']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']['children'][0]['data']['gilded']"
-										},
-										"sink": {
-											"path": "$['data']['children']['data']['gilded']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']['children'][0]['data']['clicked']"
-										},
-										"sink": {
-											"path": "$['data']['children']['data']['clicked']"
 										}
 									}
 								],
@@ -219,7 +107,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "RedditAppTestDataLakeGen2",
+								"referenceName": "RedditAppTestStorage",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -234,7 +122,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/RedditAppTestService')]",
-				"[concat(variables('factoryId'), '/datasets/RedditAppTestDataLakeGen2')]"
+				"[concat(variables('factoryId'), '/datasets/RedditAppTestStorage')]"
 			]
 		},
 		{
