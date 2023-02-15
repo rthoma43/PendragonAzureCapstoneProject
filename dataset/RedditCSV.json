@@ -1,0 +1,21 @@
+{
+	"name": "RedditCSV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageRedditAppTest",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "testcsv"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
