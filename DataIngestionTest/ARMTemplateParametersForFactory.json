@@ -8,8 +8,32 @@
 		"AzureBlobStorageRedditAppTest_connectionString": {
 			"value": ""
 		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://pendragonteststorage.dfs.core.windows.net/"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_dataLakeStoreUri": {
+			"value": "https://pendragontest.azuredatalakestore.net/webhdfs/v1"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_tenant": {
+			"value": "9e857255-df57-4c47-a0c0-0546460380cb"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_subscriptionId": {
+			"value": "588695d7-29a1-45a3-90a5-dc87a232ae76"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_resourceGroupName": {
+			"value": "DataFactoryTest"
+		},
 		"AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl": {
 			"value": "https://tw-dv-001.vault.azure.net/"
+		},
+		"BrandwatchHttpServer_properties_typeProperties_url": {
+			"value": "https://api.brandwatch.com/"
+		},
+		"BrandwatchHttpServer_properties_typeProperties_userName": {
+			"value": "bschmid5@gmu.edu"
 		},
 		"HttpRedditServer_properties_typeProperties_url": {
 			"value": "https://www.reddit.com/r/dataengineering/"

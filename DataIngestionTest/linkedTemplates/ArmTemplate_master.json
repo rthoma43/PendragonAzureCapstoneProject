@@ -11,9 +11,41 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageRedditAppTest'"
 		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://pendragonteststorage.dfs.core.windows.net/"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_dataLakeStoreUri": {
+			"type": "string",
+			"defaultValue": "https://pendragontest.azuredatalakestore.net/webhdfs/v1"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "9e857255-df57-4c47-a0c0-0546460380cb"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "588695d7-29a1-45a3-90a5-dc87a232ae76"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "DataFactoryTest"
+		},
 		"AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://tw-dv-001.vault.azure.net/"
+		},
+		"BrandwatchHttpServer_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.brandwatch.com/"
+		},
+		"BrandwatchHttpServer_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "bschmid5@gmu.edu"
 		},
 		"HttpRedditServer_properties_typeProperties_url": {
 			"type": "string",
@@ -53,8 +85,32 @@
 					"AzureBlobStorageRedditAppTest_connectionString": {
 						"value": "[parameters('AzureBlobStorageRedditAppTest_connectionString')]"
 					},
+					"AzureDataLakeStorage1_accountKey": {
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					},
+					"AzureDataLakeStorage1_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"
+					},
+					"AzureDataLakeStore1_properties_typeProperties_dataLakeStoreUri": {
+						"value": "[parameters('AzureDataLakeStore1_properties_typeProperties_dataLakeStoreUri')]"
+					},
+					"AzureDataLakeStore1_properties_typeProperties_tenant": {
+						"value": "[parameters('AzureDataLakeStore1_properties_typeProperties_tenant')]"
+					},
+					"AzureDataLakeStore1_properties_typeProperties_subscriptionId": {
+						"value": "[parameters('AzureDataLakeStore1_properties_typeProperties_subscriptionId')]"
+					},
+					"AzureDataLakeStore1_properties_typeProperties_resourceGroupName": {
+						"value": "[parameters('AzureDataLakeStore1_properties_typeProperties_resourceGroupName')]"
+					},
 					"AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl": {
 						"value": "[parameters('AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl')]"
+					},
+					"BrandwatchHttpServer_properties_typeProperties_url": {
+						"value": "[parameters('BrandwatchHttpServer_properties_typeProperties_url')]"
+					},
+					"BrandwatchHttpServer_properties_typeProperties_userName": {
+						"value": "[parameters('BrandwatchHttpServer_properties_typeProperties_userName')]"
 					},
 					"HttpRedditServer_properties_typeProperties_url": {
 						"value": "[parameters('HttpRedditServer_properties_typeProperties_url')]"
