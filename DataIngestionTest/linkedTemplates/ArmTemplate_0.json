@@ -506,7 +506,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "RedditDENTop10Posts",
+						"fileName": "RedditDENTop10Posts.csv",
 						"container": "testcsv"
 					},
 					"columnDelimiter": ",",
@@ -980,6 +980,7 @@
 						"     validateSchema: false,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
+						"     header: (['Author','Title','Text','Upvote_Ratio']),",
 						"     mapColumn(",
 						"          Author = data.children[1].data.author_fullname,",
 						"          Title = data.children[1].data.title,",
@@ -1026,7 +1027,8 @@
 							"sink": {
 								"type": "DelimitedTextSink",
 								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
+									"type": "AzureBlobStorageWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
 								},
 								"formatSettings": {
 									"type": "DelimitedTextWriteSettings",
@@ -1081,14 +1083,6 @@
 										"sink": {
 											"type": "Int64",
 											"ordinal": 5
-										}
-									},
-									{
-										"source": {
-											"path": "[['data']['parent_whitelist_status']"
-										},
-										"sink": {
-											"ordinal": 6
 										}
 									}
 								],
