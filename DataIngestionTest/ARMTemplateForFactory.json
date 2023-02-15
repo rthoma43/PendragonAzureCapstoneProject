@@ -90,7 +90,7 @@
 								"mappings": [
 									{
 										"source": {
-											"path": "$['data']['children'][0]['data']['selftext']"
+											"path": "$['data']['children']['data']['selftext']"
 										},
 										"sink": {
 											"type": "String",
@@ -99,7 +99,7 @@
 									},
 									{
 										"source": {
-											"path": "$['data']['children'][0]['data']['author_fullname']"
+											"path": "$['data']['children']['data']['author_fullname']"
 										},
 										"sink": {
 											"type": "String",
@@ -108,7 +108,7 @@
 									},
 									{
 										"source": {
-											"path": "$['data']['children'][0]['data']['title']"
+											"path": "$['data']['children']['data']['title']"
 										},
 										"sink": {
 											"type": "String",
@@ -116,7 +116,8 @@
 										}
 									}
 								],
-								"collectionReference": ""
+								"collectionReference": "$['data']['children']",
+								"mapComplexValuesToString": false
 							}
 						},
 						"inputs": [
