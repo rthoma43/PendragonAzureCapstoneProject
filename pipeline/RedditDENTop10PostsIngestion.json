@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1",
+	"name": "RedditDENTop10PostsIngestion",
 	"properties": {
 		"activities": [
 			{
