@@ -1064,7 +1064,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/RedditDENTop10')]",
+			"name": "[concat(parameters('factoryName'), '/RedditTransformation')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1102,12 +1102,11 @@
 						"     validateSchema: false,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     header: (['Author','Title','Text','Upvote_Ratio']),",
+						"     header: (['Author','Title','Text']),",
 						"     mapColumn(",
-						"          Author = data.children[1].data.author_fullname,",
+						"          Name = data.children[1].data.author_fullname,",
 						"          Title = data.children[1].data.title,",
-						"          Text = data.children[1].data.selftext,",
-						"          upvote_ratio = data.children[1].data.upvote_ratio",
+						"          Text = data.children[1].data.selftext",
 						"     )) ~> RedditSink"
 					]
 				}
