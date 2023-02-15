@@ -1,6 +1,5 @@
 {
 	"name": "HttpRedditServer",
-	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"parameters": {
 			"limit": {
@@ -13,13 +12,17 @@
 		"typeProperties": {
 			"url": "https://www.reddit.com/r/dataengineering/",
 			"enableServerCertificateValidation": true,
-			"authenticationType": "Anonymous",
-			"authHeaders": {
-				"Authorization": {
-					"type": "SecureString",
-					"value": "**********"
-				}
+			"authenticationType": "Basic",
+			"userName": "ryan_supplyin",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVaultRedditAppTest",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "Reddit-Secret"
 			}
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/linkedservices"
 }
