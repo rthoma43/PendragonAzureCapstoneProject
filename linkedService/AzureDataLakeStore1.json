@@ -1,0 +1,13 @@
+{
+	"name": "AzureDataLakeStore1",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDataLakeStore",
+		"typeProperties": {
+			"dataLakeStoreUri": "https://pendragontest.azuredatalakestore.net/webhdfs/v1",
+			"tenant": "9e857255-df57-4c47-a0c0-0546460380cb",
+			"subscriptionId": "588695d7-29a1-45a3-90a5-dc87a232ae76",
+			"resourceGroupName": "DataFactoryTest"
+		}
+	}
+}
