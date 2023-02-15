@@ -1,0 +1,18 @@
+{
+	"name": "RedditAppTestDataLakeGen2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RedditAppTestDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "testcontainer"
+			}
+		},
+		"schema": {}
+	}
+}

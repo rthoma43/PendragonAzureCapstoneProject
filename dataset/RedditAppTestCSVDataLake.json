@@ -1,0 +1,23 @@
+{
+	"name": "RedditAppTestCSVDataLake",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RedditAppTestDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "RedditDENTop10posts.csv",
+				"fileSystem": "testcontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": false,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
