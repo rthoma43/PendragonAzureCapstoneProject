@@ -13,9 +13,12 @@
 				"fileName": "RedditDENTop10Posts.csv",
 				"container": "testcsv"
 			},
-			"columnDelimiter": "\t",
+			"columnDelimiter": ",",
+			"rowDelimiter": "\n",
 			"escapeChar": "\\",
-			"quoteChar": "\""
+			"firstRowAsHeader": true,
+			"nullValue": "\"Null\"",
+			"quoteChar": ""
 		},
 		"schema": [
 			{
