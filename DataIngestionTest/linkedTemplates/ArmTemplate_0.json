@@ -1024,16 +1024,77 @@
 								}
 							},
 							"sink": {
-								"type": "JsonSink",
+								"type": "DelimitedTextSink",
 								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings",
-									"copyBehavior": "PreserveHierarchy"
+									"type": "AzureBlobStorageWriteSettings"
 								},
 								"formatSettings": {
-									"type": "JsonWriteSettings"
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
 								}
 							},
-							"enableStaging": false
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "[['data']['selftext']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 1
+										}
+									},
+									{
+										"source": {
+											"path": "[['data']['author_fullname']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 2
+										}
+									},
+									{
+										"source": {
+											"path": "[['data']['title']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 3
+										}
+									},
+									{
+										"source": {
+											"path": "[['data']['created']"
+										},
+										"sink": {
+											"type": "Double",
+											"ordinal": 4
+										}
+									},
+									{
+										"source": {
+											"path": "[['data']['num_comments']"
+										},
+										"sink": {
+											"type": "Int64",
+											"ordinal": 5
+										}
+									},
+									{
+										"source": {
+											"path": "[['data']['parent_whitelist_status']"
+										},
+										"sink": {
+											"ordinal": 6
+										}
+									}
+								],
+								"collectionReference": "$['data']['children']",
+								"mapComplexValuesToString": false
+							}
 						},
 						"inputs": [
 							{
@@ -1044,48 +1105,11 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "RedditAppTestStorage",
+								"referenceName": "RedditCSV",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						]
-					},
-					{
-						"name": "RedditDataFlow",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "RedditTop10DataIngest",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "RedditDENTop10",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"RedditRaw": {},
-									"RedditSink": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
 					}
 				],
 				"policy": {
@@ -1096,8 +1120,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/RedditAppTestService')]",
-				"[concat(variables('factoryId'), '/datasets/RedditAppTestStorage')]",
-				"[concat(variables('factoryId'), '/dataflows/RedditDENTop10')]"
+				"[concat(variables('factoryId'), '/datasets/RedditCSV')]"
 			]
 		}
 	]
