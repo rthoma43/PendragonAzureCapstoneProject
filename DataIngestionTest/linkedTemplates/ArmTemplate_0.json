@@ -509,27 +509,14 @@
 						"fileName": "RedditDENTop10Posts.csv",
 						"container": "testcsv"
 					},
-					"columnDelimiter": "\t",
+					"columnDelimiter": ",",
+					"rowDelimiter": "\n",
 					"escapeChar": "\\",
-					"quoteChar": "\""
+					"firstRowAsHeader": false,
+					"nullValue": "\"Null\"",
+					"quoteChar": ""
 				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageRedditAppTest')]"
@@ -994,13 +981,6 @@
 						"     documentForm: 'documentPerLine') ~> RedditRaw",
 						"RedditRaw sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     input(",
-						"          Column_1 as string,",
-						"          Column_2 as string,",
-						"          Column_3 as string,",
-						"          Column_4 as string,",
-						"          Column_5 as string",
-						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     header: (['Author','Title','Text','Upvote_Ratio']),",
@@ -1067,7 +1047,6 @@
 											"path": "[['data']['selftext']"
 										},
 										"sink": {
-											"type": "String",
 											"ordinal": 1
 										}
 									},
@@ -1103,7 +1082,6 @@
 											"path": "[['data']['num_comments']"
 										},
 										"sink": {
-											"type": "Int64",
 											"ordinal": 5
 										}
 									}
