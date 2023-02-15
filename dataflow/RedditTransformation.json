@@ -35,7 +35,7 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'singleDocument') ~> RedditRawJSON",
-				"RedditRawJSON foldDown(unroll(data.children),",
+				"RedditRawJSON foldDown(unroll(data.children, data.children),",
 				"     mapColumn(",
 				"          kind",
 				"     ),",
