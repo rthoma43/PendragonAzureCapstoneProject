@@ -677,7 +677,7 @@
 								"mappings": [
 									{
 										"source": {
-											"path": "$['$[\\'data\\'][\\'children\\'][\\'data\\'][\\'selftext\\']']"
+											"path": "$['$[\\'data\\'][\\'children\\'][0][\\'data\\'][\\'selftext\\']']"
 										},
 										"sink": {
 											"type": "String",
