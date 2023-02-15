@@ -26,14 +26,12 @@
 						}
 					},
 					"sink": {
-						"type": "DelimitedTextSink",
+						"type": "JsonSink",
 						"storeSettings": {
 							"type": "AzureBlobFSWriteSettings"
 						},
 						"formatSettings": {
-							"type": "DelimitedTextWriteSettings",
-							"quoteAllText": true,
-							"fileExtension": ".txt"
+							"type": "JsonWriteSettings"
 						}
 					},
 					"enableStaging": false,
@@ -42,34 +40,918 @@
 						"mappings": [
 							{
 								"source": {
-									"path": "$['data']['children'][:]['data']['selftext']"
+									"path": "$['kind']"
 								},
 								"sink": {
-									"type": "String",
-									"ordinal": 1
+									"path": "$['kind']"
 								}
 							},
 							{
 								"source": {
-									"path": "$['data']['children'][:]['data']['author_fullname']"
+									"path": "$['data']['after']"
 								},
 								"sink": {
-									"type": "String",
-									"ordinal": 2
+									"path": "$['data']['after']"
 								}
 							},
 							{
 								"source": {
-									"path": "$['data']['children'][:]['data']['title']"
+									"path": "$['data']['dist']"
 								},
 								"sink": {
-									"type": "String",
-									"ordinal": 3
+									"path": "$['data']['dist']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['data']['modhash']"
+								},
+								"sink": {
+									"path": "$['data']['modhash']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['data']['geo_filter']"
+								},
+								"sink": {
+									"path": "$['data']['geo_filter']"
+								}
+							},
+							{
+								"source": {
+									"path": "['kind']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['kind']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['approved_at_utc']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['approved_at_utc']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['subreddit']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['subreddit']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['selftext']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['selftext']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['author_fullname']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['author_fullname']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['saved']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['saved']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['mod_reason_title']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['mod_reason_title']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['gilded']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['gilded']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['clicked']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['clicked']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['title']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['title']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['link_flair_richtext'][0]"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['link_flair_richtext'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['subreddit_name_prefixed']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['subreddit_name_prefixed']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['hidden']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['hidden']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['pwls']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['pwls']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['link_flair_css_class']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['link_flair_css_class']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['downs']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['downs']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['thumbnail_height']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['thumbnail_height']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['top_awarded_type']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['top_awarded_type']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['hide_score']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['hide_score']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['name']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['name']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['quarantine']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['quarantine']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['link_flair_text_color']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['link_flair_text_color']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['upvote_ratio']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['upvote_ratio']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['author_flair_background_color']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['author_flair_background_color']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['subreddit_type']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['subreddit_type']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['ups']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['ups']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['total_awards_received']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['total_awards_received']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['media_embed']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['media_embed']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['thumbnail_width']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['thumbnail_width']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['author_flair_template_id']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['author_flair_template_id']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['is_original_content']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['is_original_content']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['user_reports'][0]"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['user_reports'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['secure_media']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['secure_media']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['is_reddit_media_domain']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['is_reddit_media_domain']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['is_meta']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['is_meta']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['category']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['category']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['secure_media_embed']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['secure_media_embed']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['link_flair_text']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['link_flair_text']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['can_mod_post']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['can_mod_post']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['score']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['score']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['approved_by']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['approved_by']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['is_created_from_ads_ui']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['is_created_from_ads_ui']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['author_premium']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['author_premium']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['thumbnail']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['thumbnail']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['edited']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['edited']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['author_flair_css_class']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['author_flair_css_class']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['author_flair_richtext'][0]"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['author_flair_richtext'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['gildings']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['gildings']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['content_categories']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['content_categories']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['is_self']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['is_self']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['mod_note']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['mod_note']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['created']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['created']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['link_flair_type']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['link_flair_type']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['wls']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['wls']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['removed_by_category']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['removed_by_category']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['banned_by']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['banned_by']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['author_flair_type']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['author_flair_type']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['domain']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['domain']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['allow_live_comments']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['allow_live_comments']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['selftext_html']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['selftext_html']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['likes']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['likes']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['suggested_sort']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['suggested_sort']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['banned_at_utc']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['banned_at_utc']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['view_count']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['view_count']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['archived']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['archived']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['no_follow']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['no_follow']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['is_crosspostable']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['is_crosspostable']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['pinned']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['pinned']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['over_18']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['over_18']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['all_awardings'][0]"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['all_awardings'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['awarders'][0]"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['awarders'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['media_only']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['media_only']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['link_flair_template_id']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['link_flair_template_id']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['can_gild']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['can_gild']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['spoiler']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['spoiler']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['locked']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['locked']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['author_flair_text']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['author_flair_text']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['treatment_tags'][0]"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['treatment_tags'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['visited']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['visited']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['removed_by']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['removed_by']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['num_reports']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['num_reports']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['distinguished']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['distinguished']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['subreddit_id']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['subreddit_id']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['author_is_blocked']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['author_is_blocked']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['mod_reason_by']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['mod_reason_by']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['removal_reason']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['removal_reason']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['link_flair_background_color']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['link_flair_background_color']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['id']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['id']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['is_robot_indexable']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['is_robot_indexable']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['report_reasons']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['report_reasons']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['author']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['author']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['discussion_type']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['discussion_type']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['num_comments']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['num_comments']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['send_replies']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['send_replies']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['whitelist_status']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['whitelist_status']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['contest_mode']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['contest_mode']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['mod_reports'][0]"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['mod_reports'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['author_patreon_flair']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['author_patreon_flair']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['author_flair_text_color']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['author_flair_text_color']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['permalink']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['permalink']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['parent_whitelist_status']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['parent_whitelist_status']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['stickied']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['stickied']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['url']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['url']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['subreddit_subscribers']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['subreddit_subscribers']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['created_utc']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['created_utc']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['num_crossposts']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['num_crossposts']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['media']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['media']"
+								}
+							},
+							{
+								"source": {
+									"path": "['data']['is_video']"
+								},
+								"sink": {
+									"path": "$['data']['children'][0]['data']['is_video']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['data']['before']"
+								},
+								"sink": {
+									"path": "$['data']['before']"
 								}
 							}
 						],
-						"collectionReference": "$['data']['children']",
-						"mapComplexValuesToString": false
+						"collectionReference": "$['data']['children']"
 					}
 				},
 				"inputs": [
@@ -80,7 +962,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "RedditAppTestCSVDataLake",
+						"referenceName": "RedditAppTestDataLakeGen2",
 						"type": "DatasetReference"
 					}
 				]

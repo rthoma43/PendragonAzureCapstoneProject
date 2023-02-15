@@ -2,7 +2,7 @@
 	"name": "RedditAppTestDataLakeGen2",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "RedditAppTestDataLakeStorage",
+			"referenceName": "AzureDataLakeStorageRedditAppTest",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
