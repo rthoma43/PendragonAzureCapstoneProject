@@ -43,7 +43,7 @@
 									"path": "$['data']['children'][0]['data']['selftext']"
 								},
 								"sink": {
-									"path": "Text"
+									"path": "$['data']['children'][0]['data']['selftext']"
 								}
 							}
 						],
