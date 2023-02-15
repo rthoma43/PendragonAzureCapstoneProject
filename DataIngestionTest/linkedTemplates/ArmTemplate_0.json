@@ -509,7 +509,7 @@
 						"fileName": "RedditDENTop10Posts.csv",
 						"container": "testcsv"
 					},
-					"columnDelimiter": ",",
+					"columnDelimiter": "\t",
 					"escapeChar": "\\",
 					"quoteChar": "\""
 				},
