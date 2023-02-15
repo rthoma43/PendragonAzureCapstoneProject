@@ -35,21 +35,7 @@
 							"filePattern": "arrayOfObjects"
 						}
 					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"mappings": [
-							{
-								"source": {
-									"path": "$['data']['children'][0]['data']['selftext']"
-								},
-								"sink": {
-									"path": "$['data']['children'][0]['data']['selftext']"
-								}
-							}
-						],
-						"collectionReference": "$['data']['children']"
-					}
+					"enableStaging": false
 				},
 				"inputs": [
 					{
