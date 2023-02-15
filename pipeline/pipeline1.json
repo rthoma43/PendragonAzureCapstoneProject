@@ -55,7 +55,7 @@
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "RedditMetadata",
+						"activity": "RedditTop10DataIngest",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -79,47 +79,6 @@
 						"computeType": "General"
 					},
 					"traceLevel": "Fine"
-				}
-			},
-			{
-				"name": "RedditMetadata",
-				"type": "GetMetadata",
-				"dependsOn": [
-					{
-						"activity": "RedditTop10DataIngest",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataset": {
-						"referenceName": "RedditAppTestService",
-						"type": "DatasetReference"
-					},
-					"fieldList": [
-						"itemName",
-						"itemType",
-						"exists",
-						"columnCount",
-						"size",
-						"structure"
-					],
-					"storeSettings": {
-						"type": "HttpReadSettings",
-						"requestMethod": "GET"
-					},
-					"formatSettings": {
-						"type": "JsonReadSettings"
-					}
 				}
 			}
 		],

@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "RedditAppTestService",
+						"referenceName": "RedditAppTestStorage",
 						"type": "DatasetReference"
 					},
 					"name": "RedditRaw"
