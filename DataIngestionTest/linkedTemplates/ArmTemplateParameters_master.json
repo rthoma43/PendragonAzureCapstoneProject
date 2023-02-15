@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "DataIngestionTest"
+		},
+		"AzureBlobStorageRedditAppTest_connectionString": {
+			"value": ""
+		},
+		"RedditAppTestDataLakeStorage_accountKey": {
+			"value": ""
+		},
+		"HttpRedditServer_properties_typeProperties_url": {
+			"value": "https://www.reddit.com/r/dataengineering/"
+		},
+		"RedditAppTestDataLakeStorage_properties_typeProperties_url": {
+			"value": "https://cs2100320012bda2056.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
