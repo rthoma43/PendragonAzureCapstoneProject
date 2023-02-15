@@ -45,7 +45,6 @@
 									"path": "['data']['selftext']"
 								},
 								"sink": {
-									"type": "String",
 									"ordinal": 1
 								}
 							},
@@ -81,7 +80,6 @@
 									"path": "['data']['num_comments']"
 								},
 								"sink": {
-									"type": "Int64",
 									"ordinal": 5
 								}
 							}
