@@ -11,9 +11,17 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageRedditAppTest'"
 		},
+		"AzureDataLakeStorageRedditAppTest_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorageRedditAppTest'"
+		},
 		"RedditAppTestDataLakeStorage_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'RedditAppTestDataLakeStorage'"
+		},
+		"AzureDataLakeStorageRedditAppTest_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://pendragonteststorage.dfs.core.windows.net/"
 		},
 		"HttpRedditServer_properties_typeProperties_url": {
 			"type": "string",
@@ -53,8 +61,14 @@
 					"AzureBlobStorageRedditAppTest_connectionString": {
 						"value": "[parameters('AzureBlobStorageRedditAppTest_connectionString')]"
 					},
+					"AzureDataLakeStorageRedditAppTest_accountKey": {
+						"value": "[parameters('AzureDataLakeStorageRedditAppTest_accountKey')]"
+					},
 					"RedditAppTestDataLakeStorage_accountKey": {
 						"value": "[parameters('RedditAppTestDataLakeStorage_accountKey')]"
+					},
+					"AzureDataLakeStorageRedditAppTest_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorageRedditAppTest_properties_typeProperties_url')]"
 					},
 					"HttpRedditServer_properties_typeProperties_url": {
 						"value": "[parameters('HttpRedditServer_properties_typeProperties_url')]"

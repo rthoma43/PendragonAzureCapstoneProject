@@ -8,8 +8,14 @@
 		"AzureBlobStorageRedditAppTest_connectionString": {
 			"value": ""
 		},
+		"AzureDataLakeStorageRedditAppTest_accountKey": {
+			"value": ""
+		},
 		"RedditAppTestDataLakeStorage_accountKey": {
 			"value": ""
+		},
+		"AzureDataLakeStorageRedditAppTest_properties_typeProperties_url": {
+			"value": "https://pendragonteststorage.dfs.core.windows.net/"
 		},
 		"HttpRedditServer_properties_typeProperties_url": {
 			"value": "https://www.reddit.com/r/dataengineering/"

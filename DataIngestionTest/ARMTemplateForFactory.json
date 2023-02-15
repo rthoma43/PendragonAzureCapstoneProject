@@ -11,9 +11,17 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageRedditAppTest'"
 		},
+		"AzureDataLakeStorageRedditAppTest_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorageRedditAppTest'"
+		},
 		"RedditAppTestDataLakeStorage_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'RedditAppTestDataLakeStorage'"
+		},
+		"AzureDataLakeStorageRedditAppTest_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://pendragonteststorage.dfs.core.windows.net/"
 		},
 		"HttpRedditServer_properties_typeProperties_url": {
 			"type": "string",
@@ -60,7 +68,7 @@
 							"sink": {
 								"type": "JsonSink",
 								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
+									"type": "AzureBlobStorageWriteSettings"
 								},
 								"formatSettings": {
 									"type": "JsonWriteSettings"
@@ -70,14 +78,14 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "RedditAppTest",
+								"referenceName": "RedditAppTestService",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "RedditAppTestBlobStorage",
+								"referenceName": "RedditAppTestStorage",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -91,28 +99,25 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/RedditAppTest')]",
-				"[concat(variables('factoryId'), '/datasets/RedditAppTestBlobStorage')]"
+				"[concat(variables('factoryId'), '/datasets/RedditAppTestService')]",
+				"[concat(variables('factoryId'), '/datasets/RedditAppTestStorage')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/RedditAppTest')]",
+			"name": "[concat(parameters('factoryName'), '/RedditAppTestService')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
 					"referenceName": "HttpRedditServer",
-					"type": "LinkedServiceReference",
-					"parameters": {
-						"limit": 10
-					}
+					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
 				"type": "Json",
 				"typeProperties": {
 					"location": {
 						"type": "HttpServerLocation",
-						"relativeUrl": "r/dataengineering/top.json"
+						"relativeUrl": "/r/dataengineering/top.json"
 					}
 				},
 				"schema": {}
@@ -122,25 +127,26 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/RedditAppTestBlobStorage')]",
+			"name": "[concat(parameters('factoryName'), '/RedditAppTestStorage')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "RedditAppTestDataLakeStorage",
+					"referenceName": "AzureBlobStorageRedditAppTest",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
 				"type": "Json",
 				"typeProperties": {
 					"location": {
-						"type": "AzureBlobFSLocation"
+						"type": "AzureBlobStorageLocation",
+						"container": "test"
 					}
 				},
 				"schema": {}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/RedditAppTestDataLakeStorage')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageRedditAppTest')]"
 			]
 		},
 		{
@@ -152,6 +158,23 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('AzureBlobStorageRedditAppTest_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorageRedditAppTest')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorageRedditAppTest_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorageRedditAppTest_accountKey')]"
+					}
 				}
 			},
 			"dependsOn": []
