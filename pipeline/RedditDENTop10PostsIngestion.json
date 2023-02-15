@@ -41,46 +41,9 @@
 						"mappings": [
 							{
 								"source": {
-									"path": "$['kind']"
-								}
-							},
-							{
-								"source": {
-									"path": "$['data']['after']"
-								}
-							},
-							{
-								"source": {
-									"path": "$['data']['dist']"
-								}
-							},
-							{
-								"source": {
-									"path": "$['data']['modhash']"
-								}
-							},
-							{
-								"source": {
-									"path": "$['data']['geo_filter']"
-								}
-							},
-							{
-								"source": {
-									"path": "$['data']['children'][0]['kind']"
-								}
-							},
-							{
-								"source": {
-									"path": "$['data']['children'][0]['data']['approved_at_utc']"
-								}
-							},
-							{
-								"source": {
-									"path": "$['data']['children'][0]['data']['subreddit']"
-								}
-							},
-							{
-								"source": {
+									"path": "$['data']['children'][0]['data']['selftext']"
+								},
+								"sink": {
 									"path": "$['data']['children'][0]['data']['selftext']"
 								}
 							},
@@ -657,11 +620,6 @@
 							{
 								"source": {
 									"path": "$['data']['children'][0]['data']['is_video']"
-								}
-							},
-							{
-								"source": {
-									"path": "$['data']['before']"
 								}
 							}
 						]
