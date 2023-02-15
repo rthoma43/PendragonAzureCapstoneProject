@@ -28,7 +28,8 @@
 					"sink": {
 						"type": "DelimitedTextSink",
 						"storeSettings": {
-							"type": "AzureBlobStorageWriteSettings"
+							"type": "AzureBlobStorageWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
 						},
 						"formatSettings": {
 							"type": "DelimitedTextWriteSettings",
@@ -83,14 +84,6 @@
 								"sink": {
 									"type": "Int64",
 									"ordinal": 5
-								}
-							},
-							{
-								"source": {
-									"path": "['data']['parent_whitelist_status']"
-								},
-								"sink": {
-									"ordinal": 6
 								}
 							}
 						],
