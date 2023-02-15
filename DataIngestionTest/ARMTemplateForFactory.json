@@ -43,10 +43,6 @@
 			"type": "string",
 			"defaultValue": "https://api.brandwatch.com/"
 		},
-		"BrandwatchHttpServer_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "bschmid5@gmu.edu"
-		},
 		"HttpRedditServer_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://www.reddit.com/r/dataengineering/"
@@ -10200,15 +10196,16 @@
 				"typeProperties": {
 					"url": "[parameters('BrandwatchHttpServer_properties_typeProperties_url')]",
 					"enableServerCertificateValidation": true,
-					"authenticationType": "Basic",
-					"userName": "[parameters('BrandwatchHttpServer_properties_typeProperties_userName')]",
-					"password": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "AzureKeyVaultRedditAppTest",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "Brandwatch-AccessToken"
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"Authorization": {
+							"type": "AzureKeyVaultSecret",
+							"store": {
+								"referenceName": "AzureKeyVaultRedditAppTest",
+								"type": "LinkedServiceReference"
+							},
+							"secretName": "Brandwatch-AccessToken"
+						}
 					}
 				}
 			},

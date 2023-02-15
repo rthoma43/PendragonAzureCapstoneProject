@@ -43,10 +43,6 @@
 			"type": "string",
 			"defaultValue": "https://api.brandwatch.com/"
 		},
-		"BrandwatchHttpServer_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "bschmid5@gmu.edu"
-		},
 		"HttpRedditServer_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://www.reddit.com/r/dataengineering/"
@@ -108,9 +104,6 @@
 					},
 					"BrandwatchHttpServer_properties_typeProperties_url": {
 						"value": "[parameters('BrandwatchHttpServer_properties_typeProperties_url')]"
-					},
-					"BrandwatchHttpServer_properties_typeProperties_userName": {
-						"value": "[parameters('BrandwatchHttpServer_properties_typeProperties_userName')]"
 					},
 					"HttpRedditServer_properties_typeProperties_url": {
 						"value": "[parameters('HttpRedditServer_properties_typeProperties_url')]"
