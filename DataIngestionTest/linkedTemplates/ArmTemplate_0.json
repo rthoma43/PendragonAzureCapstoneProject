@@ -1092,7 +1092,7 @@
 								"mappings": [
 									{
 										"source": {
-											"path": "$['Text']"
+											"path": "$['$[\\'data\\'][\\'children\\'][\\'data\\'][\\'selftext\\']']"
 										},
 										"sink": {
 											"path": "$['data']['children']['data']['selftext']"
