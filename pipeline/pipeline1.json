@@ -608,7 +608,8 @@
 									"path": "$['data']['before']"
 								}
 							}
-						]
+						],
+						"collectionReference": ""
 					}
 				},
 				"inputs": [
