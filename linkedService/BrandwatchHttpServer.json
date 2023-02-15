@@ -6,15 +6,16 @@
 		"typeProperties": {
 			"url": "https://api.brandwatch.com/",
 			"enableServerCertificateValidation": true,
-			"authenticationType": "Basic",
-			"userName": "bschmid5@gmu.edu",
-			"password": {
-				"type": "AzureKeyVaultSecret",
-				"store": {
-					"referenceName": "AzureKeyVaultRedditAppTest",
-					"type": "LinkedServiceReference"
-				},
-				"secretName": "Brandwatch-AccessToken"
+			"authenticationType": "Anonymous",
+			"authHeaders": {
+				"Authorization": {
+					"type": "AzureKeyVaultSecret",
+					"store": {
+						"referenceName": "AzureKeyVaultRedditAppTest",
+						"type": "LinkedServiceReference"
+					},
+					"secretName": "Brandwatch-AccessToken"
+				}
 			}
 		}
 	}
