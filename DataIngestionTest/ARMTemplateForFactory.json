@@ -51,7 +51,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data1",
+						"name": "RedditTop10DataIngest",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
