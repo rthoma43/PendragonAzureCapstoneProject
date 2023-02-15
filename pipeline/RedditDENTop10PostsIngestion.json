@@ -26,15 +26,32 @@
 						}
 					},
 					"sink": {
-						"type": "JsonSink",
+						"type": "DelimitedTextSink",
 						"storeSettings": {
-							"type": "AzureBlobStorageWriteSettings"
+							"type": "AzureBlobFSWriteSettings"
 						},
 						"formatSettings": {
-							"type": "JsonWriteSettings"
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
 						}
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['$[\\'data\\'][\\'children\\'][\\'data\\'][\\'selftext\\']']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 1
+								}
+							}
+						],
+						"collectionReference": ""
+					}
 				},
 				"inputs": [
 					{
@@ -44,7 +61,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "RedditAppTestStorage",
+						"referenceName": "RedditCSV",
 						"type": "DatasetReference"
 					}
 				]

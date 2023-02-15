@@ -2,16 +2,16 @@
 	"name": "RedditCSV",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureBlobStorageRedditAppTest",
+			"referenceName": "RedditAppTestDataLakeStorage",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobStorageLocation",
-				"fileName": "RedditDENTop10Posts.csv",
-				"container": "testcsv"
+				"type": "AzureBlobFSLocation",
+				"fileName": "RedditDENTop10posts.csv",
+				"fileSystem": "testcontainer"
 			},
 			"columnDelimiter": ",",
 			"rowDelimiter": "\n",
