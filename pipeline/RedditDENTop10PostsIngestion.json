@@ -42,7 +42,7 @@
 						"mappings": [
 							{
 								"source": {
-									"path": "$['data']['children']['data']['selftext']"
+									"path": "$['data']['children'][:]['data']['selftext']"
 								},
 								"sink": {
 									"type": "String",
@@ -51,7 +51,7 @@
 							},
 							{
 								"source": {
-									"path": "$['data']['children']['data']['author_fullname']"
+									"path": "$['data']['children'][:]['data']['author_fullname']"
 								},
 								"sink": {
 									"type": "String",
@@ -60,7 +60,7 @@
 							},
 							{
 								"source": {
-									"path": "$['data']['children']['data']['title']"
+									"path": "$['data']['children'][:]['data']['title']"
 								},
 								"sink": {
 									"type": "String",
