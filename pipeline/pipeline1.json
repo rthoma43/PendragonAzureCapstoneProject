@@ -53,7 +53,14 @@
 			{
 				"name": "RedditDataFlow",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "RedditTop10DataIngest",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
