@@ -677,7 +677,7 @@
 								"mappings": [
 									{
 										"source": {
-											"path": "$['[\\'data\\'][\\'selftext\\']']"
+											"path": "$['[data]']"
 										},
 										"sink": {
 											"type": "String",
@@ -685,7 +685,7 @@
 										}
 									}
 								],
-								"collectionReference": ""
+								"collectionReference": "$['data']['children']"
 							}
 						},
 						"inputs": [
