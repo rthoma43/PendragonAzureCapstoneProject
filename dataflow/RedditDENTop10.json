@@ -21,7 +21,11 @@
 					"name": "RedditSink"
 				}
 			],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "Headers"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          kind as string,",
@@ -31,7 +35,11 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> RedditRaw",
-				"RedditRaw sink(allowSchemaDrift: true,",
+				"RedditRaw derive(Author = ERROR_FUNCTION(''),",
+				"          Title = ERROR_FUNCTION(''),",
+				"          Text = ERROR_FUNCTION(''),",
+				"          Upvote_Ratio = ERROR_FUNCTION('')) ~> Headers",
+				"Headers sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
