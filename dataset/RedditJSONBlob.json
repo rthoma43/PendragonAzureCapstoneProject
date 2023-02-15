@@ -1,0 +1,18 @@
+{
+	"name": "RedditJSONBlob",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageRedditAppTest",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "test"
+			}
+		},
+		"schema": {}
+	}
+}
