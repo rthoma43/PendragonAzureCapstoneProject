@@ -11,18 +11,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorageRedditAppTest'"
 		},
-		"AzureDataLakeStorageRedditAppTest_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorageRedditAppTest'"
-		},
-		"RedditAppTestDataLakeStorage_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'RedditAppTestDataLakeStorage'"
-		},
-		"AzureDataLakeStorageRedditAppTest_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://pendragonteststorage.dfs.core.windows.net/"
-		},
 		"AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://tw-dv-001.vault.azure.net/"
@@ -34,10 +22,6 @@
 		"HttpRedditServer_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "ryan_supplyin"
-		},
-		"RedditAppTestDataLakeStorage_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://cs2100320012bda2056.dfs.core.windows.net/"
 		},
 		"containerUri": {
 			"type": "string",
@@ -69,20 +53,8 @@
 					"AzureBlobStorageRedditAppTest_connectionString": {
 						"value": "[parameters('AzureBlobStorageRedditAppTest_connectionString')]"
 					},
-					"AzureDataLakeStorageRedditAppTest_accountKey": {
-						"value": "[parameters('AzureDataLakeStorageRedditAppTest_accountKey')]"
-					},
-					"RedditAppTestDataLakeStorage_accountKey": {
-						"value": "[parameters('RedditAppTestDataLakeStorage_accountKey')]"
-					},
-					"AzureDataLakeStorageRedditAppTest_properties_typeProperties_url": {
-						"value": "[parameters('AzureDataLakeStorageRedditAppTest_properties_typeProperties_url')]"
-					},
 					"AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl": {
 						"value": "[parameters('AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl')]"
-					},
-					"RedditAppTestDataLakeStorage_properties_typeProperties_url": {
-						"value": "[parameters('RedditAppTestDataLakeStorage_properties_typeProperties_url')]"
 					},
 					"HttpRedditServer_properties_typeProperties_url": {
 						"value": "[parameters('HttpRedditServer_properties_typeProperties_url')]"
