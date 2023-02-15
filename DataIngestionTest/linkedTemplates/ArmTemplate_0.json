@@ -185,16 +185,16 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "AzureBlobStorageRedditAppTest",
+					"referenceName": "RedditAppTestDataLakeStorage",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "RedditDENTop10Posts.csv",
-						"container": "testcsv"
+						"type": "AzureBlobFSLocation",
+						"fileName": "RedditDENTop10posts.csv",
+						"fileSystem": "testcontainer"
 					},
 					"columnDelimiter": ",",
 					"rowDelimiter": "\n",
@@ -206,7 +206,7 @@
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageRedditAppTest')]"
+				"[concat(variables('factoryId'), '/linkedServices/RedditAppTestDataLakeStorage')]"
 			]
 		},
 		{
@@ -661,15 +661,32 @@
 								}
 							},
 							"sink": {
-								"type": "JsonSink",
+								"type": "DelimitedTextSink",
 								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
+									"type": "AzureBlobFSWriteSettings"
 								},
 								"formatSettings": {
-									"type": "JsonWriteSettings"
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
 								}
 							},
-							"enableStaging": false
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['$[\\'data\\'][\\'children\\'][\\'data\\'][\\'selftext\\']']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 1
+										}
+									}
+								],
+								"collectionReference": ""
+							}
 						},
 						"inputs": [
 							{
@@ -680,7 +697,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "RedditAppTestStorage",
+								"referenceName": "RedditCSV",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -695,7 +712,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/RedditAppTestService')]",
-				"[concat(variables('factoryId'), '/datasets/RedditAppTestStorage')]"
+				"[concat(variables('factoryId'), '/datasets/RedditCSV')]"
 			]
 		}
 	]
