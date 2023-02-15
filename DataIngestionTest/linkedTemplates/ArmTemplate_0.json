@@ -23,13 +23,21 @@
 			"type": "string",
 			"defaultValue": "https://pendragonteststorage.dfs.core.windows.net/"
 		},
-		"HttpRedditServer_properties_typeProperties_url": {
+		"AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl": {
 			"type": "string",
-			"defaultValue": "https://www.reddit.com/r/dataengineering/"
+			"defaultValue": "https://tw-dv-001.vault.azure.net/"
 		},
 		"RedditAppTestDataLakeStorage_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://cs2100320012bda2056.dfs.core.windows.net/"
+		},
+		"HttpRedditServer_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://www.reddit.com/r/dataengineering/"
+		},
+		"HttpRedditServer_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "ryan_supplyin"
 		}
 	},
 	"variables": {
@@ -67,28 +75,14 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/HttpRedditServer')]",
+			"name": "[concat(parameters('factoryName'), '/AzureKeyVaultRedditAppTest')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"parameters": {
-					"limit": {
-						"type": "int",
-						"defaultValue": 10
-					}
-				},
 				"annotations": [],
-				"type": "HttpServer",
+				"type": "AzureKeyVault",
 				"typeProperties": {
-					"url": "[parameters('HttpRedditServer_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": true,
-					"authenticationType": "Anonymous",
-					"authHeaders": {
-						"Authorization": {
-							"type": "SecureString",
-							"value": "**********"
-						}
-					}
+					"baseUrl": "[parameters('AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl')]"
 				}
 			},
 			"dependsOn": []
@@ -111,29 +105,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/RedditAppTestService')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "HttpRedditServer",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "HttpServerLocation",
-						"relativeUrl": "/r/dataengineering/top.json"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/HttpRedditServer')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/RedditAppTestStorage')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -154,6 +125,64 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorageRedditAppTest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/HttpRedditServer')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"limit": {
+						"type": "int",
+						"defaultValue": 10
+					}
+				},
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('HttpRedditServer_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Basic",
+					"userName": "[parameters('HttpRedditServer_properties_typeProperties_userName')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVaultRedditAppTest",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "Reddit-Secret"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVaultRedditAppTest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RedditAppTestService')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "HttpRedditServer",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"limit": 10
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/r/dataengineering/top.json"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/HttpRedditServer')]"
 			]
 		},
 		{

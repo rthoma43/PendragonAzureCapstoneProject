@@ -23,9 +23,17 @@
 			"type": "string",
 			"defaultValue": "https://pendragonteststorage.dfs.core.windows.net/"
 		},
+		"AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://tw-dv-001.vault.azure.net/"
+		},
 		"HttpRedditServer_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://www.reddit.com/r/dataengineering/"
+		},
+		"HttpRedditServer_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "ryan_supplyin"
 		},
 		"RedditAppTestDataLakeStorage_properties_typeProperties_url": {
 			"type": "string",
@@ -110,7 +118,10 @@
 			"properties": {
 				"linkedServiceName": {
 					"referenceName": "HttpRedditServer",
-					"type": "LinkedServiceReference"
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"limit": 10
+					}
 				},
 				"annotations": [],
 				"type": "Json",
@@ -180,6 +191,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureKeyVaultRedditAppTest')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/HttpRedditServer')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -195,16 +219,21 @@
 				"typeProperties": {
 					"url": "[parameters('HttpRedditServer_properties_typeProperties_url')]",
 					"enableServerCertificateValidation": true,
-					"authenticationType": "Anonymous",
-					"authHeaders": {
-						"Authorization": {
-							"type": "SecureString",
-							"value": "**********"
-						}
+					"authenticationType": "Basic",
+					"userName": "[parameters('HttpRedditServer_properties_typeProperties_userName')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVaultRedditAppTest",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "Reddit-Secret"
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVaultRedditAppTest')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/RedditAppTestDataLakeStorage')]",

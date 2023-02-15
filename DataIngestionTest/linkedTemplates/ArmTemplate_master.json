@@ -23,9 +23,17 @@
 			"type": "string",
 			"defaultValue": "https://pendragonteststorage.dfs.core.windows.net/"
 		},
+		"AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://tw-dv-001.vault.azure.net/"
+		},
 		"HttpRedditServer_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://www.reddit.com/r/dataengineering/"
+		},
+		"HttpRedditServer_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "ryan_supplyin"
 		},
 		"RedditAppTestDataLakeStorage_properties_typeProperties_url": {
 			"type": "string",
@@ -70,11 +78,17 @@
 					"AzureDataLakeStorageRedditAppTest_properties_typeProperties_url": {
 						"value": "[parameters('AzureDataLakeStorageRedditAppTest_properties_typeProperties_url')]"
 					},
-					"HttpRedditServer_properties_typeProperties_url": {
-						"value": "[parameters('HttpRedditServer_properties_typeProperties_url')]"
+					"AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl": {
+						"value": "[parameters('AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl')]"
 					},
 					"RedditAppTestDataLakeStorage_properties_typeProperties_url": {
 						"value": "[parameters('RedditAppTestDataLakeStorage_properties_typeProperties_url')]"
+					},
+					"HttpRedditServer_properties_typeProperties_url": {
+						"value": "[parameters('HttpRedditServer_properties_typeProperties_url')]"
+					},
+					"HttpRedditServer_properties_typeProperties_userName": {
+						"value": "[parameters('HttpRedditServer_properties_typeProperties_userName')]"
 					}
 				}
 			},

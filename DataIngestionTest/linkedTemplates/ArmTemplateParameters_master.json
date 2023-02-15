@@ -17,8 +17,14 @@
 		"AzureDataLakeStorageRedditAppTest_properties_typeProperties_url": {
 			"value": "https://pendragonteststorage.dfs.core.windows.net/"
 		},
+		"AzureKeyVaultRedditAppTest_properties_typeProperties_baseUrl": {
+			"value": "https://tw-dv-001.vault.azure.net/"
+		},
 		"HttpRedditServer_properties_typeProperties_url": {
 			"value": "https://www.reddit.com/r/dataengineering/"
+		},
+		"HttpRedditServer_properties_typeProperties_userName": {
+			"value": "ryan_supplyin"
 		},
 		"RedditAppTestDataLakeStorage_properties_typeProperties_url": {
 			"value": "https://cs2100320012bda2056.dfs.core.windows.net/"
