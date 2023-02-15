@@ -76,7 +76,7 @@
 							"sink": {
 								"type": "DelimitedTextSink",
 								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
+									"type": "AzureBlobFSWriteSettings"
 								},
 								"formatSettings": {
 									"type": "DelimitedTextWriteSettings",
@@ -90,15 +90,16 @@
 								"mappings": [
 									{
 										"source": {
-											"path": "[['data']['selftext']"
+											"path": "$['data']['children'][0]['data']['selftext']"
 										},
 										"sink": {
+											"type": "String",
 											"ordinal": 1
 										}
 									},
 									{
 										"source": {
-											"path": "[['data']['author_fullname']"
+											"path": "$['data']['children'][0]['data']['author_fullname']"
 										},
 										"sink": {
 											"type": "String",
@@ -107,33 +108,15 @@
 									},
 									{
 										"source": {
-											"path": "[['data']['title']"
+											"path": "$['data']['children'][0]['data']['title']"
 										},
 										"sink": {
 											"type": "String",
 											"ordinal": 3
 										}
-									},
-									{
-										"source": {
-											"path": "[['data']['created']"
-										},
-										"sink": {
-											"type": "Double",
-											"ordinal": 4
-										}
-									},
-									{
-										"source": {
-											"path": "[['data']['num_comments']"
-										},
-										"sink": {
-											"ordinal": 5
-										}
 									}
 								],
-								"collectionReference": "$['data']['children']",
-								"mapComplexValuesToString": false
+								"collectionReference": ""
 							}
 						},
 						"inputs": [
@@ -145,7 +128,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "RedditCSV",
+								"referenceName": "RedditAppTestCSVDataLake",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -160,7 +143,58 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/RedditAppTestService')]",
-				"[concat(variables('factoryId'), '/datasets/RedditCSV')]"
+				"[concat(variables('factoryId'), '/datasets/RedditAppTestCSVDataLake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RedditAppTestCSVDataLake')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RedditAppTestDataLakeStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "RedditDENTop10posts.csv",
+						"fileSystem": "testcontainer"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/RedditAppTestDataLakeStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RedditAppTestDataLakeGen2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RedditAppTestDataLakeStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "testcontainer"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/RedditAppTestDataLakeStorage')]"
 			]
 		},
 		{
