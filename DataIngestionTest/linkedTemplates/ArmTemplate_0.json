@@ -506,6 +506,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
+						"fileName": "RedditDENTop10Posts",
 						"container": "testcsv"
 					},
 					"columnDelimiter": ",",
