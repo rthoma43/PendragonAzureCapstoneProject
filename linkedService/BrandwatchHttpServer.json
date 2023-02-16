@@ -1,22 +1,15 @@
 {
 	"name": "BrandwatchHttpServer",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "HttpServer",
 		"typeProperties": {
 			"url": "https://api.brandwatch.com/",
 			"enableServerCertificateValidation": true,
-			"authenticationType": "Anonymous",
-			"authHeaders": {
-				"Authorization": {
-					"type": "AzureKeyVaultSecret",
-					"store": {
-						"referenceName": "AzureKeyVaultRedditAppTest",
-						"type": "LinkedServiceReference"
-					},
-					"secretName": "Brandwatch-AccessToken"
-				}
-			}
+			"authenticationType": "Basic",
+			"userName": "bschmid5@gmu.edu",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDNFRDQzREY5LTRGOEMtNDk3Qy05NDg1LTRDOUIwQTg4NTg3NV84NWU3ZDBkNS1jOWQ3LTQ4YjgtYjc0Zi1mMDUwNTViZDYwY2MiDQp9"
 		}
 	}
 }
