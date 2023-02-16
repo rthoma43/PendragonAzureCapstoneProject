@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
 		},
+		"BrandwatchHttpServer_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BrandwatchHttpServer'"
+		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://pendragonteststorage.dfs.core.windows.net/"
@@ -42,6 +46,10 @@
 		"BrandwatchHttpServer_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://api.brandwatch.com/"
+		},
+		"BrandwatchHttpServer_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "bschmid5@gmu.edu"
 		},
 		"HttpRedditServer_properties_typeProperties_url": {
 			"type": "string",
@@ -84,6 +92,9 @@
 					"AzureDataLakeStorage1_accountKey": {
 						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
 					},
+					"BrandwatchHttpServer_password": {
+						"value": "[parameters('BrandwatchHttpServer_password')]"
+					},
 					"AzureDataLakeStorage1_properties_typeProperties_url": {
 						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"
 					},
@@ -104,6 +115,9 @@
 					},
 					"BrandwatchHttpServer_properties_typeProperties_url": {
 						"value": "[parameters('BrandwatchHttpServer_properties_typeProperties_url')]"
+					},
+					"BrandwatchHttpServer_properties_typeProperties_userName": {
+						"value": "[parameters('BrandwatchHttpServer_properties_typeProperties_userName')]"
 					},
 					"HttpRedditServer_properties_typeProperties_url": {
 						"value": "[parameters('HttpRedditServer_properties_typeProperties_url')]"
