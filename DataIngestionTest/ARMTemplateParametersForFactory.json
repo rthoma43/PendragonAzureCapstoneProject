@@ -11,9 +11,6 @@
 		"AzureDataLakeStorage1_accountKey": {
 			"value": ""
 		},
-		"BrandwatchHttpServer_password": {
-			"value": ""
-		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"value": "https://pendragonteststorage.dfs.core.windows.net/"
 		},

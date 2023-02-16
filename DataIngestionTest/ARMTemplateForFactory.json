@@ -15,10 +15,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
 		},
-		"BrandwatchHttpServer_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'BrandwatchHttpServer'"
-		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://pendragonteststorage.dfs.core.windows.net/"
@@ -10207,12 +10203,18 @@
 					"authenticationType": "Basic",
 					"userName": "[parameters('BrandwatchHttpServer_properties_typeProperties_userName')]",
 					"password": {
-						"type": "SecureString",
-						"value": "[parameters('BrandwatchHttpServer_password')]"
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVaultRedditAppTest",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "BrandwatchAccessToken"
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVaultRedditAppTest')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/HttpRedditServer')]",

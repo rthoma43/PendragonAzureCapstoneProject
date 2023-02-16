@@ -15,10 +15,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
 		},
-		"BrandwatchHttpServer_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'BrandwatchHttpServer'"
-		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://pendragonteststorage.dfs.core.windows.net/"
@@ -91,9 +87,6 @@
 					},
 					"AzureDataLakeStorage1_accountKey": {
 						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
-					},
-					"BrandwatchHttpServer_password": {
-						"value": "[parameters('BrandwatchHttpServer_password')]"
 					},
 					"AzureDataLakeStorage1_properties_typeProperties_url": {
 						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"
