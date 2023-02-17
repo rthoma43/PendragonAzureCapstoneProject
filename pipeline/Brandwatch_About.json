@@ -232,7 +232,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "BrandwatchProjectDetails",
+						"referenceName": "BrandwatchProjectDetailsDataset",
 						"type": "DatasetReference"
 					}
 				]
