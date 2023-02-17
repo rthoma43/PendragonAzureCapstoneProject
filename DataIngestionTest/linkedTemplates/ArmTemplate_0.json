@@ -150,7 +150,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "HttpServerLocation",
-						"relativeUrl": "/user"
+						"relativeUrl": "/client"
 					}
 				},
 				"schema": {}
