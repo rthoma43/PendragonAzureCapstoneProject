@@ -317,6 +317,54 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/BrandwatchClient')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BrandwatchHttpServer",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/client"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/BrandwatchHttpServer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BrandwatchClientDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "client",
+						"folderPath": "clientanduser",
+						"container": "brandwatch"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/BrandwatchAPI')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -419,6 +467,55 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Brandwatch API Client GET",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "BrandwatchClient",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "BrandwatchClientDataset",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"policy": {
@@ -431,7 +528,9 @@
 				"[concat(variables('factoryId'), '/datasets/BrandwatchMe')]",
 				"[concat(variables('factoryId'), '/datasets/BrandwatchMeDataset')]",
 				"[concat(variables('factoryId'), '/datasets/BrandwatchUser')]",
-				"[concat(variables('factoryId'), '/datasets/BrandwatchUserDataset')]"
+				"[concat(variables('factoryId'), '/datasets/BrandwatchUserDataset')]",
+				"[concat(variables('factoryId'), '/datasets/BrandwatchClient')]",
+				"[concat(variables('factoryId'), '/datasets/BrandwatchClientDataset')]"
 			]
 		}
 	]
