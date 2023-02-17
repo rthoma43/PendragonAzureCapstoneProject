@@ -91,7 +91,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "BrandwatchUserDataset",
+						"referenceName": "BrandwatchUser",
 						"type": "DatasetReference"
 					}
 				]
@@ -185,7 +185,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "BrandwatchProjectsSummaryDataset",
+						"referenceName": "BrandwatchProjectsSummary",
 						"type": "DatasetReference"
 					}
 				]
