@@ -1,9 +1,9 @@
 {
-	"name": "BrandwatchAPI",
+	"name": "BrandwatchAPI-Me",
 	"properties": {
 		"activities": [
 			{
-				"name": "Brandwatch API Test",
+				"name": "Brandwatch API Test - Me Get",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
