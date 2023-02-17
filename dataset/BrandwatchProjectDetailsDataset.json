@@ -1,0 +1,20 @@
+{
+	"name": "BrandwatchProjectDetailsDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "projectdetails",
+				"folderPath": "About",
+				"container": "brandwatch"
+			}
+		},
+		"schema": {}
+	}
+}
