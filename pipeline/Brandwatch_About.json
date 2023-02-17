@@ -185,7 +185,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "BrandwatchProjectsSummary",
+						"referenceName": "BrandwatchProjectsSummaryDataset",
 						"type": "DatasetReference"
 					}
 				]
