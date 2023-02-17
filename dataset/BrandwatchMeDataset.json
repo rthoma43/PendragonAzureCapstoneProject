@@ -11,7 +11,7 @@
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": "me",
-				"folderPath": "API_info",
+				"folderPath": "About",
 				"container": "brandwatch"
 			}
 		},
