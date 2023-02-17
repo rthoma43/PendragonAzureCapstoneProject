@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Brandwatch API Test - Me Get",
+				"name": "Brandwatch API Test",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
