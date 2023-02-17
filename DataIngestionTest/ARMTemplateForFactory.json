@@ -43,10 +43,6 @@
 			"type": "string",
 			"defaultValue": "https://api.brandwatch.com/"
 		},
-		"BrandwatchHttpServer_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "bschmid5@gmu.edu"
-		},
 		"HttpRedditServer_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://www.reddit.com/r/dataengineering/"
@@ -61,13 +57,13 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/BrandwatchAPI')]",
+			"name": "[concat(parameters('factoryName'), '/BrandwatchAPI-Me')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Brandwatch API Test",
+						"name": "Brandwatch API Test - Me Get",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -10200,21 +10196,16 @@
 				"typeProperties": {
 					"url": "[parameters('BrandwatchHttpServer_properties_typeProperties_url')]",
 					"enableServerCertificateValidation": true,
-					"authenticationType": "Basic",
-					"userName": "[parameters('BrandwatchHttpServer_properties_typeProperties_userName')]",
-					"password": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "AzureKeyVaultRedditAppTest",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "BrandwatchAccessToken"
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"Authorization": {
+							"type": "SecureString",
+							"value": "**********"
+						}
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVaultRedditAppTest')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/HttpRedditServer')]",

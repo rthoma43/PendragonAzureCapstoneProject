@@ -32,9 +32,6 @@
 		"BrandwatchHttpServer_properties_typeProperties_url": {
 			"value": "https://api.brandwatch.com/"
 		},
-		"BrandwatchHttpServer_properties_typeProperties_userName": {
-			"value": "bschmid5@gmu.edu"
-		},
 		"HttpRedditServer_properties_typeProperties_url": {
 			"value": "https://www.reddit.com/r/dataengineering/"
 		},
