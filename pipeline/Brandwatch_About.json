@@ -91,7 +91,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "BrandwatchUser",
+						"referenceName": "BrandwatchUserDataset",
 						"type": "DatasetReference"
 					}
 				]
