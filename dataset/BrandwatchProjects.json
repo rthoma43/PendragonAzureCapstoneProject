@@ -1,0 +1,18 @@
+{
+	"name": "BrandwatchProjects",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "BrandwatchHttpServer",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "/projects/summary"
+			}
+		},
+		"schema": {}
+	}
+}
