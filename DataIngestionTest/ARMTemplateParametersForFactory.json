@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "DataIngestionTest"
 		},
+		"AzureBlobStorage_connectionString": {
+			"value": ""
+		},
 		"AzureBlobStorageRedditAppTest_connectionString": {
 			"value": ""
 		},
