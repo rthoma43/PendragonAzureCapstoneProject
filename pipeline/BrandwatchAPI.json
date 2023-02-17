@@ -439,11 +439,273 @@
 							"type": "JsonReadSettings"
 						}
 					},
-					"enableStaging": false
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['id']"
+								},
+								"sink": {
+									"ordinal": 1
+								}
+							},
+							{
+								"source": {
+									"path": "$['username']"
+								},
+								"sink": {
+									"ordinal": 2
+								}
+							},
+							{
+								"source": {
+									"path": "$['password']"
+								},
+								"sink": {
+									"ordinal": 3
+								}
+							},
+							{
+								"source": {
+									"path": "$['passwordConfirmation']"
+								},
+								"sink": {
+									"ordinal": 4
+								}
+							},
+							{
+								"source": {
+									"path": "$['oldPassword']"
+								},
+								"sink": {
+									"ordinal": 5
+								}
+							},
+							{
+								"source": {
+									"path": "$['passwordExpiryDate']"
+								},
+								"sink": {
+									"ordinal": 6
+								}
+							},
+							{
+								"source": {
+									"path": "$['clientId']"
+								},
+								"sink": {
+									"ordinal": 7
+								}
+							},
+							{
+								"source": {
+									"path": "$['clientName']"
+								},
+								"sink": {
+									"ordinal": 8
+								}
+							},
+							{
+								"source": {
+									"path": "$['firstName']"
+								},
+								"sink": {
+									"ordinal": 9
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastName']"
+								},
+								"sink": {
+									"ordinal": 10
+								}
+							},
+							{
+								"source": {
+									"path": "$['creationDate']"
+								},
+								"sink": {
+									"ordinal": 11
+								}
+							},
+							{
+								"source": {
+									"path": "$['enabled']"
+								},
+								"sink": {
+									"ordinal": 12
+								}
+							},
+							{
+								"source": {
+									"path": "$['job']"
+								},
+								"sink": {
+									"ordinal": 13
+								}
+							},
+							{
+								"source": {
+									"path": "$['department']"
+								},
+								"sink": {
+									"ordinal": 14
+								}
+							},
+							{
+								"source": {
+									"path": "$['uiRole']"
+								},
+								"sink": {
+									"ordinal": 15
+								}
+							},
+							{
+								"source": {
+									"path": "$['address']"
+								},
+								"sink": {
+									"ordinal": 16
+								}
+							},
+							{
+								"source": {
+									"path": "$['phone']"
+								},
+								"sink": {
+									"ordinal": 17
+								}
+							},
+							{
+								"source": {
+									"path": "$['mobile']"
+								},
+								"sink": {
+									"ordinal": 18
+								}
+							},
+							{
+								"source": {
+									"path": "$['messenger']"
+								},
+								"sink": {
+									"ordinal": 19
+								}
+							},
+							{
+								"source": {
+									"path": "$['apiRole'][0]"
+								},
+								"sink": {
+									"ordinal": 20
+								}
+							},
+							{
+								"source": {
+									"path": "$['externalId']"
+								},
+								"sink": {
+									"ordinal": 21
+								}
+							},
+							{
+								"source": {
+									"path": "$['uiLanguage']"
+								},
+								"sink": {
+									"ordinal": 22
+								}
+							},
+							{
+								"source": {
+									"path": "$['customRoleId']"
+								},
+								"sink": {
+									"ordinal": 23
+								}
+							},
+							{
+								"source": {
+									"path": "$['customRoleName']"
+								},
+								"sink": {
+									"ordinal": 24
+								}
+							},
+							{
+								"source": {
+									"path": "$['tags']"
+								},
+								"sink": {
+									"ordinal": 25
+								}
+							},
+							{
+								"source": {
+									"path": "$['twoFactorAuthConfigured']"
+								},
+								"sink": {
+									"ordinal": 26
+								}
+							},
+							{
+								"source": {
+									"path": "$['blocked']"
+								},
+								"sink": {
+									"ordinal": 27
+								}
+							},
+							{
+								"source": {
+									"path": "$['products'][0]['code']"
+								},
+								"sink": {
+									"ordinal": 28
+								}
+							},
+							{
+								"source": {
+									"path": "$['emailSubscriptions'][0]"
+								},
+								"sink": {
+									"ordinal": 29
+								}
+							},
+							{
+								"source": {
+									"path": "$['learnabilityLoginFormStatus']"
+								},
+								"sink": {
+									"ordinal": 30
+								}
+							}
+						]
+					}
 				},
 				"inputs": [
 					{
 						"referenceName": "BrandwatchUser",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "BrandwatchUserDataset",
 						"type": "DatasetReference"
 					}
 				]
@@ -471,6 +733,17 @@
 							"type": "JsonReadSettings"
 						}
 					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
 					"enableStaging": false,
 					"translator": {
 						"type": "TabularTranslator",
@@ -480,7 +753,7 @@
 									"path": "$['id']"
 								},
 								"sink": {
-									"path": "$['id']"
+									"ordinal": 1
 								}
 							},
 							{
@@ -488,7 +761,7 @@
 									"path": "$['name']"
 								},
 								"sink": {
-									"path": "$['name']"
+									"ordinal": 2
 								}
 							},
 							{
@@ -496,7 +769,7 @@
 									"path": "$['parentId']"
 								},
 								"sink": {
-									"path": "$['parentId']"
+									"ordinal": 3
 								}
 							},
 							{
@@ -504,7 +777,7 @@
 									"path": "$['startDate']"
 								},
 								"sink": {
-									"path": "$['startDate']"
+									"ordinal": 4
 								}
 							},
 							{
@@ -512,7 +785,7 @@
 									"path": "$['expiryDate']"
 								},
 								"sink": {
-									"path": "$['expiryDate']"
+									"ordinal": 5
 								}
 							},
 							{
@@ -520,7 +793,7 @@
 									"path": "$['website']"
 								},
 								"sink": {
-									"path": "$['website']"
+									"ordinal": 6
 								}
 							},
 							{
@@ -528,7 +801,7 @@
 									"path": "$['address1']"
 								},
 								"sink": {
-									"path": "$['address1']"
+									"ordinal": 7
 								}
 							},
 							{
@@ -536,7 +809,7 @@
 									"path": "$['address2']"
 								},
 								"sink": {
-									"path": "$['address2']"
+									"ordinal": 8
 								}
 							},
 							{
@@ -544,7 +817,7 @@
 									"path": "$['address3']"
 								},
 								"sink": {
-									"path": "$['address3']"
+									"ordinal": 9
 								}
 							},
 							{
@@ -552,7 +825,7 @@
 									"path": "$['country']"
 								},
 								"sink": {
-									"path": "$['country']"
+									"ordinal": 10
 								}
 							},
 							{
@@ -560,7 +833,7 @@
 									"path": "$['postcode']"
 								},
 								"sink": {
-									"path": "$['postcode']"
+									"ordinal": 11
 								}
 							},
 							{
@@ -568,7 +841,7 @@
 									"path": "$['contactName']"
 								},
 								"sink": {
-									"path": "$['contactName']"
+									"ordinal": 12
 								}
 							},
 							{
@@ -576,7 +849,7 @@
 									"path": "$['contactEmail']"
 								},
 								"sink": {
-									"path": "$['contactEmail']"
+									"ordinal": 13
 								}
 							},
 							{
@@ -584,7 +857,7 @@
 									"path": "$['contactTitle']"
 								},
 								"sink": {
-									"path": "$['contactTitle']"
+									"ordinal": 14
 								}
 							},
 							{
@@ -592,7 +865,7 @@
 									"path": "$['contactTelephone']"
 								},
 								"sink": {
-									"path": "$['contactTelephone']"
+									"ordinal": 15
 								}
 							},
 							{
@@ -600,7 +873,7 @@
 									"path": "$['contactMobile']"
 								},
 								"sink": {
-									"path": "$['contactMobile']"
+									"ordinal": 16
 								}
 							},
 							{
@@ -608,7 +881,7 @@
 									"path": "$['tags']['ratelimit.limit']"
 								},
 								"sink": {
-									"path": "$['tags']['ratelimit.limit']"
+									"ordinal": 17
 								}
 							},
 							{
@@ -616,7 +889,7 @@
 									"path": "$['tags']['ratelimit.period']"
 								},
 								"sink": {
-									"path": "$['tags']['ratelimit.period']"
+									"ordinal": 18
 								}
 							},
 							{
@@ -624,7 +897,7 @@
 									"path": "$['tags']['shardName']"
 								},
 								"sink": {
-									"path": "$['tags']['shardName']"
+									"ordinal": 19
 								}
 							},
 							{
@@ -632,7 +905,7 @@
 									"path": "$['priceStructureId']"
 								},
 								"sink": {
-									"path": "$['priceStructureId']"
+									"ordinal": 20
 								}
 							},
 							{
@@ -640,7 +913,7 @@
 									"path": "$['priceStructureLineId']"
 								},
 								"sink": {
-									"path": "$['priceStructureLineId']"
+									"ordinal": 21
 								}
 							},
 							{
@@ -648,7 +921,7 @@
 									"path": "$['maxUsers']"
 								},
 								"sink": {
-									"path": "$['maxUsers']"
+									"ordinal": 22
 								}
 							},
 							{
@@ -656,7 +929,7 @@
 									"path": "$['theme']"
 								},
 								"sink": {
-									"path": "$['theme']"
+									"ordinal": 23
 								}
 							},
 							{
@@ -664,7 +937,7 @@
 									"path": "$['themeUrl']"
 								},
 								"sink": {
-									"path": "$['themeUrl']"
+									"ordinal": 24
 								}
 							},
 							{
@@ -672,7 +945,7 @@
 									"path": "$['owner']"
 								},
 								"sink": {
-									"path": "$['owner']"
+									"ordinal": 25
 								}
 							},
 							{
@@ -680,7 +953,7 @@
 									"path": "$['userInactivityTimeoutMinutes']"
 								},
 								"sink": {
-									"path": "$['userInactivityTimeoutMinutes']"
+									"ordinal": 26
 								}
 							},
 							{
@@ -688,7 +961,7 @@
 									"path": "$['shardName']"
 								},
 								"sink": {
-									"path": "$['shardName']"
+									"ordinal": 27
 								}
 							},
 							{
@@ -696,7 +969,7 @@
 									"path": "$['shard']"
 								},
 								"sink": {
-									"path": "$['shard']"
+									"ordinal": 28
 								}
 							},
 							{
@@ -704,7 +977,7 @@
 									"path": "$['allowedUIRoles'][0]"
 								},
 								"sink": {
-									"path": "$['allowedUIRoles'][0]"
+									"ordinal": 29
 								}
 							},
 							{
@@ -712,7 +985,7 @@
 									"path": "$['subscriptionIds'][0]"
 								},
 								"sink": {
-									"path": "$['subscriptionIds'][0]"
+									"ordinal": 30
 								}
 							},
 							{
@@ -720,7 +993,7 @@
 									"path": "$['excludedContentSources'][0]"
 								},
 								"sink": {
-									"path": "$['excludedContentSources'][0]"
+									"ordinal": 31
 								}
 							},
 							{
@@ -728,7 +1001,7 @@
 									"path": "$['agency']"
 								},
 								"sink": {
-									"path": "$['agency']"
+									"ordinal": 32
 								}
 							},
 							{
@@ -736,7 +1009,7 @@
 									"path": "$['crimsonMode']"
 								},
 								"sink": {
-									"path": "$['crimsonMode']"
+									"ordinal": 33
 								}
 							},
 							{
@@ -744,7 +1017,7 @@
 									"path": "$['defaultUiLanguage']"
 								},
 								"sink": {
-									"path": "$['defaultUiLanguage']"
+									"ordinal": 34
 								}
 							},
 							{
@@ -752,7 +1025,7 @@
 									"path": "$['clientPackageId']"
 								},
 								"sink": {
-									"path": "$['clientPackageId']"
+									"ordinal": 35
 								}
 							},
 							{
@@ -760,7 +1033,7 @@
 									"path": "$['clientPackageName']"
 								},
 								"sink": {
-									"path": "$['clientPackageName']"
+									"ordinal": 36
 								}
 							},
 							{
@@ -768,7 +1041,7 @@
 									"path": "$['queryLimit']"
 								},
 								"sink": {
-									"path": "$['queryLimit']"
+									"ordinal": 37
 								}
 							},
 							{
@@ -776,7 +1049,7 @@
 									"path": "$['monthlyMentionsLimit']"
 								},
 								"sink": {
-									"path": "$['monthlyMentionsLimit']"
+									"ordinal": 38
 								}
 							},
 							{
@@ -784,7 +1057,7 @@
 									"path": "$['monthlyBackfillMentionsLimit']"
 								},
 								"sink": {
-									"path": "$['monthlyBackfillMentionsLimit']"
+									"ordinal": 39
 								}
 							},
 							{
@@ -792,7 +1065,7 @@
 									"path": "$['monthsHistoricData']"
 								},
 								"sink": {
-									"path": "$['monthsHistoricData']"
+									"ordinal": 40
 								}
 							},
 							{
@@ -800,7 +1073,7 @@
 									"path": "$['monthsRollingData']"
 								},
 								"sink": {
-									"path": "$['monthsRollingData']"
+									"ordinal": 41
 								}
 							},
 							{
@@ -808,7 +1081,7 @@
 									"path": "$['nonTwitterChannelLimit']"
 								},
 								"sink": {
-									"path": "$['nonTwitterChannelLimit']"
+									"ordinal": 42
 								}
 							},
 							{
@@ -816,7 +1089,7 @@
 									"path": "$['twitterChannelLimit']"
 								},
 								"sink": {
-									"path": "$['twitterChannelLimit']"
+									"ordinal": 43
 								}
 							},
 							{
@@ -824,7 +1097,7 @@
 									"path": "$['maxSampledVolume']"
 								},
 								"sink": {
-									"path": "$['maxSampledVolume']"
+									"ordinal": 44
 								}
 							},
 							{
@@ -832,7 +1105,7 @@
 									"path": "$['dailyMentionExportLimit']"
 								},
 								"sink": {
-									"path": "$['dailyMentionExportLimit']"
+									"ordinal": 45
 								}
 							},
 							{
@@ -840,7 +1113,7 @@
 									"path": "$['monthlyDocumentsUploadLimit']"
 								},
 								"sink": {
-									"path": "$['monthlyDocumentsUploadLimit']"
+									"ordinal": 46
 								}
 							},
 							{
@@ -848,7 +1121,7 @@
 									"path": "$['modules'][0]"
 								},
 								"sink": {
-									"path": "$['modules'][0]"
+									"ordinal": 47
 								}
 							},
 							{
@@ -856,7 +1129,7 @@
 									"path": "$['unusedQueryMaxAgeDays']"
 								},
 								"sink": {
-									"path": "$['unusedQueryMaxAgeDays']"
+									"ordinal": 48
 								}
 							},
 							{
@@ -864,7 +1137,7 @@
 									"path": "$['deactivateInactiveUsersEnabled']"
 								},
 								"sink": {
-									"path": "$['deactivateInactiveUsersEnabled']"
+									"ordinal": 49
 								}
 							},
 							{
@@ -872,7 +1145,7 @@
 									"path": "$['products'][0]['code']"
 								},
 								"sink": {
-									"path": "$['products'][0]['code']"
+									"ordinal": 50
 								}
 							},
 							{
@@ -880,7 +1153,7 @@
 									"path": "$['products'][0]['name']"
 								},
 								"sink": {
-									"path": "$['products'][0]['name']"
+									"ordinal": 51
 								}
 							}
 						]
@@ -889,6 +1162,12 @@
 				"inputs": [
 					{
 						"referenceName": "BrandwatchClient",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "BrandwatchClientDataset",
 						"type": "DatasetReference"
 					}
 				]
