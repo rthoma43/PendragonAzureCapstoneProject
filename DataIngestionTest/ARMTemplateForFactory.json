@@ -452,6 +452,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
+						"fileName": "projects",
 						"container": "test"
 					}
 				},
