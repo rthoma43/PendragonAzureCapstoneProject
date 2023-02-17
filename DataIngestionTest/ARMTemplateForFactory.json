@@ -290,7 +290,7 @@
 					"location": {
 						"type": "AzureBlobStorageLocation",
 						"fileName": "me",
-						"folderPath": "userandclient",
+						"folderPath": "API_Info",
 						"container": "brandwatch"
 					}
 				},
@@ -338,7 +338,7 @@
 					"location": {
 						"type": "AzureBlobStorageLocation",
 						"fileName": "user",
-						"folderPath": "clientanduser",
+						"folderPath": "API_info",
 						"container": "brandwatch"
 					}
 				},
@@ -523,7 +523,7 @@
 					"location": {
 						"type": "AzureBlobStorageLocation",
 						"fileName": "client",
-						"folderPath": "clientanduser",
+						"folderPath": "API_info",
 						"container": "brandwatch"
 					}
 				},
