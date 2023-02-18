@@ -340,6 +340,9 @@
 					"referenceName": "BrandwatchHttpServer",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "BrandwatchGETandDatasets"
+				},
 				"annotations": [],
 				"type": "Json",
 				"typeProperties": {
@@ -362,6 +365,9 @@
 				"linkedServiceName": {
 					"referenceName": "AzureBlobStorage",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "BrandwatchGETandDatasets"
 				},
 				"annotations": [],
 				"type": "Json",
@@ -388,6 +394,9 @@
 					"referenceName": "BrandwatchHttpServer",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "BrandwatchGETandDatasets"
+				},
 				"annotations": [],
 				"type": "Json",
 				"typeProperties": {
@@ -411,6 +420,9 @@
 					"referenceName": "BrandwatchHttpServer",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "BrandwatchGETandDatasets"
+				},
 				"annotations": [],
 				"type": "Json",
 				"typeProperties": {
@@ -433,6 +445,9 @@
 				"linkedServiceName": {
 					"referenceName": "AzureBlobStorage",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "BrandwatchGETandDatasets"
 				},
 				"annotations": [],
 				"type": "Json",
@@ -459,6 +474,9 @@
 					"referenceName": "BrandwatchHttpServer",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "BrandwatchGETandDatasets"
+				},
 				"annotations": [],
 				"type": "Json",
 				"typeProperties": {
@@ -481,6 +499,9 @@
 				"linkedServiceName": {
 					"referenceName": "AzureBlobStorage",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "BrandwatchGETandDatasets"
 				},
 				"annotations": [],
 				"type": "Json",
@@ -507,6 +528,9 @@
 					"referenceName": "BrandwatchHttpServer",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "BrandwatchGETandDatasets"
+				},
 				"annotations": [],
 				"type": "Json",
 				"typeProperties": {
@@ -529,6 +553,9 @@
 				"linkedServiceName": {
 					"referenceName": "AzureBlobStorage",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "BrandwatchGETandDatasets"
 				},
 				"annotations": [],
 				"type": "Json",
@@ -555,6 +582,9 @@
 					"referenceName": "BrandwatchHttpServer",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "BrandwatchGETandDatasets"
+				},
 				"annotations": [],
 				"type": "Json",
 				"typeProperties": {
@@ -577,6 +607,9 @@
 				"linkedServiceName": {
 					"referenceName": "AzureBlobStorage",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "BrandwatchGETandDatasets"
 				},
 				"annotations": [],
 				"type": "Json",
