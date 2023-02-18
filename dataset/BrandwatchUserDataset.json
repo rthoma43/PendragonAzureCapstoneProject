@@ -5,6 +5,9 @@
 			"referenceName": "AzureBlobStorage",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "BrandwatchGETandDatasets"
+		},
 		"annotations": [],
 		"type": "Json",
 		"typeProperties": {
