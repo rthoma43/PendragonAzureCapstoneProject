@@ -1,0 +1,20 @@
+{
+	"name": "Json1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "1998956016",
+				"folderPath": "hashtags",
+				"fileSystem": "Brandwatch"
+			}
+		},
+		"schema": {}
+	}
+}
