@@ -1,0 +1,70 @@
+{
+	"name": "Pipeline 1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web Brandwatch",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://api.brandwatch.com/projects/1998163585/data/hashtags?queryId=1998956016&startDate=2019-01-01&endDate=2023-02-01",
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET",
+					"headers": {
+						"Authorization": "Bearer ee40892e-d0ed-453b-8109-8b963b9f76d1"
+					}
+				}
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Web Brandwatch",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"outputs": [
+					{
+						"referenceName": "Json1",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
