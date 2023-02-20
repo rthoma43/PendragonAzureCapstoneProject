@@ -10,9 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "1998956016",
-				"folderPath": "hashtags",
-				"fileSystem": "Brandwatch"
+				"fileSystem": "pendragon"
 			}
 		},
 		"schema": {}
