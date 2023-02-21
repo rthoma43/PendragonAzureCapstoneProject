@@ -1,0 +1,57 @@
+{
+	"name": "TwitterJson1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "pendragon"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"results": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"label": {
+								"type": "null"
+							},
+							"name": {
+								"type": "string"
+							},
+							"volume": {
+								"type": "integer"
+							},
+							"retweets": {
+								"type": "integer"
+							},
+							"tweets": {
+								"type": "integer"
+							},
+							"reachEstimate": {
+								"type": "integer"
+							},
+							"impressions": {
+								"type": "integer"
+							}
+						}
+					}
+				},
+				"orderBy": {
+					"type": "string"
+				},
+				"orderDirection": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}
