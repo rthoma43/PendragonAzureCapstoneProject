@@ -1,42 +1,11 @@
 {
-	"name": "Brandwatch_Queries",
+	"name": "Brandwatch_Test2",
 	"properties": {
 		"activities": [
 			{
-				"name": "Web Brandwatch",
-				"type": "WebActivity",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"url": "https://api.brandwatch.com/projects",
-					"connectVia": {
-						"referenceName": "AutoResolveIntegrationRuntime",
-						"type": "IntegrationRuntimeReference"
-					},
-					"method": "GET",
-					"headers": {
-						"Authorization": "Bearer ee40892e-d0ed-453b-8109-8b963b9f76d1"
-					}
-				}
-			},
-			{
-				"name": "Copy data1",
+				"name": "Brandwatch Copy Fulltext",
 				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "Web Brandwatch",
-						"dependencyConditions": [
-							"Completed"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
