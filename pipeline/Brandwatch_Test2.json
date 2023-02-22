@@ -15,7 +15,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://api.brandwatch.com/projects/1998163585/data/mentions?startDate=2019-01-01&endDate=2023-02-01",
+					"url": "https://api.brandwatch.com/projects/1998163585/data/mentions?startDate=2023-01-01&endDate=2023-02-01",
 					"connectVia": {
 						"referenceName": "AutoResolveIntegrationRuntime",
 						"type": "IntegrationRuntimeReference"
