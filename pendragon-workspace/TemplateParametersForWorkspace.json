@@ -5,11 +5,20 @@
 		"workspaceName": {
 			"value": "pendragon-workspace"
 		},
+		"RedditHttpServer1_password": {
+			"value": ""
+		},
 		"pendragon-workspace-WorkspaceDefaultSqlServer_connectionString": {
 			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:pendragon-workspace.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
 		},
+		"RedditHttpServer1_properties_typeProperties_url": {
+			"value": "https://www.reddit.com/"
+		},
+		"RedditHttpServer1_properties_typeProperties_userName": {
+			"value": "ryan_supplyin"
+		},
 		"RedditRestService1_properties_typeProperties_url": {
-			"value": "https://www.reddit.com"
+			"value": "https://www.reddit.com/"
 		},
 		"RestService1_properties_typeProperties_url": {
 			"value": "https://api.brandwatch.com/projects/1998163585/data/hashtags?queryId=1998956016&startDate=2019-01-01&endDate=2023-02-01"

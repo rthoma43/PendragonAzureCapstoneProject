@@ -7,14 +7,26 @@
 			"metadata": "Workspace name",
 			"defaultValue": "pendragon-workspace"
 		},
+		"RedditHttpServer1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'RedditHttpServer1'"
+		},
 		"pendragon-workspace-WorkspaceDefaultSqlServer_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'pendragon-workspace-WorkspaceDefaultSqlServer'",
 			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:pendragon-workspace.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
 		},
+		"RedditHttpServer1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://www.reddit.com/"
+		},
+		"RedditHttpServer1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "ryan_supplyin"
+		},
 		"RedditRestService1_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://www.reddit.com"
+			"defaultValue": "https://www.reddit.com/"
 		},
 		"RestService1_properties_typeProperties_url": {
 			"type": "string",
@@ -250,10 +262,14 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET"
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
 							},
 							"sink": {
 								"type": "JsonSink",
@@ -268,7 +284,7 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "RestResourceReddit1",
+								"referenceName": "RedditJson1",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -289,7 +305,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/RestResourceReddit1')]",
+				"[concat(variables('workspaceId'), '/datasets/RedditJson1')]",
 				"[concat(variables('workspaceId'), '/datasets/Json1')]"
 			]
 		},
@@ -381,6 +397,29 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/RedditJson1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RedditHttpServer1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/search.json?q=NATO&sort=top&limit=5"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/RedditHttpServer1')]"
 			]
 		},
 		{
@@ -504,6 +543,32 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/RedditHttpServer1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('RedditHttpServer1_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Basic",
+					"userName": "[parameters('RedditHttpServer1_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('RedditHttpServer1_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/RedditRestService1')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -513,13 +578,7 @@
 				"typeProperties": {
 					"url": "[parameters('RedditRestService1_properties_typeProperties_url')]",
 					"enableServerCertificateValidation": true,
-					"authenticationType": "Anonymous",
-					"authHeaders": {
-						"Authorization": {
-							"type": "SecureString",
-							"value": "**********"
-						}
-					}
+					"authenticationType": "Anonymous"
 				},
 				"connectVia": {
 					"referenceName": "AutoResolveIntegrationRuntime",
