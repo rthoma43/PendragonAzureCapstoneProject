@@ -222,7 +222,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "Json1",
+								"referenceName": "BrandwatchJson2",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -238,7 +238,7 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResource1')]",
-				"[concat(variables('workspaceId'), '/datasets/Json1')]"
+				"[concat(variables('workspaceId'), '/datasets/BrandwatchJson2')]"
 			]
 		},
 		{
@@ -377,7 +377,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/Json1')]",
+			"name": "[concat(parameters('workspaceName'), '/BrandwatchJson2')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -391,6 +391,30 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"fileName": "BrandwatchTest2dataset",
+						"fileSystem": "pendragon"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Json1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "BrandwatchTest1dataset",
 						"fileSystem": "pendragon"
 					}
 				},
