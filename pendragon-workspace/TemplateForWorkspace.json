@@ -162,7 +162,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.brandwatch.com/projects/1998163585/data/mentions?startDate=2023-01-01&endDate=2023-02-01",
+							"url": "https://api.brandwatch.com/projects/1998163585/data/mentions/fulltext",
 							"connectVia": {
 								"referenceName": "AutoResolveIntegrationRuntime",
 								"type": "IntegrationRuntimeReference"
@@ -390,7 +390,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "BrandwatchTest1dataset",
+						"fileName": "BrandwatchTest2dataset",
 						"fileSystem": "pendragon"
 					}
 				},
