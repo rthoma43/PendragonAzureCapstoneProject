@@ -64,7 +64,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"url": "https://api.brandwatch.com/projects/1998163585/queries",
+							"url": "https://api.brandwatch.com/projects",
 							"connectVia": {
 								"referenceName": "AutoResolveIntegrationRuntime",
 								"type": "IntegrationRuntimeReference"
