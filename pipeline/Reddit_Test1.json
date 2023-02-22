@@ -17,10 +17,14 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "RestSource",
-						"httpRequestTimeout": "00:01:40",
-						"requestInterval": "00.00:00:00.010",
-						"requestMethod": "GET"
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
 					},
 					"sink": {
 						"type": "JsonSink",
@@ -35,7 +39,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "RestResourceReddit1",
+						"referenceName": "RedditJson1",
 						"type": "DatasetReference"
 					}
 				],
