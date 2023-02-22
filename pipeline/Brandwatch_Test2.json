@@ -74,7 +74,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "Json1",
+						"referenceName": "BrandwatchJson2",
 						"type": "DatasetReference"
 					}
 				]
