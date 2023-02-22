@@ -427,7 +427,7 @@
 				"annotations": [],
 				"type": "RestResource",
 				"typeProperties": {
-					"relativeUrl": "/projects/1998163585/data/mentions/fulltext"
+					"relativeUrl": "/projects/1998163585/data/mentions?queryId=1998956016&startDate=2023-01-01&endDate=2023-02-01/fulltext"
 				},
 				"schema": []
 			},
