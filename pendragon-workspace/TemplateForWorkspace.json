@@ -382,7 +382,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "BrandwatchTest1dataset",
+						"fileName": "RedditTest1dataset",
 						"fileSystem": "pendragon"
 					}
 				},
