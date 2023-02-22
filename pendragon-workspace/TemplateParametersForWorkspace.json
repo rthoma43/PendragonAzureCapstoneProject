@@ -21,7 +21,7 @@
 			"value": "https://www.reddit.com/"
 		},
 		"RestService1_properties_typeProperties_url": {
-			"value": "https://api.brandwatch.com/projects/1998163585/data/hashtags?queryId=1998956016&startDate=2019-01-01&endDate=2023-02-01"
+			"value": "https://api.brandwatch.com/"
 		},
 		"RestServiceTwitter1_properties_typeProperties_url": {
 			"value": "https://api.twitter.com"

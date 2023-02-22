@@ -30,7 +30,7 @@
 		},
 		"RestService1_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://api.brandwatch.com/projects/1998163585/data/hashtags?queryId=1998956016&startDate=2019-01-01&endDate=2023-02-01"
+			"defaultValue": "https://api.brandwatch.com/"
 		},
 		"RestServiceTwitter1_properties_typeProperties_url": {
 			"type": "string",
@@ -45,104 +45,6 @@
 		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('workspaceName'), '/Brandwatch_Queries')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "Web Brandwatch",
-						"type": "WebActivity",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"url": "https://api.brandwatch.com/projects",
-							"connectVia": {
-								"referenceName": "AutoResolveIntegrationRuntime",
-								"type": "IntegrationRuntimeReference"
-							},
-							"method": "GET",
-							"headers": {
-								"Authorization": "Bearer ee40892e-d0ed-453b-8109-8b963b9f76d1"
-							}
-						}
-					},
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Web Brandwatch",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET",
-								"paginationRules": {
-									"supportRFC5988": "true"
-								}
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "RestResource1",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "BrandwatchJson2",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
-				"[concat(variables('workspaceId'), '/datasets/RestResource1')]",
-				"[concat(variables('workspaceId'), '/datasets/BrandwatchJson2')]"
-			]
-		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/Brandwatch_Test1')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
@@ -239,6 +141,72 @@
 				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResource1')]",
 				"[concat(variables('workspaceId'), '/datasets/Json1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Brandwatch_Test2')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Brandwatch Copy Fulltext",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "RestResource1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "BrandwatchJson2",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/RestResource1')]",
+				"[concat(variables('workspaceId'), '/datasets/BrandwatchJson2')]"
 			]
 		},
 		{
@@ -390,7 +358,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "BrandwatchQueries",
+						"fileName": "BrandwatchFulltext",
 						"fileSystem": "pendragon"
 					}
 				},
@@ -458,7 +426,9 @@
 				},
 				"annotations": [],
 				"type": "RestResource",
-				"typeProperties": {},
+				"typeProperties": {
+					"relativeUrl": "/projects/1998163585/data/mentions/fulltext"
+				},
 				"schema": []
 			},
 			"dependsOn": [
