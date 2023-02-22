@@ -358,7 +358,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "BrandwatchQueries",
+						"fileName": "BrandwatchFulltext",
 						"fileSystem": "pendragon"
 					}
 				},
@@ -427,7 +427,7 @@
 				"annotations": [],
 				"type": "RestResource",
 				"typeProperties": {
-					"relativeUrl": "/projects/1998163585/queries"
+					"relativeUrl": "/projects/1998163585/data/mentions/fulltext?queryId=1998956016&startDate=2023-01-01&endDate=2023-02-01"
 				},
 				"schema": []
 			},
