@@ -248,7 +248,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Reddit NATO search",
+						"name": "Reddit Top 5 NATO search",
 						"description": "",
 						"type": "Copy",
 						"dependsOn": [],
@@ -390,6 +390,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "BrandwatchTest1dataset",
 						"fileSystem": "pendragon"
 					}
 				},
