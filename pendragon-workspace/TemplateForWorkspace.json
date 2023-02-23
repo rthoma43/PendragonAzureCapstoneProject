@@ -172,15 +172,32 @@
 								}
 							},
 							"sink": {
-								"type": "JsonSink",
+								"type": "DelimitedTextSink",
 								"storeSettings": {
 									"type": "AzureBlobFSWriteSettings"
 								},
 								"formatSettings": {
-									"type": "JsonWriteSettings"
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
 								}
 							},
-							"enableStaging": false
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['$[\\'results\\'][0][\\'fullText\\']']"
+										},
+										"sink": {
+											"type": "String",
+											"ordinal": 1
+										}
+									}
+								],
+								"collectionReference": ""
+							}
 						},
 						"inputs": [
 							{
@@ -191,7 +208,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "BrandwatchJson2",
+								"referenceName": "BrandwatchDelimitedText1",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -206,7 +223,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/RestResource1')]",
-				"[concat(variables('workspaceId'), '/datasets/BrandwatchJson2')]"
+				"[concat(variables('workspaceId'), '/datasets/BrandwatchDelimitedText1')]"
 			]
 		},
 		{
@@ -345,6 +362,33 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/BrandwatchDelimitedText1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "BrandwatchDeliminatedText",
+						"fileSystem": "pendragon"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/BrandwatchJson2')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -427,7 +471,7 @@
 				"annotations": [],
 				"type": "RestResource",
 				"typeProperties": {
-					"relativeUrl": "/projects/1998163585/data/mentions/fulltext?queryId=1998275289&startDate=2023-01-01&endDate=2023-02-01&pageType=facebook"
+					"relativeUrl": "/projects/1998163585/data/mentions/fulltext?queryId=2001274488&startDate=2023-01-01&endDate=2023-02-01&pageType!=twitter"
 				},
 				"schema": []
 			},
