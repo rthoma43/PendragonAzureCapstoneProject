@@ -41,7 +41,7 @@
 						"mappings": [
 							{
 								"source": {
-									"path": "$['$[\\'results\\'][0][\\'fullText\\']']"
+									"path": "[0]['fullText']"
 								},
 								"sink": {
 									"type": "String",
@@ -49,7 +49,7 @@
 								}
 							}
 						],
-						"collectionReference": "",
+						"collectionReference": "$['results']",
 						"mapComplexValuesToString": true
 					}
 				},
@@ -61,7 +61,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "BranswatchDelimitedText1",
+						"referenceName": "BrandwatchDelimitedText1",
 						"type": "DatasetReference"
 					}
 				]

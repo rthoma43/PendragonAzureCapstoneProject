@@ -1,0 +1,22 @@
+{
+	"name": "BrandwatchDelimitedText1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "brandwatchCSV",
+				"fileSystem": "pendragon"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
