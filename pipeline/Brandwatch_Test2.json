@@ -25,15 +25,32 @@
 						}
 					},
 					"sink": {
-						"type": "JsonSink",
+						"type": "DelimitedTextSink",
 						"storeSettings": {
 							"type": "AzureBlobFSWriteSettings"
 						},
 						"formatSettings": {
-							"type": "JsonWriteSettings"
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
 						}
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['$[\\'results\\'][0][\\'fullText\\']']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 1
+								}
+							}
+						],
+						"collectionReference": ""
+					}
 				},
 				"inputs": [
 					{
@@ -43,7 +60,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "BrandwatchJson2",
+						"referenceName": "BrandwatchDelimitedText1",
 						"type": "DatasetReference"
 					}
 				]
