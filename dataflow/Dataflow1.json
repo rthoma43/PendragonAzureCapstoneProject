@@ -23,26 +23,16 @@
 			],
 			"transformations": [
 				{
-					"name": "flatten1"
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
-				"source(output(",
-				"          results as (accountType as string, added as string, assignment as string, author as string, avatarUrl as string, blogName as string, broadcastMediaUrl as string, isSyndicated as boolean, airType as string, broadcastType as string, mediaType as string, categories as string[], categoryDetails as string[], checked as boolean, city as string, cityCode as string, continent as string, continentCode as string, country as string, countryCode as string, region as string, regionCode as string, date as string, displayUrls as string[], domain as string, engagementType as string, expandedUrls as string[], facebookAuthorId as string, facebookComments as integer, facebookLikes as integer, facebookRole as string, facebookShares as integer, facebookSubtype as string, fullText as string, fullname as string, gender as string, guid as string, impressions as integer, insightsHashtag as string[], insightsMentioned as string[], instagramCommentCount as integer, instagramFollowerCount as integer, instagramFollowingCount as integer, instagramInteractionsCount as integer, instagramLikeCount as integer, instagramPostCount as integer, interest as string[], itemReview as string, language as string, lastAssignmentDate as string, latitude as double, linkedinComments as integer, linkedinEngagement as double, linkedinImpressions as integer, linkedinLikes as integer, linkedinShares as integer, linkedinSponsored as boolean, linkedinVideoViews as integer, locationName as string, longitude as double, matchPositions as string[], mediaFilter as string, mediaUrls as string[], monthlyVisitors as integer, originalUrl as string, pageType as string, parentPostId as string, parentBlogName as string, priority as string, professions as string[], pubType as string, publisherSubType as string, queryId as integer, queryName as string, rating as string, reachEstimate as integer, redditScore as string, redditScoreUpvoteRatio as string, redditComments as string, redditAuthorKarma as string, redditAuthorAwardeeKarma as string, redditAuthorAwarderKarma as string, replyTo as string, resourceType as string, retweetOf as string, rootPostId as string, rootBlogName as string, sentiment as string, sinaWeiboAuthorId as string, sinaWeiboFollowers as string, sinaWeiboFollowing as string, sinaWeiboBiFollowers as string, sinaWeiboPostCount as string, sinaWeiboFavouritesCount as string, sinaWeiboRawLocation as string, shortUrls as string[], snippet as string, starred as boolean, status as string, subreddit as string, subredditSubscribers as string, subtype as string, tags as string[], threadAuthor as string, threadCreated as string, threadEntryType as string, threadId as string, threadURL as string, title as string, twitterAuthorId as string, twitterFollowers as integer, twitterFollowing as integer, twitterPostCount as integer, twitterReplyCount as integer, twitterRetweets as integer, twitterLikeCount as string, twitterRole as string, twitterVerified as boolean, updated as string, url as string, copyright as string[], weblogTitle as string, classifications as (classifierId as string, labelId as string, name as string, confidence as double)[], pageTypeName as string, contentSource as string, contentSourceName as string, impact as double, resourceId as string)[],",
-				"          resultsTotal as integer,",
-				"          resultsPage as integer,",
-				"          resultsPageSize as integer,",
-				"          nextCursor as string,",
-				"          startDate as string,",
-				"          endDate as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
+				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'singleDocument') ~> source1",
-				"source1 foldDown(unroll(results, results),",
-				"     mapColumn(",
-				"          results,",
+				"source1 select(mapColumn(",
+				"          fulltext = results[1].fullText,",
 				"          resultsTotal,",
 				"          resultsPage,",
 				"          resultsPageSize,",
@@ -50,9 +40,9 @@
 				"          startDate,",
 				"          endDate",
 				"     ),",
-				"     skipDuplicateMapInputs: false,",
-				"     skipDuplicateMapOutputs: false) ~> flatten1",
-				"flatten1 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     umask: 0022,",
 				"     preCommands: [],",

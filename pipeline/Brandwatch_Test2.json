@@ -27,13 +27,733 @@
 					"sink": {
 						"type": "JsonSink",
 						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings"
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
 						},
 						"formatSettings": {
 							"type": "JsonWriteSettings"
 						}
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$.results[0].fullText"
+								},
+								"sink": {
+									"path": "$['results'][0]['fullText']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['added']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['assignment']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['author']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['avatarUrl']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['blogName']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['broadcastMediaUrl']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['isSyndicated']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['airType']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['broadcastType']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['mediaType']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['categories'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['categoryDetails'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['checked']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['city']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['cityCode']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['continent']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['continentCode']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['country']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['countryCode']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['region']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['regionCode']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['date']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['displayUrls']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['domain']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['engagementType']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['expandedUrls']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['facebookAuthorId']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['facebookComments']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['facebookLikes']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['facebookRole']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['facebookShares']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['facebookSubtype']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['fullText']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['fullname']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['gender']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['guid']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['impressions']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['insightsHashtag']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['insightsMentioned']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['instagramCommentCount']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['instagramFollowerCount']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['instagramFollowingCount']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['instagramInteractionsCount']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['instagramLikeCount']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['instagramPostCount']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['interest'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['itemReview']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['language']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['lastAssignmentDate']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['latitude']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['linkedinComments']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['linkedinEngagement']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['linkedinImpressions']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['linkedinLikes']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['linkedinShares']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['linkedinSponsored']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['linkedinVideoViews']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['locationName']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['longitude']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['matchPositions'][0]['start']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['matchPositions'][0]['text']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['matchPositions'][0]['length']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['mediaFilter']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['mediaUrls'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['monthlyVisitors']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['originalUrl']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['pageType']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['parentPostId']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['parentBlogName']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['priority']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['professions'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['pubType']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['publisherSubType']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['queryId']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['queryName']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['rating']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['reachEstimate']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['redditScore']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['redditScoreUpvoteRatio']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['redditComments']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['redditAuthorKarma']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['redditAuthorAwardeeKarma']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['redditAuthorAwarderKarma']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['replyTo']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['resourceType']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['retweetOf']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['rootPostId']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['rootBlogName']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['sentiment']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['sinaWeiboAuthorId']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['sinaWeiboFollowers']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['sinaWeiboFollowing']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['sinaWeiboBiFollowers']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['sinaWeiboPostCount']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['sinaWeiboFavouritesCount']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['sinaWeiboRawLocation']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['shortUrls']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['snippet']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['starred']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['status']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['subreddit']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['subredditSubscribers']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['subtype']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['tags'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['threadAuthor']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['threadCreated']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['threadEntryType']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['threadId']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['threadURL']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['title']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['twitterAuthorId']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['twitterFollowers']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['twitterFollowing']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['twitterPostCount']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['twitterReplyCount']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['twitterRetweets']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['twitterLikeCount']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['twitterRole']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['twitterVerified']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['updated']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['url']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['copyright'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['weblogTitle']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['classifications'][0]['classifierId']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['classifications'][0]['labelId']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['classifications'][0]['name']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['classifications'][0]['confidence']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['pageTypeName']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['contentSource']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['contentSourceName']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['impact']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['resourceId']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['entityInfo'][0]['entityId']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['entityInfo'][0]['entityConfidence']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['results'][0]['entityInfo'][0]['url']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['resultsTotal']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['resultsPage']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['resultsPageSize']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['nextCursor']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['startDate']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['endDate']"
+								}
+							}
+						],
+						"collectionReference": ""
+					}
 				},
 				"inputs": [
 					{
@@ -47,30 +767,6 @@
 						"type": "DatasetReference"
 					}
 				]
-			},
-			{
-				"name": "Data flow1",
-				"type": "ExecuteDataFlow",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataflow": {
-						"referenceName": "Dataflow1",
-						"type": "DataFlowReference"
-					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
-					},
-					"traceLevel": "Fine"
-				}
 			}
 		],
 		"annotations": []
