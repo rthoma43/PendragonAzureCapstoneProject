@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "BrandwatchFiltersjson",
+				"fileName": "BrandwatchTest2.json",
 				"fileSystem": "pendragon"
 			}
 		},
