@@ -25,13 +25,14 @@
 						}
 					},
 					"sink": {
-						"type": "JsonSink",
+						"type": "DelimitedTextSink",
 						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings",
-							"copyBehavior": "PreserveHierarchy"
+							"type": "AzureBlobFSWriteSettings"
 						},
 						"formatSettings": {
-							"type": "JsonWriteSettings"
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
 						}
 					},
 					"enableStaging": false,
@@ -40,716 +41,1143 @@
 						"mappings": [
 							{
 								"source": {
-									"path": "['accountType']"
+									"path": "$['results'][0]['accountType']"
+								},
+								"sink": {
+									"type": "String",
+									"ordinal": 1
 								}
 							},
 							{
 								"source": {
-									"path": "['added']"
+									"path": "$['results'][0]['added']"
+								},
+								"sink": {
+									"ordinal": 2
 								}
 							},
 							{
 								"source": {
-									"path": "['assignment']"
+									"path": "$['results'][0]['assignment']"
+								},
+								"sink": {
+									"ordinal": 3
 								}
 							},
 							{
 								"source": {
-									"path": "['author']"
+									"path": "$['results'][0]['author']"
+								},
+								"sink": {
+									"ordinal": 4
 								}
 							},
 							{
 								"source": {
-									"path": "['avatarUrl']"
+									"path": "$['results'][0]['avatarUrl']"
+								},
+								"sink": {
+									"ordinal": 5
 								}
 							},
 							{
 								"source": {
-									"path": "['blogName']"
+									"path": "$['results'][0]['blogName']"
+								},
+								"sink": {
+									"ordinal": 6
 								}
 							},
 							{
 								"source": {
-									"path": "['broadcastMediaUrl']"
+									"path": "$['results'][0]['broadcastMediaUrl']"
+								},
+								"sink": {
+									"ordinal": 7
 								}
 							},
 							{
 								"source": {
-									"path": "['isSyndicated']"
+									"path": "$['results'][0]['isSyndicated']"
+								},
+								"sink": {
+									"ordinal": 8
 								}
 							},
 							{
 								"source": {
-									"path": "['airType']"
+									"path": "$['results'][0]['airType']"
+								},
+								"sink": {
+									"ordinal": 9
 								}
 							},
 							{
 								"source": {
-									"path": "['broadcastType']"
+									"path": "$['results'][0]['broadcastType']"
+								},
+								"sink": {
+									"ordinal": 10
 								}
 							},
 							{
 								"source": {
-									"path": "['mediaType']"
+									"path": "$['results'][0]['mediaType']"
+								},
+								"sink": {
+									"ordinal": 11
 								}
 							},
 							{
 								"source": {
-									"path": "['categories'][0]"
+									"path": "$['results'][0]['categories'][0]"
+								},
+								"sink": {
+									"ordinal": 12
 								}
 							},
 							{
 								"source": {
-									"path": "['categoryDetails'][0]"
+									"path": "$['results'][0]['categoryDetails'][0]"
+								},
+								"sink": {
+									"ordinal": 13
 								}
 							},
 							{
 								"source": {
-									"path": "['checked']"
+									"path": "$['results'][0]['checked']"
+								},
+								"sink": {
+									"ordinal": 14
 								}
 							},
 							{
 								"source": {
-									"path": "['city']"
+									"path": "$['results'][0]['city']"
+								},
+								"sink": {
+									"ordinal": 15
 								}
 							},
 							{
 								"source": {
-									"path": "['cityCode']"
+									"path": "$['results'][0]['cityCode']"
+								},
+								"sink": {
+									"ordinal": 16
 								}
 							},
 							{
 								"source": {
-									"path": "['continent']"
+									"path": "$['results'][0]['continent']"
+								},
+								"sink": {
+									"ordinal": 17
 								}
 							},
 							{
 								"source": {
-									"path": "['continentCode']"
+									"path": "$['results'][0]['continentCode']"
+								},
+								"sink": {
+									"ordinal": 18
 								}
 							},
 							{
 								"source": {
-									"path": "['country']"
+									"path": "$['results'][0]['country']"
+								},
+								"sink": {
+									"ordinal": 19
 								}
 							},
 							{
 								"source": {
-									"path": "['countryCode']"
+									"path": "$['results'][0]['countryCode']"
+								},
+								"sink": {
+									"ordinal": 20
 								}
 							},
 							{
 								"source": {
-									"path": "['region']"
+									"path": "$['results'][0]['region']"
+								},
+								"sink": {
+									"ordinal": 21
 								}
 							},
 							{
 								"source": {
-									"path": "['regionCode']"
+									"path": "$['results'][0]['regionCode']"
+								},
+								"sink": {
+									"ordinal": 22
 								}
 							},
 							{
 								"source": {
-									"path": "['date']"
+									"path": "$['results'][0]['date']"
+								},
+								"sink": {
+									"ordinal": 23
 								}
 							},
 							{
 								"source": {
-									"path": "['displayUrls']"
+									"path": "$['results'][0]['displayUrls']"
+								},
+								"sink": {
+									"ordinal": 24
 								}
 							},
 							{
 								"source": {
-									"path": "['domain']"
+									"path": "$['results'][0]['domain']"
+								},
+								"sink": {
+									"ordinal": 25
 								}
 							},
 							{
 								"source": {
-									"path": "['engagementType']"
+									"path": "$['results'][0]['engagementType']"
+								},
+								"sink": {
+									"ordinal": 26
 								}
 							},
 							{
 								"source": {
-									"path": "['expandedUrls']"
+									"path": "$['results'][0]['expandedUrls']"
+								},
+								"sink": {
+									"ordinal": 27
 								}
 							},
 							{
 								"source": {
-									"path": "['facebookAuthorId']"
+									"path": "$['results'][0]['facebookAuthorId']"
+								},
+								"sink": {
+									"ordinal": 28
 								}
 							},
 							{
 								"source": {
-									"path": "['facebookComments']"
+									"path": "$['results'][0]['facebookComments']"
+								},
+								"sink": {
+									"ordinal": 29
 								}
 							},
 							{
 								"source": {
-									"path": "['facebookLikes']"
+									"path": "$['results'][0]['facebookLikes']"
+								},
+								"sink": {
+									"ordinal": 30
 								}
 							},
 							{
 								"source": {
-									"path": "['facebookRole']"
+									"path": "$['results'][0]['facebookRole']"
+								},
+								"sink": {
+									"ordinal": 31
 								}
 							},
 							{
 								"source": {
-									"path": "['facebookShares']"
+									"path": "$['results'][0]['facebookShares']"
+								},
+								"sink": {
+									"ordinal": 32
 								}
 							},
 							{
 								"source": {
-									"path": "['facebookSubtype']"
+									"path": "$['results'][0]['facebookSubtype']"
+								},
+								"sink": {
+									"ordinal": 33
 								}
 							},
 							{
 								"source": {
-									"path": "['fullText']"
+									"path": "$['results'][0]['fullText']"
+								},
+								"sink": {
+									"ordinal": 34
 								}
 							},
 							{
 								"source": {
-									"path": "['fullname']"
+									"path": "$['results'][0]['fullname']"
+								},
+								"sink": {
+									"ordinal": 35
 								}
 							},
 							{
 								"source": {
-									"path": "['gender']"
+									"path": "$['results'][0]['gender']"
+								},
+								"sink": {
+									"ordinal": 36
 								}
 							},
 							{
 								"source": {
-									"path": "['guid']"
+									"path": "$['results'][0]['guid']"
+								},
+								"sink": {
+									"ordinal": 37
 								}
 							},
 							{
 								"source": {
-									"path": "['impressions']"
+									"path": "$['results'][0]['impressions']"
+								},
+								"sink": {
+									"ordinal": 38
 								}
 							},
 							{
 								"source": {
-									"path": "['insightsHashtag']"
+									"path": "$['results'][0]['insightsHashtag']"
+								},
+								"sink": {
+									"ordinal": 39
 								}
 							},
 							{
 								"source": {
-									"path": "['insightsMentioned']"
+									"path": "$['results'][0]['insightsMentioned']"
+								},
+								"sink": {
+									"ordinal": 40
 								}
 							},
 							{
 								"source": {
-									"path": "['instagramCommentCount']"
+									"path": "$['results'][0]['instagramCommentCount']"
+								},
+								"sink": {
+									"ordinal": 41
 								}
 							},
 							{
 								"source": {
-									"path": "['instagramFollowerCount']"
+									"path": "$['results'][0]['instagramFollowerCount']"
+								},
+								"sink": {
+									"ordinal": 42
 								}
 							},
 							{
 								"source": {
-									"path": "['instagramFollowingCount']"
+									"path": "$['results'][0]['instagramFollowingCount']"
+								},
+								"sink": {
+									"ordinal": 43
 								}
 							},
 							{
 								"source": {
-									"path": "['instagramInteractionsCount']"
+									"path": "$['results'][0]['instagramInteractionsCount']"
+								},
+								"sink": {
+									"ordinal": 44
 								}
 							},
 							{
 								"source": {
-									"path": "['instagramLikeCount']"
+									"path": "$['results'][0]['instagramLikeCount']"
+								},
+								"sink": {
+									"ordinal": 45
 								}
 							},
 							{
 								"source": {
-									"path": "['instagramPostCount']"
+									"path": "$['results'][0]['instagramPostCount']"
+								},
+								"sink": {
+									"ordinal": 46
 								}
 							},
 							{
 								"source": {
-									"path": "['interest'][0]"
+									"path": "$['results'][0]['interest'][0]"
+								},
+								"sink": {
+									"ordinal": 47
 								}
 							},
 							{
 								"source": {
-									"path": "['itemReview']"
+									"path": "$['results'][0]['itemReview']"
+								},
+								"sink": {
+									"ordinal": 48
 								}
 							},
 							{
 								"source": {
-									"path": "['language']"
+									"path": "$['results'][0]['language']"
+								},
+								"sink": {
+									"ordinal": 49
 								}
 							},
 							{
 								"source": {
-									"path": "['lastAssignmentDate']"
+									"path": "$['results'][0]['lastAssignmentDate']"
+								},
+								"sink": {
+									"ordinal": 50
 								}
 							},
 							{
 								"source": {
-									"path": "['latitude']"
+									"path": "$['results'][0]['latitude']"
+								},
+								"sink": {
+									"ordinal": 51
 								}
 							},
 							{
 								"source": {
-									"path": "['linkedinComments']"
+									"path": "$['results'][0]['linkedinComments']"
+								},
+								"sink": {
+									"ordinal": 52
 								}
 							},
 							{
 								"source": {
-									"path": "['linkedinEngagement']"
+									"path": "$['results'][0]['linkedinEngagement']"
+								},
+								"sink": {
+									"ordinal": 53
 								}
 							},
 							{
 								"source": {
-									"path": "['linkedinImpressions']"
+									"path": "$['results'][0]['linkedinImpressions']"
+								},
+								"sink": {
+									"ordinal": 54
 								}
 							},
 							{
 								"source": {
-									"path": "['linkedinLikes']"
+									"path": "$['results'][0]['linkedinLikes']"
+								},
+								"sink": {
+									"ordinal": 55
 								}
 							},
 							{
 								"source": {
-									"path": "['linkedinShares']"
+									"path": "$['results'][0]['linkedinShares']"
+								},
+								"sink": {
+									"ordinal": 56
 								}
 							},
 							{
 								"source": {
-									"path": "['linkedinSponsored']"
+									"path": "$['results'][0]['linkedinSponsored']"
+								},
+								"sink": {
+									"ordinal": 57
 								}
 							},
 							{
 								"source": {
-									"path": "['linkedinVideoViews']"
+									"path": "$['results'][0]['linkedinVideoViews']"
+								},
+								"sink": {
+									"ordinal": 58
 								}
 							},
 							{
 								"source": {
-									"path": "['locationName']"
+									"path": "$['results'][0]['locationName']"
+								},
+								"sink": {
+									"ordinal": 59
 								}
 							},
 							{
 								"source": {
-									"path": "['longitude']"
+									"path": "$['results'][0]['longitude']"
+								},
+								"sink": {
+									"ordinal": 60
 								}
 							},
 							{
 								"source": {
-									"path": "['matchPositions'][0]['start']"
+									"path": "$['results'][0]['matchPositions'][0]['start']"
+								},
+								"sink": {
+									"ordinal": 61
 								}
 							},
 							{
 								"source": {
-									"path": "['matchPositions'][0]['text']"
+									"path": "$['results'][0]['matchPositions'][0]['text']"
+								},
+								"sink": {
+									"ordinal": 62
 								}
 							},
 							{
 								"source": {
-									"path": "['matchPositions'][0]['length']"
+									"path": "$['results'][0]['matchPositions'][0]['length']"
+								},
+								"sink": {
+									"ordinal": 63
 								}
 							},
 							{
 								"source": {
-									"path": "['mediaFilter']"
+									"path": "$['results'][0]['mediaFilter']"
+								},
+								"sink": {
+									"ordinal": 64
 								}
 							},
 							{
 								"source": {
-									"path": "['mediaUrls'][0]"
+									"path": "$['results'][0]['mediaUrls'][0]"
+								},
+								"sink": {
+									"ordinal": 65
 								}
 							},
 							{
 								"source": {
-									"path": "['monthlyVisitors']"
+									"path": "$['results'][0]['monthlyVisitors']"
+								},
+								"sink": {
+									"ordinal": 66
 								}
 							},
 							{
 								"source": {
-									"path": "['originalUrl']"
+									"path": "$['results'][0]['originalUrl']"
+								},
+								"sink": {
+									"ordinal": 67
 								}
 							},
 							{
 								"source": {
-									"path": "['pageType']"
+									"path": "$['results'][0]['pageType']"
+								},
+								"sink": {
+									"ordinal": 68
 								}
 							},
 							{
 								"source": {
-									"path": "['parentPostId']"
+									"path": "$['results'][0]['parentPostId']"
+								},
+								"sink": {
+									"ordinal": 69
 								}
 							},
 							{
 								"source": {
-									"path": "['parentBlogName']"
+									"path": "$['results'][0]['parentBlogName']"
+								},
+								"sink": {
+									"ordinal": 70
 								}
 							},
 							{
 								"source": {
-									"path": "['priority']"
+									"path": "$['results'][0]['priority']"
+								},
+								"sink": {
+									"ordinal": 71
 								}
 							},
 							{
 								"source": {
-									"path": "['professions'][0]"
+									"path": "$['results'][0]['professions'][0]"
+								},
+								"sink": {
+									"ordinal": 72
 								}
 							},
 							{
 								"source": {
-									"path": "['pubType']"
+									"path": "$['results'][0]['pubType']"
+								},
+								"sink": {
+									"ordinal": 73
 								}
 							},
 							{
 								"source": {
-									"path": "['publisherSubType']"
+									"path": "$['results'][0]['publisherSubType']"
+								},
+								"sink": {
+									"ordinal": 74
 								}
 							},
 							{
 								"source": {
-									"path": "['queryId']"
+									"path": "$['results'][0]['queryId']"
+								},
+								"sink": {
+									"ordinal": 75
 								}
 							},
 							{
 								"source": {
-									"path": "['queryName']"
+									"path": "$['results'][0]['queryName']"
+								},
+								"sink": {
+									"ordinal": 76
 								}
 							},
 							{
 								"source": {
-									"path": "['rating']"
+									"path": "$['results'][0]['rating']"
+								},
+								"sink": {
+									"ordinal": 77
 								}
 							},
 							{
 								"source": {
-									"path": "['reachEstimate']"
+									"path": "$['results'][0]['reachEstimate']"
+								},
+								"sink": {
+									"ordinal": 78
 								}
 							},
 							{
 								"source": {
-									"path": "['redditScore']"
+									"path": "$['results'][0]['redditScore']"
+								},
+								"sink": {
+									"ordinal": 79
 								}
 							},
 							{
 								"source": {
-									"path": "['redditScoreUpvoteRatio']"
+									"path": "$['results'][0]['redditScoreUpvoteRatio']"
+								},
+								"sink": {
+									"ordinal": 80
 								}
 							},
 							{
 								"source": {
-									"path": "['redditComments']"
+									"path": "$['results'][0]['redditComments']"
+								},
+								"sink": {
+									"ordinal": 81
 								}
 							},
 							{
 								"source": {
-									"path": "['redditAuthorKarma']"
+									"path": "$['results'][0]['redditAuthorKarma']"
+								},
+								"sink": {
+									"ordinal": 82
 								}
 							},
 							{
 								"source": {
-									"path": "['redditAuthorAwardeeKarma']"
+									"path": "$['results'][0]['redditAuthorAwardeeKarma']"
+								},
+								"sink": {
+									"ordinal": 83
 								}
 							},
 							{
 								"source": {
-									"path": "['redditAuthorAwarderKarma']"
+									"path": "$['results'][0]['redditAuthorAwarderKarma']"
+								},
+								"sink": {
+									"ordinal": 84
 								}
 							},
 							{
 								"source": {
-									"path": "['replyTo']"
+									"path": "$['results'][0]['replyTo']"
+								},
+								"sink": {
+									"ordinal": 85
 								}
 							},
 							{
 								"source": {
-									"path": "['resourceType']"
+									"path": "$['results'][0]['resourceType']"
+								},
+								"sink": {
+									"ordinal": 86
 								}
 							},
 							{
 								"source": {
-									"path": "['retweetOf']"
+									"path": "$['results'][0]['retweetOf']"
+								},
+								"sink": {
+									"ordinal": 87
 								}
 							},
 							{
 								"source": {
-									"path": "['rootPostId']"
+									"path": "$['results'][0]['rootPostId']"
+								},
+								"sink": {
+									"ordinal": 88
 								}
 							},
 							{
 								"source": {
-									"path": "['rootBlogName']"
+									"path": "$['results'][0]['rootBlogName']"
+								},
+								"sink": {
+									"ordinal": 89
 								}
 							},
 							{
 								"source": {
-									"path": "['sentiment']"
+									"path": "$['results'][0]['sentiment']"
+								},
+								"sink": {
+									"ordinal": 90
 								}
 							},
 							{
 								"source": {
-									"path": "['sinaWeiboAuthorId']"
+									"path": "$['results'][0]['sinaWeiboAuthorId']"
+								},
+								"sink": {
+									"ordinal": 91
 								}
 							},
 							{
 								"source": {
-									"path": "['sinaWeiboFollowers']"
+									"path": "$['results'][0]['sinaWeiboFollowers']"
+								},
+								"sink": {
+									"ordinal": 92
 								}
 							},
 							{
 								"source": {
-									"path": "['sinaWeiboFollowing']"
+									"path": "$['results'][0]['sinaWeiboFollowing']"
+								},
+								"sink": {
+									"ordinal": 93
 								}
 							},
 							{
 								"source": {
-									"path": "['sinaWeiboBiFollowers']"
+									"path": "$['results'][0]['sinaWeiboBiFollowers']"
+								},
+								"sink": {
+									"ordinal": 94
 								}
 							},
 							{
 								"source": {
-									"path": "['sinaWeiboPostCount']"
+									"path": "$['results'][0]['sinaWeiboPostCount']"
+								},
+								"sink": {
+									"ordinal": 95
 								}
 							},
 							{
 								"source": {
-									"path": "['sinaWeiboFavouritesCount']"
+									"path": "$['results'][0]['sinaWeiboFavouritesCount']"
+								},
+								"sink": {
+									"ordinal": 96
 								}
 							},
 							{
 								"source": {
-									"path": "['sinaWeiboRawLocation']"
+									"path": "$['results'][0]['sinaWeiboRawLocation']"
+								},
+								"sink": {
+									"ordinal": 97
 								}
 							},
 							{
 								"source": {
-									"path": "['shortUrls']"
+									"path": "$['results'][0]['shortUrls']"
+								},
+								"sink": {
+									"ordinal": 98
 								}
 							},
 							{
 								"source": {
-									"path": "['snippet']"
+									"path": "$['results'][0]['snippet']"
+								},
+								"sink": {
+									"ordinal": 99
 								}
 							},
 							{
 								"source": {
-									"path": "['starred']"
+									"path": "$['results'][0]['starred']"
+								},
+								"sink": {
+									"ordinal": 100
 								}
 							},
 							{
 								"source": {
-									"path": "['status']"
+									"path": "$['results'][0]['status']"
+								},
+								"sink": {
+									"ordinal": 101
 								}
 							},
 							{
 								"source": {
-									"path": "['subreddit']"
+									"path": "$['results'][0]['subreddit']"
+								},
+								"sink": {
+									"ordinal": 102
 								}
 							},
 							{
 								"source": {
-									"path": "['subredditSubscribers']"
+									"path": "$['results'][0]['subredditSubscribers']"
+								},
+								"sink": {
+									"ordinal": 103
 								}
 							},
 							{
 								"source": {
-									"path": "['subtype']"
+									"path": "$['results'][0]['subtype']"
+								},
+								"sink": {
+									"ordinal": 104
 								}
 							},
 							{
 								"source": {
-									"path": "['tags'][0]"
+									"path": "$['results'][0]['tags'][0]"
+								},
+								"sink": {
+									"ordinal": 105
 								}
 							},
 							{
 								"source": {
-									"path": "['threadAuthor']"
+									"path": "$['results'][0]['threadAuthor']"
+								},
+								"sink": {
+									"ordinal": 106
 								}
 							},
 							{
 								"source": {
-									"path": "['threadCreated']"
+									"path": "$['results'][0]['threadCreated']"
+								},
+								"sink": {
+									"ordinal": 107
 								}
 							},
 							{
 								"source": {
-									"path": "['threadEntryType']"
+									"path": "$['results'][0]['threadEntryType']"
+								},
+								"sink": {
+									"ordinal": 108
 								}
 							},
 							{
 								"source": {
-									"path": "['threadId']"
+									"path": "$['results'][0]['threadId']"
+								},
+								"sink": {
+									"ordinal": 109
 								}
 							},
 							{
 								"source": {
-									"path": "['threadURL']"
+									"path": "$['results'][0]['threadURL']"
+								},
+								"sink": {
+									"ordinal": 110
 								}
 							},
 							{
 								"source": {
-									"path": "['title']"
+									"path": "$['results'][0]['title']"
+								},
+								"sink": {
+									"ordinal": 111
 								}
 							},
 							{
 								"source": {
-									"path": "['twitterAuthorId']"
+									"path": "$['results'][0]['twitterAuthorId']"
+								},
+								"sink": {
+									"ordinal": 112
 								}
 							},
 							{
 								"source": {
-									"path": "['twitterFollowers']"
+									"path": "$['results'][0]['twitterFollowers']"
+								},
+								"sink": {
+									"ordinal": 113
 								}
 							},
 							{
 								"source": {
-									"path": "['twitterFollowing']"
+									"path": "$['results'][0]['twitterFollowing']"
+								},
+								"sink": {
+									"ordinal": 114
 								}
 							},
 							{
 								"source": {
-									"path": "['twitterPostCount']"
+									"path": "$['results'][0]['twitterPostCount']"
+								},
+								"sink": {
+									"ordinal": 115
 								}
 							},
 							{
 								"source": {
-									"path": "['twitterReplyCount']"
+									"path": "$['results'][0]['twitterReplyCount']"
+								},
+								"sink": {
+									"ordinal": 116
 								}
 							},
 							{
 								"source": {
-									"path": "['twitterRetweets']"
+									"path": "$['results'][0]['twitterRetweets']"
+								},
+								"sink": {
+									"ordinal": 117
 								}
 							},
 							{
 								"source": {
-									"path": "['twitterLikeCount']"
+									"path": "$['results'][0]['twitterLikeCount']"
+								},
+								"sink": {
+									"ordinal": 118
 								}
 							},
 							{
 								"source": {
-									"path": "['twitterRole']"
+									"path": "$['results'][0]['twitterRole']"
+								},
+								"sink": {
+									"ordinal": 119
 								}
 							},
 							{
 								"source": {
-									"path": "['twitterVerified']"
+									"path": "$['results'][0]['twitterVerified']"
+								},
+								"sink": {
+									"ordinal": 120
 								}
 							},
 							{
 								"source": {
-									"path": "['updated']"
+									"path": "$['results'][0]['updated']"
+								},
+								"sink": {
+									"ordinal": 121
 								}
 							},
 							{
 								"source": {
-									"path": "['url']"
+									"path": "$['results'][0]['url']"
+								},
+								"sink": {
+									"ordinal": 122
 								}
 							},
 							{
 								"source": {
-									"path": "['copyright'][0]"
+									"path": "$['results'][0]['copyright'][0]"
+								},
+								"sink": {
+									"ordinal": 123
 								}
 							},
 							{
 								"source": {
-									"path": "['weblogTitle']"
+									"path": "$['results'][0]['weblogTitle']"
+								},
+								"sink": {
+									"ordinal": 124
 								}
 							},
 							{
 								"source": {
-									"path": "['classifications'][0]['classifierId']"
+									"path": "$['results'][0]['classifications'][0]['classifierId']"
+								},
+								"sink": {
+									"ordinal": 125
 								}
 							},
 							{
 								"source": {
-									"path": "['classifications'][0]['labelId']"
+									"path": "$['results'][0]['classifications'][0]['labelId']"
+								},
+								"sink": {
+									"ordinal": 126
 								}
 							},
 							{
 								"source": {
-									"path": "['classifications'][0]['name']"
+									"path": "$['results'][0]['classifications'][0]['name']"
+								},
+								"sink": {
+									"ordinal": 127
 								}
 							},
 							{
 								"source": {
-									"path": "['classifications'][0]['confidence']"
+									"path": "$['results'][0]['classifications'][0]['confidence']"
+								},
+								"sink": {
+									"ordinal": 128
 								}
 							},
 							{
 								"source": {
-									"path": "['pageTypeName']"
+									"path": "$['results'][0]['pageTypeName']"
+								},
+								"sink": {
+									"ordinal": 129
 								}
 							},
 							{
 								"source": {
-									"path": "['contentSource']"
+									"path": "$['results'][0]['contentSource']"
+								},
+								"sink": {
+									"ordinal": 130
 								}
 							},
 							{
 								"source": {
-									"path": "['contentSourceName']"
+									"path": "$['results'][0]['contentSourceName']"
+								},
+								"sink": {
+									"ordinal": 131
 								}
 							},
 							{
 								"source": {
-									"path": "['impact']"
+									"path": "$['results'][0]['impact']"
+								},
+								"sink": {
+									"ordinal": 132
 								}
 							},
 							{
 								"source": {
-									"path": "['resourceId']"
+									"path": "$['results'][0]['resourceId']"
+								},
+								"sink": {
+									"ordinal": 133
 								}
 							},
 							{
 								"source": {
-									"path": "['entityInfo'][0]['entityId']"
+									"path": "$['results'][0]['entityInfo'][0]['entityId']"
+								},
+								"sink": {
+									"ordinal": 134
 								}
 							},
 							{
 								"source": {
-									"path": "['entityInfo'][0]['entityConfidence']"
+									"path": "$['results'][0]['entityInfo'][0]['entityConfidence']"
+								},
+								"sink": {
+									"ordinal": 135
 								}
 							},
 							{
 								"source": {
-									"path": "['entityInfo'][0]['url']"
+									"path": "$['results'][0]['entityInfo'][0]['url']"
+								},
+								"sink": {
+									"ordinal": 136
 								}
 							},
 							{
 								"source": {
 									"path": "$['resultsTotal']"
+								},
+								"sink": {
+									"ordinal": 137
 								}
 							},
 							{
 								"source": {
 									"path": "$['resultsPage']"
+								},
+								"sink": {
+									"ordinal": 138
 								}
 							},
 							{
 								"source": {
 									"path": "$['resultsPageSize']"
+								},
+								"sink": {
+									"ordinal": 139
 								}
 							},
 							{
 								"source": {
 									"path": "$['nextCursor']"
+								},
+								"sink": {
+									"ordinal": 140
 								}
 							},
 							{
 								"source": {
 									"path": "$['startDate']"
+								},
+								"sink": {
+									"ordinal": 141
 								}
 							},
 							{
 								"source": {
 									"path": "$['endDate']"
+								},
+								"sink": {
+									"ordinal": 142
 								}
 							}
 						],
-						"collectionReference": "$['results']"
+						"collectionReference": ""
 					}
 				},
 				"inputs": [
@@ -760,7 +1188,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "BrandwatchJson2",
+						"referenceName": "BranswatchDelimitedText1",
 						"type": "DatasetReference"
 					}
 				]
