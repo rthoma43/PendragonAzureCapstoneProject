@@ -358,7 +358,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "BrandwatchFulltext.json",
+						"fileName": "BrandwatchFiltersjson",
 						"fileSystem": "pendragon"
 					}
 				},
@@ -427,7 +427,7 @@
 				"annotations": [],
 				"type": "RestResource",
 				"typeProperties": {
-					"relativeUrl": "/projects/1998163585/data/mentions/fulltext?queryId=1998275289&startDate=2023-01-01&endDate=2023-02-01&pageType=Dark_Web"
+					"relativeUrl": "/filters"
 				},
 				"schema": []
 			},
