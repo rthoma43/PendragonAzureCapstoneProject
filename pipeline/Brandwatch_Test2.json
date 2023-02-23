@@ -33,22 +33,7 @@
 							"type": "JsonWriteSettings"
 						}
 					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"mappings": [
-							{
-								"source": {
-									"path": "$['fulltext']"
-								},
-								"sink": {
-									"type": "String",
-									"ordinal": 1
-								}
-							}
-						],
-						"collectionReference": "$['Results']"
-					}
+					"enableStaging": false
 				},
 				"inputs": [
 					{
