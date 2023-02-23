@@ -188,7 +188,7 @@
 								"mappings": [
 									{
 										"source": {
-											"path": "$['$[\\'results\\'][0][\\'fullText\\']']"
+											"path": "[0]['fullText']"
 										},
 										"sink": {
 											"type": "String",
@@ -196,7 +196,7 @@
 										}
 									}
 								],
-								"collectionReference": "",
+								"collectionReference": "$['results']",
 								"mapComplexValuesToString": true
 							}
 						},
@@ -209,7 +209,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "BranswatchDelimitedText1",
+								"referenceName": "BrandwatchDelimitedText1",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -224,7 +224,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/RestResource1')]",
-				"[concat(variables('workspaceId'), '/datasets/BranswatchDelimitedText1')]"
+				"[concat(variables('workspaceId'), '/datasets/BrandwatchDelimitedText1')]"
 			]
 		},
 		{
@@ -363,6 +363,33 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/BrandwatchDelimitedText1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "brandwatchCSV",
+						"fileSystem": "pendragon"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/BrandwatchJson2')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -405,33 +432,6 @@
 					}
 				},
 				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/BranswatchDelimitedText1')]",
-			"type": "Microsoft.Synapse/workspaces/datasets",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "BrandwatchFulltextTabular",
-						"fileSystem": "pendragon"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
