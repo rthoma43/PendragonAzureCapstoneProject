@@ -188,11 +188,1138 @@
 								"mappings": [
 									{
 										"source": {
-											"path": "[0]['fullText']"
+											"path": "['accountType']"
 										},
 										"sink": {
-											"type": "String",
 											"ordinal": 1
+										}
+									},
+									{
+										"source": {
+											"path": "['added']"
+										},
+										"sink": {
+											"ordinal": 2
+										}
+									},
+									{
+										"source": {
+											"path": "['assignment']"
+										},
+										"sink": {
+											"ordinal": 3
+										}
+									},
+									{
+										"source": {
+											"path": "['author']"
+										},
+										"sink": {
+											"ordinal": 4
+										}
+									},
+									{
+										"source": {
+											"path": "['avatarUrl']"
+										},
+										"sink": {
+											"ordinal": 5
+										}
+									},
+									{
+										"source": {
+											"path": "['blogName']"
+										},
+										"sink": {
+											"ordinal": 6
+										}
+									},
+									{
+										"source": {
+											"path": "['broadcastMediaUrl']"
+										},
+										"sink": {
+											"ordinal": 7
+										}
+									},
+									{
+										"source": {
+											"path": "['isSyndicated']"
+										},
+										"sink": {
+											"ordinal": 8
+										}
+									},
+									{
+										"source": {
+											"path": "['airType']"
+										},
+										"sink": {
+											"ordinal": 9
+										}
+									},
+									{
+										"source": {
+											"path": "['broadcastType']"
+										},
+										"sink": {
+											"ordinal": 10
+										}
+									},
+									{
+										"source": {
+											"path": "['mediaType']"
+										},
+										"sink": {
+											"ordinal": 11
+										}
+									},
+									{
+										"source": {
+											"path": "['categories'][0]"
+										},
+										"sink": {
+											"ordinal": 12
+										}
+									},
+									{
+										"source": {
+											"path": "['categoryDetails'][0]"
+										},
+										"sink": {
+											"ordinal": 13
+										}
+									},
+									{
+										"source": {
+											"path": "['checked']"
+										},
+										"sink": {
+											"ordinal": 14
+										}
+									},
+									{
+										"source": {
+											"path": "['city']"
+										},
+										"sink": {
+											"ordinal": 15
+										}
+									},
+									{
+										"source": {
+											"path": "['cityCode']"
+										},
+										"sink": {
+											"ordinal": 16
+										}
+									},
+									{
+										"source": {
+											"path": "['continent']"
+										},
+										"sink": {
+											"ordinal": 17
+										}
+									},
+									{
+										"source": {
+											"path": "['continentCode']"
+										},
+										"sink": {
+											"ordinal": 18
+										}
+									},
+									{
+										"source": {
+											"path": "['country']"
+										},
+										"sink": {
+											"ordinal": 19
+										}
+									},
+									{
+										"source": {
+											"path": "['countryCode']"
+										},
+										"sink": {
+											"ordinal": 20
+										}
+									},
+									{
+										"source": {
+											"path": "['region']"
+										},
+										"sink": {
+											"ordinal": 21
+										}
+									},
+									{
+										"source": {
+											"path": "['regionCode']"
+										},
+										"sink": {
+											"ordinal": 22
+										}
+									},
+									{
+										"source": {
+											"path": "['date']"
+										},
+										"sink": {
+											"ordinal": 23
+										}
+									},
+									{
+										"source": {
+											"path": "['displayUrls']"
+										},
+										"sink": {
+											"ordinal": 24
+										}
+									},
+									{
+										"source": {
+											"path": "['domain']"
+										},
+										"sink": {
+											"ordinal": 25
+										}
+									},
+									{
+										"source": {
+											"path": "['engagementType']"
+										},
+										"sink": {
+											"ordinal": 26
+										}
+									},
+									{
+										"source": {
+											"path": "['expandedUrls']"
+										},
+										"sink": {
+											"ordinal": 27
+										}
+									},
+									{
+										"source": {
+											"path": "['facebookAuthorId']"
+										},
+										"sink": {
+											"ordinal": 28
+										}
+									},
+									{
+										"source": {
+											"path": "['facebookComments']"
+										},
+										"sink": {
+											"ordinal": 29
+										}
+									},
+									{
+										"source": {
+											"path": "['facebookLikes']"
+										},
+										"sink": {
+											"ordinal": 30
+										}
+									},
+									{
+										"source": {
+											"path": "['facebookRole']"
+										},
+										"sink": {
+											"ordinal": 31
+										}
+									},
+									{
+										"source": {
+											"path": "['facebookShares']"
+										},
+										"sink": {
+											"ordinal": 32
+										}
+									},
+									{
+										"source": {
+											"path": "['facebookSubtype']"
+										},
+										"sink": {
+											"ordinal": 33
+										}
+									},
+									{
+										"source": {
+											"path": "['fullText']"
+										},
+										"sink": {
+											"ordinal": 34
+										}
+									},
+									{
+										"source": {
+											"path": "['fullname']"
+										},
+										"sink": {
+											"ordinal": 35
+										}
+									},
+									{
+										"source": {
+											"path": "['gender']"
+										},
+										"sink": {
+											"ordinal": 36
+										}
+									},
+									{
+										"source": {
+											"path": "['guid']"
+										},
+										"sink": {
+											"ordinal": 37
+										}
+									},
+									{
+										"source": {
+											"path": "['impressions']"
+										},
+										"sink": {
+											"ordinal": 38
+										}
+									},
+									{
+										"source": {
+											"path": "['insightsHashtag']"
+										},
+										"sink": {
+											"ordinal": 39
+										}
+									},
+									{
+										"source": {
+											"path": "['insightsMentioned']"
+										},
+										"sink": {
+											"ordinal": 40
+										}
+									},
+									{
+										"source": {
+											"path": "['instagramCommentCount']"
+										},
+										"sink": {
+											"ordinal": 41
+										}
+									},
+									{
+										"source": {
+											"path": "['instagramFollowerCount']"
+										},
+										"sink": {
+											"ordinal": 42
+										}
+									},
+									{
+										"source": {
+											"path": "['instagramFollowingCount']"
+										},
+										"sink": {
+											"ordinal": 43
+										}
+									},
+									{
+										"source": {
+											"path": "['instagramInteractionsCount']"
+										},
+										"sink": {
+											"ordinal": 44
+										}
+									},
+									{
+										"source": {
+											"path": "['instagramLikeCount']"
+										},
+										"sink": {
+											"ordinal": 45
+										}
+									},
+									{
+										"source": {
+											"path": "['instagramPostCount']"
+										},
+										"sink": {
+											"ordinal": 46
+										}
+									},
+									{
+										"source": {
+											"path": "['interest'][0]"
+										},
+										"sink": {
+											"ordinal": 47
+										}
+									},
+									{
+										"source": {
+											"path": "['itemReview']"
+										},
+										"sink": {
+											"ordinal": 48
+										}
+									},
+									{
+										"source": {
+											"path": "['language']"
+										},
+										"sink": {
+											"ordinal": 49
+										}
+									},
+									{
+										"source": {
+											"path": "['lastAssignmentDate']"
+										},
+										"sink": {
+											"ordinal": 50
+										}
+									},
+									{
+										"source": {
+											"path": "['latitude']"
+										},
+										"sink": {
+											"ordinal": 51
+										}
+									},
+									{
+										"source": {
+											"path": "['linkedinComments']"
+										},
+										"sink": {
+											"ordinal": 52
+										}
+									},
+									{
+										"source": {
+											"path": "['linkedinEngagement']"
+										},
+										"sink": {
+											"ordinal": 53
+										}
+									},
+									{
+										"source": {
+											"path": "['linkedinImpressions']"
+										},
+										"sink": {
+											"ordinal": 54
+										}
+									},
+									{
+										"source": {
+											"path": "['linkedinLikes']"
+										},
+										"sink": {
+											"ordinal": 55
+										}
+									},
+									{
+										"source": {
+											"path": "['linkedinShares']"
+										},
+										"sink": {
+											"ordinal": 56
+										}
+									},
+									{
+										"source": {
+											"path": "['linkedinSponsored']"
+										},
+										"sink": {
+											"ordinal": 57
+										}
+									},
+									{
+										"source": {
+											"path": "['linkedinVideoViews']"
+										},
+										"sink": {
+											"ordinal": 58
+										}
+									},
+									{
+										"source": {
+											"path": "['locationName']"
+										},
+										"sink": {
+											"ordinal": 59
+										}
+									},
+									{
+										"source": {
+											"path": "['longitude']"
+										},
+										"sink": {
+											"ordinal": 60
+										}
+									},
+									{
+										"source": {
+											"path": "['matchPositions'][0]['start']"
+										},
+										"sink": {
+											"ordinal": 61
+										}
+									},
+									{
+										"source": {
+											"path": "['matchPositions'][0]['text']"
+										},
+										"sink": {
+											"ordinal": 62
+										}
+									},
+									{
+										"source": {
+											"path": "['matchPositions'][0]['length']"
+										},
+										"sink": {
+											"ordinal": 63
+										}
+									},
+									{
+										"source": {
+											"path": "['mediaFilter']"
+										},
+										"sink": {
+											"ordinal": 64
+										}
+									},
+									{
+										"source": {
+											"path": "['mediaUrls'][0]"
+										},
+										"sink": {
+											"ordinal": 65
+										}
+									},
+									{
+										"source": {
+											"path": "['monthlyVisitors']"
+										},
+										"sink": {
+											"ordinal": 66
+										}
+									},
+									{
+										"source": {
+											"path": "['originalUrl']"
+										},
+										"sink": {
+											"ordinal": 67
+										}
+									},
+									{
+										"source": {
+											"path": "['pageType']"
+										},
+										"sink": {
+											"ordinal": 68
+										}
+									},
+									{
+										"source": {
+											"path": "['parentPostId']"
+										},
+										"sink": {
+											"ordinal": 69
+										}
+									},
+									{
+										"source": {
+											"path": "['parentBlogName']"
+										},
+										"sink": {
+											"ordinal": 70
+										}
+									},
+									{
+										"source": {
+											"path": "['priority']"
+										},
+										"sink": {
+											"ordinal": 71
+										}
+									},
+									{
+										"source": {
+											"path": "['professions'][0]"
+										},
+										"sink": {
+											"ordinal": 72
+										}
+									},
+									{
+										"source": {
+											"path": "['pubType']"
+										},
+										"sink": {
+											"ordinal": 73
+										}
+									},
+									{
+										"source": {
+											"path": "['publisherSubType']"
+										},
+										"sink": {
+											"ordinal": 74
+										}
+									},
+									{
+										"source": {
+											"path": "['queryId']"
+										},
+										"sink": {
+											"ordinal": 75
+										}
+									},
+									{
+										"source": {
+											"path": "['queryName']"
+										},
+										"sink": {
+											"ordinal": 76
+										}
+									},
+									{
+										"source": {
+											"path": "['rating']"
+										},
+										"sink": {
+											"ordinal": 77
+										}
+									},
+									{
+										"source": {
+											"path": "['reachEstimate']"
+										},
+										"sink": {
+											"ordinal": 78
+										}
+									},
+									{
+										"source": {
+											"path": "['redditScore']"
+										},
+										"sink": {
+											"ordinal": 79
+										}
+									},
+									{
+										"source": {
+											"path": "['redditScoreUpvoteRatio']"
+										},
+										"sink": {
+											"ordinal": 80
+										}
+									},
+									{
+										"source": {
+											"path": "['redditComments']"
+										},
+										"sink": {
+											"ordinal": 81
+										}
+									},
+									{
+										"source": {
+											"path": "['redditAuthorKarma']"
+										},
+										"sink": {
+											"ordinal": 82
+										}
+									},
+									{
+										"source": {
+											"path": "['redditAuthorAwardeeKarma']"
+										},
+										"sink": {
+											"ordinal": 83
+										}
+									},
+									{
+										"source": {
+											"path": "['redditAuthorAwarderKarma']"
+										},
+										"sink": {
+											"ordinal": 84
+										}
+									},
+									{
+										"source": {
+											"path": "['replyTo']"
+										},
+										"sink": {
+											"ordinal": 85
+										}
+									},
+									{
+										"source": {
+											"path": "['resourceType']"
+										},
+										"sink": {
+											"ordinal": 86
+										}
+									},
+									{
+										"source": {
+											"path": "['retweetOf']"
+										},
+										"sink": {
+											"ordinal": 87
+										}
+									},
+									{
+										"source": {
+											"path": "['rootPostId']"
+										},
+										"sink": {
+											"ordinal": 88
+										}
+									},
+									{
+										"source": {
+											"path": "['rootBlogName']"
+										},
+										"sink": {
+											"ordinal": 89
+										}
+									},
+									{
+										"source": {
+											"path": "['sentiment']"
+										},
+										"sink": {
+											"ordinal": 90
+										}
+									},
+									{
+										"source": {
+											"path": "['sinaWeiboAuthorId']"
+										},
+										"sink": {
+											"ordinal": 91
+										}
+									},
+									{
+										"source": {
+											"path": "['sinaWeiboFollowers']"
+										},
+										"sink": {
+											"ordinal": 92
+										}
+									},
+									{
+										"source": {
+											"path": "['sinaWeiboFollowing']"
+										},
+										"sink": {
+											"ordinal": 93
+										}
+									},
+									{
+										"source": {
+											"path": "['sinaWeiboBiFollowers']"
+										},
+										"sink": {
+											"ordinal": 94
+										}
+									},
+									{
+										"source": {
+											"path": "['sinaWeiboPostCount']"
+										},
+										"sink": {
+											"ordinal": 95
+										}
+									},
+									{
+										"source": {
+											"path": "['sinaWeiboFavouritesCount']"
+										},
+										"sink": {
+											"ordinal": 96
+										}
+									},
+									{
+										"source": {
+											"path": "['sinaWeiboRawLocation']"
+										},
+										"sink": {
+											"ordinal": 97
+										}
+									},
+									{
+										"source": {
+											"path": "['shortUrls']"
+										},
+										"sink": {
+											"ordinal": 98
+										}
+									},
+									{
+										"source": {
+											"path": "['snippet']"
+										},
+										"sink": {
+											"ordinal": 99
+										}
+									},
+									{
+										"source": {
+											"path": "['starred']"
+										},
+										"sink": {
+											"ordinal": 100
+										}
+									},
+									{
+										"source": {
+											"path": "['status']"
+										},
+										"sink": {
+											"ordinal": 101
+										}
+									},
+									{
+										"source": {
+											"path": "['subreddit']"
+										},
+										"sink": {
+											"ordinal": 102
+										}
+									},
+									{
+										"source": {
+											"path": "['subredditSubscribers']"
+										},
+										"sink": {
+											"ordinal": 103
+										}
+									},
+									{
+										"source": {
+											"path": "['subtype']"
+										},
+										"sink": {
+											"ordinal": 104
+										}
+									},
+									{
+										"source": {
+											"path": "['tags'][0]"
+										},
+										"sink": {
+											"ordinal": 105
+										}
+									},
+									{
+										"source": {
+											"path": "['threadAuthor']"
+										},
+										"sink": {
+											"ordinal": 106
+										}
+									},
+									{
+										"source": {
+											"path": "['threadCreated']"
+										},
+										"sink": {
+											"ordinal": 107
+										}
+									},
+									{
+										"source": {
+											"path": "['threadEntryType']"
+										},
+										"sink": {
+											"ordinal": 108
+										}
+									},
+									{
+										"source": {
+											"path": "['threadId']"
+										},
+										"sink": {
+											"ordinal": 109
+										}
+									},
+									{
+										"source": {
+											"path": "['threadURL']"
+										},
+										"sink": {
+											"ordinal": 110
+										}
+									},
+									{
+										"source": {
+											"path": "['title']"
+										},
+										"sink": {
+											"ordinal": 111
+										}
+									},
+									{
+										"source": {
+											"path": "['twitterAuthorId']"
+										},
+										"sink": {
+											"ordinal": 112
+										}
+									},
+									{
+										"source": {
+											"path": "['twitterFollowers']"
+										},
+										"sink": {
+											"ordinal": 113
+										}
+									},
+									{
+										"source": {
+											"path": "['twitterFollowing']"
+										},
+										"sink": {
+											"ordinal": 114
+										}
+									},
+									{
+										"source": {
+											"path": "['twitterPostCount']"
+										},
+										"sink": {
+											"ordinal": 115
+										}
+									},
+									{
+										"source": {
+											"path": "['twitterReplyCount']"
+										},
+										"sink": {
+											"ordinal": 116
+										}
+									},
+									{
+										"source": {
+											"path": "['twitterRetweets']"
+										},
+										"sink": {
+											"ordinal": 117
+										}
+									},
+									{
+										"source": {
+											"path": "['twitterLikeCount']"
+										},
+										"sink": {
+											"ordinal": 118
+										}
+									},
+									{
+										"source": {
+											"path": "['twitterRole']"
+										},
+										"sink": {
+											"ordinal": 119
+										}
+									},
+									{
+										"source": {
+											"path": "['twitterVerified']"
+										},
+										"sink": {
+											"ordinal": 120
+										}
+									},
+									{
+										"source": {
+											"path": "['updated']"
+										},
+										"sink": {
+											"ordinal": 121
+										}
+									},
+									{
+										"source": {
+											"path": "['url']"
+										},
+										"sink": {
+											"ordinal": 122
+										}
+									},
+									{
+										"source": {
+											"path": "['copyright'][0]"
+										},
+										"sink": {
+											"ordinal": 123
+										}
+									},
+									{
+										"source": {
+											"path": "['weblogTitle']"
+										},
+										"sink": {
+											"ordinal": 124
+										}
+									},
+									{
+										"source": {
+											"path": "['classifications'][0]['classifierId']"
+										},
+										"sink": {
+											"ordinal": 125
+										}
+									},
+									{
+										"source": {
+											"path": "['classifications'][0]['labelId']"
+										},
+										"sink": {
+											"ordinal": 126
+										}
+									},
+									{
+										"source": {
+											"path": "['classifications'][0]['name']"
+										},
+										"sink": {
+											"ordinal": 127
+										}
+									},
+									{
+										"source": {
+											"path": "['classifications'][0]['confidence']"
+										},
+										"sink": {
+											"ordinal": 128
+										}
+									},
+									{
+										"source": {
+											"path": "['pageTypeName']"
+										},
+										"sink": {
+											"ordinal": 129
+										}
+									},
+									{
+										"source": {
+											"path": "['contentSource']"
+										},
+										"sink": {
+											"ordinal": 130
+										}
+									},
+									{
+										"source": {
+											"path": "['contentSourceName']"
+										},
+										"sink": {
+											"ordinal": 131
+										}
+									},
+									{
+										"source": {
+											"path": "['impact']"
+										},
+										"sink": {
+											"ordinal": 132
+										}
+									},
+									{
+										"source": {
+											"path": "['resourceId']"
+										},
+										"sink": {
+											"ordinal": 133
+										}
+									},
+									{
+										"source": {
+											"path": "['entityInfo'][0]['entityId']"
+										},
+										"sink": {
+											"ordinal": 134
+										}
+									},
+									{
+										"source": {
+											"path": "['entityInfo'][0]['entityConfidence']"
+										},
+										"sink": {
+											"ordinal": 135
+										}
+									},
+									{
+										"source": {
+											"path": "['entityInfo'][0]['url']"
+										},
+										"sink": {
+											"ordinal": 136
+										}
+									},
+									{
+										"source": {
+											"path": "$['resultsTotal']"
+										},
+										"sink": {
+											"ordinal": 137
+										}
+									},
+									{
+										"source": {
+											"path": "$['resultsPage']"
+										},
+										"sink": {
+											"ordinal": 138
+										}
+									},
+									{
+										"source": {
+											"path": "$['resultsPageSize']"
+										},
+										"sink": {
+											"ordinal": 139
+										}
+									},
+									{
+										"source": {
+											"path": "$['nextCursor']"
+										},
+										"sink": {
+											"ordinal": 140
+										}
+									},
+									{
+										"source": {
+											"path": "$['startDate']"
+										},
+										"sink": {
+											"ordinal": 141
+										}
+									},
+									{
+										"source": {
+											"path": "$['endDate']"
+										},
+										"sink": {
+											"ordinal": 142
 										}
 									}
 								],
