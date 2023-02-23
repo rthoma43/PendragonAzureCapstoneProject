@@ -172,33 +172,15 @@
 								}
 							},
 							"sink": {
-								"type": "DelimitedTextSink",
+								"type": "JsonSink",
 								"storeSettings": {
 									"type": "AzureBlobFSWriteSettings"
 								},
 								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
+									"type": "JsonWriteSettings"
 								}
 							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"path": "$['[0][\\'fulltext\\']']"
-										},
-										"sink": {
-											"type": "String",
-											"ordinal": 1
-										}
-									}
-								],
-								"collectionReference": "$['Results']",
-								"mapComplexValuesToString": true
-							}
+							"enableStaging": false
 						},
 						"inputs": [
 							{
@@ -209,7 +191,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "BrandwatchDelimitedText1",
+								"referenceName": "BrandwatchJson2",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -224,7 +206,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/RestResource1')]",
-				"[concat(variables('workspaceId'), '/datasets/BrandwatchDelimitedText1')]"
+				"[concat(variables('workspaceId'), '/datasets/BrandwatchJson2')]"
 			]
 		},
 		{
@@ -360,33 +342,6 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/RestResourceTwitter1')]",
 				"[concat(variables('workspaceId'), '/datasets/TwitterJson1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/BrandwatchDelimitedText1')]",
-			"type": "Microsoft.Synapse/workspaces/datasets",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "brandwatchCSV",
-						"fileSystem": "pendragon"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
