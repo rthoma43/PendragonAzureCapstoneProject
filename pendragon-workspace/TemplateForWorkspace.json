@@ -443,8 +443,7 @@
 							"sink": {
 								"type": "DelimitedTextSink",
 								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings",
-									"copyBehavior": "PreserveHierarchy"
+									"type": "AzureBlobFSWriteSettings"
 								},
 								"formatSettings": {
 									"type": "DelimitedTextWriteSettings",
@@ -458,61 +457,15 @@
 								"mappings": [
 									{
 										"source": {
-											"path": "$['data'][0]['edit_history_tweet_ids'][0]"
-										},
-										"sink": {
-											"ordinal": 1
-										}
-									},
-									{
-										"source": {
-											"path": "$['data'][0]['id']"
-										},
-										"sink": {
-											"ordinal": 2
-										}
-									},
-									{
-										"source": {
 											"path": "$['data'][0]['text']"
 										},
 										"sink": {
-											"ordinal": 3
-										}
-									},
-									{
-										"source": {
-											"path": "$['meta']['newest_id']"
-										},
-										"sink": {
-											"ordinal": 4
-										}
-									},
-									{
-										"source": {
-											"path": "$['meta']['oldest_id']"
-										},
-										"sink": {
-											"ordinal": 5
-										}
-									},
-									{
-										"source": {
-											"path": "$['meta']['result_count']"
-										},
-										"sink": {
-											"ordinal": 6
-										}
-									},
-									{
-										"source": {
-											"path": "$['meta']['next_token']"
-										},
-										"sink": {
-											"ordinal": 7
+											"type": "String",
+											"ordinal": 1
 										}
 									}
 								],
+								"collectionReference": "",
 								"mapComplexValuesToString": false
 							}
 						},
@@ -774,6 +727,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "test1_rt",
 						"fileSystem": "pendragon"
 					},
 					"columnDelimiter": ",",
@@ -948,6 +902,69 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Dataflow1')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "TwitterJson1",
+								"type": "DatasetReference"
+							},
+							"name": "TwitterJSON"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "TwitterJson1",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "TwitterParsed"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          results as (label as string, name as string, volume as integer, retweets as integer, tweets as integer, reachEstimate as integer, impressions as integer)[],",
+						"          orderBy as string,",
+						"          orderDirection as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> TwitterJSON",
+						"TwitterJSON parse(format: 'delimited',",
+						"     columnNamesAsHeader: false,",
+						"     columnDelimiter: ',',",
+						"     nullValue: '') ~> TwitterParsed",
+						"TwitterParsed sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          results as (label as string, name as string, volume as integer, retweets as integer, tweets as integer, reachEstimate as integer, impressions as integer)[],",
+						"          orderBy as string,",
+						"          orderDirection as string",
+						"     ),",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/TwitterJson1')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
