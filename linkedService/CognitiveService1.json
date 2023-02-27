@@ -1,0 +1,27 @@
+{
+	"name": "CognitiveService1",
+	"properties": {
+		"annotations": [],
+		"type": "CognitiveService",
+		"typeProperties": {
+			"subscriptionId": "588695d7-29a1-45a3-90a5-dc87a232ae76",
+			"resourceGroup": "datafactorytest",
+			"csName": "CongitiveLanguagePendragon",
+			"csKind": "TextAnalytics",
+			"csLocation": "eastus",
+			"endPoint": "https://congitivelanguagependragon.cognitiveservices.azure.com/",
+			"csKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVaultPendragon",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "7789f3550f704da79332a4cbd30b9b26"
+			}
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
