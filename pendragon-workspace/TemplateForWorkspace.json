@@ -16,6 +16,14 @@
 			"metadata": "Secure string for 'connectionString' of 'pendragon-workspace-WorkspaceDefaultSqlServer'",
 			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:pendragon-workspace.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
 		},
+		"AzureKeyVaultPendragon_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://tw-dv-001.vault.azure.net/"
+		},
+		"CognitiveService1_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "588695d7-29a1-45a3-90a5-dc87a232ae76"
+		},
 		"RedditHttpServer1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://www.reddit.com/"
@@ -457,11 +465,58 @@
 								"mappings": [
 									{
 										"source": {
+											"path": "$['data'][0]['edit_history_tweet_ids'][0]"
+										},
+										"sink": {
+											"ordinal": 1
+										}
+									},
+									{
+										"source": {
+											"path": "$['data'][0]['id']"
+										},
+										"sink": {
+											"ordinal": 2
+										}
+									},
+									{
+										"source": {
 											"path": "$['data'][0]['text']"
 										},
 										"sink": {
-											"type": "String",
-											"ordinal": 1
+											"ordinal": 3
+										}
+									},
+									{
+										"source": {
+											"path": "$['meta']['newest_id']"
+										},
+										"sink": {
+											"ordinal": 4
+										}
+									},
+									{
+										"source": {
+											"path": "$['meta']['oldest_id']"
+										},
+										"sink": {
+											"ordinal": 5
+										}
+									},
+									{
+										"source": {
+											"path": "$['meta']['result_count']"
+										},
+										"sink": {
+											"ordinal": 6
+										}
+									},
+									{
+										"source": {
+											"path": "$['meta']['next_token']"
+										},
+										"sink": {
+											"ordinal": 7
 										}
 									}
 								],
@@ -727,7 +782,6 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "test1_rt",
 						"fileSystem": "pendragon"
 					},
 					"columnDelimiter": ",",
@@ -738,6 +792,52 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AzureKeyVaultPendragon')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('AzureKeyVaultPendragon_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CognitiveService1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "CognitiveService",
+				"typeProperties": {
+					"subscriptionId": "[parameters('CognitiveService1_properties_typeProperties_subscriptionId')]",
+					"resourceGroup": "datafactorytest",
+					"csName": "CongitiveLanguagePendragon",
+					"csKind": "TextAnalytics",
+					"csLocation": "eastus",
+					"endPoint": "https://congitivelanguagependragon.cognitiveservices.azure.com/",
+					"csKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVaultPendragon",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "7789f3550f704da79332a4cbd30b9b26"
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/linkedServices/AzureKeyVaultPendragon')]"
 			]
 		},
 		{

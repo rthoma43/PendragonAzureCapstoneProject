@@ -11,6 +11,12 @@
 		"pendragon-workspace-WorkspaceDefaultSqlServer_connectionString": {
 			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:pendragon-workspace.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
 		},
+		"AzureKeyVaultPendragon_properties_typeProperties_baseUrl": {
+			"value": "https://tw-dv-001.vault.azure.net/"
+		},
+		"CognitiveService1_properties_typeProperties_subscriptionId": {
+			"value": "588695d7-29a1-45a3-90a5-dc87a232ae76"
+		},
 		"RedditHttpServer1_properties_typeProperties_url": {
 			"value": "https://www.reddit.com/"
 		},
