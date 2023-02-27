@@ -1,0 +1,10 @@
+{
+	"name": "AzureKeyVaultPendragon",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://tw-dv-001.vault.azure.net/"
+		}
+	}
+}
