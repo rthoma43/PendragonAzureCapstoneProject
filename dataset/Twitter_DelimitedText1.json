@@ -10,7 +10,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "test1_rt",
 				"fileSystem": "pendragon"
 			},
 			"columnDelimiter": ",",
