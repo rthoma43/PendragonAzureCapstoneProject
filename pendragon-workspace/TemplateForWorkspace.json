@@ -457,7 +457,7 @@
 								"mappings": [
 									{
 										"source": {
-											"path": "$['data'][0]['edit_history_tweet_ids']"
+											"path": "$['data'][0]['edit_history_tweet_ids'][0]"
 										},
 										"sink": {
 											"ordinal": 1
@@ -511,7 +511,8 @@
 											"ordinal": 7
 										}
 									}
-								]
+								],
+								"mapComplexValuesToString": false
 							}
 						},
 						"inputs": [
