@@ -40,8 +40,8 @@
 				"     documentForm: 'documentPerLine') ~> source1",
 				"source1 foldDown(unroll(data, data),",
 				"     mapColumn(",
-				"          data,",
-				"          meta = meta",
+				"          data = data,",
+				"          meta",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> flatten1",
@@ -60,7 +60,18 @@
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          id,",
+				"          created_at,",
+				"          text,",
+				"          lang,",
+				"          retweet_count,",
+				"          reply_count,",
+				"          like_count,",
+				"          quote_count,",
+				"          impression_count",
+				"     )) ~> sink1"
 			]
 		}
 	}
