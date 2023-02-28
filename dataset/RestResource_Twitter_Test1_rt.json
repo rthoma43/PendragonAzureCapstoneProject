@@ -1,0 +1,15 @@
+{
+	"name": "RestResource_Twitter_Test1_rt",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RestServiceTwitter1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": "/2/tweets/search/recent?query=East Palestine OR ohio train derailment OR Ohio Train OR Norfolk Southern&start_time=2000-01-25T00:00:07.000Z&end_time=2023-02-27T00:00:07.000Z&max_results=10"
+		},
+		"schema": []
+	}
+}
