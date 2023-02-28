@@ -63,7 +63,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Parse_JSON_Dataflow",
+						"referenceName": "Twitter_Parse_Test",
 						"type": "DataFlowReference"
 					},
 					"compute": {
