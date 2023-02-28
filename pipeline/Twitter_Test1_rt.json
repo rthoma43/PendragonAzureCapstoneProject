@@ -56,7 +56,7 @@
 					{
 						"activity": "Twitter NATO mentions",
 						"dependencyConditions": [
-							"Succeeded"
+							"Completed"
 						]
 					}
 				],
