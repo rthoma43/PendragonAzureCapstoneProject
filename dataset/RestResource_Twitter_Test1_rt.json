@@ -2,7 +2,7 @@
 	"name": "RestResource_Twitter_Test1_rt",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "RestServiceTwitter1",
+			"referenceName": "Twitter_RestService_RT",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
