@@ -10,7 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "TwitterTest1dataset1",
+				"fileName": "rawJSON",
+				"folderPath": "Twitter_Test_RT",
 				"fileSystem": "pendragon"
 			}
 		},
