@@ -14,6 +14,47 @@
 				"fileSystem": "pendragon"
 			}
 		},
-		"schema": {}
+		"schema": {
+			"type": "object",
+			"properties": {
+				"data": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"edit_history_tweet_ids": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							},
+							"id": {
+								"type": "string"
+							},
+							"text": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"meta": {
+					"type": "object",
+					"properties": {
+						"newest_id": {
+							"type": "string"
+						},
+						"oldest_id": {
+							"type": "string"
+						},
+						"result_count": {
+							"type": "integer"
+						},
+						"next_token": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
 	}
 }
