@@ -28,15 +28,54 @@
 					"sink": {
 						"type": "JsonSink",
 						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings",
-							"copyBehavior": "PreserveHierarchy"
+							"type": "AzureBlobFSWriteSettings"
 						},
 						"formatSettings": {
 							"type": "JsonWriteSettings",
 							"filePattern": "setOfObjects"
 						}
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['data'][0]['edit_history_tweet_ids'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "$['data'][0]['id']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['data'][0]['text']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['meta']['newest_id']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['meta']['oldest_id']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['meta']['result_count']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['meta']['next_token']"
+								}
+							}
+						]
+					}
 				},
 				"inputs": [
 					{
@@ -54,7 +93,14 @@
 			{
 				"name": "Parse Twitter JSON",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Twitter NATO mentions",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
