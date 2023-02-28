@@ -529,7 +529,8 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter_Test1_rt')]",
 				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
-				"[concat(variables('workspaceId'), '/dataflows/Parse_JSON_Dataflow')]"
+				"[concat(variables('workspaceId'), '/dataflows/Parse_JSON_Dataflow')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
@@ -1257,7 +1258,8 @@
 						"     skipDuplicateMapInputs: false,",
 						"     skipDuplicateMapOutputs: false) ~> flatten1",
 						"flatten1 derive(data = data.id,",
-						"          text = data.text) ~> derivedColumn1",
+						"          text = data.text,",
+						"          id = data.id) ~> derivedColumn1",
 						"derivedColumn1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     umask: 0022,",
@@ -1265,7 +1267,9 @@
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
+						"     header: (['id','text']),",
 						"     mapColumn(",
+						"          id,",
 						"          text",
 						"     )) ~> sink1"
 					]
