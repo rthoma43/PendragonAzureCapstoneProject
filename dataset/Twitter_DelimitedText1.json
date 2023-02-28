@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Twitter_Test1_rt_csv",
+				"fileName": "CSV",
 				"folderPath": "Twitter_Test_RT",
 				"fileSystem": "pendragon"
 			},
