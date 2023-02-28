@@ -15,7 +15,7 @@
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "derivedColumn1"
+					"name": "flatten1"
 				}
 			],
 			"scriptLines": [
@@ -26,9 +26,14 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     documentForm: 'arrayOfDocuments') ~> source1",
-				"source1 derive(id = data.id,",
-				"          text = data.text) ~> derivedColumn1"
+				"     documentForm: 'singleDocument') ~> source1",
+				"source1 foldDown(unroll(data, data),",
+				"     mapColumn(",
+				"          data,",
+				"          meta",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1"
 			]
 		}
 	}
