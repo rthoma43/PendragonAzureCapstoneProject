@@ -40,6 +40,10 @@
 			"type": "string",
 			"defaultValue": "https://api.brandwatch.com/"
 		},
+		"RestService2_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.twitter.com"
+		},
 		"RestServiceTwitter1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://api.twitter.com"
@@ -449,91 +453,26 @@
 								}
 							},
 							"sink": {
-								"type": "DelimitedTextSink",
+								"type": "JsonSink",
 								"storeSettings": {
 									"type": "AzureBlobFSWriteSettings"
 								},
 								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".csv"
+									"type": "JsonWriteSettings"
 								}
 							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"path": "$['data'][0]['edit_history_tweet_ids'][0]"
-										},
-										"sink": {
-											"ordinal": 1
-										}
-									},
-									{
-										"source": {
-											"path": "$['data'][0]['id']"
-										},
-										"sink": {
-											"ordinal": 2
-										}
-									},
-									{
-										"source": {
-											"path": "$['data'][0]['text']"
-										},
-										"sink": {
-											"ordinal": 3
-										}
-									},
-									{
-										"source": {
-											"path": "$['meta']['newest_id']"
-										},
-										"sink": {
-											"ordinal": 4
-										}
-									},
-									{
-										"source": {
-											"path": "$['meta']['oldest_id']"
-										},
-										"sink": {
-											"ordinal": 5
-										}
-									},
-									{
-										"source": {
-											"path": "$['meta']['result_count']"
-										},
-										"sink": {
-											"ordinal": 6
-										}
-									},
-									{
-										"source": {
-											"path": "$['meta']['next_token']"
-										},
-										"sink": {
-											"ordinal": 7
-										}
-									}
-								],
-								"collectionReference": "",
-								"mapComplexValuesToString": false
-							}
+							"enableStaging": false
 						},
 						"inputs": [
 							{
-								"referenceName": "RestResourceTwitter1",
+								"referenceName": "RestResource_Twitter_Test1_rt",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "Twitter_DelimitedText1",
+								"referenceName": "Twitter_test_rt_Json",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -547,8 +486,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/RestResourceTwitter1')]",
-				"[concat(variables('workspaceId'), '/datasets/Twitter_DelimitedText1')]"
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter_Test1_rt')]",
+				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]"
 			]
 		},
 		{
@@ -692,13 +631,33 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
+					"referenceName": "RestService2",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": "/2/tweets/search/recent?query=East Palestine OR ohio train derailment OR Ohio Train OR Norfolk Southern&start_time=2000-01-25T00:00:07.000Z&end_time=2023-02-27T00:00:07.000Z&max_results=450,000"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/RestService2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/RestResource_Twitter_Test1_rt')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
 					"referenceName": "RestServiceTwitter1",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
 				"type": "RestResource",
 				"typeProperties": {
-					"relativeUrl": "/2/tweets/search/recent?query=NATO&start_time=2023-02-25T00:00:07.000Z&end_time=2023-02-26T00:00:07.000Z&max_results=10"
+					"relativeUrl": "/2/tweets/search/recent?query=East Palestine OR ohio train derailment OR Ohio Train OR Norfolk Southern&start_time=2000-01-25T00:00:07.000Z&end_time=2023-02-27T00:00:07.000Z&max_results=10"
 				},
 				"schema": []
 			},
@@ -789,6 +748,29 @@
 					"quoteChar": "\""
 				},
 				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Twitter_test_rt_Json')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "pendragon"
+					}
+				},
+				"schema": {}
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
@@ -896,6 +878,33 @@
 				"type": "RestService",
 				"typeProperties": {
 					"url": "[parameters('RestService1_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"Authorization": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/RestService2')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('RestService2_properties_typeProperties_url')]",
 					"enableServerCertificateValidation": true,
 					"authenticationType": "Anonymous",
 					"authHeaders": {
