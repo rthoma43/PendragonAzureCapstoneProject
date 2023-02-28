@@ -5,6 +5,10 @@
 		"typeProperties": {
 			"sources": [
 				{
+					"dataset": {
+						"referenceName": "Twitter_test_rt_Json",
+						"type": "DatasetReference"
+					},
 					"name": "source1"
 				}
 			],
@@ -26,8 +30,14 @@
 				}
 			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> source1",
+				"source(output(",
+				"          data as (edit_history_tweet_ids as string[], id as string, text as string)[],",
+				"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> source1",
 				"source1 foldDown(unroll(data, data),",
 				"     mapColumn(",
 				"          data,",
