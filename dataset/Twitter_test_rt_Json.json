@@ -22,6 +22,9 @@
 					"items": {
 						"type": "object",
 						"properties": {
+							"created_at": {
+								"type": "string"
+							},
 							"edit_history_tweet_ids": {
 								"type": "array",
 								"items": {
@@ -31,7 +34,30 @@
 							"id": {
 								"type": "string"
 							},
+							"public_metrics": {
+								"type": "object",
+								"properties": {
+									"retweet_count": {
+										"type": "integer"
+									},
+									"reply_count": {
+										"type": "integer"
+									},
+									"like_count": {
+										"type": "integer"
+									},
+									"quote_count": {
+										"type": "integer"
+									},
+									"impression_count": {
+										"type": "integer"
+									}
+								}
+							},
 							"text": {
+								"type": "string"
+							},
+							"lang": {
 								"type": "string"
 							}
 						}
