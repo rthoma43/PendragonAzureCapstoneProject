@@ -48,6 +48,10 @@
 			"type": "string",
 			"defaultValue": "https://api.twitter.com"
 		},
+		"Twitter_RestService_RT_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.twitter.com"
+		},
 		"pendragon-workspace-WorkspaceDefaultStorage_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://pendragon.dfs.core.windows.net"
@@ -331,7 +335,7 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "RestResourceTwitter1",
+								"referenceName": "RestResource_Twitter_Test1_rt",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -352,7 +356,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/RestResourceTwitter1')]",
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter_Test1_rt')]",
 				"[concat(variables('workspaceId'), '/datasets/TwitterJson1')]"
 			]
 		},
@@ -455,12 +459,10 @@
 							"sink": {
 								"type": "JsonSink",
 								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings",
-									"copyBehavior": "PreserveHierarchy"
+									"type": "AzureBlobFSWriteSettings"
 								},
 								"formatSettings": {
-									"type": "JsonWriteSettings",
-									"filePattern": "setOfObjects"
+									"type": "JsonWriteSettings"
 								}
 							},
 							"enableStaging": false
@@ -479,6 +481,43 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Twitter NATO mentions",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Parse_JSON_Dataflow",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
 					}
 				],
 				"policy": {
@@ -489,7 +528,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter_Test1_rt')]",
-				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]"
+				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
+				"[concat(variables('workspaceId'), '/dataflows/Parse_JSON_Dataflow')]"
 			]
 		},
 		{
@@ -653,18 +693,18 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "RestServiceTwitter1",
+					"referenceName": "Twitter_RestService_RT",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
 				"type": "RestResource",
 				"typeProperties": {
-					"relativeUrl": "/2/tweets/search/recent?query=East Palestine OR ohio train derailment OR Ohio Train OR Norfolk Southern&start_time=2023-02-25T00:00:07.000Z&end_time=2023-02-27T00:00:07.000Z&max_results=10"
+					"relativeUrl": "/2/tweets/search/recent?query=NATO&start_time=2023-02-25T00:00:07.000Z&end_time=2023-02-27T00:00:07.000Z&max_results=10&tweet.fields=id,text"
 				},
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/RestServiceTwitter1')]"
+				"[concat(variables('workspaceId'), '/linkedServices/Twitter_RestService_RT')]"
 			]
 		},
 		{
@@ -681,6 +721,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "TwitterTest1dataset",
 						"fileSystem": "pendragon"
 					}
 				},
@@ -743,6 +784,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "Twitter_Test_RT_CSV",
 						"fileSystem": "pendragon"
 					},
 					"columnDelimiter": ",",
@@ -773,7 +815,48 @@
 						"fileSystem": "pendragon"
 					}
 				},
-				"schema": {}
+				"schema": {
+					"type": "object",
+					"properties": {
+						"data": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"edit_history_tweet_ids": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									},
+									"id": {
+										"type": "string"
+									},
+									"text": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"meta": {
+							"type": "object",
+							"properties": {
+								"newest_id": {
+									"type": "string"
+								},
+								"oldest_id": {
+									"type": "string"
+								},
+								"result_count": {
+									"type": "integer"
+								},
+								"next_token": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
@@ -954,6 +1037,33 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Twitter_RestService_RT')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('Twitter_RestService_RT_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"Authorization": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/pendragon-workspace-WorkspaceDefaultSqlServer')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -1040,11 +1150,7 @@
 							"name": "sink1"
 						}
 					],
-					"transformations": [
-						{
-							"name": "TwitterParsed"
-						}
-					],
+					"transformations": [],
 					"scriptLines": [
 						"source(output(",
 						"          results as (label as string, name as string, volume as integer, retweets as integer, tweets as integer, reachEstimate as integer, impressions as integer)[],",
@@ -1055,11 +1161,7 @@
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
 						"     documentForm: 'documentPerLine') ~> TwitterJSON",
-						"TwitterJSON parse(format: 'delimited',",
-						"     columnNamesAsHeader: false,",
-						"     columnDelimiter: ',',",
-						"     nullValue: '') ~> TwitterParsed",
-						"TwitterParsed sink(allowSchemaDrift: true,",
+						"TwitterJSON sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
 						"          results as (label as string, name as string, volume as integer, retweets as integer, tweets as integer, reachEstimate as integer, impressions as integer)[],",
@@ -1076,6 +1178,75 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/TwitterJson1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Parse_JSON_Dataflow')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Twitter_test_rt_Json",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Twitter_DelimitedText1",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "flatten1"
+						},
+						{
+							"name": "derivedColumn1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          data as (edit_history_tweet_ids as string[], id as string, text as string)[],",
+						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> source1",
+						"source1 foldDown(unroll(data, data),",
+						"     mapColumn(",
+						"          data,",
+						"          meta",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten1",
+						"flatten1 derive(data = data.id,",
+						"          text = data.text) ~> derivedColumn1",
+						"derivedColumn1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          text",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
+				"[concat(variables('workspaceId'), '/datasets/Twitter_DelimitedText1')]"
 			]
 		},
 		{

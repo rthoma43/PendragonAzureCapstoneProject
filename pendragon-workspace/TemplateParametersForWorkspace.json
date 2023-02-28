@@ -35,6 +35,9 @@
 		"RestServiceTwitter1_properties_typeProperties_url": {
 			"value": "https://api.twitter.com"
 		},
+		"Twitter_RestService_RT_properties_typeProperties_url": {
+			"value": "https://api.twitter.com"
+		},
 		"pendragon-workspace-WorkspaceDefaultStorage_properties_typeProperties_url": {
 			"value": "https://pendragon.dfs.core.windows.net"
 		}
