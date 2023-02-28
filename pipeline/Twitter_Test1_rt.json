@@ -28,10 +28,12 @@
 					"sink": {
 						"type": "JsonSink",
 						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings"
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "PreserveHierarchy"
 						},
 						"formatSettings": {
-							"type": "JsonWriteSettings"
+							"type": "JsonWriteSettings",
+							"filePattern": "setOfObjects"
 						}
 					},
 					"enableStaging": false,
@@ -40,61 +42,14 @@
 						"mappings": [
 							{
 								"source": {
-									"path": "$['data'][0]['edit_history_tweet_ids'][0]"
-								},
-								"sink": {
-									"path": "$['data'][0]['edit_history_tweet_ids'][0]"
-								}
-							},
-							{
-								"source": {
-									"path": "$['data'][0]['id']"
-								},
-								"sink": {
-									"path": "$['data'][0]['id']"
-								}
-							},
-							{
-								"source": {
-									"path": "$['data'][0]['text']"
+									"path": "$['$[\\'data\\'][0][\\'text\\']']"
 								},
 								"sink": {
 									"path": "$['data'][0]['text']"
-								}
-							},
-							{
-								"source": {
-									"path": "$['meta']['newest_id']"
-								},
-								"sink": {
-									"path": "$['meta']['newest_id']"
-								}
-							},
-							{
-								"source": {
-									"path": "$['meta']['oldest_id']"
-								},
-								"sink": {
-									"path": "$['meta']['oldest_id']"
-								}
-							},
-							{
-								"source": {
-									"path": "$['meta']['result_count']"
-								},
-								"sink": {
-									"path": "$['meta']['result_count']"
-								}
-							},
-							{
-								"source": {
-									"path": "$['meta']['next_token']"
-								},
-								"sink": {
-									"path": "$['meta']['next_token']"
 								}
 							}
-						]
+						],
+						"collectionReference": ""
 					}
 				},
 				"inputs": [
