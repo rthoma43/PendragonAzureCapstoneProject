@@ -55,7 +55,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     header: (id,text),",
+				"     header: (['id','text']),",
 				"     mapColumn(",
 				"          id,",
 				"          text",
