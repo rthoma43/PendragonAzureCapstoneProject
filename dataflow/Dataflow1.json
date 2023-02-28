@@ -21,11 +21,7 @@
 					"name": "sink1"
 				}
 			],
-			"transformations": [
-				{
-					"name": "TwitterParsed"
-				}
-			],
+			"transformations": [],
 			"scriptLines": [
 				"source(output(",
 				"          results as (label as string, name as string, volume as integer, retweets as integer, tweets as integer, reachEstimate as integer, impressions as integer)[],",
@@ -36,12 +32,7 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> TwitterJSON",
-				"TwitterJSON parse(results = ERROR_FUNCTION(''),",
-				"     format: 'delimited',",
-				"     columnNamesAsHeader: false,",
-				"     columnDelimiter: ',',",
-				"     nullValue: '') ~> TwitterParsed",
-				"TwitterParsed sink(allowSchemaDrift: true,",
+				"TwitterJSON sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          results as (label as string, name as string, volume as integer, retweets as integer, tweets as integer, reachEstimate as integer, impressions as integer)[],",
