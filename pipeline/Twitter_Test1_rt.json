@@ -36,21 +36,7 @@
 							"filePattern": "setOfObjects"
 						}
 					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"mappings": [
-							{
-								"source": {
-									"path": "$['$[\\'data\\'][0][\\'text\\']']"
-								},
-								"sink": {
-									"path": "$['data'][0]['text']"
-								}
-							}
-						],
-						"collectionReference": ""
-					}
+					"enableStaging": false
 				},
 				"inputs": [
 					{
