@@ -26,13 +26,14 @@
 						}
 					},
 					"sink": {
-						"type": "JsonSink",
+						"type": "DelimitedTextSink",
 						"storeSettings": {
 							"type": "AzureBlobFSWriteSettings"
 						},
 						"formatSettings": {
-							"type": "JsonWriteSettings",
-							"filePattern": "setOfObjects"
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
 						}
 					},
 					"enableStaging": false,
@@ -42,36 +43,57 @@
 							{
 								"source": {
 									"path": "$['data'][0]['edit_history_tweet_ids'][0]"
+								},
+								"sink": {
+									"ordinal": 1
 								}
 							},
 							{
 								"source": {
 									"path": "$['data'][0]['id']"
+								},
+								"sink": {
+									"ordinal": 2
 								}
 							},
 							{
 								"source": {
 									"path": "$['data'][0]['text']"
+								},
+								"sink": {
+									"ordinal": 3
 								}
 							},
 							{
 								"source": {
 									"path": "$['meta']['newest_id']"
+								},
+								"sink": {
+									"ordinal": 4
 								}
 							},
 							{
 								"source": {
 									"path": "$['meta']['oldest_id']"
+								},
+								"sink": {
+									"ordinal": 5
 								}
 							},
 							{
 								"source": {
 									"path": "$['meta']['result_count']"
+								},
+								"sink": {
+									"ordinal": 6
 								}
 							},
 							{
 								"source": {
 									"path": "$['meta']['next_token']"
+								},
+								"sink": {
+									"ordinal": 7
 								}
 							}
 						]
@@ -85,7 +107,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "Twitter_test_rt_Json",
+						"referenceName": "Twitter_DelimitedText1",
 						"type": "DatasetReference"
 					}
 				]
