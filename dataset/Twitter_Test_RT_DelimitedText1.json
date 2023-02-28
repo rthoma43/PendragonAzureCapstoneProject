@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Twitter_Test_RT_CSV",
+				"fileName": "Twitter_Test_RT.csv",
 				"fileSystem": "pendragon"
 			},
 			"columnDelimiter": ",",
