@@ -38,7 +38,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "RestResourceTwitter1",
+						"referenceName": "RestResource_Twitter_Test1_rt",
 						"type": "DatasetReference"
 					}
 				],
