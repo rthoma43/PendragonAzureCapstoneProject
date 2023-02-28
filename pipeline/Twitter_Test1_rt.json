@@ -26,78 +26,15 @@
 						}
 					},
 					"sink": {
-						"type": "DelimitedTextSink",
+						"type": "JsonSink",
 						"storeSettings": {
 							"type": "AzureBlobFSWriteSettings"
 						},
 						"formatSettings": {
-							"type": "DelimitedTextWriteSettings",
-							"quoteAllText": true,
-							"fileExtension": ".txt"
+							"type": "JsonWriteSettings"
 						}
 					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"mappings": [
-							{
-								"source": {
-									"path": "$['data'][0]['edit_history_tweet_ids'][0]"
-								},
-								"sink": {
-									"ordinal": 1
-								}
-							},
-							{
-								"source": {
-									"path": "$['data'][0]['id']"
-								},
-								"sink": {
-									"ordinal": 2
-								}
-							},
-							{
-								"source": {
-									"path": "$['data'][0]['text']"
-								},
-								"sink": {
-									"ordinal": 3
-								}
-							},
-							{
-								"source": {
-									"path": "$['meta']['newest_id']"
-								},
-								"sink": {
-									"ordinal": 4
-								}
-							},
-							{
-								"source": {
-									"path": "$['meta']['oldest_id']"
-								},
-								"sink": {
-									"ordinal": 5
-								}
-							},
-							{
-								"source": {
-									"path": "$['meta']['result_count']"
-								},
-								"sink": {
-									"ordinal": 6
-								}
-							},
-							{
-								"source": {
-									"path": "$['meta']['next_token']"
-								},
-								"sink": {
-									"ordinal": 7
-								}
-							}
-						]
-					}
+					"enableStaging": false
 				},
 				"inputs": [
 					{
@@ -107,7 +44,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "Twitter_DelimitedText1",
+						"referenceName": "Twitter_test_rt_Json",
 						"type": "DatasetReference"
 					}
 				]
@@ -133,7 +70,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Twitter_Test1_rt_JSONParse",
+						"referenceName": "Parse_JSON_Dataflow",
 						"type": "DataFlowReference"
 					},
 					"compute": {
