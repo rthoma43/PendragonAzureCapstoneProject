@@ -455,10 +455,12 @@
 							"sink": {
 								"type": "JsonSink",
 								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
 								},
 								"formatSettings": {
-									"type": "JsonWriteSettings"
+									"type": "JsonWriteSettings",
+									"filePattern": "setOfObjects"
 								}
 							},
 							"enableStaging": false
@@ -767,6 +769,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "Twitter_Test_RT",
 						"fileSystem": "pendragon"
 					}
 				},
