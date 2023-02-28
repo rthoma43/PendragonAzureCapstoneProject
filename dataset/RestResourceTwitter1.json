@@ -2,13 +2,13 @@
 	"name": "RestResourceTwitter1",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "RestServiceTwitter1",
+			"referenceName": "RestService2",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
 		"type": "RestResource",
 		"typeProperties": {
-			"relativeUrl": "/2/tweets/search/recent?query=NATO&start_time=2023-02-25T00:00:07.000Z&end_time=2023-02-26T00:00:07.000Z&max_results=10"
+			"relativeUrl": "/2/tweets/search/recent?query=East Palestine OR ohio train derailment OR Ohio Train OR Norfolk Southern&start_time=2000-01-25T00:00:07.000Z&end_time=2023-02-27T00:00:07.000Z&max_results=450,000"
 		},
 		"schema": []
 	}
