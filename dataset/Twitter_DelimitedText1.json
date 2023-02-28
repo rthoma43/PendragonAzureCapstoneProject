@@ -11,6 +11,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": "Twitter_Test1_rt_csv",
+				"folderPath": "Twitter_Test_RT",
 				"fileSystem": "pendragon"
 			},
 			"columnDelimiter": ",",
