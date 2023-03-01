@@ -8,6 +8,9 @@
 		"AzureDatabricks1_accessToken": {
 			"value": ""
 		},
+		"New_Palestine_KH_accountKey": {
+			"value": ""
+		},
 		"RedditHttpServer1_password": {
 			"value": ""
 		},
@@ -19,6 +22,9 @@
 		},
 		"CognitiveService1_properties_typeProperties_subscriptionId": {
 			"value": "588695d7-29a1-45a3-90a5-dc87a232ae76"
+		},
+		"New_Palestine_KH_properties_typeProperties_url": {
+			"value": "https://pendragon.dfs.core.windows.net/"
 		},
 		"RedditHttpServer1_properties_typeProperties_url": {
 			"value": "https://www.reddit.com/"

@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks1'"
 		},
+		"New_Palestine_KH_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'New_Palestine_KH'"
+		},
 		"RedditHttpServer1_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'RedditHttpServer1'"
@@ -27,6 +31,10 @@
 		"CognitiveService1_properties_typeProperties_subscriptionId": {
 			"type": "string",
 			"defaultValue": "588695d7-29a1-45a3-90a5-dc87a232ae76"
+		},
+		"New_Palestine_KH_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://pendragon.dfs.core.windows.net/"
 		},
 		"RedditHttpServer1_properties_typeProperties_url": {
 			"type": "string",
@@ -745,7 +753,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+					"referenceName": "New_Palestine_KH",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -753,7 +761,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "TwitterTest1dataset",
+						"fileName": "TwitterTest1dataset_KH",
 						"fileSystem": "pendragon"
 					}
 				},
@@ -799,7 +807,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+				"[concat(variables('workspaceId'), '/linkedServices/New_Palestine_KH')]"
 			]
 		},
 		{
@@ -1060,6 +1068,29 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
 				"[concat(variables('workspaceId'), '/linkedServices/AzureKeyVaultPendragon')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/New_Palestine_KH')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('New_Palestine_KH_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('New_Palestine_KH_accountKey')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
