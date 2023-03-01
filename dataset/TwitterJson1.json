@@ -2,7 +2,7 @@
 	"name": "TwitterJson1",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+			"referenceName": "New_Palestine_KH",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "TwitterTest1dataset",
+				"fileName": "TwitterTest1dataset_KH",
 				"fileSystem": "pendragon"
 			}
 		},
