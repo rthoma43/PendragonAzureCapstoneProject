@@ -10,14 +10,51 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Twitter_Test_RT.csv",
+				"fileName": "Twitter_JSON_to_CSV.csv",
 				"fileSystem": "pendragon"
 			},
-			"columnDelimiter": "\t",
+			"columnDelimiter": ",",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "id",
+				"type": "String"
+			},
+			{
+				"name": "created_at",
+				"type": "String"
+			},
+			{
+				"name": "text",
+				"type": "String"
+			},
+			{
+				"name": "lang",
+				"type": "String"
+			},
+			{
+				"name": "retweet_count",
+				"type": "String"
+			},
+			{
+				"name": "reply_count",
+				"type": "String"
+			},
+			{
+				"name": "like_count",
+				"type": "String"
+			},
+			{
+				"name": "quote_count",
+				"type": "String"
+			},
+			{
+				"name": "impression_count",
+				"type": "String"
+			}
+		]
 	}
 }
