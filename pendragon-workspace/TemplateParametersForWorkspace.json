@@ -5,6 +5,9 @@
 		"workspaceName": {
 			"value": "pendragon-workspace"
 		},
+		"AzureDatabricks1_accessToken": {
+			"value": ""
+		},
 		"RedditHttpServer1_password": {
 			"value": ""
 		},
