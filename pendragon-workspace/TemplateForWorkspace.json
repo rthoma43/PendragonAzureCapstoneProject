@@ -529,7 +529,8 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter_Test1_rt')]",
 				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
-				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]"
+				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
@@ -1342,7 +1343,7 @@
 						"          quote_count as string,",
 						"          impression_count as string",
 						"     ),",
-						"     filePattern:'concat(\\'Twitter\\', toString(currentTimestamp(),\\'yyyyMMddHHmmss\\'),\\'-[n].csv\\')',",
+						"     filePattern:(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.csv')),",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
