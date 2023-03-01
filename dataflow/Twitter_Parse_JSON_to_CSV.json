@@ -1,5 +1,5 @@
 {
-	"name": "Twitter_Parse_Test",
+	"name": "Twitter_Parse_JSON_to_CSV",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -40,7 +40,7 @@
 				"     documentForm: 'documentPerLine') ~> source1",
 				"source1 foldDown(unroll(data, data),",
 				"     mapColumn(",
-				"          data = data,",
+				"          data,",
 				"          meta",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
