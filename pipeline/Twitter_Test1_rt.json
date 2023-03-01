@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Twitter NATO mentions",
+				"name": "Twitter NATO mentions top 10",
 				"description": "2023-02-19T00:00:07.000Z to 2023-02-20T00:00:07.000Z\nmax_results=10",
 				"type": "Copy",
 				"dependsOn": [],
@@ -50,11 +50,11 @@
 				]
 			},
 			{
-				"name": "Data flow1",
+				"name": "Parse and convert to CSV",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "Twitter NATO mentions",
+						"activity": "Twitter NATO mentions top 10",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -70,7 +70,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Twitter_Parse_Test",
+						"referenceName": "Twitter_Parse_JSON_to_CSV",
 						"type": "DataFlowReference"
 					},
 					"compute": {
