@@ -56,7 +56,7 @@
 					{
 						"activity": "Twitter Palestine mentions",
 						"dependencyConditions": [
-							"Completed"
+							"Succeeded"
 						]
 					}
 				],
