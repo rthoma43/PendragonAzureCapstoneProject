@@ -67,7 +67,7 @@
 				"          quote_count as string,",
 				"          impression_count as string",
 				"     ),",
-				"     filePattern:(concat('twitter',toString(currentTimestamp()),'-[n].csv')),",
+				"     filePattern:'Twitter_Parse_Test.csv',",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
