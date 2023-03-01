@@ -13,8 +13,8 @@
 				"fileName": "Twitter_Test_RT.csv",
 				"fileSystem": "pendragon"
 			},
-			"columnDelimiter": ",",
-			"escapeChar": "",
+			"columnDelimiter": "\t",
+			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
