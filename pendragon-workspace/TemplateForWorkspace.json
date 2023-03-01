@@ -812,15 +812,52 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "Twitter_Test_RT.csv",
+						"fileName": "Twitter_JSON_to_CSV.csv",
 						"fileSystem": "pendragon"
 					},
-					"columnDelimiter": "\t",
+					"columnDelimiter": ",",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
-				"schema": []
+				"schema": [
+					{
+						"name": "id",
+						"type": "String"
+					},
+					{
+						"name": "created_at",
+						"type": "String"
+					},
+					{
+						"name": "text",
+						"type": "String"
+					},
+					{
+						"name": "lang",
+						"type": "String"
+					},
+					{
+						"name": "retweet_count",
+						"type": "String"
+					},
+					{
+						"name": "reply_count",
+						"type": "String"
+					},
+					{
+						"name": "like_count",
+						"type": "String"
+					},
+					{
+						"name": "quote_count",
+						"type": "String"
+					},
+					{
+						"name": "impression_count",
+						"type": "String"
+					}
+				]
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
@@ -1295,6 +1332,17 @@
 						"          impression_count = data.public_metrics.impression_count) ~> derivedColumn1",
 						"derivedColumn1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
+						"     input(",
+						"          id as string,",
+						"          created_at as string,",
+						"          text as string,",
+						"          lang as string,",
+						"          retweet_count as string,",
+						"          reply_count as string,",
+						"          like_count as string,",
+						"          quote_count as string,",
+						"          impression_count as string",
+						"     ),",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
