@@ -483,7 +483,7 @@
 						]
 					},
 					{
-						"name": "Parse and convert to TSV",
+						"name": "Parse and convert to CSV",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [
 							{
@@ -529,8 +529,7 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter_Test1_rt')]",
 				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
-				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]",
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]"
 			]
 		},
 		{
@@ -1343,6 +1342,7 @@
 						"          quote_count as string,",
 						"          impression_count as string",
 						"     ),",
+						"     filePattern:'concat(\\'Twitter\\', toString(currentTimestamp(),\\'yyyyMMddHHmmss\\'),\\'-[n].csv\\')',",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
