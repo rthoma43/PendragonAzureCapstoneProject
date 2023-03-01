@@ -50,7 +50,7 @@
 				]
 			},
 			{
-				"name": "Parse and convert to CSV",
+				"name": "Parse and convert to TSV",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
