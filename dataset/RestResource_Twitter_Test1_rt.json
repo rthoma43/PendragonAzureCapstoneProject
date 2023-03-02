@@ -31,7 +31,7 @@
 		"type": "RestResource",
 		"typeProperties": {
 			"relativeUrl": {
-				"value": "@concat('/2/tweets/search/recent?','query=',dataset().Query,'&','start_time=',dataset().start_time,'&','end_time=',dataset().end_time,'&','tweet.fields=',dataset().tweet_fields,'&','max_results=',dataset().max_results)",
+				"value": "@concat('/2/tweets/search/recent?','query=',dataset().Query,'&','start_time=',string(dataset().start_time),'&','end_time=',string(dataset().end_time),'&','tweet.fields=',dataset().tweet_fields,'&','max_results=',dataset().max_results)",
 				"type": "Expression"
 			}
 		},
