@@ -12,34 +12,30 @@
 					"name": "source1"
 				}
 			],
-			"sinks": [
+			"sinks": [],
+			"transformations": [
 				{
-					"dataset": {
-						"referenceName": "Twitter_test_rt_Json",
-						"type": "DatasetReference"
-					},
-					"name": "sink1"
+					"name": "flatten1"
 				}
 			],
-			"transformations": [],
 			"scriptLines": [
+				"parameters{",
+				"     Query as string ('NATO'),",
+				"     start_time as string ('2023-02-25T00:00:07.000Z'),",
+				"     end_time as string ('2023-02-27T00:00:07.000Z'),",
+				"     max_results as string ('10'),",
+				"     tweet_fields as string ('id,text,created_at,lang,public_metrics')",
+				"}",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     httpMethod: 'GET',",
 				"     timeout: 30,",
+				"     requestInterval: 0,",
 				"     paginationRules: ['supportRFC5988' -> 'true'],",
 				"     responseFormat: ['type' -> 'json', 'documentForm' -> 'documentPerLine']) ~> source1",
-				"source1 sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     input(",
-				"          data as (created_at as string, edit_history_tweet_ids as string[], id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), text as string, lang as string)[],",
-				"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
-				"     ),",
-				"     umask: 0022,",
-				"     preCommands: [],",
-				"     postCommands: [],",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"source1 foldDown(unroll((data)),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1"
 			]
 		}
 	}
