@@ -351,8 +351,6 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"Query": "NATO",
-									"start_time": "2023-02-27T00:00:07.000Z",
-									"end_time": "2023-02-28T00:00:07.000Z",
 									"max_results": "10",
 									"tweet_fields": "id,created_at,text,lang,public_metrics,entities"
 								}
@@ -491,8 +489,6 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"Query": "NATO",
-									"start_time": "2023-02-25T00:00:07.000Z",
-									"end_time": "2023-02-27T00:00:07.000Z",
 									"max_results": "10",
 									"tweet_fields": "id,text,created_at,lang,public_metrics"
 								}
@@ -576,16 +572,26 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "Twitter ETL Data Flow",
+								"referenceName": "Twitter_ELT_Data_Flow",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
 									"source1": {
 										"Query": "NATO",
-										"start_time": "2023-02-25T00:00:07.000Z",
-										"end_time": "2023-02-27T00:00:07.000Z",
-										"max_results": "10",
-										"tweet_fields": "id,text,created_at,lang,public_metrics"
+										"max_results": "11",
+										"tweet_fields": "id,text,created_at,lang,public_metrics",
+										"start_year": "2023",
+										"start_month": "02",
+										"start_day": "25",
+										"start_hour": "00",
+										"start_minute": "00",
+										"start_second": "01",
+										"end_year": "2023",
+										"end_month": "02",
+										"end_day": "26",
+										"end_hour": "00",
+										"end_minute": "00",
+										"end_second": "01"
 									},
 									"sink1": {}
 								}
@@ -606,7 +612,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/Twitter ETL Data Flow')]",
+				"[concat(variables('workspaceId'), '/dataflows/Twitter_ELT_Data_Flow')]",
 				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
@@ -1168,30 +1174,70 @@
 				"parameters": {
 					"Query": {
 						"type": "string",
-						"defaultValue": "NATO"
-					},
-					"start_time": {
-						"type": "string",
-						"defaultValue": "2023-02-25T00:00:07.000Z"
-					},
-					"end_time": {
-						"type": "string",
-						"defaultValue": "2023-02-27T00:00:07.000Z"
+						"defaultValue": "NATO'"
 					},
 					"max_results": {
 						"type": "string",
-						"defaultValue": "10"
+						"defaultValue": "11"
 					},
 					"tweet_fields": {
 						"type": "string",
 						"defaultValue": "id,text,created_at,lang,public_metrics"
+					},
+					"start_year": {
+						"type": "string",
+						"defaultValue": "2023"
+					},
+					"start_month": {
+						"type": "string",
+						"defaultValue": "02"
+					},
+					"start_day": {
+						"type": "string",
+						"defaultValue": "25"
+					},
+					"start_hour": {
+						"type": "string",
+						"defaultValue": "00"
+					},
+					"start_minute": {
+						"type": "string",
+						"defaultValue": "00"
+					},
+					"start_second": {
+						"type": "string",
+						"defaultValue": "01"
+					},
+					"end_year": {
+						"type": "string",
+						"defaultValue": "2023"
+					},
+					"end_month": {
+						"type": "string",
+						"defaultValue": "02"
+					},
+					"end_day": {
+						"type": "string",
+						"defaultValue": "26"
+					},
+					"end_hour": {
+						"type": "string",
+						"defaultValue": "00"
+					},
+					"end_minute": {
+						"type": "string",
+						"defaultValue": "00"
+					},
+					"end_second": {
+						"type": "string",
+						"defaultValue": "01"
 					}
 				},
 				"annotations": [],
 				"type": "RestResource",
 				"typeProperties": {
 					"relativeUrl": {
-						"value": "@concat('/2/tweets/search/recent?','query=',dataset().Query,'&','start_time=',dataset().start_time,'&','end_time=',dataset().end_time,'&','tweet.fields=',dataset().tweet_fields,'&','max_results=',dataset().max_results)",
+						"value": "@concat('/2/tweets/search/recent?query=',dataset().Query,'&start_time=',dataset().start_year,'-',dataset().start_month,'-',dataset().start_day,'T',dataset().start_hour,':',dataset().start_minute,':',dataset().start_second,'.000Z','&end_time=',dataset().end_year,'-',dataset().end_month,'-',dataset().end_day,'T',dataset().end_hour,':',dataset().end_minute,':',dataset().end_second,'.000Z','&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results)",
 						"type": "Expression"
 					}
 				},
@@ -1820,7 +1866,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/Twitter ETL Data Flow')]",
+			"name": "[concat(parameters('workspaceName'), '/Twitter_ELT_Data_Flow')]",
 			"type": "Microsoft.Synapse/workspaces/dataflows",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
