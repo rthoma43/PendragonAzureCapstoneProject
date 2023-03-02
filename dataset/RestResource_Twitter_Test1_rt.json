@@ -22,7 +22,7 @@
 				"type": "string",
 				"defaultValue": "10"
 			},
-			"tweet.fields": {
+			"tweet_fields": {
 				"type": "string",
 				"defaultValue": "id,text,created_at,lang,public_metrics"
 			}
@@ -31,7 +31,7 @@
 		"type": "RestResource",
 		"typeProperties": {
 			"relativeUrl": {
-				"value": "@concat('/2/tweets/search/recent?','dataset().Query','&','dataset().start_time','&','dataset().end_time','dataset().tweet.fields','&','dataset().max_results')",
+				"value": "@concat('/2/tweets/search/recent?','query=',dataset().Query,'&','start_time=',dataset().start_time,'&','end_time=',dataset().end_time,'tweet.fields=',dataset().tweet_fields,'&','max_results=',dataset().max_results)",
 				"type": "Expression"
 			}
 		},
