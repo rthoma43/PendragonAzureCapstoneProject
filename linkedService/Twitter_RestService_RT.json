@@ -1,23 +1,79 @@
 {
 	"name": "Twitter_RestService_RT",
-	"type": "Microsoft.Synapse/workspaces/linkedservices",
 	"properties": {
+		"parameters": {
+			"Query": {
+				"type": "string",
+				"defaultValue": "NATO"
+			},
+			"Max_results": {
+				"type": "string",
+				"defaultValue": "10"
+			},
+			"Tweet_fields": {
+				"type": "string",
+				"defaultValue": "id,text,created_at,lang,public_metrics"
+			},
+			"start_year": {
+				"type": "string",
+				"defaultValue": "2023"
+			},
+			"start_month": {
+				"type": "string",
+				"defaultValue": "02"
+			},
+			"start_day": {
+				"type": "string",
+				"defaultValue": "25"
+			},
+			"start_hour": {
+				"type": "string",
+				"defaultValue": "00"
+			},
+			"start_minute": {
+				"type": "string",
+				"defaultValue": "00"
+			},
+			"start_second": {
+				"type": "string",
+				"defaultValue": "01"
+			},
+			"end_year": {
+				"type": "string",
+				"defaultValue": "2023"
+			},
+			"end_month": {
+				"type": "string",
+				"defaultValue": "02"
+			},
+			"end_day": {
+				"type": "string",
+				"defaultValue": "26"
+			},
+			"end_hour": {
+				"type": "string",
+				"defaultValue": "00"
+			},
+			"end_minute": {
+				"type": "string",
+				"defaultValue": "00"
+			},
+			"end_second": {
+				"type": "string",
+				"defaultValue": "01"
+			}
+		},
 		"annotations": [],
 		"type": "RestService",
 		"typeProperties": {
 			"url": "https://api.twitter.com",
 			"enableServerCertificateValidation": true,
-			"authenticationType": "Anonymous",
-			"authHeaders": {
-				"Authorization": {
-					"type": "SecureString",
-					"value": "**********"
-				}
-			}
+			"authenticationType": "Anonymous"
 		},
 		"connectVia": {
 			"referenceName": "AutoResolveIntegrationRuntime",
 			"type": "IntegrationRuntimeReference"
 		}
-	}
+	},
+	"type": "Microsoft.Synapse/workspaces/linkedservices"
 }
