@@ -1,0 +1,41 @@
+{
+	"name": "Twitter_Test2_rt",
+	"properties": {
+		"activities": [
+			{
+				"name": "Twitter ETL",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Twitter ETL Data Flow",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"Query": "NATO",
+								"start_time": "2023-02-25T00:00:07.000Z",
+								"end_time": "2023-02-27T00:00:07.000Z",
+								"max_results": "10",
+								"tweet_fields": "id,text,created_at,lang,public_metrics"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": []
+	}
+}
