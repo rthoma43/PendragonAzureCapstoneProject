@@ -10,14 +10,6 @@
 				"type": "string",
 				"defaultValue": "NATO'"
 			},
-			"start_time": {
-				"type": "object",
-				"defaultValue": "2023-02-25T00:00:07.000Z"
-			},
-			"end_time": {
-				"type": "object",
-				"defaultValue": "2023-02-27T00:00:07.000Z"
-			},
 			"max_results": {
 				"type": "string",
 				"defaultValue": "11"
@@ -25,6 +17,54 @@
 			"tweet_fields": {
 				"type": "string",
 				"defaultValue": "id,text,created_at,lang,public_metrics"
+			},
+			"start_year": {
+				"type": "string",
+				"defaultValue": "2023"
+			},
+			"start_month": {
+				"type": "string",
+				"defaultValue": "02"
+			},
+			"start_day": {
+				"type": "string",
+				"defaultValue": "25"
+			},
+			"start_hour": {
+				"type": "string",
+				"defaultValue": "00"
+			},
+			"start_minute": {
+				"type": "string",
+				"defaultValue": "00"
+			},
+			"start_second": {
+				"type": "string",
+				"defaultValue": "00"
+			},
+			"end_year": {
+				"type": "string",
+				"defaultValue": "2023"
+			},
+			"end_month": {
+				"type": "string",
+				"defaultValue": "02"
+			},
+			"end_day": {
+				"type": "string",
+				"defaultValue": "26"
+			},
+			"end_hour": {
+				"type": "string",
+				"defaultValue": "00"
+			},
+			"end_minute": {
+				"type": "string",
+				"defaultValue": "00"
+			},
+			"end_second": {
+				"type": "string",
+				"defaultValue": "00"
 			}
 		},
 		"annotations": [],
