@@ -5,10 +5,35 @@
 			"referenceName": "Twitter_RestService_RT",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"Query": {
+				"type": "string",
+				"defaultValue": "NATO"
+			},
+			"start_time": {
+				"type": "string",
+				"defaultValue": "2023-02-25T00:00:07.000Z"
+			},
+			"end_time": {
+				"type": "string",
+				"defaultValue": "2023-02-27T00:00:07.000Z"
+			},
+			"max_results": {
+				"type": "int",
+				"defaultValue": 10
+			},
+			"tweet.fields": {
+				"type": "string",
+				"defaultValue": "id,text,created_at,lang,public_metrics"
+			}
+		},
 		"annotations": [],
 		"type": "RestResource",
 		"typeProperties": {
-			"relativeUrl": "/2/tweets/search/recent?query=NATO&start_time=2023-02-25T00:00:07.000Z&end_time=2023-02-27T00:00:07.000Z&max_results=10&tweet.fields=id,text,created_at,lang,public_metrics"
+			"relativeUrl": {
+				"value": "@concat('/2/tweets/search/recent?','dataset().Query','&','dataset().start_time','&','dataset().end_time','dataset().tweet.fields','&','dataset().max_results')",
+				"type": "Expression"
+			}
 		},
 		"schema": []
 	}
