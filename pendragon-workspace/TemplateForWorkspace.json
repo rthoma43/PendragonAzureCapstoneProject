@@ -349,12 +349,18 @@
 							{
 								"referenceName": "RestResource_Twitter_Test1_rt",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"Query": "NATO",
+									"start_time": "2023-02-27T00:00:07.000Z",
+									"end_time": "2023-02-29T00:00:07.000Z",
+									"max_results": "10",
+									"tweet_fields": "id,created_at,text,lang,public_metrics,entities"
+								}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "TwitterJson1",
+								"referenceName": "Twitter_test_rt_Json",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -369,7 +375,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter_Test1_rt')]",
-				"[concat(variables('workspaceId'), '/datasets/TwitterJson1')]"
+				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]"
 			]
 		},
 		{
@@ -719,7 +725,7 @@
 				"annotations": [],
 				"type": "RestResource",
 				"typeProperties": {
-					"relativeUrl": "/2/tweets/search/recent?query=East Palestine OR ohio train derailment OR Ohio Train OR Norfolk Southern&start_time=2023-02-22T03:35:00Z"
+					"relativeUrl": "/2/tweets/search/recent?query=East Palestine OR ohio train derailment OR Ohio Train OR Norfolk Southern&start_time=2023-02-23T03:35:00Z"
 				},
 				"schema": []
 			},
@@ -736,10 +742,35 @@
 					"referenceName": "Twitter_RestService_RT",
 					"type": "LinkedServiceReference"
 				},
+				"parameters": {
+					"Query": {
+						"type": "string",
+						"defaultValue": "NATO"
+					},
+					"start_time": {
+						"type": "string",
+						"defaultValue": "2023-02-25T00:00:07.000Z"
+					},
+					"end_time": {
+						"type": "string",
+						"defaultValue": "2023-02-27T00:00:07.000Z"
+					},
+					"max_results": {
+						"type": "string",
+						"defaultValue": "10"
+					},
+					"tweet_fields": {
+						"type": "string",
+						"defaultValue": "id,text,created_at,lang,public_metrics"
+					}
+				},
 				"annotations": [],
 				"type": "RestResource",
 				"typeProperties": {
-					"relativeUrl": "/2/tweets/search/recent?query=NATO&start_time=2023-02-25T00:00:07.000Z&end_time=2023-02-27T00:00:07.000Z&max_results=10&tweet.fields=id,text,created_at,lang,public_metrics"
+					"relativeUrl": {
+						"value": "@concat('/2/tweets/search/recent?','query=',dataset().Query,'&','start_time=',dataset().start_time,'&','end_time=',dataset().end_time,'tweet.fields=',dataset().tweet_fields,'&','max_results=',dataset().max_results)",
+						"type": "Expression"
+					}
 				},
 				"schema": []
 			},
@@ -753,7 +784,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "New_Palestine_KH",
+					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -761,7 +792,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "TwitterTest1dataset_KH",
+						"fileName": "Twitter_Test_DynamicURL",
 						"fileSystem": "pendragon"
 					}
 				},
@@ -807,7 +838,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/New_Palestine_KH')]"
+				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
@@ -916,7 +947,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "Twitter_Test_RT",
+						"fileName": "Twitter_Test_URL",
 						"fileSystem": "pendragon"
 					}
 				},
