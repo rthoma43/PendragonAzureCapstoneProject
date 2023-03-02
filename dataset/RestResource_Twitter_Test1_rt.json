@@ -19,8 +19,8 @@
 				"defaultValue": "2023-02-27T00:00:07.000Z"
 			},
 			"max_results": {
-				"type": "int",
-				"defaultValue": 10
+				"type": "string",
+				"defaultValue": "10"
 			},
 			"tweet.fields": {
 				"type": "string",
