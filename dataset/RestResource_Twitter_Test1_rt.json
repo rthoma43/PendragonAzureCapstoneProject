@@ -20,7 +20,7 @@
 			},
 			"max_results": {
 				"type": "string",
-				"defaultValue": "10"
+				"defaultValue": "11"
 			},
 			"tweet_fields": {
 				"type": "string",
