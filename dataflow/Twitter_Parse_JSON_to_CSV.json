@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "Twitter_test_rt_Json",
+						"referenceName": "Twitter_Blob_Storage",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -30,11 +30,7 @@
 				}
 			],
 			"scriptLines": [
-				"source(output(",
-				"          data as (created_at as string, edit_history_tweet_ids as string[], id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), text as string, lang as string)[],",
-				"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
-				"     ),",
-				"     allowSchemaDrift: true,",
+				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> source1",

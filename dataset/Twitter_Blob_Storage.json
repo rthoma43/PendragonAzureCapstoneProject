@@ -1,0 +1,19 @@
+{
+	"name": "Twitter_Blob_Storage",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Twitter_rawJSON_blob",
+				"container": "pendragon"
+			}
+		},
+		"schema": {}
+	}
+}
