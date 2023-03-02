@@ -16,63 +16,15 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Twitter ETL Data Flow",
+						"referenceName": "Twitter_ELT_Data_Flow",
 						"type": "DataFlowReference",
-						"parameters": {
-							"Query": "'NATO'",
-							"start_time": "'2023-02-25T00:00:07.000Z'",
-							"end_time": "'2023-02-27T00:00:07.000Z'",
-							"max_results": "'10'",
-							"tweet_fields": "'id,text,created_at,lang,public_metrics'"
-						},
 						"datasetParameters": {
 							"source1": {
-								"Query": {
-									"value": "'NATO'",
-									"type": "Expression"
-								},
-								"start_time": {
-									"value": "'2023-02-25T00:00:07.000Z'",
-									"type": "Expression"
-								},
-								"end_time": {
-									"value": "'2023-02-27T00:00:07.000Z'",
-									"type": "Expression"
-								},
-								"max_results": {
-									"value": "'10'",
-									"type": "Expression"
-								},
-								"tweet_fields": {
-									"value": "'id,text,created_at,lang,public_metrics'",
-									"type": "Expression"
-								}
-							}
-						},
-						"linkedServiceParameters": {
-							"source1": {
-								"schemaLinkedService": {
-									"Query": {
-										"value": "'NATO'",
-										"type": "Expression"
-									},
-									"start_time": {
-										"value": "'2023-02-25T00:00:07.000Z'",
-										"type": "Expression"
-									},
-									"end_time": {
-										"value": "'2023-02-27T00:00:07.000Z'",
-										"type": "Expression"
-									},
-									"max_results": {
-										"value": "'10'",
-										"type": "Expression"
-									},
-									"tweet_fields": {
-										"value": "'id,text,created_at,lang,public_metrics'",
-										"type": "Expression"
-									}
-								}
+								"Query": "NATO",
+								"start_time": "2023-02-25T00:00:07.000Z",
+								"end_time": "2023-02-27T00:00:07.000Z",
+								"max_results": "10",
+								"tweet_fields": "id,text,created_at,lang,public_metrics"
 							}
 						}
 					},
