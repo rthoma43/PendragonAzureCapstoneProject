@@ -1,5 +1,6 @@
 {
 	"name": "Twitter_RestService_RT",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
 	"properties": {
 		"parameters": {
 			"Query": {
@@ -66,14 +67,19 @@
 		"annotations": [],
 		"type": "RestService",
 		"typeProperties": {
-			"url": "https://api.twitter.com",
+			"url": "@{concat('https://api.twitter.com/2/tweets/search/recent?','query=',linkedService().Query,'&','start_time=',linkedService().start_year,'-',linkedService().start_month,'-',linkedService().start_day,'T',linkedService().start_hour,':',linkedService().start_minute,':',linkedService().start_second,'.000Z','&','end_time=',linkedService().end_year,'-',linkedService().end_month,'-',linkedService().end_day,'T',linkedService().end_hour,':',linkedService().end_minute,':',linkedService().end_second,'.000Z','&','tweet.fields=',linkedService().Tweet_fields,'&','max_results=',linkedService().Max_results)}",
 			"enableServerCertificateValidation": true,
-			"authenticationType": "Anonymous"
+			"authenticationType": "Anonymous",
+			"authHeaders": {
+				"Authorization": {
+					"type": "SecureString",
+					"value": "**********"
+				}
+			}
 		},
 		"connectVia": {
 			"referenceName": "AutoResolveIntegrationRuntime",
 			"type": "IntegrationRuntimeReference"
 		}
-	},
-	"type": "Microsoft.Synapse/workspaces/linkedservices"
+	}
 }
