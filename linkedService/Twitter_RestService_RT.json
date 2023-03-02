@@ -2,72 +2,10 @@
 	"name": "Twitter_RestService_RT",
 	"type": "Microsoft.Synapse/workspaces/linkedservices",
 	"properties": {
-		"parameters": {
-			"Query": {
-				"type": "string",
-				"defaultValue": "NATO"
-			},
-			"Max_results": {
-				"type": "string",
-				"defaultValue": "10"
-			},
-			"Tweet_fields": {
-				"type": "string",
-				"defaultValue": "id,text,created_at,lang,public_metrics"
-			},
-			"start_year": {
-				"type": "string",
-				"defaultValue": "2023"
-			},
-			"start_month": {
-				"type": "string",
-				"defaultValue": "02"
-			},
-			"start_day": {
-				"type": "string",
-				"defaultValue": "25"
-			},
-			"start_hour": {
-				"type": "string",
-				"defaultValue": "00"
-			},
-			"start_minute": {
-				"type": "string",
-				"defaultValue": "00"
-			},
-			"start_second": {
-				"type": "string",
-				"defaultValue": "01"
-			},
-			"end_year": {
-				"type": "string",
-				"defaultValue": "2023"
-			},
-			"end_month": {
-				"type": "string",
-				"defaultValue": "02"
-			},
-			"end_day": {
-				"type": "string",
-				"defaultValue": "26"
-			},
-			"end_hour": {
-				"type": "string",
-				"defaultValue": "00"
-			},
-			"end_minute": {
-				"type": "string",
-				"defaultValue": "00"
-			},
-			"end_second": {
-				"type": "string",
-				"defaultValue": "01"
-			}
-		},
 		"annotations": [],
 		"type": "RestService",
 		"typeProperties": {
-			"url": "@{concat('https://api.twitter.com/2/tweets/search/recent?','query=',linkedService().Query,'&','start_time=',linkedService().start_year,'-',linkedService().start_month,'-',linkedService().start_day,'T',linkedService().start_hour,':',linkedService().start_minute,':',linkedService().start_second,'.000Z','&','end_time=',linkedService().end_year,'-',linkedService().end_month,'-',linkedService().end_day,'T',linkedService().end_hour,':',linkedService().end_minute,':',linkedService().end_second,'.000Z','&','tweet.fields=',linkedService().Tweet_fields,'&','max_results=',linkedService().Max_results)}",
+			"url": "https://api.twitter.com",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Anonymous",
 			"authHeaders": {
