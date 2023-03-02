@@ -1,0 +1,19 @@
+{
+	"name": "Json2_kh",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "New_Palestine_KH",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "TwitterTest1dataset_KH",
+				"fileSystem": "pendragon"
+			}
+		},
+		"schema": {}
+	}
+}
