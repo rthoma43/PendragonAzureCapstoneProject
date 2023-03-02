@@ -43,7 +43,7 @@
 						"parameters": {
 							"Query": "NATO",
 							"start_time": "2023-02-27T00:00:07.000Z",
-							"end_time": "2023-02-29T00:00:07.000Z",
+							"end_time": "2023-02-28T00:00:07.000Z",
 							"max_results": "10",
 							"tweet_fields": "id,created_at,text,lang,public_metrics,entities"
 						}
