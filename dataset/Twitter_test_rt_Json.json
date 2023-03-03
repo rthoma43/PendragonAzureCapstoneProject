@@ -10,7 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Twitter_Test_URL",
+				"fileName": "NATOmentions",
+				"folderPath": "Raw_Twitter_JSONs",
 				"fileSystem": "pendragon"
 			}
 		},
