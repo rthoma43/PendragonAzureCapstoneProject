@@ -17,7 +17,7 @@
 			"escapeChar": "",
 			"firstRowAsHeader": true,
 			"nullValue": "NA",
-			"quoteChar": ""
+			"quoteChar": "\""
 		},
 		"schema": [
 			{
