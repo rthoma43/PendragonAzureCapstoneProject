@@ -14,7 +14,7 @@
 				"fileSystem": "pendragon"
 			},
 			"columnDelimiter": ",",
-			"escapeChar": "/",
+			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"nullValue": "NA",
 			"quoteChar": "\""
