@@ -565,8 +565,7 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter_Test1_rt')]",
 				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
-				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]",
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]"
 			]
 		},
 		{
@@ -1308,10 +1307,10 @@
 						"fileSystem": "pendragon"
 					},
 					"columnDelimiter": ",",
-					"escapeChar": "",
+					"escapeChar": "/",
 					"firstRowAsHeader": true,
 					"nullValue": "NA",
-					"quoteChar": ""
+					"quoteChar": "\""
 				},
 				"schema": [
 					{
