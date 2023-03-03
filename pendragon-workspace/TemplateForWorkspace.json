@@ -565,7 +565,8 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter_Test1_rt')]",
 				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
-				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]"
+				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
@@ -1309,6 +1310,7 @@
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
+					"nullValue": "NA",
 					"quoteChar": "\""
 				},
 				"schema": [
@@ -1888,7 +1890,7 @@
 						"     skipDuplicateMapOutputs: false) ~> flatten1",
 						"flatten1 derive(id = data.id,",
 						"          created_at = data.created_at,",
-						"          text = data.text,",
+						"          text = concat('\"',data.text,'\"'),",
 						"          lang = data.lang,",
 						"          retweet_count = data.public_metrics.retweet_count,",
 						"          reply_count = data.public_metrics.reply_count,",
