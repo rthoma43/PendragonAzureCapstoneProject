@@ -493,7 +493,7 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"Query": "\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO",
-									"max_results": "101",
+									"max_results": "100",
 									"tweet_fields": "id,text,created_at,lang,public_metrics",
 									"start_year": "2023",
 									"start_month": "03",
@@ -1943,6 +1943,37 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Trigger 1')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Twitter_Test1_rt",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 1,
+						"startTime": "2023-03-04T20:21:00",
+						"endTime": "2023-03-05T20:20:00",
+						"timeZone": "Eastern Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/pipelines/Twitter_Test1_rt')]"
+			]
 		}
 	]
 }
