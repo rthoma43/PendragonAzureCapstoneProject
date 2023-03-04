@@ -1,0 +1,25 @@
+{
+	"name": "Trigger 1",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Twitter_Test1_rt",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 1,
+				"startTime": "2023-03-04T20:21:00",
+				"endTime": "2023-03-05T20:20:00",
+				"timeZone": "Eastern Standard Time"
+			}
+		}
+	}
+}

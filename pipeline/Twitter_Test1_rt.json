@@ -42,7 +42,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"Query": "\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO",
-							"max_results": "101",
+							"max_results": "100",
 							"tweet_fields": "id,text,created_at,lang,public_metrics",
 							"start_year": "2023",
 							"start_month": "03",
