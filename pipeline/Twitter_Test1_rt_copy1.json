@@ -1,5 +1,5 @@
 {
-	"name": "Twitter_Test1_rt",
+	"name": "Twitter_Test1_rt_copy1",
 	"properties": {
 		"activities": [
 			{
@@ -98,6 +98,7 @@
 				}
 			}
 		],
+		"concurrency": 10,
 		"variables": {
 			"Query": {
 				"type": "String"
