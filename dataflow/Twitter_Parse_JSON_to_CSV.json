@@ -27,9 +27,6 @@
 				},
 				{
 					"name": "derivedColumn1"
-				},
-				{
-					"name": "sort1"
 				}
 			],
 			"scriptLines": [
@@ -57,8 +54,7 @@
 				"          like_count = data.public_metrics.like_count,",
 				"          quote_count = data.public_metrics.quote_count,",
 				"          impression_count = data.public_metrics.impression_count) ~> derivedColumn1",
-				"derivedColumn1 sort(desc(data.id, true)) ~> sort1",
-				"sort1 sink(allowSchemaDrift: true,",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          id as string,",

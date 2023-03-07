@@ -38,7 +38,24 @@
 				"inputs": [
 					{
 						"referenceName": "RestResource_Twitter",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Query": "NATO",
+							"max_results": "10",
+							"tweet_fields": "id,text,created_at,lang,public_metrics",
+							"start_year": "2023",
+							"start_month": "03",
+							"start_day": "05",
+							"start_hour": "00",
+							"start_minute": "00",
+							"start_second": "01",
+							"end_year": "2023",
+							"end_month": "03",
+							"end_day": "07",
+							"end_hour": "00",
+							"end_minute": "00",
+							"end_second": "01"
+						}
 					}
 				],
 				"outputs": [
@@ -77,6 +94,36 @@
 						"computeType": "General"
 					},
 					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "Twitter_Test_RT_DelimitedText1",
+						"type": "DatasetReference"
+					}
 				}
 			}
 		],
