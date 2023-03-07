@@ -23,7 +23,7 @@
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
 						"recursive": true,
-						"wildcardFileName": "Twitter20230305013019-00001.csv",
+						"wildcardFileName": "Twitter2*",
 						"enablePartitionDiscovery": false
 					}
 				}
