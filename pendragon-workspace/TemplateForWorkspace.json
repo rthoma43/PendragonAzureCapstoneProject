@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
 		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+		},
 		"AzureDatabricks1_accessToken": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'AzureDatabricks1'"
@@ -32,6 +36,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'pendragon-workspace-WorkspaceDefaultSqlServer'",
 			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:pendragon-workspace.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://pendragon.dfs.core.windows.net/"
 		},
 		"AzureKeyVaultPendragon_properties_typeProperties_baseUrl": {
 			"type": "string",
@@ -78,10 +86,6 @@
 			"defaultValue": "https://api.twitter.com"
 		},
 		"pendragon-synapse-WorkspaceDefaultStorage_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://pendragon.dfs.core.windows.net"
-		},
-		"pendragon-workspace-WorkspaceDefaultStorage_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://pendragon.dfs.core.windows.net"
 		}
@@ -320,49 +324,6 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/RedditJson1')]",
 				"[concat(variables('workspaceId'), '/datasets/Json1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/Twitter_Delete_Temp')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "Delete1",
-						"type": "Delete",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "DelimitedText2",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"enableLogging": false,
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/DelimitedText2')]"
 			]
 		},
 		{
@@ -719,7 +680,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Twitter NATO mentions top 10",
+						"name": "First Twitter GET",
 						"description": "2023-02-19T00:00:07.000Z to 2023-02-20T00:00:07.000Z\nmax_results=10",
 						"type": "Copy",
 						"dependsOn": [],
@@ -788,7 +749,7 @@
 						"type": "ExecuteDataFlow",
 						"dependsOn": [
 							{
-								"activity": "Twitter NATO mentions top 10",
+								"activity": "First Twitter GET",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -806,12 +767,7 @@
 							"dataflow": {
 								"referenceName": "Twitter_Parse_JSON_to_CSV",
 								"type": "DataFlowReference",
-								"parameters": {
-									"parameter1": {
-										"value": "'@{variables('Last_ID')}'",
-										"type": "Expression"
-									}
-								},
+								"parameters": {},
 								"datasetParameters": {
 									"source1": {},
 									"sink1": {}
@@ -831,17 +787,6 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
-				"variables": {
-					"Query": {
-						"type": "String"
-					},
-					"max_results": {
-						"type": "String"
-					},
-					"Last_ID": {
-						"type": "Array"
-					}
-				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -856,7 +801,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+					"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -871,7 +816,7 @@
 				"schema": {}
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+				"[concat(variables('workspaceId'), '/linkedServices/pendragon-synapse-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
@@ -880,7 +825,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+					"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -895,7 +840,7 @@
 				"schema": {}
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+				"[concat(variables('workspaceId'), '/linkedServices/pendragon-synapse-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
@@ -904,7 +849,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+					"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -950,7 +895,7 @@
 				]
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+				"[concat(variables('workspaceId'), '/linkedServices/pendragon-synapse-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
@@ -1326,7 +1271,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
+					"referenceName": "AzureDataLakeStorage1",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -1334,7 +1279,6 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "Twitter2*",
 						"fileSystem": "pendragon"
 					},
 					"columnDelimiter": ",",
@@ -1345,7 +1289,7 @@
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/pendragon-synapse-WorkspaceDefaultStorage')]"
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
 			]
 		},
 		{
@@ -1354,7 +1298,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+					"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -1374,7 +1318,63 @@
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+				"[concat(variables('workspaceId'), '/linkedServices/pendragon-synapse-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DelimitedText_LookUp')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "*",
+						"folderPath": "Tweets/Individual_files/NATO_Mentions",
+						"fileSystem": "pendragon"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
 			]
 		},
 		{
@@ -1383,7 +1383,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+					"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -1398,7 +1398,7 @@
 				"schema": {}
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+				"[concat(variables('workspaceId'), '/linkedServices/pendragon-synapse-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
@@ -1599,7 +1599,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+					"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -1653,7 +1653,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+				"[concat(variables('workspaceId'), '/linkedServices/pendragon-synapse-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
@@ -1662,7 +1662,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+					"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -1680,7 +1680,7 @@
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+				"[concat(variables('workspaceId'), '/linkedServices/pendragon-synapse-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
@@ -1689,7 +1689,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+					"referenceName": "AzureDataLakeStorage1",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -1697,7 +1697,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "Twitter_Template",
+						"folderPath": "Tweets/Individual_files/NATO_Mentions",
 						"fileSystem": "pendragon"
 					},
 					"columnDelimiter": ",",
@@ -1746,7 +1746,7 @@
 				]
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
 			]
 		},
 		{
@@ -1755,7 +1755,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
+					"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -1838,7 +1838,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/pendragon-workspace-WorkspaceDefaultStorage')]"
+				"[concat(variables('workspaceId'), '/linkedServices/pendragon-synapse-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
@@ -1850,6 +1850,29 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('AzureBlobStorage1_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AzureDataLakeStorage1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					}
 				},
 				"connectVia": {
 					"referenceName": "AutoResolveIntegrationRuntime",
@@ -2223,25 +2246,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/pendragon-workspace-WorkspaceDefaultStorage')]",
-			"type": "Microsoft.Synapse/workspaces/linkedServices",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('pendragon-workspace-WorkspaceDefaultStorage_properties_typeProperties_url')]"
-				},
-				"connectVia": {
-					"referenceName": "AutoResolveIntegrationRuntime",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/Trigger 1')]",
 			"type": "Microsoft.Synapse/workspaces/triggers",
 			"apiVersion": "2019-06-01-preview",
@@ -2377,12 +2381,12 @@
 						},
 						{
 							"name": "derivedColumn1"
+						},
+						{
+							"name": "sort1"
 						}
 					],
 					"scriptLines": [
-						"parameters{",
-						"     parameter1 as string (last(id))",
-						"}",
 						"source(output(",
 						"          data as (created_at as string, edit_history_tweet_ids as string[], id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), text as string, lang as string)[],",
 						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
@@ -2407,7 +2411,8 @@
 						"          like_count = data.public_metrics.like_count,",
 						"          quote_count = data.public_metrics.quote_count,",
 						"          impression_count = data.public_metrics.impression_count) ~> derivedColumn1",
-						"derivedColumn1 sink(allowSchemaDrift: true,",
+						"derivedColumn1 sort(desc(data.id, true)) ~> sort1",
+						"sort1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
 						"          id as string,",

@@ -8,6 +8,9 @@
 		"AzureBlobStorage1_connectionString": {
 			"value": ""
 		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
 		"AzureDatabricks1_accessToken": {
 			"value": ""
 		},
@@ -22,6 +25,9 @@
 		},
 		"pendragon-workspace-WorkspaceDefaultSqlServer_connectionString": {
 			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:pendragon-workspace.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://pendragon.dfs.core.windows.net/"
 		},
 		"AzureKeyVaultPendragon_properties_typeProperties_baseUrl": {
 			"value": "https://tw-dv-001.vault.azure.net/"
@@ -57,9 +63,6 @@
 			"value": "https://api.twitter.com"
 		},
 		"pendragon-synapse-WorkspaceDefaultStorage_properties_typeProperties_url": {
-			"value": "https://pendragon.dfs.core.windows.net"
-		},
-		"pendragon-workspace-WorkspaceDefaultStorage_properties_typeProperties_url": {
 			"value": "https://pendragon.dfs.core.windows.net"
 		}
 	}
