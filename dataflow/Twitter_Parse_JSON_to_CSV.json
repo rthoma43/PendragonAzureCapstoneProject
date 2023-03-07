@@ -27,12 +27,12 @@
 				},
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "sort1"
 				}
 			],
 			"scriptLines": [
-				"parameters{",
-				"     parameter1 as string (last(id))",
-				"}",
 				"source(output(",
 				"          data as (created_at as string, edit_history_tweet_ids as string[], id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), text as string, lang as string)[],",
 				"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
@@ -57,7 +57,8 @@
 				"          like_count = data.public_metrics.like_count,",
 				"          quote_count = data.public_metrics.quote_count,",
 				"          impression_count = data.public_metrics.impression_count) ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"derivedColumn1 sort(desc(data.id, true)) ~> sort1",
+				"sort1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          id as string,",

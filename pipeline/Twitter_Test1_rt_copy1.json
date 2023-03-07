@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Twitter NATO mentions top 10",
+				"name": "First Twitter GET",
 				"description": "2023-02-19T00:00:07.000Z to 2023-02-20T00:00:07.000Z\nmax_results=10",
 				"type": "Copy",
 				"dependsOn": [],
@@ -71,7 +71,7 @@
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "Twitter NATO mentions top 10",
+						"activity": "First Twitter GET",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -88,14 +88,65 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "Twitter_Parse_JSON_to_CSV",
-						"type": "DataFlowReference",
-						"parameters": {
-							"parameter1": {
-								"value": "'@{variables('Last_ID')}'",
-								"type": "Expression"
-							}
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Parse and convert to CSV",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
 						}
 					},
+					"dataset": {
+						"referenceName": "DelimitedText_LookUp",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
@@ -105,17 +156,6 @@
 			}
 		],
 		"concurrency": 10,
-		"variables": {
-			"Query": {
-				"type": "String"
-			},
-			"max_results": {
-				"type": "String"
-			},
-			"Last_ID": {
-				"type": "Array"
-			}
-		},
 		"annotations": []
 	}
 }
