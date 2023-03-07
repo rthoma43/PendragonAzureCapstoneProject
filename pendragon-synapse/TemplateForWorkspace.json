@@ -61,7 +61,6 @@
 							"storeSettings": {
 								"type": "AzureBlobFSReadSettings",
 								"recursive": true,
-								"wildcardFileName": "Twitter2*",
 								"enablePartitionDiscovery": false
 							}
 						}
