@@ -2,7 +2,7 @@
 	"name": "Twitter_test_rt_Json",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
+			"referenceName": "AzureDataLakeStorage1",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
