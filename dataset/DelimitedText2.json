@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Twitter2*",
+				"fileName": "Twitter2",
 				"fileSystem": "pendragon"
 			},
 			"columnDelimiter": ",",
