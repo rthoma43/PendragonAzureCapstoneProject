@@ -69,6 +69,9 @@
 			"sort_order": {
 				"type": "string",
 				"defaultValue": "recency"
+			},
+			"since_id": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
