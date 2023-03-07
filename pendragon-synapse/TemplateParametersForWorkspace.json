@@ -1,0 +1,69 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "pendragon-synapse"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"AzureDatabricks1_accessToken": {
+			"value": ""
+		},
+		"New_Palestine_KH_accountKey": {
+			"value": ""
+		},
+		"RedditHttpServer1_password": {
+			"value": ""
+		},
+		"pendragon-synapse-WorkspaceDefaultSqlServer_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:pendragon-synapse.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"pendragon-workspace-WorkspaceDefaultSqlServer_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:pendragon-workspace.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://pendragon.dfs.core.windows.net/"
+		},
+		"AzureKeyVaultPendragon_properties_typeProperties_baseUrl": {
+			"value": "https://tw-dv-001.vault.azure.net/"
+		},
+		"CognitiveService1_properties_typeProperties_subscriptionId": {
+			"value": "588695d7-29a1-45a3-90a5-dc87a232ae76"
+		},
+		"New_Palestine_KH_properties_typeProperties_url": {
+			"value": "https://pendragon.dfs.core.windows.net/"
+		},
+		"RedditHttpServer1_properties_typeProperties_url": {
+			"value": "https://www.reddit.com/"
+		},
+		"RedditHttpServer1_properties_typeProperties_userName": {
+			"value": "ryan_supplyin"
+		},
+		"RedditRestService1_properties_typeProperties_url": {
+			"value": "https://www.reddit.com/"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"value": "https://api.brandwatch.com/"
+		},
+		"RestService2_properties_typeProperties_url": {
+			"value": "https://api.twitter.com"
+		},
+		"RestServiceTwitter1_properties_typeProperties_url": {
+			"value": "https://api.twitter.com"
+		},
+		"Twitter_RestService_AS_properties_typeProperties_url": {
+			"value": "https://api.twitter.com"
+		},
+		"Twitter_RestService_RT_properties_typeProperties_url": {
+			"value": "https://api.twitter.com"
+		},
+		"pendragon-synapse-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://pendragon.dfs.core.windows.net"
+		}
+	}
+}
