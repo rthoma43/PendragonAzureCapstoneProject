@@ -194,7 +194,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "Twitter2*",
+						"fileName": "Twitter20230305012933-00001.csv",
 						"fileSystem": "pendragon"
 					},
 					"columnDelimiter": ",",
