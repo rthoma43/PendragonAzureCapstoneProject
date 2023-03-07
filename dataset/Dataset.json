@@ -1,6 +1,10 @@
 {
 	"name": "Dataset",
 	"properties": {
+		"linkedServiceName": {
+			"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {

@@ -1,6 +1,10 @@
 {
 	"name": "TwitterJson1",
 	"properties": {
+		"linkedServiceName": {
+			"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
 		"annotations": [],
 		"type": "Json",
 		"typeProperties": {

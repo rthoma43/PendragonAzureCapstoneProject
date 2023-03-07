@@ -1,6 +1,10 @@
 {
 	"name": "Twitter_Test_RT_DelimitedText1",
 	"properties": {
+		"linkedServiceName": {
+			"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
