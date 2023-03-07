@@ -53,7 +53,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "DelimitedText2",
+								"referenceName": "DelimitedText3",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -74,7 +74,7 @@
 				"lastPublishTime": "2023-03-07T04:20:03Z"
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/DelimitedText2')]"
+				"[concat(variables('workspaceId'), '/datasets/DelimitedText3')]"
 			]
 		},
 		{
