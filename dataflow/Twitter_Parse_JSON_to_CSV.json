@@ -57,7 +57,8 @@
 				"          like_count = data.public_metrics.like_count,",
 				"          quote_count = data.public_metrics.quote_count,",
 				"          impression_count = data.public_metrics.impression_count) ~> derivedColumn1",
-				"derivedColumn1 sort(desc(id, true)) ~> sort1",
+				"derivedColumn1 sort(desc(id, true),",
+				"     partitionLevel: true) ~> sort1",
 				"sort1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -71,7 +72,7 @@
 				"          quote_count as string,",
 				"          impression_count as string",
 				"     ),",
-				"     filePattern:(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.csv')),",
+				"     partitionFileNames:[(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.csv'))],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
@@ -87,7 +88,8 @@
 				"          like_count,",
 				"          quote_count,",
 				"          impression_count",
-				"     )) ~> sink1"
+				"     ),",
+				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
 	}
