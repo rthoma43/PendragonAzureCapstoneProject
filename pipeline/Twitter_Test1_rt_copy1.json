@@ -88,7 +88,13 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "Twitter_Parse_JSON_to_CSV",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"parameter1": {
+								"value": "'@{variables('Last_ID')}'",
+								"type": "Expression"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -105,6 +111,9 @@
 			},
 			"max_results": {
 				"type": "String"
+			},
+			"Last_ID": {
+				"type": "Array"
 			}
 		},
 		"annotations": []
