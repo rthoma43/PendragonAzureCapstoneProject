@@ -1,0 +1,59 @@
+{
+	"name": "TwitterJson1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Twitter_Test_DynamicURL",
+				"fileSystem": "pendragon"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"results": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"label": {
+								"type": "null"
+							},
+							"name": {
+								"type": "string"
+							},
+							"volume": {
+								"type": "integer"
+							},
+							"retweets": {
+								"type": "integer"
+							},
+							"tweets": {
+								"type": "integer"
+							},
+							"reachEstimate": {
+								"type": "integer"
+							},
+							"impressions": {
+								"type": "integer"
+							}
+						}
+					}
+				},
+				"orderBy": {
+					"type": "string"
+				},
+				"orderDirection": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

@@ -1,0 +1,11 @@
+{
+	"name": "PowerBIWorkspacePendragon",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "PowerBIWorkspace",
+		"typeProperties": {
+			"tenantID": "9e857255-df57-4c47-a0c0-0546460380cb"
+		}
+	}
+}
