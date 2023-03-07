@@ -1,10 +1,6 @@
 {
 	"name": "DelimitedText2",
 	"properties": {
-		"linkedServiceName": {
-			"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
-			"type": "LinkedServiceReference"
-		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {

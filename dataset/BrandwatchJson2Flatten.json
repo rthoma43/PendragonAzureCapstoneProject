@@ -1,10 +1,6 @@
 {
 	"name": "BrandwatchJson2Flatten",
 	"properties": {
-		"linkedServiceName": {
-			"referenceName": "pendragon-workspace-WorkspaceDefaultStorage",
-			"type": "LinkedServiceReference"
-		},
 		"annotations": [],
 		"type": "Json",
 		"typeProperties": {
