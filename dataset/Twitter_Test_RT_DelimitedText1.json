@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Twitter_Template",
+				"folderPath": "Tweets/Individual_files/NATO_Mentions",
 				"fileSystem": "pendragon"
 			},
 			"columnDelimiter": ",",
