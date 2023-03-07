@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "DelimitedText3",
+						"referenceName": "DelimitedText2",
 						"type": "DatasetReference"
 					},
 					"enableLogging": false,
