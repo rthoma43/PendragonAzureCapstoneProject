@@ -305,7 +305,7 @@
 								}
 							},
 							"dataset": {
-								"referenceName": "Twitter_DelimitedText_Wildcard",
+								"referenceName": "Twitter_Test_RT_DelimitedText1",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -352,7 +352,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "Twitter_DelimitedText_Wildcard",
+								"referenceName": "Twitter_Test_RT_DelimitedText1",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -455,7 +455,7 @@
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter')]",
 				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
 				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]",
-				"[concat(variables('workspaceId'), '/datasets/Twitter_DelimitedText_Wildcard')]",
+				"[concat(variables('workspaceId'), '/datasets/Twitter_Test_RT_DelimitedText1')]",
 				"[concat(variables('workspaceId'), '/datasets/SetVariable')]"
 			]
 		},
@@ -1368,7 +1368,6 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "Twitter2*",
 						"folderPath": "Tweets/Individual_files/NATO_Mentions",
 						"fileSystem": "pendragon"
 					},
@@ -1396,6 +1395,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "Twitter2*",
 						"folderPath": "Tweets/Individual_files/NATO_Mentions",
 						"fileSystem": "pendragon"
 					},
