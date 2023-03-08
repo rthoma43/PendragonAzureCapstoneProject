@@ -114,6 +114,54 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Pipeline 1')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Twitter_DelimitedText_Wildcard",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"lastModified"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Twitter_DelimitedText_Wildcard')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Twitter_GET')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -257,7 +305,7 @@
 								}
 							},
 							"dataset": {
-								"referenceName": "Twitter_Test_RT_DelimitedText1",
+								"referenceName": "Twitter_DelimitedText_Wildcard",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -304,7 +352,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "Twitter_Test_RT_DelimitedText1",
+								"referenceName": "Twitter_DelimitedText_Wildcard",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -314,6 +362,7 @@
 							"storeSettings": {
 								"type": "AzureBlobFSReadSettings",
 								"recursive": true,
+								"modifiedDatetimeStart": "2023-03-07T00:00:00.000Z",
 								"enablePartitionDiscovery": false
 							},
 							"formatSettings": {
@@ -406,7 +455,7 @@
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter')]",
 				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
 				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]",
-				"[concat(variables('workspaceId'), '/datasets/Twitter_Test_RT_DelimitedText1')]",
+				"[concat(variables('workspaceId'), '/datasets/Twitter_DelimitedText_Wildcard')]",
 				"[concat(variables('workspaceId'), '/datasets/SetVariable')]"
 			]
 		},
@@ -1306,7 +1355,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/Twitter_Test_RT_DelimitedText1')]",
+			"name": "[concat(parameters('workspaceName'), '/Twitter_DelimitedText_Wildcard')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -1320,6 +1369,33 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"fileName": "Twitter2*",
+						"folderPath": "Tweets/Individual_files/NATO_Mentions",
+						"fileSystem": "pendragon"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Twitter_Test_RT_DelimitedText1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
 						"folderPath": "Tweets/Individual_files/NATO_Mentions",
 						"fileSystem": "pendragon"
 					},
