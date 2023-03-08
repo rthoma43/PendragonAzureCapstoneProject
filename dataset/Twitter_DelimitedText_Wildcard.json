@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Twitter20230308020*",
+				"fileName": "Twitter20230308020821.csv",
 				"folderPath": "Tweets/Individual_files/NATO_Mentions",
 				"fileSystem": "pendragon"
 			},
