@@ -16,11 +16,11 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "Twitter_DelimitedText_Wildcard",
+						"referenceName": "DelimitedText4",
 						"type": "DatasetReference"
 					},
 					"fieldList": [
-						"lastModified"
+						"childItems"
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
@@ -34,6 +34,12 @@
 		],
 		"variables": {
 			"prevLastModified": {
+				"type": "String"
+			},
+			"currenttime": {
+				"type": "String"
+			},
+			"last_id": {
 				"type": "String"
 			}
 		},

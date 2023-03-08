@@ -98,52 +98,11 @@
 				}
 			},
 			{
-				"name": "Look Up last ID",
-				"type": "Lookup",
-				"dependsOn": [
-					{
-						"activity": "Get Metadata1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "DelimitedTextSource",
-						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
-							"modifiedDatetimeStart": {
-								"value": "@activity('Get Metadata1').output",
-								"type": "Expression"
-							},
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
-						}
-					},
-					"dataset": {
-						"referenceName": "Twitter_Test_RT_DelimitedText1",
-						"type": "DatasetReference"
-					}
-				}
-			},
-			{
 				"name": "Last ID Variable",
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Look Up last ID",
+						"activity": "Lookup1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -153,14 +112,14 @@
 				"typeProperties": {
 					"variableName": "last_id",
 					"value": {
-						"value": "@activity('Look Up last ID').output.firstRow.id",
+						"value": "@activity('Lookup1').output.firstRow.id",
 						"type": "Expression"
 					}
 				}
 			},
 			{
-				"name": "Get Metadata1",
-				"type": "GetMetadata",
+				"name": "Lookup1",
+				"type": "Lookup",
 				"dependsOn": [
 					{
 						"activity": "Convert JSON to CSV",
@@ -178,84 +137,26 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataset": {
-						"referenceName": "Twitter_DelimitedText_Wildcard",
-						"type": "DatasetReference"
-					},
-					"fieldList": [
-						"lastModified"
-					],
-					"storeSettings": {
-						"type": "AzureBlobFSReadSettings",
-						"recursive": true,
-						"modifiedDatetimeStart": "2023-03-07T00:00:00.000Z",
-						"enablePartitionDiscovery": false
-					},
-					"formatSettings": {
-						"type": "DelimitedTextReadSettings"
-					}
-				}
-			},
-			{
-				"name": "Copy data1",
-				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "Last ID Variable",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
 					"source": {
 						"type": "DelimitedTextSource",
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
+							"wildcardFileName": {
+								"value": "@activity('Convert JSON to CSV').output",
+								"type": "Expression"
+							},
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
 							"type": "DelimitedTextReadSettings"
 						}
 					},
-					"sink": {
-						"type": "DelimitedTextSink",
-						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings"
-						},
-						"formatSettings": {
-							"type": "DelimitedTextWriteSettings",
-							"quoteAllText": true,
-							"fileExtension": ".txt"
-						}
-					},
-					"enableStaging": false,
-					"translator": {
-						"value": "@activity('Look Up last ID').output",
-						"type": "Expression"
-					}
-				},
-				"inputs": [
-					{
-						"referenceName": "SetVariable",
+					"dataset": {
+						"referenceName": "DelimitedText_LookUp",
 						"type": "DatasetReference"
 					}
-				],
-				"outputs": [
-					{
-						"referenceName": "SetVariable",
-						"type": "DatasetReference"
-					}
-				]
+				}
 			}
 		],
 		"parameters": {
