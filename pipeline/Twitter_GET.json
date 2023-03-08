@@ -75,12 +75,6 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
-					},
-					{
-						"activity": "Set variable1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
 					}
 				],
 				"policy": {
@@ -94,31 +88,13 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "Twitter_Parse_JSON_to_CSV",
-						"type": "DataFlowReference",
-						"datasetParameters": {
-							"sink1": {
-								"filenumber": {
-									"value": "@variables('filenumber')",
-									"type": "Expression"
-								}
-							}
-						}
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
 					},
 					"traceLevel": "Fine"
-				}
-			},
-			{
-				"name": "Set variable1",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "filenumber",
-					"value": "1"
 				}
 			}
 		],
