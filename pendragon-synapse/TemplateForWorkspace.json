@@ -138,9 +138,6 @@
 								"parameters": {}
 							},
 							"fieldList": [
-								"exists",
-								"itemName",
-								"itemType",
 								"lastModified"
 							],
 							"storeSettings": {
@@ -157,6 +154,11 @@
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"variables": {
+					"prevLastModified": {
+						"type": "String"
+					}
 				},
 				"annotations": []
 			},
@@ -1372,10 +1374,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "Twitter2*",
-							"type": "Expression"
-						},
+						"fileName": "Twitter20230308020821.csv",
 						"folderPath": "Tweets/Individual_files/NATO_Mentions",
 						"fileSystem": "pendragon"
 					},
