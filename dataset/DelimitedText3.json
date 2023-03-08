@@ -2,7 +2,7 @@
 	"name": "DelimitedText3",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "pendragon-synapse-WorkspaceDefaultStorage",
+			"referenceName": "AzureDataLakeStorage1",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
@@ -10,8 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "TweetsCombined.csv",
-				"folderPath": "Tweets",
+				"fileName": "Combined_Test",
+				"folderPath": "Tweets/Combined_files/NATO_mentions",
 				"fileSystem": "pendragon"
 			},
 			"columnDelimiter": ",",
