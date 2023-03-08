@@ -94,7 +94,15 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "Twitter_Parse_JSON_to_CSV",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"sink1": {
+								"filenumber": {
+									"value": "@variables('filenumber')",
+									"type": "Expression"
+								}
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
