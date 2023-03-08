@@ -1372,7 +1372,10 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "Twitter2*",
+						"fileName": {
+							"value": "Twitter2*",
+							"type": "Expression"
+						},
 						"folderPath": "Tweets/Individual_files/NATO_Mentions",
 						"fileSystem": "pendragon"
 					},
