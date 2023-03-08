@@ -133,7 +133,7 @@
 						}
 					},
 					"dataset": {
-						"referenceName": "Twitter_Test_RT_DelimitedText1",
+						"referenceName": "Twitter_DelimitedText_Wildcard",
 						"type": "DatasetReference"
 					}
 				}
@@ -179,7 +179,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "Twitter_Test_RT_DelimitedText1",
+						"referenceName": "Twitter_DelimitedText_Wildcard",
 						"type": "DatasetReference"
 					},
 					"fieldList": [
@@ -188,6 +188,7 @@
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
 						"recursive": true,
+						"modifiedDatetimeStart": "2023-03-07T00:00:00.000Z",
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
