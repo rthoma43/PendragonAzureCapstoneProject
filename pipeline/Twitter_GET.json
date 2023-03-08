@@ -75,6 +75,12 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
+					},
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
 				"policy": {
@@ -88,7 +94,25 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "Twitter_Parse_JSON_to_CSV",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"sink1": {
+								"filenumber": {
+									"value": "@variables('filenumber')",
+									"type": "Expression"
+								}
+							}
+						},
+						"linkedServiceParameters": {
+							"sink1": {
+								"schemaLinkedService": {
+									"filenumber": {
+										"value": "@variables('filenumber')",
+										"type": "Expression"
+									}
+								}
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -98,75 +122,18 @@
 				}
 			},
 			{
-				"name": "Last ID Variable",
+				"name": "Set variable1",
 				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Lookup1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "last_id",
-					"value": {
-						"value": "@activity('Lookup1').output.firstRow.id",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "Lookup1",
-				"type": "Lookup",
-				"dependsOn": [
-					{
-						"activity": "Convert JSON to CSV",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "DelimitedTextSource",
-						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
-							"wildcardFileName": {
-								"value": "@activity('Convert JSON to CSV').output",
-								"type": "Expression"
-							},
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
-						}
-					},
-					"dataset": {
-						"referenceName": "DelimitedText_LookUp",
-						"type": "DatasetReference"
-					}
+					"variableName": "filenumber",
+					"value": "1"
 				}
 			}
 		],
-		"parameters": {
-			"last_id": {
-				"type": "string",
-				"defaultValue": "0"
-			}
-		},
 		"variables": {
-			"last_id": {
+			"filenumber": {
 				"type": "String"
 			}
 		},

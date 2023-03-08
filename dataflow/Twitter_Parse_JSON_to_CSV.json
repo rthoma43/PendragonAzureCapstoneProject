@@ -72,7 +72,7 @@
 				"          quote_count as string,",
 				"          impression_count as string",
 				"     ),",
-				"     partitionFileNames:[(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.csv'))],",
+				"     partitionFileNames:[''],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
@@ -88,8 +88,7 @@
 				"          like_count,",
 				"          quote_count,",
 				"          impression_count",
-				"     ),",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     )) ~> sink1"
 			]
 		}
 	}
