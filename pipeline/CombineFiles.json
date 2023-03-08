@@ -51,7 +51,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "Twitter_Test_RT_DelimitedText1",
+						"referenceName": "DelimitedText2",
 						"type": "DatasetReference"
 					}
 				],
