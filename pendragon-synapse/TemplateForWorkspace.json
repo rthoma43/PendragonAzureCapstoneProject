@@ -194,7 +194,7 @@
 							},
 							"enableStaging": false,
 							"translator": {
-								"value": "@activity('Get Metadata1').output",
+								"value": "@activity('Get Metadata1').output.lastModified",
 								"type": "Expression"
 							}
 						},
