@@ -133,7 +133,7 @@
 						}
 					},
 					"dataset": {
-						"referenceName": "Twitter_DelimitedText_Wildcard",
+						"referenceName": "Twitter_Test_RT_DelimitedText1",
 						"type": "DatasetReference"
 					}
 				}
@@ -179,7 +179,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "Twitter_DelimitedText_Wildcard",
+						"referenceName": "Twitter_Test_RT_DelimitedText1",
 						"type": "DatasetReference"
 					},
 					"fieldList": [
