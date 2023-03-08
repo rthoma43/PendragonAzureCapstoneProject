@@ -48,7 +48,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> flatten1",
-				"flatten1 derive(id = data.id,",
+				"flatten1 derive(id = toInteger(data.id),",
 				"          created_at = data.created_at,",
 				"          text = data.text,",
 				"          lang = data.lang,",

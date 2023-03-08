@@ -40,7 +40,7 @@
 						"referenceName": "RestResource_Twitter",
 						"type": "DatasetReference",
 						"parameters": {
-							"Query": "NATO",
+							"Query": "NATO -is:retweet",
 							"max_results": "10",
 							"tweet_fields": "id,text,created_at,lang,public_metrics",
 							"start_year": "2023",
@@ -55,11 +55,7 @@
 							"end_hour": "00",
 							"end_minute": "00",
 							"end_second": "01",
-							"sort_order": "recency",
-							"since_id": {
-								"value": "@pipeline().parameters.last_id",
-								"type": "Expression"
-							}
+							"sort_order": "recency"
 						}
 					}
 				],
@@ -128,7 +124,10 @@
 							"recursive": true,
 							"modifiedDatetimeStart": "2023-03-07T00:00:00.000Z",
 							"wildcardFolderPath": "Tweets/Individual_files/NATO_Mentions",
-							"wildcardFileName": "*",
+							"wildcardFileName": {
+								"value": "@activity('Convert JSON to CSV').output",
+								"type": "Expression"
+							},
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
