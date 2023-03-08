@@ -179,7 +179,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "Twitter_Test_RT_DelimitedText1",
+						"referenceName": "Twitter_DelimitedText_Wildcard",
 						"type": "DatasetReference"
 					},
 					"fieldList": [
