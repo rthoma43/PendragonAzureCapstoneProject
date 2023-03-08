@@ -102,16 +102,6 @@
 									"type": "Expression"
 								}
 							}
-						},
-						"linkedServiceParameters": {
-							"sink1": {
-								"schemaLinkedService": {
-									"filenumber": {
-										"value": "@variables('filenumber')",
-										"type": "Expression"
-									}
-								}
-							}
 						}
 					},
 					"compute": {
