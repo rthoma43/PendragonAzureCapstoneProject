@@ -235,7 +235,7 @@
 						"type": "Lookup",
 						"dependsOn": [
 							{
-								"activity": "Convert JSON to CSV",
+								"activity": "Get Metadata1",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -255,10 +255,8 @@
 								"storeSettings": {
 									"type": "AzureBlobFSReadSettings",
 									"recursive": true,
-									"modifiedDatetimeStart": "2023-03-07T00:00:00.000Z",
-									"wildcardFolderPath": "Tweets/Individual_files/NATO_Mentions",
-									"wildcardFileName": {
-										"value": "@activity('Convert JSON to CSV').output",
+									"modifiedDatetimeStart": {
+										"value": "@activity('Get Metadata1').output",
 										"type": "Expression"
 									},
 									"enablePartitionDiscovery": false
@@ -293,6 +291,107 @@
 								"type": "Expression"
 							}
 						}
+					},
+					{
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
+						"dependsOn": [
+							{
+								"activity": "Convert JSON to CSV",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Twitter_Test_RT_DelimitedText1",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"lastModified"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Last ID Variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"value": "@activity('Look Up last ID').output",
+								"type": "Expression"
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SetVariable",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SetVariable",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"policy": {
@@ -316,7 +415,8 @@
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter')]",
 				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
 				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]",
-				"[concat(variables('workspaceId'), '/datasets/Twitter_Test_RT_DelimitedText1')]"
+				"[concat(variables('workspaceId'), '/datasets/Twitter_Test_RT_DelimitedText1')]",
+				"[concat(variables('workspaceId'), '/datasets/SetVariable')]"
 			]
 		},
 		{
@@ -1097,6 +1197,34 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SetVariable')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "setvariable.txt",
+						"folderPath": "Tweets",
+						"fileSystem": "pendragon"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/TwitterJson1')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -1200,6 +1328,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "*",
 						"folderPath": "Tweets/Individual_files/NATO_Mentions",
 						"fileSystem": "pendragon"
 					},
