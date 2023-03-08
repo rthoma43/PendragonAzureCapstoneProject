@@ -102,7 +102,7 @@
 				"type": "Lookup",
 				"dependsOn": [
 					{
-						"activity": "Convert JSON to CSV",
+						"activity": "Get Metadata1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -122,10 +122,8 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
-							"modifiedDatetimeStart": "2023-03-07T00:00:00.000Z",
-							"wildcardFolderPath": "Tweets/Individual_files/NATO_Mentions",
-							"wildcardFileName": {
-								"value": "@activity('Convert JSON to CSV').output",
+							"modifiedDatetimeStart": {
+								"value": "@activity('Get Metadata1').output",
 								"type": "Expression"
 							},
 							"enablePartitionDiscovery": false
@@ -157,6 +155,42 @@
 					"value": {
 						"value": "@activity('Look Up last ID').output.firstRow.id",
 						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Get Metadata1",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Convert JSON to CSV",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Twitter_Test_RT_DelimitedText1",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"lastModified"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
 					}
 				}
 			}
