@@ -346,7 +346,7 @@
 									"max_results": "10",
 									"tweet_fields": "id,text,created_at,lang,public_metrics",
 									"until_id": {
-										"value": "@activity('Data flow1').output.sink1.value.id\n",
+										"value": "@activity('Data flow1').output.runStatus.output.sink1.value[0].id\n",
 										"type": "Expression"
 									},
 									"sort_order": "recency"
@@ -384,7 +384,6 @@
 				"[concat(variables('workspaceId'), '/datasets/Individual_NATO_Folder')]",
 				"[concat(variables('workspaceId'), '/datasets/inputFolder_file_Dyn')]",
 				"[concat(variables('workspaceId'), '/datasets/Lookup_Output')]",
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
 				"[concat(variables('workspaceId'), '/dataflows/Find Last ID')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter2')]"
 			]
@@ -794,6 +793,47 @@
 				"typeProperties": {
 					"relativeUrl": {
 						"value": "@concat('/2/tweets/search/recent?query=',dataset().Query,'&start_time=',dataset().start_year,'-',dataset().start_month,'-',dataset().start_day,'T',dataset().start_hour,':',dataset().start_minute,':',dataset().start_second,'.000Z','&end_time=',dataset().end_year,'-',dataset().end_month,'-',dataset().end_day,'T',dataset().end_hour,':',dataset().end_minute,':',dataset().end_second,'.000Z','&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results,'&sort_order=',dataset().sort_order)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/Twitter_RestService_AS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/RestResource_Twitter2')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Twitter_RestService_AS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Query": {
+						"type": "string"
+					},
+					"max_results": {
+						"type": "string"
+					},
+					"tweet_fields": {
+						"type": "string"
+					},
+					"until_id": {
+						"type": "string"
+					},
+					"sort_order": {
+						"type": "string",
+						"defaultValue": "recency"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat('/2/tweets/search/recent?query=',dataset().Query,'&tweet.fields=',dataset().tweet_fields,'&until_id=',dataset().until_id,'&max_results=',dataset().max_results,'&sort_order=',dataset().sort_order)",
 						"type": "Expression"
 					}
 				},
@@ -1214,6 +1254,62 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Find Last ID')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Find_minid_input",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "aggregate1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          id as string,",
+						"          created_at as string,",
+						"          text as string,",
+						"          lang as string,",
+						"          retweet_count as string,",
+						"          reply_count as string,",
+						"          like_count as string,",
+						"          quote_count as string,",
+						"          impression_count as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 aggregate(id = min(id)) ~> aggregate1",
+						"aggregate1 sink(validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     store: 'cache',",
+						"     format: 'inline',",
+						"     output: true,",
+						"     saveOrder: 1) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Find_minid_input')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Twitter_Parse_JSON_to_CSV')]",
 			"type": "Microsoft.Synapse/workspaces/dataflows",
 			"apiVersion": "2019-06-01-preview",
@@ -1360,103 +1456,6 @@
 			},
 			"dependsOn": [],
 			"location": "eastus2"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/Find Last ID')]",
-			"type": "Microsoft.Synapse/workspaces/dataflows",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "Find_minid_input",
-								"type": "DatasetReference"
-							},
-							"name": "source1"
-						}
-					],
-					"sinks": [
-						{
-							"name": "sink1"
-						}
-					],
-					"transformations": [
-						{
-							"name": "aggregate1"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          id as string,",
-						"          created_at as string,",
-						"          text as string,",
-						"          lang as string,",
-						"          retweet_count as string,",
-						"          reply_count as string,",
-						"          like_count as string,",
-						"          quote_count as string,",
-						"          impression_count as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> source1",
-						"source1 aggregate(id = min(id)) ~> aggregate1",
-						"aggregate1 sink(validateSchema: false,",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     store: 'cache',",
-						"     format: 'inline',",
-						"     output: true,",
-						"     saveOrder: 1) ~> sink1"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/Find_minid_input')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/RestResource_Twitter2')]",
-			"type": "Microsoft.Synapse/workspaces/datasets",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Twitter_RestService_AS",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Query": {
-						"type": "string"
-					},
-					"max_results": {
-						"type": "string"
-					},
-					"tweet_fields": {
-						"type": "string"
-					},
-					"until_id": {
-						"type": "string"
-					},
-					"sort_order": {
-						"type": "string",
-						"defaultValue": "recency"
-					}
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {
-					"relativeUrl": {
-						"value": "@concat('/2/tweets/search/recent?query=',dataset().Query,'&tweet.fields=',dataset().tweet_fields,'&until_id=',dataset().until_id,'&max_results=',dataset().max_results,'&sort_order=',dataset().sort_order)",
-						"type": "Expression"
-					}
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/Twitter_RestService_AS')]"
-			]
 		}
 	]
 }
