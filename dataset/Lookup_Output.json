@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "mostrecentfile",
 				"folderPath": "Tweets/Individual_files/Lookup_Output",
 				"fileSystem": "pendragon"
 			},
