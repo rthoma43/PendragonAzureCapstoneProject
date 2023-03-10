@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "merged_NATO",
 				"folderPath": "Tweets/Combined_files/NATO_mentions",
 				"fileSystem": "pendragon"
 			},
