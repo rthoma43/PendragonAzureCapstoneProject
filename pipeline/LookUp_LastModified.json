@@ -215,6 +215,105 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Find Last ID",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "None",
+					"cacheSinks": {
+						"firstRowOnly": true
+					}
+				}
+			},
+			{
+				"name": "Twitter NATO mentions",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Data flow1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "RestResource_Twitter2",
+						"type": "DatasetReference",
+						"parameters": {
+							"Query": "NATO -is:retweet",
+							"max_results": "10",
+							"tweet_fields": "id,text,created_at,lang,public_metrics",
+							"until_id": {
+								"value": "@activity('Data flow1').output.cacheName.id\n",
+								"type": "Expression"
+							},
+							"sort_order": "recency"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Individual_NATO_Folder",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"variables": {
@@ -224,6 +323,9 @@
 			"PreviousModifiedDate": {
 				"type": "String",
 				"defaultValue": "1990-01-01T05:12:22Z"
+			},
+			"last_id": {
+				"type": "String"
 			}
 		},
 		"annotations": []
