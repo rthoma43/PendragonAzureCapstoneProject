@@ -355,6 +355,9 @@
 			},
 			"last_id": {
 				"type": "String"
+			},
+			"Counter": {
+				"type": "String"
 			}
 		},
 		"annotations": []
