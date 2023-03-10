@@ -472,6 +472,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "Twitter20230310045826-00001.csv",
 						"folderPath": "Tweets/Individual_files/Lookup_Output",
 						"fileSystem": "pendragon"
 					},
@@ -482,39 +483,39 @@
 				},
 				"schema": [
 					{
-						"name": "Prop_0",
+						"name": "id",
 						"type": "String"
 					},
 					{
-						"name": "Prop_1",
+						"name": "created_at",
 						"type": "String"
 					},
 					{
-						"name": "Prop_2",
+						"name": "text",
 						"type": "String"
 					},
 					{
-						"name": "Prop_3",
+						"name": "lang",
 						"type": "String"
 					},
 					{
-						"name": "Prop_4",
+						"name": "retweet_count",
 						"type": "String"
 					},
 					{
-						"name": "Prop_5",
+						"name": "reply_count",
 						"type": "String"
 					},
 					{
-						"name": "Prop_6",
+						"name": "like_count",
 						"type": "String"
 					},
 					{
-						"name": "Prop_7",
+						"name": "quote_count",
 						"type": "String"
 					},
 					{
-						"name": "Prop_8",
+						"name": "impression_count",
 						"type": "String"
 					}
 				]
@@ -588,6 +589,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "mostrecentfile",
 						"folderPath": "Tweets/Individual_files/Lookup_Output",
 						"fileSystem": "pendragon"
 					},
