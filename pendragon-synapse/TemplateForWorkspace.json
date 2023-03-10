@@ -1164,7 +1164,7 @@
 						"          like_count = data.public_metrics.like_count,",
 						"          quote_count = data.public_metrics.quote_count,",
 						"          impression_count = data.public_metrics.impression_count) ~> derivedColumn1",
-						"derivedColumn1 sort(desc(id, true),",
+						"derivedColumn1 sort(asc(id, true),",
 						"     partitionLevel: true) ~> sort1",
 						"sort1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
