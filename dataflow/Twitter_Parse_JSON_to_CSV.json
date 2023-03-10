@@ -48,7 +48,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> flatten1",
-				"flatten1 derive(id = try(toInteger(trim(data.id)), -1),",
+				"flatten1 derive(id = data.id,",
 				"          created_at = data.created_at,",
 				"          text = replace(replace(data.text, '\\n\\n', ' '), '\\n', ' '),",
 				"          lang = data.lang,",
