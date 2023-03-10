@@ -74,7 +74,7 @@
 						"referenceName": "Twitter_Test_RT_DelimitedText1",
 						"type": "DatasetReference"
 					},
-					"enableLogging": true,
+					"enableLogging": false,
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
 						"recursive": true,
@@ -106,7 +106,7 @@
 						"referenceName": "Lookup_Output",
 						"type": "DatasetReference"
 					},
-					"enableLogging": true,
+					"enableLogging": false,
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
 						"recursive": true,
