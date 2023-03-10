@@ -14,7 +14,7 @@
 				"folderPath": "Tweets/Individual_files/Lookup_Output",
 				"fileSystem": "pendragon"
 			},
-			"columnDelimiter": ",",
+			"columnDelimiter": "|",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
