@@ -1,5 +1,5 @@
 {
-	"name": "LookUp_LastModified",
+	"name": "Extract Last ID and Twitter until_id GET",
 	"properties": {
 		"activities": [
 			{
