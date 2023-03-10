@@ -13,8 +13,9 @@
 				"folderPath": "Tweets/Individual_files/NATO_Mentions",
 				"fileSystem": "pendragon"
 			},
-			"columnDelimiter": ",",
-			"escapeChar": "\\",
+			"columnDelimiter": "|",
+			"rowDelimiter": "\rd",
+			"escapeChar": "",
 			"firstRowAsHeader": true,
 			"nullValue": "NA",
 			"quoteChar": "\""
