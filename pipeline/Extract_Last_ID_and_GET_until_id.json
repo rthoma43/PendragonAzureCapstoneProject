@@ -1,5 +1,5 @@
 {
-	"name": "Extract Last ID and Twitter until_id GET",
+	"name": "Extract_Last_ID_and_GET_until_id",
 	"properties": {
 		"activities": [
 			{

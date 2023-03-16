@@ -48,7 +48,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "Extract Last ID and Twitter until_id GET",
+									"referenceName": "Extract_Last_ID_and_GET_until_id",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
