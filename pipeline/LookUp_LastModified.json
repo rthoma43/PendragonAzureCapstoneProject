@@ -1,5 +1,5 @@
 {
-	"name": "Extract_Last_ID_and_GET_until_id",
+	"name": "LookUp_LastModified",
 	"properties": {
 		"activities": [
 			{

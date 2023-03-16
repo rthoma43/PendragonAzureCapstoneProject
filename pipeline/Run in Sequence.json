@@ -48,7 +48,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "Extract_Last_ID_and_GET_until_id",
+									"referenceName": "LookUp_LastModified",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
