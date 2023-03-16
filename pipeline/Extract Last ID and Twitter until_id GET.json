@@ -295,7 +295,7 @@
 						"referenceName": "RestResource_Twitter2",
 						"type": "DatasetReference",
 						"parameters": {
-							"Query": "NATO -is:retweet",
+							"Query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en (-is:retweet)",
 							"max_results": "10",
 							"tweet_fields": "id,text,created_at,lang,public_metrics",
 							"until_id": {
