@@ -45,13 +45,13 @@
 							"tweet_fields": "id,text,created_at,lang,public_metrics",
 							"start_year": "2023",
 							"start_month": "03",
-							"start_day": "10",
+							"start_day": "16",
 							"start_hour": "00",
 							"start_minute": "00",
 							"start_second": "07",
 							"end_year": "2023",
 							"end_month": "03",
-							"end_day": "10",
+							"end_day": "15",
 							"end_hour": "00",
 							"end_minute": "01",
 							"end_second": "07",
@@ -90,9 +90,9 @@
 						"referenceName": "Twitter_Parse_JSON_to_CSV",
 						"type": "DataFlowReference"
 					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
+					"integrationRuntime": {
+						"referenceName": "WarmIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
 					},
 					"traceLevel": "Fine"
 				}
