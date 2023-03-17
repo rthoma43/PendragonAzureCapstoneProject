@@ -244,10 +244,7 @@
 						"referenceName": "WarmIntegrationRuntime",
 						"type": "IntegrationRuntimeReference"
 					},
-					"traceLevel": "None",
-					"cacheSinks": {
-						"firstRowOnly": true
-					}
+					"traceLevel": "Fine"
 				}
 			},
 			{
