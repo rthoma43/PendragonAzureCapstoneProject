@@ -285,9 +285,9 @@
 								}
 							},
 							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
+							"integrationRuntime": {
+								"referenceName": "WarmIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
 							},
 							"traceLevel": "None",
 							"cacheSinks": {
@@ -340,8 +340,8 @@
 								"referenceName": "RestResource_Twitter2",
 								"type": "DatasetReference",
 								"parameters": {
-									"Query": "NATO -is:retweet",
-									"max_results": "10",
+									"Query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en (-is:retweet)",
+									"max_results": "100",
 									"tweet_fields": "id,text,created_at,lang,public_metrics",
 									"until_id": {
 										"value": "@activity('Data flow1').output.runStatus.output.sink1.value[0].id\n",
@@ -389,9 +389,9 @@
 								}
 							},
 							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
+							"integrationRuntime": {
+								"referenceName": "WarmIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
 							},
 							"traceLevel": "Fine"
 						}
@@ -423,6 +423,7 @@
 				"[concat(variables('workspaceId'), '/datasets/inputFolder_file_Dyn')]",
 				"[concat(variables('workspaceId'), '/datasets/Lookup_Output')]",
 				"[concat(variables('workspaceId'), '/dataflows/Find Last ID')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/WarmIntegrationRuntime')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter2')]",
 				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
 				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]"
@@ -469,7 +470,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@range(0,5)",
+								"value": "@range(0,1)",
 								"type": "Expression"
 							},
 							"isSequential": true,
@@ -678,19 +679,19 @@
 								"referenceName": "RestResource_Twitter",
 								"type": "DatasetReference",
 								"parameters": {
-									"Query": "NATO -is:retweet",
-									"max_results": "10",
+									"Query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en (-is:retweet)",
+									"max_results": "100",
 									"tweet_fields": "id,text,created_at,lang,public_metrics",
 									"start_year": "2023",
 									"start_month": "03",
-									"start_day": "05",
-									"start_hour": "00",
+									"start_day": "11",
+									"start_hour": "20",
 									"start_minute": "00",
 									"start_second": "01",
 									"end_year": "2023",
 									"end_month": "03",
-									"end_day": "07",
-									"end_hour": "00",
+									"end_day": "17",
+									"end_hour": "20",
 									"end_minute": "00",
 									"end_second": "01",
 									"sort_order": "recency"
@@ -735,9 +736,9 @@
 								}
 							},
 							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
+							"integrationRuntime": {
+								"referenceName": "WarmIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
 							},
 							"traceLevel": "Fine"
 						}
@@ -757,7 +758,8 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter')]",
 				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
-				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]"
+				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/WarmIntegrationRuntime')]"
 			]
 		},
 		{
@@ -974,7 +976,10 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "merged_NATO",
+						"fileName": {
+							"value": "@concat('merged_NATO',utcNow())",
+							"type": "Expression"
+						},
 						"folderPath": "Tweets/Combined_files/NATO_mentions",
 						"fileSystem": "pendragon"
 					},
@@ -1560,6 +1565,26 @@
 							"computeType": "General",
 							"coreCount": 8,
 							"timeToLive": 0
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/WarmIntegrationRuntime')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 10,
+							"cleanup": false
 						}
 					}
 				}
