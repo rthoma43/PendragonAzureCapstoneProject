@@ -296,7 +296,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"Query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en (-is:retweet)",
-							"max_results": "10",
+							"max_results": "100",
 							"tweet_fields": "id,text,created_at,lang,public_metrics",
 							"until_id": {
 								"value": "@activity('Data flow1').output.runStatus.output.sink1.value[0].id\n",
