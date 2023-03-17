@@ -240,9 +240,9 @@
 						"referenceName": "Find Last ID",
 						"type": "DataFlowReference"
 					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
+					"integrationRuntime": {
+						"referenceName": "WarmIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
 					},
 					"traceLevel": "None",
 					"cacheSinks": {
@@ -337,9 +337,9 @@
 						"referenceName": "Twitter_Parse_JSON_to_CSV",
 						"type": "DataFlowReference"
 					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
+					"integrationRuntime": {
+						"referenceName": "WarmIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
 					},
 					"traceLevel": "Fine"
 				}
