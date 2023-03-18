@@ -40,8 +40,8 @@
 						"referenceName": "RestResource_Twitter",
 						"type": "DatasetReference",
 						"parameters": {
-							"Query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en (-is:retweet)",
-							"max_results": "100",
+							"Query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en -is:retweet -is:reply",
+							"max_results": "10",
 							"tweet_fields": "id,text,created_at,lang,public_metrics",
 							"start_year": "2023",
 							"start_month": "03",
