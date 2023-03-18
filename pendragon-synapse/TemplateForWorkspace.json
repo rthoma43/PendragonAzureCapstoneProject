@@ -470,7 +470,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@range(0,899)",
+								"value": "@range(0,1)",
 								"type": "Expression"
 							},
 							"isSequential": true,
