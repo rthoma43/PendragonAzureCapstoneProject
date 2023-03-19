@@ -32,7 +32,18 @@
 						"type": "SqlPoolSink",
 						"allowCopyCommand": true
 					},
-					"enableStaging": false
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "AzureDataLakeStorage1",
+							"type": "LinkedServiceReference"
+						},
+						"path": "pendragon"
+					},
+					"translator": {
+						"type": "TabularTranslator",
+						"mapComplexValuesToString": false
+					}
 				},
 				"inputs": [
 					{
