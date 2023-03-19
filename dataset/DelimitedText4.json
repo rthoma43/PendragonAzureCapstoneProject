@@ -1,0 +1,61 @@
+{
+	"name": "DelimitedText4",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "TweetsCombined.csv",
+				"folderPath": "Tweets",
+				"fileSystem": "pendragon"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "id",
+				"type": "String"
+			},
+			{
+				"name": "created_at",
+				"type": "String"
+			},
+			{
+				"name": "text",
+				"type": "String"
+			},
+			{
+				"name": "lang",
+				"type": "String"
+			},
+			{
+				"name": "retweet_count",
+				"type": "String"
+			},
+			{
+				"name": "reply_count",
+				"type": "String"
+			},
+			{
+				"name": "like_count",
+				"type": "String"
+			},
+			{
+				"name": "quote_count",
+				"type": "String"
+			},
+			{
+				"name": "impression_count",
+				"type": "String"
+			}
+		]
+	}
+}
