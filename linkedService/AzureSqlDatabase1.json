@@ -1,0 +1,15 @@
+{
+	"name": "AzureSqlDatabase1",
+	"properties": {
+		"description": "linked pipelines connections",
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=pendragonserver.database.windows.net;Initial Catalog=TestDB"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
