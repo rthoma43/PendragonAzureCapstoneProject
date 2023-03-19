@@ -1,0 +1,17 @@
+{
+	"name": "tableCreate",
+	"properties": {
+		"content": {
+			"query": "CREATE TABLE [dbo].[tweets]\n(\n    id int NOT NULL,\n    text VARCHAR,\n    lang VARCHAR,\n    retweet_count int,\n    reply_count int,\n    like_count int,\n    quote_count int,\n    impression_count int\n\n)\nWITH\n(\n    DISTRIBUTION = HASH (id),\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "SQLPoolTest",
+				"poolName": "SQLPoolTest"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
