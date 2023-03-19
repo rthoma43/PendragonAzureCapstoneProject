@@ -1,0 +1,61 @@
+{
+	"name": "Twitter_Test1_db",
+	"properties": {
+		"description": "Database load",
+		"activities": [
+			{
+				"name": "Twitter NATO mentions top 10",
+				"description": "2023-02-19T00:00:07.000Z to 2023-02-20T00:00:07.000Z\nmax_results=10",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlPoolSink",
+						"allowCopyCommand": true
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Twitter_test_rt_Json",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SqlPoolTable1",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"variables": {
+			"Query": {
+				"type": "String"
+			},
+			"max_results": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}

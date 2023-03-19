@@ -1,0 +1,55 @@
+{
+	"name": "SqlPoolTable1",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "text",
+				"type": "varchar"
+			},
+			{
+				"name": "lang",
+				"type": "varchar"
+			},
+			{
+				"name": "retweet_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "reply_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "like_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "quote_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "impression_count",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "tweets"
+		},
+		"sqlPool": {
+			"referenceName": "SQLPoolTest",
+			"type": "SqlPoolReference"
+		}
+	}
+}
