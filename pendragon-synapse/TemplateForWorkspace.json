@@ -58,7 +58,14 @@
 					{
 						"name": "Initial GET Past 7 Days",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Delete Previous Output Files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -93,9 +100,18 @@
 								"referenceName": "RestResourceTwitter7days",
 								"type": "DatasetReference",
 								"parameters": {
-									"query": "\"NATO\" -is:retweet -is:reply",
-									"tweet_fields": "id,text,created_at,lang,public_metrics",
-									"max_results": "10"
+									"query": {
+										"value": "@variables('Query')",
+										"type": "Expression"
+									},
+									"tweet_fields": {
+										"value": "@variables('Tweet Fields')",
+										"type": "Expression"
+									},
+									"max_results": {
+										"value": "@variables('max_results')",
+										"type": "Expression"
+									}
 								}
 							}
 						],
@@ -108,11 +124,17 @@
 						]
 					},
 					{
-						"name": "ForEach1",
+						"name": "GET using Next Token",
 						"type": "ForEach",
 						"dependsOn": [
 							{
 								"activity": "Initial GET Past 7 Days",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Number of Loops",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -121,7 +143,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@range(0,5)",
+								"value": "@range(0,int(variables('loops')))",
 								"type": "Expression"
 							},
 							"isSequential": true,
@@ -206,9 +228,18 @@
 											"referenceName": "RestResource_Next_Token",
 											"type": "DatasetReference",
 											"parameters": {
-												"query": "NATO",
-												"tweet_fields": "id,created_at,text,lang,public_metrics",
-												"max_results": "10",
+												"query": {
+													"value": "@variables('Query')",
+													"type": "Expression"
+												},
+												"tweet_fields": {
+													"value": "@variables('Tweet Fields')",
+													"type": "Expression"
+												},
+												"max_results": {
+													"value": "@variables('max_results')",
+													"type": "Expression"
+												},
 												"next_token": {
 													"value": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token",
 													"type": "Expression"
@@ -226,19 +257,287 @@
 								}
 							]
 						}
+					},
+					{
+						"name": "Query",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Query",
+							"value": "\"NATO\" lang:en -is:retweet -is:reply"
+						}
+					},
+					{
+						"name": "Max Results",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "max_results",
+							"value": "100"
+						}
+					},
+					{
+						"name": "Tweet Fields",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Tweet Fields",
+							"value": "id,text,created_at,lang,public_metrics"
+						}
+					},
+					{
+						"name": "Delete Previous Output Files",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Query",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Max Results",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Tweet Fields",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Raw_Twitter_Outputs",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "Number of Loops",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "loops",
+							"value": "2"
+						}
+					},
+					{
+						"name": "Delete NATO Temp file",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "GET using Next Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Twitter_RawJSON_Temp",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "Merge JSONs",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Delete NATO Temp file",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*.json",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Raw_Twitter_Outputs",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Merged_Json",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Convert Merged JSON to CSV",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Merge JSONs",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Merge JSON to CSV",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								},
+								"linkedServiceParameters": {}
+							},
+							"staging": {},
+							"integrationRuntime": {
+								"referenceName": "WarmIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Delete Previous Merged Output files",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Query",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Merged_JSON_folder",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"variables": {
+					"Query": {
+						"type": "String"
+					},
+					"max_results": {
+						"type": "String"
+					},
+					"Tweet Fields": {
+						"type": "String"
+					},
+					"Number of Tweets to Pull": {
+						"type": "String"
+					},
+					"loops": {
+						"type": "String"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/RestResourceTwitter7days')]",
 				"[concat(variables('workspaceId'), '/datasets/Twitter_RawJSON_Temp')]",
-				"[concat(variables('workspaceId'), '/dataflows/Get Next Token')]",
+				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs')]",
+				"[concat(variables('workspaceId'), '/datasets/Merged_Json')]",
+				"[concat(variables('workspaceId'), '/dataflows/Merge JSON to CSV')]",
 				"[concat(variables('workspaceId'), '/integrationRuntimes/WarmIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/datasets/Merged_JSON_folder')]",
+				"[concat(variables('workspaceId'), '/dataflows/Get Next Token')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]"
 			]
 		},
@@ -837,6 +1136,11 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"variables": {
+					"loops": {
+						"type": "String"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -1114,6 +1418,23 @@
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"variables": {
+					"Query": {
+						"type": "String"
+					},
+					"max_results": {
+						"type": "String"
+					},
+					"Tweet Fields": {
+						"type": "String"
+					},
+					"Number of Tweets to Pull": {
+						"type": "String"
+					},
+					"loops": {
+						"type": "String"
+					}
 				},
 				"annotations": []
 			},
@@ -2491,6 +2812,7 @@
 						"     )) ~> sink1",
 						"source2 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
+						"     filePattern:(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.json')),",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
@@ -2740,6 +3062,311 @@
 			},
 			"dependsOn": [],
 			"location": "eastus2"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Merged_Json')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@concat('Twitter','_NATO_',utcnow(),'.json')",
+							"type": "Expression"
+						},
+						"folderPath": "Raw_Twitter_JSONs/Merged_Output",
+						"fileSystem": "pendragon"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Merge JSON to CSV')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Merged_JSON_folder",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "MergedJSON_to_CSV",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "flatten1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "sort1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
+						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> source1",
+						"source1 foldDown(unroll(data, data),",
+						"     mapColumn(",
+						"          data,",
+						"          meta",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten1",
+						"flatten1 derive(id = data.id,",
+						"          created_at = data.created_at,",
+						"          text = replace(replace(data.text, '\\n\\n', ' '), '\\n', ' '),",
+						"          lang = data.lang,",
+						"          retweet_count = data.public_metrics.retweet_count,",
+						"          reply_count = data.public_metrics.reply_count,",
+						"          like_count = data.public_metrics.like_count,",
+						"          quote_count = data.public_metrics.quote_count,",
+						"          impression_count = data.public_metrics.impression_count) ~> derivedColumn1",
+						"derivedColumn1 sort(desc(id, false)) ~> sort1",
+						"sort1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id as string,",
+						"          created_at as string,",
+						"          text as string,",
+						"          lang as string,",
+						"          retweet_count as string,",
+						"          reply_count as string,",
+						"          like_count as string,",
+						"          quote_count as string,",
+						"          impression_count as string",
+						"     ),",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          id,",
+						"          created_at,",
+						"          text,",
+						"          lang,",
+						"          retweet_count,",
+						"          reply_count,",
+						"          like_count,",
+						"          quote_count,",
+						"          impression_count",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Merged_JSON_folder')]",
+				"[concat(variables('workspaceId'), '/datasets/MergedJSON_to_CSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Merged_JSON_folder')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Raw_Twitter_JSONs/Merged_Output",
+						"fileSystem": "pendragon"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"data": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"lang": {
+										"type": "string"
+									},
+									"text": {
+										"type": "string"
+									},
+									"id": {
+										"type": "string"
+									},
+									"public_metrics": {
+										"type": "object",
+										"properties": {
+											"retweet_count": {
+												"type": "integer"
+											},
+											"reply_count": {
+												"type": "integer"
+											},
+											"like_count": {
+												"type": "integer"
+											},
+											"quote_count": {
+												"type": "integer"
+											},
+											"impression_count": {
+												"type": "integer"
+											}
+										}
+									},
+									"created_at": {
+										"type": "string"
+									},
+									"edit_history_tweet_ids": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									}
+								}
+							}
+						},
+						"meta": {
+							"type": "object",
+							"properties": {
+								"newest_id": {
+									"type": "string"
+								},
+								"oldest_id": {
+									"type": "string"
+								},
+								"result_count": {
+									"type": "integer"
+								},
+								"next_token": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AzureSqlTable1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "Twitter",
+					"table": "NATO_tweets_test"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureSqlDatabase1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/MergedJSON_to_CSV')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "NATO_merged.csv",
+						"folderPath": "Raw_Twitter_JSONs/Merged_Output",
+						"fileSystem": "pendragon"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "id",
+						"type": "String"
+					},
+					{
+						"name": "created_at",
+						"type": "String"
+					},
+					{
+						"name": "text",
+						"type": "String"
+					},
+					{
+						"name": "lang",
+						"type": "String"
+					},
+					{
+						"name": "retweet_count",
+						"type": "String"
+					},
+					{
+						"name": "reply_count",
+						"type": "String"
+					},
+					{
+						"name": "like_count",
+						"type": "String"
+					},
+					{
+						"name": "quote_count",
+						"type": "String"
+					},
+					{
+						"name": "impression_count",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
 		}
 	]
 }
