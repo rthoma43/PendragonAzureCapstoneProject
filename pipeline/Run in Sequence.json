@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "Twitter_Initial_GET",
+						"referenceName": "Twitter_GET",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
