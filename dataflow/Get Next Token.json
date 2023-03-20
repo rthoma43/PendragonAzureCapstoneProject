@@ -67,6 +67,7 @@
 				"     )) ~> sink1",
 				"source2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     filePattern:(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.json')),",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",

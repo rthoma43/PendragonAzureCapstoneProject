@@ -5,7 +5,14 @@
 			{
 				"name": "Initial GET Past 7 Days",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Delete Previous Output Files",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -40,9 +47,18 @@
 						"referenceName": "RestResourceTwitter7days",
 						"type": "DatasetReference",
 						"parameters": {
-							"query": "\"NATO\" lang:en -is:retweet -is:reply",
-							"tweet_fields": "id,text,created_at,lang,public_metrics",
-							"max_results": "10"
+							"query": {
+								"value": "@variables('Query')",
+								"type": "Expression"
+							},
+							"tweet_fields": {
+								"value": "@variables('Tweet Fields')",
+								"type": "Expression"
+							},
+							"max_results": {
+								"value": "@variables('max_results')",
+								"type": "Expression"
+							}
 						}
 					}
 				],
@@ -54,11 +70,17 @@
 				]
 			},
 			{
-				"name": "ForEach1",
+				"name": "GET using Next Token",
 				"type": "ForEach",
 				"dependsOn": [
 					{
 						"activity": "Initial GET Past 7 Days",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Number of Loops",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -67,7 +89,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@range(0,5)",
+						"value": "@range(0,int(variables('loops')))",
 						"type": "Expression"
 					},
 					"isSequential": true,
@@ -144,9 +166,18 @@
 									"referenceName": "RestResource_Next_Token",
 									"type": "DatasetReference",
 									"parameters": {
-										"query": "NATO",
-										"tweet_fields": "id,created_at,text,lang,public_metrics",
-										"max_results": "10",
+										"query": {
+											"value": "@variables('Query')",
+											"type": "Expression"
+										},
+										"tweet_fields": {
+											"value": "@variables('Tweet Fields')",
+											"type": "Expression"
+										},
+										"max_results": {
+											"value": "@variables('max_results')",
+											"type": "Expression"
+										},
 										"next_token": {
 											"value": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token",
 											"type": "Expression"
@@ -163,8 +194,196 @@
 						}
 					]
 				}
+			},
+			{
+				"name": "Query",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Query",
+					"value": "\"NATO\" lang:en -is:retweet -is:reply"
+				}
+			},
+			{
+				"name": "Max Results",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "max_results",
+					"value": "100"
+				}
+			},
+			{
+				"name": "Tweet Fields",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Tweet Fields",
+					"value": "id,text,created_at,lang,public_metrics"
+				}
+			},
+			{
+				"name": "Delete Previous Output Files",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Query",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Max Results",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Tweet Fields",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Raw_Twitter_Outputs",
+						"type": "DatasetReference"
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Number of Loops",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "loops",
+					"value": "3"
+				}
+			},
+			{
+				"name": "Delete NATO Temp file",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Merge JSONs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Twitter_RawJSON_Temp",
+						"type": "DatasetReference"
+					},
+					"enableLogging": true,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Merge JSONs",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "GET using Next Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Raw_Twitter_Outputs",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Merged_Json",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
+		"variables": {
+			"Query": {
+				"type": "String"
+			},
+			"max_results": {
+				"type": "String"
+			},
+			"Tweet Fields": {
+				"type": "String"
+			},
+			"Number of Tweets to Pull": {
+				"type": "String"
+			},
+			"loops": {
+				"type": "String"
+			}
+		},
 		"annotations": []
 	}
 }
