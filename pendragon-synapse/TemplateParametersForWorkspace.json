@@ -8,11 +8,23 @@
 		"AzureDataLakeStorage1_accountKey": {
 			"value": ""
 		},
+		"AzureSqlDatabase1_connectionString": {
+			"value": ""
+		},
 		"pendragon-synapse-WorkspaceDefaultSqlServer_connectionString": {
 			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:pendragon-synapse.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
 		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"value": "https://pendragon.dfs.core.windows.net/"
+		},
+		"RestService_Next_Token_properties_typeProperties_url": {
+			"value": "https://api.twitter.com"
+		},
+		"RestService_Twitter_7days_properties_typeProperties_url": {
+			"value": "https://api.twitter.com"
+		},
+		"Twitter_RestService_ Aithusa_properties_typeProperties_url": {
+			"value": "https://api.twitter.com"
 		},
 		"Twitter_RestService_AS_properties_typeProperties_url": {
 			"value": "https://api.twitter.com"

@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
 		},
+		"AzureSqlDatabase1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
+		},
 		"pendragon-synapse-WorkspaceDefaultSqlServer_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'pendragon-synapse-WorkspaceDefaultSqlServer'",
@@ -19,6 +23,18 @@
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://pendragon.dfs.core.windows.net/"
+		},
+		"RestService_Next_Token_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.twitter.com"
+		},
+		"RestService_Twitter_7days_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.twitter.com"
+		},
+		"Twitter_RestService_ Aithusa_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.twitter.com"
 		},
 		"Twitter_RestService_AS_properties_typeProperties_url": {
 			"type": "string",
@@ -33,6 +49,199 @@
 		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/GET Loop Next Token RT')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Initial GET Past 7 Days",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "RestResourceTwitter7days",
+								"type": "DatasetReference",
+								"parameters": {
+									"query": "\"NATO\" -is:retweet -is:reply",
+									"tweet_fields": "id,text,created_at,lang,public_metrics",
+									"max_results": "10"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Twitter_RawJSON_Temp",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Initial GET Past 7 Days",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@range(0,5)",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Extract Next Token",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "Get Next Token",
+											"type": "DataFlowReference",
+											"parameters": {},
+											"datasetParameters": {
+												"source1": {},
+												"source2": {},
+												"sink1": {},
+												"sink2": {}
+											}
+										},
+										"staging": {},
+										"integrationRuntime": {
+											"referenceName": "WarmIntegrationRuntime",
+											"type": "IntegrationRuntimeReference"
+										},
+										"traceLevel": "None",
+										"cacheSinks": {
+											"firstRowOnly": true
+										}
+									}
+								},
+								{
+									"name": "GET to Temp",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Extract Next Token",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "GET",
+											"paginationRules": {
+												"supportRFC5988": "true"
+											}
+										},
+										"sink": {
+											"type": "JsonSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "JsonWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "RestResource_Next_Token",
+											"type": "DatasetReference",
+											"parameters": {
+												"query": "NATO",
+												"tweet_fields": "id,created_at,text,lang,public_metrics",
+												"max_results": "10",
+												"next_token": {
+													"value": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "Twitter_RawJSON_Temp",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/RestResourceTwitter7days')]",
+				"[concat(variables('workspaceId'), '/datasets/Twitter_RawJSON_Temp')]",
+				"[concat(variables('workspaceId'), '/dataflows/Get Next Token')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/WarmIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]"
+			]
+		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/LookUp_LastModified')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
@@ -414,6 +623,9 @@
 					},
 					"Counter": {
 						"type": "String"
+					},
+					"next_token": {
+						"type": "String"
 					}
 				},
 				"annotations": []
@@ -763,6 +975,154 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Twitter_Loop')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Initial Query",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET"
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "RestService_Aithusa",
+								"type": "DatasetReference",
+								"parameters": {
+									"Query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en -is:retweet -is:reply",
+									"max_results": "10",
+									"tweet_fields": "id,text,created_at,lang,public_metrics",
+									"start_year": "2023",
+									"start_month": "03",
+									"start_day": "17",
+									"start_hour": "00",
+									"start_minute": "00",
+									"start_second": "01",
+									"end_year": "2023",
+									"end_month": "03",
+									"end_day": "20",
+									"end_hour": "00",
+									"end_minute": "00",
+									"end_second": "01",
+									"sort_order": "recency",
+									"next_token": "b26v89c19zqg8o3fqka1ul12l1v52f39wscygv1iaubul"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "json_Aithusa",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Copy data1_copy1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"QueryParameters.theNextToken": "$.meta.next_token",
+									"EndCondition:meta.next_token": "NonExist"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "RestService_Aithusa",
+								"type": "DatasetReference",
+								"parameters": {
+									"Query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en -is:retweet -is:reply",
+									"max_results": "10",
+									"tweet_fields": "id,text,created_at,lang,public_metrics",
+									"start_year": "2023",
+									"start_month": "03",
+									"start_day": "05",
+									"start_hour": "00",
+									"start_minute": "00",
+									"start_second": "01",
+									"end_year": "2023",
+									"end_month": "03",
+									"end_day": "07",
+									"end_hour": "00",
+									"end_minute": "00",
+									"end_second": "01",
+									"sort_order": "recency",
+									"next_token": "b26v89c19zqg8o3fqka1ul12l1v52f39wscygv1iaubul"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "json_Aithusa",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/RestService_Aithusa')]",
+				"[concat(variables('workspaceId'), '/datasets/json_Aithusa')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Dataset')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -977,7 +1337,7 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"fileName": {
-							"value": "@concat('merged_NATO',utcNow())",
+							"value": "@concat('merged_NATO',utcNow(),'.csv')",
 							"type": "Expression"
 						},
 						"folderPath": "Tweets/Combined_files/NATO_mentions",
@@ -1029,6 +1389,108 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Raw_Twitter_Outputs')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Raw_Twitter_JSONs/Output",
+						"fileSystem": "pendragon"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/RestResourceTwitter7days')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RestService_Twitter_7days",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"query": {
+						"type": "string",
+						"defaultValue": "NATO"
+					},
+					"tweet_fields": {
+						"type": "string",
+						"defaultValue": "id,text,created_at,lang,public_metrics"
+					},
+					"max_results": {
+						"type": "string",
+						"defaultValue": "10"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/RestService_Twitter_7days')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/RestResource_Next_Token')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RestService_Next_Token",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"query": {
+						"type": "string",
+						"defaultValue": "NATO"
+					},
+					"tweet_fields": {
+						"type": "string",
+						"defaultValue": "id,created_at,text,lang,public_metrics"
+					},
+					"max_results": {
+						"type": "string",
+						"defaultValue": "10"
+					},
+					"next_token": {
+						"type": "string",
+						"defaultValue": "b26v89c19zqg8o3fqka107quvh02v90tb138wylvg69od"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results,'&next_token=',dataset().next_token)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/RestService_Next_Token')]"
 			]
 		},
 		{
@@ -1162,6 +1624,98 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/RestService_Aithusa')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Twitter_RestService_ Aithusa",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Query": {
+						"type": "string",
+						"defaultValue": "NATO"
+					},
+					"max_results": {
+						"type": "string",
+						"defaultValue": "10"
+					},
+					"tweet_fields": {
+						"type": "string",
+						"defaultValue": "id,text,created_at,lang,public_metrics"
+					},
+					"start_year": {
+						"type": "string",
+						"defaultValue": "2023"
+					},
+					"start_month": {
+						"type": "string",
+						"defaultValue": "03"
+					},
+					"start_day": {
+						"type": "string",
+						"defaultValue": "05"
+					},
+					"start_hour": {
+						"type": "string",
+						"defaultValue": "00"
+					},
+					"start_minute": {
+						"type": "string",
+						"defaultValue": "00"
+					},
+					"start_second": {
+						"type": "string",
+						"defaultValue": "01"
+					},
+					"end_year": {
+						"type": "string",
+						"defaultValue": "2023"
+					},
+					"end_month": {
+						"type": "string",
+						"defaultValue": "03"
+					},
+					"end_day": {
+						"type": "string",
+						"defaultValue": "07"
+					},
+					"end_hour": {
+						"type": "string",
+						"defaultValue": "00"
+					},
+					"end_minute": {
+						"type": "string",
+						"defaultValue": "00"
+					},
+					"end_second": {
+						"type": "string",
+						"defaultValue": "01"
+					},
+					"sort_order": {
+						"type": "string",
+						"defaultValue": "recency"
+					},
+					"next_token": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat('/2/tweets/search/recent?query=',dataset().Query,'&start_time=',dataset().start_year,'-',dataset().start_month,'-',dataset().start_day,'T',dataset().start_hour,':',dataset().start_minute,':',dataset().start_second,'.000Z','&end_time=',dataset().end_year,'-',dataset().end_month,'-',dataset().end_day,'T',dataset().end_hour,':',dataset().end_minute,':',dataset().end_second,'.000Z','&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results,'&sort_order=',dataset().sort_order)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/Twitter_RestService_ Aithusa')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/TwitterJson1')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -1249,6 +1803,98 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/pendragon-synapse-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Twitter_RawJSON_Temp')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "NATO_Temp",
+						"folderPath": "Raw_Twitter_JSONs/Temp",
+						"fileSystem": "pendragon"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"data": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"lang": {
+										"type": "string"
+									},
+									"text": {
+										"type": "string"
+									},
+									"id": {
+										"type": "string"
+									},
+									"public_metrics": {
+										"type": "object",
+										"properties": {
+											"retweet_count": {
+												"type": "integer"
+											},
+											"reply_count": {
+												"type": "integer"
+											},
+											"like_count": {
+												"type": "integer"
+											},
+											"quote_count": {
+												"type": "integer"
+											},
+											"impression_count": {
+												"type": "integer"
+											}
+										}
+									},
+									"created_at": {
+										"type": "string"
+									},
+									"edit_history_tweet_ids": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									}
+								}
+							}
+						},
+						"meta": {
+							"type": "object",
+							"properties": {
+								"newest_id": {
+									"type": "string"
+								},
+								"oldest_id": {
+									"type": "string"
+								},
+								"result_count": {
+									"type": "integer"
+								},
+								"next_token": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
 			]
 		},
 		{
@@ -1447,6 +2093,31 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/json_Aithusa')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "NATO_mentions",
+						"folderPath": "Twitter_Aithusa",
+						"fileSystem": "pendragon"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/AzureDataLakeStorage1')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -1470,6 +2141,26 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/AzureSqlDatabase1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"description": "linked pipelines connections",
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDatabase1_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/PowerBIWorkspacePendragon')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -1481,6 +2172,87 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/RestService_Next_Token')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('RestService_Next_Token_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"Authorization": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/RestService_Twitter_7days')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('RestService_Twitter_7days_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"Authorization": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Twitter_RestService_ Aithusa')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('Twitter_RestService_ Aithusa_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"Authorization": {
+							"type": "SecureString",
+							"value": "**********"
+						}
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/Twitter_RestService_AS')]",
@@ -1646,6 +2418,90 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/Find_minid_input')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Get Next Token')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Twitter_RawJSON_Temp",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "Twitter_RawJSON_Temp",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						}
+					],
+					"sinks": [
+						{
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "Raw_Twitter_Outputs",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumn1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
+						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> source1",
+						"source(output(",
+						"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
+						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     purgeFiles: true,",
+						"     documentForm: 'documentPerLine') ~> source2",
+						"source1 derive(next_token = meta.next_token) ~> derivedColumn1",
+						"derivedColumn1 sink(validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     store: 'cache',",
+						"     format: 'inline',",
+						"     output: true,",
+						"     saveOrder: 1,",
+						"     mapColumn(",
+						"          next_token",
+						"     )) ~> sink1",
+						"source2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink2"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Twitter_RawJSON_Temp')]",
+				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs')]"
 			]
 		},
 		{
