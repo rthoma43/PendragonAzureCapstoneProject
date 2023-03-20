@@ -23,13 +23,19 @@
 					"items": {
 						"type": "object",
 						"properties": {
-							"lang": {
+							"edit_history_tweet_ids": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							},
+							"id": {
+								"type": "string"
+							},
+							"created_at": {
 								"type": "string"
 							},
 							"text": {
-								"type": "string"
-							},
-							"id": {
 								"type": "string"
 							},
 							"public_metrics": {
@@ -52,14 +58,8 @@
 									}
 								}
 							},
-							"created_at": {
+							"lang": {
 								"type": "string"
-							},
-							"edit_history_tweet_ids": {
-								"type": "array",
-								"items": {
-									"type": "string"
-								}
 							}
 						}
 					}
