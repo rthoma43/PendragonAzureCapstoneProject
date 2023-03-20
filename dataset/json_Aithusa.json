@@ -1,0 +1,20 @@
+{
+	"name": "json_Aithusa",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "NATO_mentions",
+				"folderPath": "Twitter_Aithusa",
+				"fileSystem": "pendragon"
+			}
+		},
+		"schema": {}
+	}
+}

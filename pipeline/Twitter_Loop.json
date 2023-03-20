@@ -1,0 +1,116 @@
+{
+	"name": "Twitter_Loop",
+	"properties": {
+		"activities": [
+			{
+				"name": "Initial Query",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"QueryParameters.theNextToken": "$.meta.next_token",
+							"EndCondition:meta.next_token": "NonExist"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "RestService_Aithusa",
+						"type": "DatasetReference",
+						"parameters": {
+							"Query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en -is:retweet -is:reply",
+							"max_results": "10",
+							"tweet_fields": "id,text,created_at,lang,public_metrics",
+							"end_second": "01",
+							"sort_order": "recency"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "json_Aithusa",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy data1_copy1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"QueryParameters.theNextToken": "$.meta.next_token",
+							"EndCondition:meta.next_token": "NonExist"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "RestService_Aithusa",
+						"type": "DatasetReference",
+						"parameters": {
+							"Query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en -is:retweet -is:reply",
+							"max_results": "10",
+							"tweet_fields": "id,text,created_at,lang,public_metrics",
+							"end_second": "01",
+							"sort_order": "recency"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "json_Aithusa",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
