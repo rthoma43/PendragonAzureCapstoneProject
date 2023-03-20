@@ -18,54 +18,6 @@
 				"type": "string",
 				"defaultValue": "id,text,created_at,lang,public_metrics"
 			},
-			"start_year": {
-				"type": "string",
-				"defaultValue": "2023"
-			},
-			"start_month": {
-				"type": "string",
-				"defaultValue": "03"
-			},
-			"start_day": {
-				"type": "string",
-				"defaultValue": "05"
-			},
-			"start_hour": {
-				"type": "string",
-				"defaultValue": "00"
-			},
-			"start_minute": {
-				"type": "string",
-				"defaultValue": "00"
-			},
-			"start_second": {
-				"type": "string",
-				"defaultValue": "01"
-			},
-			"end_year": {
-				"type": "string",
-				"defaultValue": "2023"
-			},
-			"end_month": {
-				"type": "string",
-				"defaultValue": "03"
-			},
-			"end_day": {
-				"type": "string",
-				"defaultValue": "07"
-			},
-			"end_hour": {
-				"type": "string",
-				"defaultValue": "00"
-			},
-			"end_minute": {
-				"type": "string",
-				"defaultValue": "00"
-			},
-			"end_second": {
-				"type": "string",
-				"defaultValue": "01"
-			},
 			"sort_order": {
 				"type": "string",
 				"defaultValue": "recency"
