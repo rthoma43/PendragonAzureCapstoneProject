@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "Merged_JSON_folder",
+						"referenceName": "Raw_Twitter_Outputs",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
