@@ -276,7 +276,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "loops",
-					"value": "3"
+					"value": "2"
 				}
 			},
 			{
@@ -284,7 +284,7 @@
 				"type": "Delete",
 				"dependsOn": [
 					{
-						"activity": "Merge JSONs",
+						"activity": "GET using Next Token",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -316,7 +316,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "GET using Next Token",
+						"activity": "Delete NATO Temp file",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -366,6 +366,69 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "Convert Merged JSON to CSV",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Merge JSONs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Merge JSON to CSV",
+						"type": "DataFlowReference"
+					},
+					"integrationRuntime": {
+						"referenceName": "WarmIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Delete Previous Merged Output files",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Query",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Merged_JSON_folder",
+						"type": "DatasetReference"
+					},
+					"enableLogging": true,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
 			}
 		],
 		"variables": {
