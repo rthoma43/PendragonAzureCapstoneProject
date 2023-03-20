@@ -1,0 +1,84 @@
+{
+	"name": "RestService_Aithusa",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Twitter_RestService_ Aithusa",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Query": {
+				"type": "string",
+				"defaultValue": "NATO"
+			},
+			"max_results": {
+				"type": "string",
+				"defaultValue": "10"
+			},
+			"tweet_fields": {
+				"type": "string",
+				"defaultValue": "id,text,created_at,lang,public_metrics"
+			},
+			"start_year": {
+				"type": "string",
+				"defaultValue": "2023"
+			},
+			"start_month": {
+				"type": "string",
+				"defaultValue": "03"
+			},
+			"start_day": {
+				"type": "string",
+				"defaultValue": "05"
+			},
+			"start_hour": {
+				"type": "string",
+				"defaultValue": "00"
+			},
+			"start_minute": {
+				"type": "string",
+				"defaultValue": "00"
+			},
+			"start_second": {
+				"type": "string",
+				"defaultValue": "01"
+			},
+			"end_year": {
+				"type": "string",
+				"defaultValue": "2023"
+			},
+			"end_month": {
+				"type": "string",
+				"defaultValue": "03"
+			},
+			"end_day": {
+				"type": "string",
+				"defaultValue": "07"
+			},
+			"end_hour": {
+				"type": "string",
+				"defaultValue": "00"
+			},
+			"end_minute": {
+				"type": "string",
+				"defaultValue": "00"
+			},
+			"end_second": {
+				"type": "string",
+				"defaultValue": "01"
+			},
+			"sort_order": {
+				"type": "string",
+				"defaultValue": "recency"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@concat('/2/tweets/search/recent?query=',dataset().Query,'&start_time=',dataset().start_year,'-',dataset().start_month,'-',dataset().start_day,'T',dataset().start_hour,':',dataset().start_minute,':',dataset().start_second,'.000Z','&end_time=',dataset().end_year,'-',dataset().end_month,'-',dataset().end_day,'T',dataset().end_hour,':',dataset().end_minute,':',dataset().end_second,'.000Z','&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results,'&sort_order=',dataset().sort_order)",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	}
+}
