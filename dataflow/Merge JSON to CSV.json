@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "AzureSqlTable1",
+						"referenceName": "MergedJSON_to_CSV",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
@@ -50,7 +50,7 @@
 				"     skipDuplicateMapOutputs: false) ~> flatten1",
 				"flatten1 derive(id = data.id,",
 				"          created_at = data.created_at,",
-				"          text = data.text,",
+				"          text = replace(replace(data.text, '\\n\\n', ' '), '\\n', ' '),",
 				"          lang = data.lang,",
 				"          retweet_count = data.public_metrics.retweet_count,",
 				"          reply_count = data.public_metrics.reply_count,",
@@ -60,14 +60,22 @@
 				"derivedColumn1 sort(desc(id, false)) ~> sort1",
 				"sort1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     deletable:false,",
-				"     insertable:true,",
-				"     updateable:false,",
-				"     upsertable:false,",
-				"     format: 'table',",
+				"     input(",
+				"          id as string,",
+				"          created_at as string,",
+				"          text as string,",
+				"          lang as string,",
+				"          retweet_count as string,",
+				"          reply_count as string,",
+				"          like_count as string,",
+				"          quote_count as string,",
+				"          impression_count as string",
+				"     ),",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+				"     skipDuplicateMapOutputs: true) ~> sink1"
 			]
 		}
 	}
