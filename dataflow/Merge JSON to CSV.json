@@ -33,7 +33,11 @@
 				}
 			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
+				"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'arrayOfDocuments') ~> source1",
@@ -67,7 +71,7 @@
 				"          quote_count as string,",
 				"          impression_count as string",
 				"     ),",
-				"     filePattern:(concat('Twitter_merged',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.csv')),",
+				"     partitionFileNames:[(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.csv'))],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
@@ -83,7 +87,8 @@
 				"          like_count,",
 				"          quote_count,",
 				"          impression_count",
-				"     )) ~> sink1"
+				"     ),",
+				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
 	}
