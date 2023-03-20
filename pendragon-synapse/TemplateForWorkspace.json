@@ -188,7 +188,7 @@
 									"type": "Copy",
 									"dependsOn": [
 										{
-											"activity": "Extract Next Token",
+											"activity": "Delete Temp File",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -254,6 +254,39 @@
 											"parameters": {}
 										}
 									]
+								},
+								{
+									"name": "Delete Temp File",
+									"type": "Delete",
+									"dependsOn": [
+										{
+											"activity": "Extract Next Token",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "Twitter_RawJSON_Temp",
+											"type": "DatasetReference",
+											"parameters": {}
+										},
+										"enableLogging": false,
+										"storeSettings": {
+											"type": "AzureBlobFSReadSettings",
+											"recursive": true,
+											"enablePartitionDiscovery": false
+										}
+									}
 								}
 							]
 						}
@@ -2161,13 +2194,19 @@
 							"items": {
 								"type": "object",
 								"properties": {
-									"lang": {
+									"edit_history_tweet_ids": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									},
+									"id": {
+										"type": "string"
+									},
+									"created_at": {
 										"type": "string"
 									},
 									"text": {
-										"type": "string"
-									},
-									"id": {
 										"type": "string"
 									},
 									"public_metrics": {
@@ -2190,14 +2229,8 @@
 											}
 										}
 									},
-									"created_at": {
+									"lang": {
 										"type": "string"
-									},
-									"edit_history_tweet_ids": {
-										"type": "array",
-										"items": {
-											"type": "string"
-										}
 									}
 								}
 							}
@@ -2805,7 +2838,6 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
-						"     purgeFiles: true,",
 						"     documentForm: 'documentPerLine') ~> source2",
 						"source1 derive(next_token = meta.next_token) ~> derivedColumn1",
 						"derivedColumn1 sink(validateSchema: false,",
@@ -2829,7 +2861,8 @@
 						"     preCommands: [],",
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> sink2"
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 2) ~> sink2"
 					]
 				}
 			},
