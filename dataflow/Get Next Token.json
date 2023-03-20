@@ -21,9 +21,6 @@
 			],
 			"sinks": [
 				{
-					"name": "sink1"
-				},
-				{
 					"dataset": {
 						"referenceName": "Raw_Twitter_Outputs",
 						"type": "DatasetReference"
@@ -40,20 +37,15 @@
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
-				"     documentForm: 'documentPerLine') ~> source1",
+				"     purgeFiles: true,",
+				"     documentForm: 'documentPerLine',",
+				"     wildcardPaths:['*']) ~> source1",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     purgeFiles: true,",
 				"     documentForm: 'documentPerLine') ~> source2",
 				"source1 derive(column1 = ERROR_FUNCTION('')) ~> derivedColumn1",
-				"derivedColumn1 sink(validateSchema: false,",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     store: 'cache',",
-				"     format: 'inline',",
-				"     output: true,",
-				"     saveOrder: 1) ~> sink1",
 				"source2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     umask: 0022,",
