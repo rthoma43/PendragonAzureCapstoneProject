@@ -25,7 +25,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "Raw_Twitter_Outputs",
+						"referenceName": "Raw_Twitter_Outputs1",
 						"type": "DatasetReference"
 					},
 					"name": "sink2"
