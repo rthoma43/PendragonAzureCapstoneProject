@@ -19,11 +19,7 @@
 						"type": "RestSource",
 						"httpRequestTimeout": "00:01:40",
 						"requestInterval": "00.00:00:00.010",
-						"requestMethod": "GET",
-						"paginationRules": {
-							"QueryParameters.theNextToken": "$.meta.next_token",
-							"EndCondition:meta.next_token": "NonExist"
-						}
+						"requestMethod": "GET"
 					},
 					"sink": {
 						"type": "JsonSink",
@@ -44,6 +40,17 @@
 							"Query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en -is:retweet -is:reply",
 							"max_results": "10",
 							"tweet_fields": "id,text,created_at,lang,public_metrics",
+							"start_year": "2023",
+							"start_month": "03",
+							"start_day": "17",
+							"start_hour": "00",
+							"start_minute": "00",
+							"start_second": "01",
+							"end_year": "2023",
+							"end_month": "03",
+							"end_day": "20",
+							"end_hour": "00",
+							"end_minute": "00",
 							"end_second": "01",
 							"sort_order": "recency"
 						}
@@ -98,6 +105,17 @@
 							"Query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en -is:retweet -is:reply",
 							"max_results": "10",
 							"tweet_fields": "id,text,created_at,lang,public_metrics",
+							"start_year": "2023",
+							"start_month": "03",
+							"start_day": "05",
+							"start_hour": "00",
+							"start_minute": "00",
+							"start_second": "01",
+							"end_year": "2023",
+							"end_month": "03",
+							"end_day": "07",
+							"end_hour": "00",
+							"end_minute": "00",
 							"end_second": "01",
 							"sort_order": "recency"
 						}
