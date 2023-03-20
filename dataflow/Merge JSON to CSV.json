@@ -50,7 +50,7 @@
 				"     skipDuplicateMapOutputs: false) ~> flatten1",
 				"flatten1 derive(id = data.id,",
 				"          created_at = data.created_at,",
-				"          text = replace(replace(data.text, '\\n\\n', ' '), '\\n', ' '),",
+				"          text = replace(replace(replace(data.text, '\\n\\n', ' '), '\\n', ' '),'\\\"',''),",
 				"          lang = data.lang,",
 				"          retweet_count = data.public_metrics.retweet_count,",
 				"          reply_count = data.public_metrics.reply_count,",
