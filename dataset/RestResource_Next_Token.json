@@ -19,7 +19,8 @@
 				"defaultValue": "10"
 			},
 			"next_token": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "b26v89c19zqg8o3fqka107quvh02v90tb138wylvg69od"
 			}
 		},
 		"annotations": [],
