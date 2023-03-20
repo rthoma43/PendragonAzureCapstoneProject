@@ -78,7 +78,7 @@
 		"type": "RestResource",
 		"typeProperties": {
 			"relativeUrl": {
-				"value": "@concat('/2/tweets/search/recent?query=',dataset().Query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results,'&sort_order=',dataset().sort_order,'&next_token=',dataset().next_token)",
+				"value": "@concat('/2/tweets/search/recent?query=',dataset().Query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results,'&sort_order=',dataset().sort_order)",
 				"type": "Expression"
 			}
 		},
