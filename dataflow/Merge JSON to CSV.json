@@ -75,7 +75,18 @@
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          id,",
+				"          created_at,",
+				"          text,",
+				"          lang,",
+				"          retweet_count,",
+				"          reply_count,",
+				"          like_count,",
+				"          quote_count,",
+				"          impression_count",
+				"     )) ~> sink1"
 			]
 		}
 	}
