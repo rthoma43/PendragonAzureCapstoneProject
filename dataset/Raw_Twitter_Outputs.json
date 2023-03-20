@@ -1,0 +1,19 @@
+{
+	"name": "Raw_Twitter_Outputs",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "Raw_Twitter_JSONs/Outputs_test",
+				"fileSystem": "pendragon"
+			}
+		},
+		"schema": {}
+	}
+}

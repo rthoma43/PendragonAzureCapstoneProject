@@ -16,22 +16,190 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "DelimitedTextSource",
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
 						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
+							"type": "AzureBlobFSWriteSettings"
 						},
 						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['data'][0]['edit_history_tweet_ids'][0]"
+								}
+							},
+							{
+								"source": {
+									"path": "$['data'][0]['public_metrics']['retweet_count']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['data'][0]['public_metrics']['reply_count']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['data'][0]['public_metrics']['like_count']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['data'][0]['public_metrics']['quote_count']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['data'][0]['public_metrics']['impression_count']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['data'][0]['text']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['data'][0]['id']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['data'][0]['created_at']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['data'][0]['lang']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['meta']['newest_id']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['meta']['oldest_id']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['meta']['result_count']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['meta']['next_token']"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RestResourceTwitter7days",
+						"type": "DatasetReference",
+						"parameters": {
+							"query": "NATO -is:retweet -is:reply",
+							"max_results": "10"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Twitter_test_rt_Json",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Get Next Token",
+						"type": "DataFlowReference"
+					},
+					"integrationRuntime": {
+						"referenceName": "WarmIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Copy data2",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Data flow1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"supportRFC5988": "true"
 						}
 					},
 					"enableStaging": false
 				},
 				"inputs": [
 					{
-						"referenceName": "Twitter_Test_RT_DelimitedText1",
-						"type": "DatasetReference"
+						"referenceName": "RestResource_Next_Token",
+						"type": "DatasetReference",
+						"parameters": {
+							"query": "NATO -is:retweet -is:reply",
+							"max_results": {
+								"value": "@activity('Data flow1').output.runStatus.output.sink1.value[0].next_token",
+								"type": "Expression"
+							}
+						}
 					}
 				]
 			}
