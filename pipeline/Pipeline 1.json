@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "Initial GET Past 7 Days",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -48,104 +48,121 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "Twitter_test_rt_Json",
+						"referenceName": "Twitter_RawJSON_Temp",
 						"type": "DatasetReference"
 					}
 				]
 			},
 			{
-				"name": "Data flow1",
-				"type": "ExecuteDataFlow",
+				"name": "ForEach1",
+				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Copy data1",
+						"activity": "Initial GET Past 7 Days",
 						"dependencyConditions": [
 							"Succeeded"
 						]
 					}
 				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataflow": {
-						"referenceName": "Get Next Token",
-						"type": "DataFlowReference"
+					"items": {
+						"value": "@range(0,5)",
+						"type": "Expression"
 					},
-					"integrationRuntime": {
-						"referenceName": "WarmIntegrationRuntime",
-						"type": "IntegrationRuntimeReference"
-					},
-					"traceLevel": "None",
-					"cacheSinks": {
-						"firstRowOnly": true
-					}
-				}
-			},
-			{
-				"name": "Copy data2",
-				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "Data flow1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "RestSource",
-						"httpRequestTimeout": "00:01:40",
-						"requestInterval": "00.00:00:00.010",
-						"requestMethod": "GET",
-						"paginationRules": {
-							"supportRFC5988": "true"
-						}
-					},
-					"sink": {
-						"type": "JsonSink",
-						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings"
-						},
-						"formatSettings": {
-							"type": "JsonWriteSettings"
-						}
-					},
-					"enableStaging": false
-				},
-				"inputs": [
-					{
-						"referenceName": "RestResource_Next_Token",
-						"type": "DatasetReference",
-						"parameters": {
-							"query": "NATO -is:retweet -is:reply",
-							"max_results": {
-								"value": "10",
-								"type": "Expression"
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Extract Next Token",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "Get Next Token",
+									"type": "DataFlowReference"
+								},
+								"integrationRuntime": {
+									"referenceName": "WarmIntegrationRuntime",
+									"type": "IntegrationRuntimeReference"
+								},
+								"traceLevel": "None",
+								"cacheSinks": {
+									"firstRowOnly": true
+								}
 							}
+						},
+						{
+							"name": "GET to Temp",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Extract Next Token",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "RestSource",
+									"httpRequestTimeout": "00:01:40",
+									"requestInterval": "00.00:00:00.010",
+									"requestMethod": "GET",
+									"paginationRules": {
+										"supportRFC5988": "true"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "RestResource_Next_Token",
+									"type": "DatasetReference",
+									"parameters": {
+										"query": "NATO",
+										"tweet_fields": "id,created_at,text,lang,public_metrics",
+										"max_results": "10",
+										"next_token": {
+											"value": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Twitter_RawJSON_Temp",
+									"type": "DatasetReference"
+								}
+							]
 						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "Raw_Twitter_Outputs",
-						"type": "DatasetReference"
-					}
-				]
+					]
+				}
 			}
 		],
 		"annotations": []
