@@ -40,7 +40,7 @@
 						"referenceName": "RestResourceTwitter7days",
 						"type": "DatasetReference",
 						"parameters": {
-							"query": "\"NATO\" -is:retweet -is:reply",
+							"query": "\"NATO\" lang:en -is:retweet -is:reply",
 							"tweet_fields": "id,text,created_at,lang,public_metrics",
 							"max_results": "10"
 						}
