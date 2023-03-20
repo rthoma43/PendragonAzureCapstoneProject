@@ -1,0 +1,74 @@
+{
+	"name": "Merge JSON to CSV",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Merged_JSON_folder",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "flatten1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "sort1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
+				"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> source1",
+				"source1 foldDown(unroll(data, data),",
+				"     mapColumn(",
+				"          data,",
+				"          meta",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1",
+				"flatten1 derive(id = data.id,",
+				"          created_at = data.created_at,",
+				"          text = data.text,",
+				"          lang = data.lang,",
+				"          retweet_count = data.public_metrics.retweet_count,",
+				"          reply_count = data.public_metrics.reply_count,",
+				"          like_count = data.public_metrics.like_count,",
+				"          quote_count = data.public_metrics.quote_count,",
+				"          impression_count = data.public_metrics.impression_count) ~> derivedColumn1",
+				"derivedColumn1 sort(desc(id, false)) ~> sort1",
+				"sort1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+			]
+		}
+	}
+}
