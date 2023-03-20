@@ -10,11 +10,25 @@
 						"type": "DatasetReference"
 					},
 					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "Twitter_RawJSON_Temp",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
 				}
 			],
 			"sinks": [
 				{
 					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "Raw_Twitter_Outputs",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
 				}
 			],
 			"transformations": [
@@ -31,6 +45,14 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> source1",
+				"source(output(",
+				"          data as (edit_history_tweet_ids as string[], id as string, created_at as string, text as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), lang as string)[],",
+				"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> source2",
 				"source1 derive(next_token = meta.next_token) ~> derivedColumn1",
 				"derivedColumn1 sink(validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
@@ -41,7 +63,16 @@
 				"     saveOrder: 1,",
 				"     mapColumn(",
 				"          next_token",
-				"     )) ~> sink1"
+				"     )) ~> sink1",
+				"source2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     filePattern:(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.json')),",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 2) ~> sink2"
 			]
 		}
 	}
