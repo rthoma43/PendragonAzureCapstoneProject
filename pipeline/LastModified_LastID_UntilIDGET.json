@@ -1,5 +1,5 @@
 {
-	"name": "LookUp_LastModified",
+	"name": "LastModified_LastID_UntilIDGET",
 	"properties": {
 		"activities": [
 			{
@@ -357,6 +357,9 @@
 				"type": "String"
 			},
 			"Counter": {
+				"type": "String"
+			},
+			"next_token": {
 				"type": "String"
 			}
 		},

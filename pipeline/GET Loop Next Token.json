@@ -1,5 +1,5 @@
 {
-	"name": "Pipeline 1",
+	"name": "GET Loop Next Token",
 	"properties": {
 		"activities": [
 			{

@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "Twitter_GET",
+						"referenceName": "Twitter_Initial_GET",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
@@ -48,7 +48,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "LookUp_LastModified",
+									"referenceName": "LastModified_LastID_UntilIDGET",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true
