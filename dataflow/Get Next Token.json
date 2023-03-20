@@ -46,7 +46,7 @@
 				"     ignoreNoFilesFound: false,",
 				"     purgeFiles: true,",
 				"     documentForm: 'documentPerLine') ~> source2",
-				"source1 derive(next_token = meta.next_token) ~> derivedColumn1",
+				"source1 derive(column1 = ERROR_FUNCTION('')) ~> derivedColumn1",
 				"derivedColumn1 sink(validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
