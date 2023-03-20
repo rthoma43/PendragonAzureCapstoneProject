@@ -64,6 +64,12 @@
 								"dependencyConditions": [
 									"Succeeded"
 								]
+							},
+							{
+								"activity": "Delete Previous Merged Output files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
 							}
 						],
 						"policy": {
@@ -170,7 +176,8 @@
 												"source2": {},
 												"sink1": {},
 												"sink2": {}
-											}
+											},
+											"linkedServiceParameters": {}
 										},
 										"staging": {},
 										"integrationRuntime": {
@@ -2811,7 +2818,7 @@
 						},
 						{
 							"dataset": {
-								"referenceName": "Raw_Twitter_Outputs",
+								"referenceName": "Raw_Twitter_Outputs1",
 								"type": "DatasetReference"
 							},
 							"name": "sink2"
@@ -2832,7 +2839,7 @@
 						"     ignoreNoFilesFound: false,",
 						"     documentForm: 'documentPerLine') ~> source1",
 						"source(output(",
-						"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
+						"          data as (edit_history_tweet_ids as string[], id as string, created_at as string, text as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), lang as string)[],",
 						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
 						"     ),",
 						"     allowSchemaDrift: true,",
@@ -2852,10 +2859,6 @@
 						"     )) ~> sink1",
 						"source2 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     input(",
-						"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
-						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
-						"     ),",
 						"     filePattern:(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.json')),",
 						"     umask: 0022,",
 						"     preCommands: [],",
@@ -2868,7 +2871,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/Twitter_RawJSON_Temp')]",
-				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs')]"
+				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs1')]"
 			]
 		},
 		{
@@ -3211,7 +3214,7 @@
 						"          quote_count as string,",
 						"          impression_count as string",
 						"     ),",
-						"     filePattern:(concat('Twitter_merged',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.csv')),",
+						"     partitionFileNames:[(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.csv'))],",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
@@ -3227,7 +3230,8 @@
 						"          like_count,",
 						"          quote_count,",
 						"          impression_count",
-						"     )) ~> sink1"
+						"     ),",
+						"     partitionBy('hash', 1)) ~> sink1"
 					]
 				}
 			},
@@ -3409,6 +3413,30 @@
 						"type": "String"
 					}
 				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Raw_Twitter_Outputs1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Raw_Twitter_JSONs/Output",
+						"fileSystem": "pendragon"
+					}
+				},
+				"schema": {}
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
