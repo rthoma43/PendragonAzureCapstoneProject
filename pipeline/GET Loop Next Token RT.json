@@ -437,6 +437,7 @@
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
+							"wildcardFileName": "*",
 							"enablePartitionDiscovery": false
 						},
 						"formatSettings": {
@@ -451,7 +452,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "MergedJSON_to_CSV",
+						"referenceName": "Merged_output_csv",
 						"type": "DatasetReference"
 					}
 				],
