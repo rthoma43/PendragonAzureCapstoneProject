@@ -6,21 +6,21 @@
 		"schema": [
 			{
 				"name": "id",
-				"type": "int",
-				"precision": 10
+				"type": "bigint",
+				"precision": 19
 			},
 			{
 				"name": "created_at",
-				"type": "time",
+				"type": "datetime2",
 				"scale": 7
 			},
 			{
 				"name": "text",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "lang",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "retweet_count",
@@ -50,7 +50,7 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "NATO_Tweets"
+			"table": "NATO_Tweets1"
 		},
 		"sqlPool": {
 			"referenceName": "SQLPoolTest",
