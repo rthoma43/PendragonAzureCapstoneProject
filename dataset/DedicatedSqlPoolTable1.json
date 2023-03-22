@@ -6,9 +6,8 @@
 		"schema": [
 			{
 				"name": "id",
-				"type": "decimal",
-				"precision": 18,
-				"scale": 0
+				"type": "int",
+				"precision": 10
 			},
 			{
 				"name": "created_at",
@@ -51,7 +50,7 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "NATO_Tweets_Test"
+			"table": "NATO_Tweets"
 		},
 		"sqlPool": {
 			"referenceName": "SQLPoolTest",

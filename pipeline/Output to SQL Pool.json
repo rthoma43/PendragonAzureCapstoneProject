@@ -41,16 +41,18 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "id"
+									"name": "id",
+									"type": "Int32"
 								}
 							},
 							{
 								"source": {
 									"name": "created_at",
-									"type": "DateTime"
+									"type": "TimeSpan"
 								},
 								"sink": {
-									"name": "created_at"
+									"name": "created_at",
+									"type": "TimeSpan"
 								}
 							},
 							{
@@ -59,7 +61,8 @@
 									"type": "String"
 								},
 								"sink": {
-									"name": "text"
+									"name": "text",
+									"type": "String"
 								}
 							},
 							{
@@ -68,7 +71,8 @@
 									"type": "String"
 								},
 								"sink": {
-									"name": "lang"
+									"name": "lang",
+									"type": "String"
 								}
 							},
 							{
@@ -77,7 +81,8 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "retweet_count"
+									"name": "retweet_count",
+									"type": "Int32"
 								}
 							},
 							{
@@ -86,7 +91,8 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "reply_count"
+									"name": "reply_count",
+									"type": "Int32"
 								}
 							},
 							{
@@ -95,7 +101,8 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "like_count"
+									"name": "like_count",
+									"type": "Int32"
 								}
 							},
 							{
@@ -104,7 +111,8 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "quote_count"
+									"name": "quote_count",
+									"type": "Int32"
 								}
 							},
 							{
@@ -113,7 +121,8 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "impression_count"
+									"name": "impression_count",
+									"type": "Int32"
 								}
 							}
 						]
