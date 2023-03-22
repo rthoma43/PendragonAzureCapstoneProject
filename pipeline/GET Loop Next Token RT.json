@@ -417,7 +417,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Merge JSONs and Convert to CSV",
+						"activity": "SQL pool stored procedure1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -448,7 +448,102 @@
 						"type": "SqlPoolSink",
 						"allowCopyCommand": true
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "id",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "id",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"name": "created_at",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "created_at",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "text",
+									"type": "String"
+								},
+								"sink": {
+									"name": "text",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "lang",
+									"type": "String"
+								},
+								"sink": {
+									"name": "lang",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "retweet_count",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "retweet_count",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "reply_count",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "reply_count",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "like_count",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "like_count",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "quote_count",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "quote_count",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "impression_count",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "impression_count",
+									"type": "Int32"
+								}
+							}
+						]
+					}
 				},
 				"inputs": [
 					{
@@ -462,6 +557,33 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "SQL pool stored procedure1",
+				"type": "SqlPoolStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Merge JSONs and Convert to CSV",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"sqlPool": {
+					"referenceName": "SQLPoolTest",
+					"type": "SqlPoolReference"
+				},
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[DeleteAllRowsFromNatoTweets1]"
+				}
 			}
 		],
 		"variables": {
