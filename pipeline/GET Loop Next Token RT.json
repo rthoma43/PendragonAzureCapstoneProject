@@ -417,7 +417,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "SQL pool stored procedure1",
+						"activity": "Delete All Existing Rows in NATO_Tweets1 Table",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -559,7 +559,7 @@
 				]
 			},
 			{
-				"name": "SQL pool stored procedure1",
+				"name": "Delete All Existing Rows in NATO_Tweets1 Table",
 				"type": "SqlPoolStoredProcedure",
 				"dependsOn": [
 					{
