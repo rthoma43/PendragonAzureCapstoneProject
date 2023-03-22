@@ -1,0 +1,17 @@
+{
+	"name": "DeleteAllProcedure",
+	"properties": {
+		"content": {
+			"query": "CREATE PROCEDURE DeleteAllRowsFromNatoTweets1\nAS\nBEGIN\n    DELETE FROM [dbo].[NATO_Tweets1];\nEND;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "SQLPoolTest",
+				"poolName": "SQLPoolTest"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
