@@ -1,0 +1,147 @@
+{
+	"name": "Output to SQL Pool",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data to Dedicated SQL Pool",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFileName": "*",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlPoolSink",
+						"allowCopyCommand": true
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "id",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "id",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "created_at",
+									"type": "TimeSpan"
+								},
+								"sink": {
+									"name": "created_at",
+									"type": "TimeSpan"
+								}
+							},
+							{
+								"source": {
+									"name": "text",
+									"type": "String"
+								},
+								"sink": {
+									"name": "text",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "lang",
+									"type": "String"
+								},
+								"sink": {
+									"name": "lang",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "retweet_count",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "retweet_count",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "reply_count",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "reply_count",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "like_count",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "like_count",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "quote_count",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "quote_count",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "impression_count",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "impression_count",
+									"type": "Int32"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Merged_output_csv",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DedicatedSqlPoolTable1",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
