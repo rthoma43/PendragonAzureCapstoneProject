@@ -1,5 +1,5 @@
 {
-	"name": "SQL script 1",
+	"name": "CreateNATOTweetsTable",
 	"properties": {
 		"content": {
 			"query": "SET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO\n\nCREATE TABLE [dbo].[NATO_Tweets]\n( \n\t[id] [int]  NOT NULL,\n\t[created_at] [time](7)  NULL,\n\t[text] [varchar](1)  NULL,\n\t[lang] [varchar](1)  NULL,\n\t[retweet_count] [int]  NULL,\n\t[reply_count] [int]  NULL,\n\t[like_count] [int]  NULL,\n\t[quote_count] [int]  NULL,\n\t[impression_count] [int]  NULL\n)\nWITH\n(\n\tDISTRIBUTION = HASH ( [id] ),\n\tCLUSTERED COLUMNSTORE INDEX\n)\nGO",
