@@ -1,0 +1,10 @@
+{
+	"name": "PendragonKeyVault",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://pendragonkeys.vault.azure.net/"
+		}
+	}
+}
