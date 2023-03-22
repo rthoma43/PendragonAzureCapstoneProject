@@ -38,7 +38,7 @@
 							{
 								"source": {
 									"name": "id",
-									"type": "Int64"
+									"type": "Int32"
 								},
 								"sink": {
 									"name": "id",
@@ -78,7 +78,7 @@
 							{
 								"source": {
 									"name": "retweet_count",
-									"type": "Int64"
+									"type": "Int32"
 								},
 								"sink": {
 									"name": "retweet_count",
@@ -88,7 +88,7 @@
 							{
 								"source": {
 									"name": "reply_count",
-									"type": "Int64"
+									"type": "Int32"
 								},
 								"sink": {
 									"name": "reply_count",
@@ -98,7 +98,7 @@
 							{
 								"source": {
 									"name": "like_count",
-									"type": "Int64"
+									"type": "Int32"
 								},
 								"sink": {
 									"name": "like_count",
@@ -108,7 +108,7 @@
 							{
 								"source": {
 									"name": "quote_count",
-									"type": "Int64"
+									"type": "Int32"
 								},
 								"sink": {
 									"name": "quote_count",
@@ -118,7 +118,7 @@
 							{
 								"source": {
 									"name": "impression_count",
-									"type": "Int64"
+									"type": "Int32"
 								},
 								"sink": {
 									"name": "impression_count",
