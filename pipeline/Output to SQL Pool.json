@@ -38,21 +38,19 @@
 							{
 								"source": {
 									"name": "id",
-									"type": "Decimal"
+									"type": "Int64"
 								},
 								"sink": {
-									"name": "id",
-									"type": "Decimal"
+									"name": "id"
 								}
 							},
 							{
 								"source": {
 									"name": "created_at",
-									"type": "TimeSpan"
+									"type": "DateTime"
 								},
 								"sink": {
-									"name": "created_at",
-									"type": "TimeSpan"
+									"name": "created_at"
 								}
 							},
 							{
@@ -61,8 +59,7 @@
 									"type": "String"
 								},
 								"sink": {
-									"name": "text",
-									"type": "String"
+									"name": "text"
 								}
 							},
 							{
@@ -71,8 +68,7 @@
 									"type": "String"
 								},
 								"sink": {
-									"name": "lang",
-									"type": "String"
+									"name": "lang"
 								}
 							},
 							{
@@ -81,8 +77,7 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "retweet_count",
-									"type": "Int32"
+									"name": "retweet_count"
 								}
 							},
 							{
@@ -91,8 +86,7 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "reply_count",
-									"type": "Int32"
+									"name": "reply_count"
 								}
 							},
 							{
@@ -101,8 +95,7 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "like_count",
-									"type": "Int32"
+									"name": "like_count"
 								}
 							},
 							{
@@ -111,8 +104,7 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "quote_count",
-									"type": "Int32"
+									"name": "quote_count"
 								}
 							},
 							{
@@ -121,8 +113,7 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "impression_count",
-									"type": "Int32"
+									"name": "impression_count"
 								}
 							}
 						]
