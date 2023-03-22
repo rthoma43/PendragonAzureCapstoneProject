@@ -28,8 +28,8 @@
 				}
 			},
 			{
-				"name": "Sentiment Analysis",
-				"type": "WebActivity",
+				"name": "ForEach1",
+				"type": "ForEach",
 				"dependsOn": [
 					{
 						"activity": "Lookup1",
@@ -38,40 +38,80 @@
 						]
 					}
 				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://pendragon-language.cognitiveservices.azure.com/",
-					"connectVia": {
-						"referenceName": "AutoResolveIntegrationRuntime",
-						"type": "IntegrationRuntimeReference"
-					},
-					"method": "POST",
-					"body": {
-						"value": "@concat('{\"document\":[\n                        {\n                            \"langauge\": \"en\", \"id\": \"',\n                                activity('Lookup1').output.id ,\n                                '\", \"text\": \"' , activity('Lookup1').output.text ,'\"\n                            }\n                            ]\n                            }')",
+					"items": {
+						"value": "@activity('Lookup1').output",
 						"type": "Expression"
 					},
-					"authentication": {
-						"type": "Basic",
-						"username": "rthoma43",
-						"password": {
-							"type": "AzureKeyVaultSecret",
-							"store": {
-								"referenceName": "PendragonKeyVault",
-								"type": "LinkedServiceReference"
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Sentiment Analysis",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
 							},
-							"secretName": "LangaugeKey"
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://pendragon-language.cognitiveservices.azure.com/",
+								"connectVia": {
+									"referenceName": "AutoResolveIntegrationRuntime",
+									"type": "IntegrationRuntimeReference"
+								},
+								"method": "POST",
+								"body": {
+									"value": "@concat('{\"document\":[\n                        {\n                            \"langauge\": \"en\", \"id\": \"',\n                                item().id ,\n                                '\", \"text\": \"' , item().text ,'\"\n                            }\n                            ]\n                            }')",
+									"type": "Expression"
+								},
+								"authentication": {
+									"type": "Basic",
+									"username": "rthoma43",
+									"password": {
+										"type": "AzureKeyVaultSecret",
+										"store": {
+											"referenceName": "PendragonKeyVault",
+											"type": "LinkedServiceReference"
+										},
+										"secretName": "LangaugeKey"
+									}
+								}
+							}
+						},
+						{
+							"name": "Append variable1",
+							"type": "AppendVariable",
+							"dependsOn": [
+								{
+									"activity": "Sentiment Analysis",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "results",
+								"value": {
+									"value": "@activity('Sentiment Analysis').output",
+									"type": "Expression"
+								}
+							}
 						}
-					}
+					]
 				}
 			}
 		],
+		"variables": {
+			"results": {
+				"type": "Array"
+			}
+		},
 		"annotations": []
 	}
 }
