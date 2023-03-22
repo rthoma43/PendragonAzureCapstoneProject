@@ -1,0 +1,17 @@
+{
+	"name": "DeleteAllRows",
+	"properties": {
+		"content": {
+			"query": "DELETE FROM [dbo].[NATO_Tweets1];\nGO\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "SQLPoolTest",
+				"poolName": "SQLPoolTest"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
