@@ -51,7 +51,7 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "tweets"
+			"table": "NATO_Tweets_Test"
 		},
 		"sqlPool": {
 			"referenceName": "SQLPoolTest",
