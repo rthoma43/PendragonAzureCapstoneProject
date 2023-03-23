@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
 		},
+		"AzureSqlDatabase2_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase2'"
+		},
 		"pendragon-synapse-WorkspaceDefaultSqlServer_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'pendragon-synapse-WorkspaceDefaultSqlServer'",
@@ -23,6 +27,10 @@
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://pendragon.dfs.core.windows.net/"
+		},
+		"PendragonKeyVault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://pendragonkeys.vault.azure.net/"
 		},
 		"RestService_Next_Token_properties_typeProperties_url": {
 			"type": "string",
@@ -700,6 +708,670 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/GET Until Next Token')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Initial GET Past 7 Days",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Delete Previous Output Files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Delete Previous Merged Output files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "RestResourceTwitter7days",
+								"type": "DatasetReference",
+								"parameters": {
+									"query": {
+										"value": "@variables('Query')",
+										"type": "Expression"
+									},
+									"tweet_fields": {
+										"value": "@variables('Tweet Fields')",
+										"type": "Expression"
+									},
+									"max_results": {
+										"value": "@variables('max_results')",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Twitter_RawJSON_Temp",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Query",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Query",
+							"value": "\"NATO\" lang:en -is:retweet -is:reply"
+						}
+					},
+					{
+						"name": "Max Results",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "max_results",
+							"value": "100"
+						}
+					},
+					{
+						"name": "Tweet Fields",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Tweet Fields",
+							"value": "id,text,created_at,lang,public_metrics"
+						}
+					},
+					{
+						"name": "Delete Previous Output Files",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Query",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Max Results",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Tweet Fields",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Raw_Twitter_Outputs",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "Delete NATO Temp file",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "GET using Next Token Until Empty",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Twitter_RawJSON_Temp",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "Merge JSONs and Convert to CSV",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Delete NATO Temp file",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Merge JSON to CSV",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"integrationRuntime": {
+								"referenceName": "WarmIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Delete Previous Merged Output files",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Query",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Merged_JSON_folder",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "Copy data to Dedicated SQL Pool",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Delete All Existing Rows in NATO_Tweets1 Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlPoolSink",
+								"allowCopyCommand": true,
+								"copyCommandSettings": {}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "id",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"name": "created_at",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "created_at",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "text",
+											"type": "String"
+										},
+										"sink": {
+											"name": "text",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "lang",
+											"type": "String"
+										},
+										"sink": {
+											"name": "lang",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "retweet_count",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "retweet_count",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "reply_count",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "reply_count",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "like_count",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "like_count",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "quote_count",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "quote_count",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "impression_count",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "impression_count",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Merged_output_csv",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DedicatedSqlPoolTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Delete All Existing Rows in NATO_Tweets1 Table",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Merge JSONs and Convert to CSV",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "SQLPoolTest",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[dbo].[DeleteAllRowsFromNatoTweets1]"
+						}
+					},
+					{
+						"name": "GET using Next Token Until Empty",
+						"type": "Until",
+						"dependsOn": [
+							{
+								"activity": "Data flow1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token ",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Extract Next Token",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "Get Next Token",
+											"type": "DataFlowReference",
+											"parameters": {},
+											"datasetParameters": {
+												"source1": {},
+												"source2": {},
+												"sink1": {},
+												"sink2": {}
+											}
+										},
+										"staging": {},
+										"integrationRuntime": {
+											"referenceName": "WarmIntegrationRuntime",
+											"type": "IntegrationRuntimeReference"
+										},
+										"traceLevel": "None",
+										"cacheSinks": {
+											"firstRowOnly": true
+										}
+									}
+								},
+								{
+									"name": "Delete Temp File",
+									"type": "Delete",
+									"dependsOn": [
+										{
+											"activity": "Extract Next Token",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "Twitter_RawJSON_Temp",
+											"type": "DatasetReference",
+											"parameters": {}
+										},
+										"enableLogging": false,
+										"storeSettings": {
+											"type": "AzureBlobFSReadSettings",
+											"recursive": true,
+											"enablePartitionDiscovery": false
+										}
+									}
+								},
+								{
+									"name": "GET to Temp",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Delete Temp File",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "GET",
+											"paginationRules": {
+												"supportRFC5988": "true"
+											}
+										},
+										"sink": {
+											"type": "JsonSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "JsonWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "RestResource_Next_Token",
+											"type": "DatasetReference",
+											"parameters": {
+												"query": "@variables('Query')",
+												"tweet_fields": "@variables('Tweet Fields')",
+												"max_results": "@variables('max_results')",
+												"next_token": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "Twitter_RawJSON_Temp",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							],
+							"timeout": "0.12:00:00"
+						}
+					},
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Initial GET Past 7 Days",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Get Next Token",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"sink1": {},
+									"sink2": {}
+								}
+							},
+							"staging": {},
+							"integrationRuntime": {
+								"referenceName": "WarmIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"traceLevel": "None",
+							"cacheSinks": {
+								"firstRowOnly": true
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"Query": {
+						"type": "String"
+					},
+					"max_results": {
+						"type": "String"
+					},
+					"Tweet Fields": {
+						"type": "String"
+					},
+					"Number of Tweets to Pull": {
+						"type": "String"
+					},
+					"loops": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/RestResourceTwitter7days')]",
+				"[concat(variables('workspaceId'), '/datasets/Twitter_RawJSON_Temp')]",
+				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs')]",
+				"[concat(variables('workspaceId'), '/dataflows/Merge JSON to CSV')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/WarmIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/datasets/Merged_JSON_folder')]",
+				"[concat(variables('workspaceId'), '/datasets/Merged_output_csv')]",
+				"[concat(variables('workspaceId'), '/datasets/DedicatedSqlPoolTable1')]",
+				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]",
+				"[concat(variables('workspaceId'), '/dataflows/Get Next Token')]",
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/LookUp_LastModified')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -1096,6 +1768,136 @@
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter2')]",
 				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
 				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Pipeline 2')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlPoolSource",
+								"sqlReaderQuery": "SELECT id, text FROM [dbo].[NATO_Tweets1]",
+								"queryTimeout": "02:00:00"
+							},
+							"dataset": {
+								"referenceName": "DedicatedSqlPoolTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup1').output",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Sentiment Analysis",
+									"type": "WebActivity",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"url": "https://pendragon-language.cognitiveservices.azure.com/",
+										"connectVia": {
+											"referenceName": "AutoResolveIntegrationRuntime",
+											"type": "IntegrationRuntimeReference"
+										},
+										"method": "POST",
+										"headers": {},
+										"body": {
+											"value": "@concat('{\"document\":[\n                        {\n                            \"langauge\": \"en\", \"id\": \"',\n                                item().id ,\n                                '\", \"text\": \"' , item().text ,'\"\n                            }\n                            ]\n                            }')",
+											"type": "Expression"
+										},
+										"authentication": {
+											"type": "Basic",
+											"username": "rthoma43",
+											"password": {
+												"type": "AzureKeyVaultSecret",
+												"store": {
+													"referenceName": "PendragonKeyVault",
+													"type": "LinkedServiceReference"
+												},
+												"secretName": "LangaugeKey"
+											}
+										}
+									}
+								},
+								{
+									"name": "Append variable1",
+									"type": "AppendVariable",
+									"dependsOn": [
+										{
+											"activity": "Sentiment Analysis",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "results",
+										"value": {
+											"value": "@activity('Sentiment Analysis').output",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"results": {
+						"type": "Array"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DedicatedSqlPoolTable1')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/linkedServices/PendragonKeyVault')]"
 			]
 		},
 		{
@@ -3046,6 +3848,38 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/AzureSqlDatabase2')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDatabase2_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PendragonKeyVault')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('PendragonKeyVault_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/PowerBIWorkspacePendragon')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -3593,6 +4427,18 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/PendragonManagedIdentityCredential')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {
+					"resourceId": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.ManagedIdentity/userAssignedIdentities/PendragonManagedIdentity"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
 			"type": "Microsoft.Synapse/workspaces/credentials",
 			"apiVersion": "2019-06-01-preview",
@@ -3679,95 +4525,6 @@
 					"resultLimit": 5000
 				},
 				"type": "SqlQuery"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/Notebook 2')]",
-			"type": "Microsoft.Synapse/workspaces/notebooks",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"nbformat": 4,
-				"nbformat_minor": 2,
-				"bigDataPool": {
-					"referenceName": "SparkPoolTest",
-					"type": "BigDataPoolReference"
-				},
-				"sessionProperties": {
-					"driverMemory": "28g",
-					"driverCores": 4,
-					"executorMemory": "28g",
-					"executorCores": 4,
-					"numExecutors": 2,
-					"conf": {
-						"spark.dynamicAllocation.enabled": "false",
-						"spark.dynamicAllocation.minExecutors": "2",
-						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "81d89582-b7cb-4dd8-bc65-94988a1b8fc9"
-					}
-				},
-				"metadata": {
-					"saveOutput": true,
-					"enableDebugMode": false,
-					"kernelspec": {
-						"name": "synapse_pyspark",
-						"display_name": "Synapse PySpark"
-					},
-					"language_info": {
-						"name": "python"
-					},
-					"a365ComputeOptions": {
-						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolTest",
-						"name": "SparkPoolTest",
-						"type": "Spark",
-						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolTest",
-						"auth": {
-							"type": "AAD",
-							"authResource": "https://dev.azuresynapse.net"
-						},
-						"sparkVersion": "3.3",
-						"nodeCount": 3,
-						"cores": 4,
-						"memory": 28
-					},
-					"sessionKeepAliveTimeout": 30
-				},
-				"cells": [
-					{
-						"cell_type": "code",
-						"metadata": {
-							"microsoft": {
-								"language": "python"
-							}
-						},
-						"source": [
-							"%%pyspark\r\n",
-							"df = spark.read.load('abfss://pendragon@pendragon.dfs.core.windows.net/Tweets/TweetsCombined.parquet', format='parquet')\r\n",
-							"df.write.mode(\"overwrite\").saveAsTable(\"default.tweets\")"
-						],
-						"outputs": [],
-						"execution_count": 5
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							""
-						],
-						"outputs": [],
-						"execution_count": null
-					}
-				]
 			},
 			"dependsOn": []
 		},
