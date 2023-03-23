@@ -66,11 +66,21 @@
 								},
 								"method": "POST",
 								"headers": {
-									"Ocp-Apim-Subscription-Key": "a3028b5f7e7a462d8a3381e49b9c976d"
+									"Ocp-Apim-Subscription-Key": "a3028b5f7e7a462d8a3381e49b9c976d",
+									"Content-Type": "application/json",
+									"Accept": "application/json"
 								},
 								"body": {
 									"value": "@concat('{\"document\":[\n                        {\n                            \"langauge\": \"en\", \"id\": \"',\n                                item().id ,\n                                '\", \"text\": \"' , item().text ,'\"\n                            }\n                            ]\n                            }')",
 									"type": "Expression"
+								},
+								"authentication": {
+									"resource": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.CognitiveServices/accounts/pendragon-language",
+									"credential": {
+										"referenceName": "PendragonManagedIdentityCredential",
+										"type": "CredentialReference"
+									},
+									"type": "UserAssignedManagedIdentity"
 								}
 							}
 						},
