@@ -1,0 +1,27 @@
+{
+	"name": "CognitiveService1",
+	"properties": {
+		"annotations": [],
+		"type": "CognitiveService",
+		"typeProperties": {
+			"subscriptionId": "57cd2ff8-9306-41d0-9cad-c2052a0a8381",
+			"resourceGroup": "spring2023-teampendragon",
+			"csName": "pendragon-language",
+			"csKind": "TextAnalytics",
+			"csLocation": "eastus",
+			"endPoint": "https://pendragon-language.cognitiveservices.azure.com/",
+			"csKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "PendragonKeyVault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "LangaugeKey"
+			}
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
