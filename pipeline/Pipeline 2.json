@@ -65,21 +65,12 @@
 									"type": "IntegrationRuntimeReference"
 								},
 								"method": "POST",
+								"headers": {
+									"Ocp-Apim-Subscription-Key": "a3028b5f7e7a462d8a3381e49b9c976d"
+								},
 								"body": {
 									"value": "@concat('{\"document\":[\n                        {\n                            \"langauge\": \"en\", \"id\": \"',\n                                item().id ,\n                                '\", \"text\": \"' , item().text ,'\"\n                            }\n                            ]\n                            }')",
 									"type": "Expression"
-								},
-								"authentication": {
-									"type": "Basic",
-									"username": "rthoma43",
-									"password": {
-										"type": "AzureKeyVaultSecret",
-										"store": {
-											"referenceName": "PendragonKeyVault",
-											"type": "LinkedServiceReference"
-										},
-										"secretName": "LangaugeKey"
-									}
 								}
 							}
 						},
