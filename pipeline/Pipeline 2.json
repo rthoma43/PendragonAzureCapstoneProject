@@ -71,7 +71,7 @@
 									"Accept": "application/json"
 								},
 								"body": {
-									"value": "@'\n{\n    \"kind\": \"KeyPhraseExtraction\",\n    \"parameters\": {\n        \"modelVersion\": \"latest\"\n    },\n    \"analysisInput\":{\n        \"documents\":[\n            {\n                \"id\":\"item().id\",\n                \"language\":\"item().lang\",\n                \"text\": \"item().text\"\n            }\n        ]\n    }\n}\n'",
+									"value": "@'\n{\n    \"kind\": \"KeyPhraseExtraction\",\n    \"parameters\": {\n        \"modelVersion\": \"latest\"\n    },\n    \"analysisInput\":{\n        \"documents\":[\n            {\n                \"id\":item().id,\n                \"language\":item().lang,\n                \"text\": item().text\n            }\n        ]\n    }\n}\n'",
 									"type": "Expression"
 								},
 								"authentication": {
