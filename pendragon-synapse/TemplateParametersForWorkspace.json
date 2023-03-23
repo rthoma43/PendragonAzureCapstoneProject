@@ -20,6 +20,9 @@
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"value": "https://pendragon.dfs.core.windows.net/"
 		},
+		"CognitiveService1_properties_typeProperties_subscriptionId": {
+			"value": "57cd2ff8-9306-41d0-9cad-c2052a0a8381"
+		},
 		"PendragonKeyVault_properties_typeProperties_baseUrl": {
 			"value": "https://pendragonkeys.vault.azure.net/"
 		},

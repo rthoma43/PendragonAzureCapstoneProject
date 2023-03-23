@@ -28,6 +28,10 @@
 			"type": "string",
 			"defaultValue": "https://pendragon.dfs.core.windows.net/"
 		},
+		"CognitiveService1_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "57cd2ff8-9306-41d0-9cad-c2052a0a8381"
+		},
 		"PendragonKeyVault_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://pendragonkeys.vault.azure.net/"
@@ -1768,136 +1772,6 @@
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter2')]",
 				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
 				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/Pipeline 2')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "Lookup1",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlPoolSource",
-								"sqlReaderQuery": "SELECT id, text FROM [dbo].[NATO_Tweets1]",
-								"queryTimeout": "02:00:00"
-							},
-							"dataset": {
-								"referenceName": "DedicatedSqlPoolTable1",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "Lookup1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Lookup1').output",
-								"type": "Expression"
-							},
-							"isSequential": true,
-							"activities": [
-								{
-									"name": "Sentiment Analysis",
-									"type": "WebActivity",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"url": "https://pendragon-language.cognitiveservices.azure.com/",
-										"connectVia": {
-											"referenceName": "AutoResolveIntegrationRuntime",
-											"type": "IntegrationRuntimeReference"
-										},
-										"method": "POST",
-										"headers": {},
-										"body": {
-											"value": "@concat('{\"document\":[\n                        {\n                            \"langauge\": \"en\", \"id\": \"',\n                                item().id ,\n                                '\", \"text\": \"' , item().text ,'\"\n                            }\n                            ]\n                            }')",
-											"type": "Expression"
-										},
-										"authentication": {
-											"type": "Basic",
-											"username": "rthoma43",
-											"password": {
-												"type": "AzureKeyVaultSecret",
-												"store": {
-													"referenceName": "PendragonKeyVault",
-													"type": "LinkedServiceReference"
-												},
-												"secretName": "LangaugeKey"
-											}
-										}
-									}
-								},
-								{
-									"name": "Append variable1",
-									"type": "AppendVariable",
-									"dependsOn": [
-										{
-											"activity": "Sentiment Analysis",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "results",
-										"value": {
-											"value": "@activity('Sentiment Analysis').output",
-											"type": "Expression"
-										}
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"variables": {
-					"results": {
-						"type": "Array"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/DedicatedSqlPoolTable1')]",
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
-				"[concat(variables('workspaceId'), '/linkedServices/PendragonKeyVault')]"
 			]
 		},
 		{
@@ -3867,6 +3741,39 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/CognitiveService1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "CognitiveService",
+				"typeProperties": {
+					"subscriptionId": "[parameters('CognitiveService1_properties_typeProperties_subscriptionId')]",
+					"resourceGroup": "spring2023-teampendragon",
+					"csName": "pendragon-language",
+					"csKind": "TextAnalytics",
+					"csLocation": "eastus",
+					"endPoint": "https://pendragon-language.cognitiveservices.azure.com/",
+					"csKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "PendragonKeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "LangaugeKey"
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/linkedServices/PendragonKeyVault')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/PendragonKeyVault')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -3875,6 +3782,20 @@
 				"type": "AzureKeyVault",
 				"typeProperties": {
 					"baseUrl": "[parameters('PendragonKeyVault_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PowerBIWorkspace1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "PowerBIWorkspace",
+				"typeProperties": {
+					"workspaceID": "89f52e0a-3aeb-4050-9251-54de8e97068e",
+					"tenantID": "9e857255-df57-4c47-a0c0-0546460380cb"
 				}
 			},
 			"dependsOn": []
@@ -4519,12 +4440,581 @@
 						"language": "sql"
 					},
 					"currentConnection": {
-						"databaseName": "SQLPoolTest",
-						"poolName": "SQLPoolTest"
+						"databaseName": "ServerlessSQLPoolTest",
+						"poolName": "Built-in"
 					},
 					"resultLimit": 5000
 				},
 				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CleansDataFromFolder')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPoolTest",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "9285ced5-7ea2-4fc3-b1f9-6a191e66c6ec"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolTest",
+						"name": "SparkPoolTest",
+						"type": "Spark",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolTest",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.3",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"automaticScaleJobs": false
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"metadata": {},
+						"source": [
+							"!pip install azure-storage-file-datalake"
+						],
+						"outputs": [],
+						"execution_count": 17
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# azureml-core of version 1.0.72 or higher is required\r\n",
+							"# azureml-dataprep[pandas] of version 1.1.34 or higher is required\r\n",
+							"from azureml.core import Workspace, Dataset\r\n",
+							"\r\n",
+							"subscription_id = '57cd2ff8-9306-41d0-9cad-c2052a0a8381'\r\n",
+							"resource_group = 'Spring2023-TeamPendragon'\r\n",
+							"workspace_name = 'pendragon-ml'\r\n",
+							"\r\n",
+							"workspace = Workspace(subscription_id, resource_group, workspace_name)\r\n",
+							"\r\n",
+							"dataset = Dataset.get_by_name(workspace, name='NATO_Tweets')\r\n",
+							"df = dataset.to_pandas_dataframe()\r\n",
+							"df\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 19
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Remove @, #, links, and emoticons"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# remove @s\r\n",
+							"df['text'] = df['text'].str.replace(r'@\\w+\\s*', '')\r\n",
+							"\r\n",
+							"# remove hashtags\r\n",
+							"df['text'] = df['text'].str.replace(r'#\\w+\\s*', '')\r\n",
+							"\r\n",
+							"# Remove links\r\n",
+							"import re\r\n",
+							"df['text'] = df['text'].apply(lambda x: re.sub(r'http\\S+', '', x))\r\n",
+							"\r\n",
+							"# drop rows where the 'text' column is an empty string\r\n",
+							"df = df.drop(df[df['text'] == ''].index)\r\n",
+							"\r\n",
+							"# drop rows where the 'lang' column is not 'en'\r\n",
+							"df = df.drop(df[df['lang'] != 'en'].index)\r\n",
+							"\r\n",
+							"# print the resulting dataframe\r\n",
+							"#df.head(10)"
+						],
+						"outputs": [],
+						"execution_count": 20
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"import re\r\n",
+							"\r\n",
+							"# define a regex pattern to match emoticons\r\n",
+							"emoticon_pattern = re.compile(\"[\"\r\n",
+							"                              u\"\\U0001F600-\\U0001F64F\"  # emoticons\r\n",
+							"                              u\"\\U0001F300-\\U0001F5FF\"  # symbols & pictographs\r\n",
+							"                              u\"\\U0001F680-\\U0001F6FF\"  # transport & map symbols\r\n",
+							"                              u\"\\U0001F1E0-\\U0001F1FF\"  # flags (iOS)\r\n",
+							"                              \"]+\", flags=re.UNICODE)\r\n",
+							"\r\n",
+							"# apply the regex pattern to the 'text' column to remove emoticons\r\n",
+							"df['text'] = df['text'].str.replace(emoticon_pattern, '')\r\n",
+							"\r\n",
+							"# print the modified DataFrame\r\n",
+							"print(df['text'])"
+						],
+						"outputs": [],
+						"execution_count": 21
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Add a period to the end of text if one doesn't exist"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# check if each string in 'text' column ends with a period\r\n",
+							"no_period_mask = ~df['text'].str.endswith('.')\r\n",
+							"\r\n",
+							"# add period to the end of the strings that don't end with a period\r\n",
+							"df.loc[no_period_mask, 'text'] += '.'\r\n",
+							"\r\n",
+							"# print the modified DataFrame\r\n",
+							"#print(df['text'])"
+						],
+						"outputs": [],
+						"execution_count": 22
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# sort the DataFrame by the 'created_at' column\r\n",
+							"df = df.sort_values(by='created_at')\r\n",
+							"#df.head(10)"
+						],
+						"outputs": [],
+						"execution_count": 23
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/LoadfromSQLPool')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPoolTest",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "2aa6efde-df82-4393-ae30-814b3a7a34c5"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolTest",
+						"name": "SparkPoolTest",
+						"type": "Spark",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolTest",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.3",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Read from a query using Azure AD based authentication\r\n",
+							"\r\n",
+							"https://learn.microsoft.com/en-us/azure/synapse-analytics/spark/synapse-spark-sql-pool-import-export?tabs=python%2Cpython1%2Cscala2%2Cscala3%2Cscala4%2Cscala5"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Add required imports\r\n",
+							"import com.microsoft.spark.sqlanalytics\r\n",
+							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+							"from pyspark.sql.functions import col\r\n",
+							"\r\n",
+							"# Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
+							"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\r\n",
+							"\r\n",
+							"# Read from a query\r\n",
+							"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\r\n",
+							"dfToReadFromQueryAsOption = (spark.read\r\n",
+							"                     # Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
+							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
+							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							"                     # Defaults to storage path defined in the runtime configurations\r\n",
+							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							"                     # query from which data will be read\r\n",
+							"                     .option(Constants.QUERY, \"select * from dbo.NATO_Tweets1\")\r\n",
+							"                     .synapsesql()\r\n",
+							")\r\n",
+							"\r\n",
+							"dfToReadFromQueryAsArgument = (spark.read\r\n",
+							"                     # Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
+							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
+							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							"                     # Defaults to storage path defined in the runtime configurations\r\n",
+							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							"                     # query from which data will be read\r\n",
+							"                     .synapsesql(\"select * from dbo.NATO_Tweets1\")\r\n",
+							")\r\n",
+							"\r\n",
+							"# Show contents of the dataframe\r\n",
+							"dfToReadFromQueryAsOption.show()\r\n",
+							"dfToReadFromQueryAsArgument.show()"
+						],
+						"outputs": [],
+						"execution_count": 40
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df = dfToReadFromQueryAsArgument"
+						],
+						"outputs": [],
+						"execution_count": 43
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Text Analytics\r\n",
+							"https://learn.microsoft.com/en-us/azure/synapse-analytics/machine-learning/tutorial-text-analytics-use-mmlspark"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"import synapse.ml\r\n",
+							"from synapse.ml.cognitive import *\r\n",
+							"from pyspark.sql.functions import col"
+						],
+						"outputs": [],
+						"execution_count": 48
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"linked_service_name = \"CognitiveService1\""
+						],
+						"outputs": [],
+						"execution_count": 57
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Create a dataframe that's tied to it's column names\r\n",
+							"df = spark.createDataFrame([\r\n",
+							"  (\"Hello World\",),\r\n",
+							"  (\"Bonjour tout le monde\",),\r\n",
+							"  (\"La carretera estaba atascada. Había mucho tráfico el día de ayer.\",),\r\n",
+							"  (\"你好\",),\r\n",
+							"  (\"こんにちは\",),\r\n",
+							"  (\":) :( :D\",)\r\n",
+							"], [\"text\",])\r\n",
+							"\r\n",
+							"# Run the Text Analytics service with options\r\n",
+							"language = (LanguageDetector()\r\n",
+							"    .setLinkedService(linked_service_name)\r\n",
+							"    .setTextCol(\"text\")\r\n",
+							"    .setOutputCol(\"language\")\r\n",
+							"    .setErrorCol(\"error\"))\r\n",
+							"\r\n",
+							"# Show the results of your text query in a table format\r\n",
+							"display(language.transform(df))\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 58
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Remove special characters"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from pyspark.sql.functions import regexp_replace\r\n",
+							"\r\n",
+							"# remove special characters from text column\r\n",
+							"df = df.withColumn(\"text\", regexp_replace(df[\"text\"], \"[^a-zA-Z0-9\\\\s]\", \"\"))\r\n",
+							"\r\n",
+							"df_text = df.select('text')\r\n",
+							"\r\n",
+							"# show resulting dataframe\r\n",
+							"df_text.show()"
+						],
+						"outputs": [],
+						"execution_count": 47
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Write back to SQLPoolTest dbo.NATO_Tweets1 table using Azure AD based authentication"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Write using AAD Auth to internal table\r\n",
+							"# Add required imports\r\n",
+							"import com.microsoft.spark.sqlanalytics\r\n",
+							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+							"\r\n",
+							"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
+							"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
+							"(df.write\r\n",
+							" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							" # Like-wise, if `Constants.TEMP_FOLDER` is not provided, the connector will use the runtime staging directory config (see section on Configuration Options for details).\r\n",
+							" .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							" # Choose a save mode that is apt for your use case.\r\n",
+							" # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
+							" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
+							" .mode(\"overwrite\")\r\n",
+							" # Required parameter - Three-part table name to which data will be written\r\n",
+							" .synapsesql(\"SQLPoolTest.dbo.NATO_Tweets1\"))"
+						],
+						"outputs": [],
+						"execution_count": 44
+					}
+				]
 			},
 			"dependsOn": []
 		},
