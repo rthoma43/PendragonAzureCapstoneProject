@@ -1,0 +1,605 @@
+{
+	"name": "GET Until Next Token",
+	"properties": {
+		"activities": [
+			{
+				"name": "Initial GET Past 7 Days",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Delete Previous Output Files",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Delete Previous Merged Output files",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "RestResourceTwitter7days",
+						"type": "DatasetReference",
+						"parameters": {
+							"query": {
+								"value": "@variables('Query')",
+								"type": "Expression"
+							},
+							"tweet_fields": {
+								"value": "@variables('Tweet Fields')",
+								"type": "Expression"
+							},
+							"max_results": {
+								"value": "@variables('max_results')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Twitter_RawJSON_Temp",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Query",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Query",
+					"value": "\"NATO\" lang:en -is:retweet -is:reply"
+				}
+			},
+			{
+				"name": "Max Results",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "max_results",
+					"value": "100"
+				}
+			},
+			{
+				"name": "Tweet Fields",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Tweet Fields",
+					"value": "id,text,created_at,lang,public_metrics"
+				}
+			},
+			{
+				"name": "Delete Previous Output Files",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Query",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Max Results",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Tweet Fields",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Raw_Twitter_Outputs",
+						"type": "DatasetReference"
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Delete NATO Temp file",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "GET using Next Token Until Empty",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Twitter_RawJSON_Temp",
+						"type": "DatasetReference"
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Merge JSONs and Convert to CSV",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Delete NATO Temp file",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Merge JSON to CSV",
+						"type": "DataFlowReference"
+					},
+					"integrationRuntime": {
+						"referenceName": "WarmIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Delete Previous Merged Output files",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Query",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Merged_JSON_folder",
+						"type": "DatasetReference"
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Copy data to Dedicated SQL Pool",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Delete All Existing Rows in NATO_Tweets1 Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFileName": "*",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlPoolSink",
+						"allowCopyCommand": true
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "id",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "id",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"name": "created_at",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "created_at",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "text",
+									"type": "String"
+								},
+								"sink": {
+									"name": "text",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "lang",
+									"type": "String"
+								},
+								"sink": {
+									"name": "lang",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "retweet_count",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "retweet_count",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "reply_count",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "reply_count",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "like_count",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "like_count",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "quote_count",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "quote_count",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "impression_count",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "impression_count",
+									"type": "Int32"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Merged_output_csv",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DedicatedSqlPoolTable1",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Delete All Existing Rows in NATO_Tweets1 Table",
+				"type": "SqlPoolStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Merge JSONs and Convert to CSV",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"sqlPool": {
+					"referenceName": "SQLPoolTest",
+					"type": "SqlPoolReference"
+				},
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[DeleteAllRowsFromNatoTweets1]"
+				}
+			},
+			{
+				"name": "GET using Next Token Until Empty",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "Data flow1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token ",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Extract Next Token",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "Get Next Token",
+									"type": "DataFlowReference"
+								},
+								"integrationRuntime": {
+									"referenceName": "WarmIntegrationRuntime",
+									"type": "IntegrationRuntimeReference"
+								},
+								"traceLevel": "None",
+								"cacheSinks": {
+									"firstRowOnly": true
+								}
+							}
+						},
+						{
+							"name": "Delete Temp File",
+							"type": "Delete",
+							"dependsOn": [
+								{
+									"activity": "Extract Next Token",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"enableLogging": false
+							}
+						},
+						{
+							"name": "GET to Temp",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Delete Temp File",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "RestSource",
+									"httpRequestTimeout": "00:01:40",
+									"requestInterval": "00.00:00:00.010",
+									"requestMethod": "GET",
+									"paginationRules": {
+										"supportRFC5988": "true"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "RestResource_Next_Token",
+									"type": "DatasetReference",
+									"parameters": {
+										"query": "@variables('Query')",
+										"tweet_fields": "@variables('Tweet Fields')",
+										"max_results": "@variables('max_results')",
+										"next_token": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Twitter_RawJSON_Temp",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					],
+					"timeout": "0.12:00:00"
+				}
+			},
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Initial GET Past 7 Days",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Get Next Token",
+						"type": "DataFlowReference"
+					},
+					"integrationRuntime": {
+						"referenceName": "WarmIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "None",
+					"cacheSinks": {
+						"firstRowOnly": true
+					}
+				}
+			}
+		],
+		"variables": {
+			"Query": {
+				"type": "String"
+			},
+			"max_results": {
+				"type": "String"
+			},
+			"Tweet Fields": {
+				"type": "String"
+			},
+			"Number of Tweets to Pull": {
+				"type": "String"
+			},
+			"loops": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
