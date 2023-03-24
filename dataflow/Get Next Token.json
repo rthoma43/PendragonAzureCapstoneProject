@@ -6,14 +6,14 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "json_Aithusa",
+						"referenceName": "Twitter_RawJSON_Temp",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
 				},
 				{
 					"dataset": {
-						"referenceName": "json_Aithusa",
+						"referenceName": "Twitter_RawJSON_Temp",
 						"type": "DatasetReference"
 					},
 					"name": "source2"
@@ -25,7 +25,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "Raw_Aithusa_Outputs",
+						"referenceName": "Raw_Twitter_Outputs",
 						"type": "DatasetReference"
 					},
 					"name": "sink2"
