@@ -1,0 +1,86 @@
+{
+	"name": "Merged_Aithusa_JSON_folder",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "Twitter_Aithusa/Merged_Output",
+				"fileSystem": "pendragon"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"data": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"lang": {
+								"type": "string"
+							},
+							"text": {
+								"type": "string"
+							},
+							"id": {
+								"type": "string"
+							},
+							"public_metrics": {
+								"type": "object",
+								"properties": {
+									"retweet_count": {
+										"type": "integer"
+									},
+									"reply_count": {
+										"type": "integer"
+									},
+									"like_count": {
+										"type": "integer"
+									},
+									"quote_count": {
+										"type": "integer"
+									},
+									"impression_count": {
+										"type": "integer"
+									}
+								}
+							},
+							"created_at": {
+								"type": "string"
+							},
+							"edit_history_tweet_ids": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"meta": {
+					"type": "object",
+					"properties": {
+						"newest_id": {
+							"type": "string"
+						},
+						"oldest_id": {
+							"type": "string"
+						},
+						"result_count": {
+							"type": "integer"
+						},
+						"next_token": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
+	}
+}
