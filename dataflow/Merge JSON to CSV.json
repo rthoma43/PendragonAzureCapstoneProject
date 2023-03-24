@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "Raw_Twitter_Outputs",
+						"referenceName": "Raw_Twitter_Outputs1",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -33,7 +33,11 @@
 				}
 			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
+				"source(output(",
+				"          data as (id as string, lang as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), edit_history_tweet_ids as string[], text as string, created_at as string)[],",
+				"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+				"     ),",
+				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'arrayOfDocuments') ~> source1",
