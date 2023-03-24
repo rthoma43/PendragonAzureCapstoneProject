@@ -161,7 +161,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "Twitter_RawJSON_Temp",
+						"referenceName": "json_Aithusa",
 						"type": "DatasetReference"
 					},
 					"enableLogging": false,
@@ -422,7 +422,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token ",
+						"value": "empty(@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token) ",
 						"type": "Expression"
 					},
 					"activities": [
@@ -597,6 +597,9 @@
 				"type": "String"
 			},
 			"loops": {
+				"type": "String"
+			},
+			"next_token": {
 				"type": "String"
 			}
 		},
