@@ -1,0 +1,36 @@
+{
+	"name": "RestResource_Aithusa_7days_NextToken",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RestService_Next_Token",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"query": {
+				"type": "string",
+				"defaultValue": "NATO"
+			},
+			"tweet_fields": {
+				"type": "string",
+				"defaultValue": "id,created_at,text,lang,public_metrics"
+			},
+			"max_results": {
+				"type": "string",
+				"defaultValue": "10"
+			},
+			"next_token": {
+				"type": "string",
+				"defaultValue": "b26v89c19zqg8o3fqka107quvh02v90tb138wylvg69od"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results,'&next_token=',dataset().next_token)",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	}
+}
