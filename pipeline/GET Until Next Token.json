@@ -427,7 +427,7 @@
 					},
 					"activities": [
 						{
-							"name": "Extract Next Token",
+							"name": "Extract Next Token Aithusa",
 							"type": "ExecuteDataFlow",
 							"dependsOn": [],
 							"policy": {
@@ -440,7 +440,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"dataflow": {
-									"referenceName": "Get Next Token",
+									"referenceName": "Get Next Token for Aithusa",
 									"type": "DataFlowReference"
 								},
 								"integrationRuntime": {
@@ -458,7 +458,7 @@
 							"type": "Delete",
 							"dependsOn": [
 								{
-									"activity": "Extract Next Token",
+									"activity": "Extract Next Token Aithusa",
 									"dependencyConditions": [
 										"Succeeded"
 									]
