@@ -2,7 +2,7 @@
 	"name": "RestResource_Aithusa_7days_NextToken",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "RestService_Next_Token",
+			"referenceName": "Twitter_RestService_ Aithusa",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
