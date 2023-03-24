@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 1",
+	"properties": {
+		"content": {
+			"query": "SELECT COUNT(*) FROM [dbo].[NATO_Tweets1];\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "SQLPoolTest",
+				"poolName": "SQLPoolTest"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
