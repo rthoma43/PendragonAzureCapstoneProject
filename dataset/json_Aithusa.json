@@ -15,6 +15,73 @@
 				"fileSystem": "pendragon"
 			}
 		},
-		"schema": {}
+		"schema": {
+			"type": "object",
+			"properties": {
+				"data": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"edit_history_tweet_ids": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							},
+							"id": {
+								"type": "string"
+							},
+							"created_at": {
+								"type": "string"
+							},
+							"text": {
+								"type": "string"
+							},
+							"public_metrics": {
+								"type": "object",
+								"properties": {
+									"retweet_count": {
+										"type": "integer"
+									},
+									"reply_count": {
+										"type": "integer"
+									},
+									"like_count": {
+										"type": "integer"
+									},
+									"quote_count": {
+										"type": "integer"
+									},
+									"impression_count": {
+										"type": "integer"
+									}
+								}
+							},
+							"lang": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"meta": {
+					"type": "object",
+					"properties": {
+						"newest_id": {
+							"type": "string"
+						},
+						"oldest_id": {
+							"type": "string"
+						},
+						"result_count": {
+							"type": "integer"
+						},
+						"next_token": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
 	}
 }
