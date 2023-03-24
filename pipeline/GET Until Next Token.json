@@ -50,27 +50,18 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "RestResourceTwitter7days",
+						"referenceName": "RestResource_Aithusa_7days",
 						"type": "DatasetReference",
 						"parameters": {
-							"query": {
-								"value": "@variables('Query')",
-								"type": "Expression"
-							},
-							"tweet_fields": {
-								"value": "@variables('Tweet Fields')",
-								"type": "Expression"
-							},
-							"max_results": {
-								"value": "@variables('max_results')",
-								"type": "Expression"
-							}
+							"query": "@variables('Query')",
+							"tweet_fields": "@variables('Tweet Fields')",
+							"max_results": "@variables('max_results')"
 						}
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "Twitter_RawJSON_Temp",
+						"referenceName": "json_Aithusa",
 						"type": "DatasetReference"
 					}
 				]
@@ -233,7 +224,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "Merged_JSON_folder",
+						"referenceName": "Merged_Aithusa_JSON_folder",
 						"type": "DatasetReference"
 					},
 					"enableLogging": false,
@@ -482,7 +473,16 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"enableLogging": false
+								"dataset": {
+									"referenceName": "json_Aithusa",
+									"type": "DatasetReference"
+								},
+								"enableLogging": false,
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								}
 							}
 						},
 						{
@@ -527,19 +527,19 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "RestResource_Next_Token",
+									"referenceName": "RestResource_Aithusa_7days_NextToken",
 									"type": "DatasetReference",
 									"parameters": {
 										"query": "@variables('Query')",
 										"tweet_fields": "@variables('Tweet Fields')",
-										"max_results": "@variables('max_results')",
+										"max_results": "@variables('max_result')",
 										"next_token": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token"
 									}
 								}
 							],
 							"outputs": [
 								{
-									"referenceName": "Twitter_RawJSON_Temp",
+									"referenceName": "json_Aithusa",
 									"type": "DatasetReference"
 								}
 							]
@@ -569,7 +569,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Get Next Token",
+						"referenceName": "Get Next Token for Aithusa",
 						"type": "DataFlowReference"
 					},
 					"integrationRuntime": {
