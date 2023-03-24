@@ -1,5 +1,5 @@
 {
-	"name": "RestService_Aithusa_7days",
+	"name": "RestResource_Aithusa_7days",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "Twitter_RestService_ Aithusa",
