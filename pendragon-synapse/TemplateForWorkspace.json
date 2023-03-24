@@ -391,7 +391,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "loops",
-							"value": "2"
+							"value": "20"
 						}
 					},
 					{
@@ -765,27 +765,18 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "RestResourceTwitter7days",
+								"referenceName": "RestResource_Aithusa_7days",
 								"type": "DatasetReference",
 								"parameters": {
-									"query": {
-										"value": "@variables('Query')",
-										"type": "Expression"
-									},
-									"tweet_fields": {
-										"value": "@variables('Tweet Fields')",
-										"type": "Expression"
-									},
-									"max_results": {
-										"value": "@variables('max_results')",
-										"type": "Expression"
-									}
+									"query": "@variables('Query')",
+									"tweet_fields": "@variables('Tweet Fields')",
+									"max_results": "@variables('max_results')"
 								}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "Twitter_RawJSON_Temp",
+								"referenceName": "json_Aithusa",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -854,7 +845,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "Raw_Twitter_Outputs",
+								"referenceName": "Raw_Aithusa_Outputs",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -887,7 +878,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "Twitter_RawJSON_Temp",
+								"referenceName": "json_Aithusa",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -920,7 +911,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "Merge JSON to CSV",
+								"referenceName": "Merge JSONs and Convert to CSV for Aithusa",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
@@ -957,7 +948,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "Merged_JSON_folder",
+								"referenceName": "Merged_Aithusa_JSON_folder",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -1159,12 +1150,12 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token ",
+								"value": "empty(@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token) ",
 								"type": "Expression"
 							},
 							"activities": [
 								{
-									"name": "Extract Next Token",
+									"name": "Extract Next Token Aithusa",
 									"type": "ExecuteDataFlow",
 									"dependsOn": [],
 									"policy": {
@@ -1177,7 +1168,7 @@
 									"userProperties": [],
 									"typeProperties": {
 										"dataflow": {
-											"referenceName": "Get Next Token",
+											"referenceName": "Get Next Token for Aithusa",
 											"type": "DataFlowReference",
 											"parameters": {},
 											"datasetParameters": {
@@ -1203,7 +1194,7 @@
 									"type": "Delete",
 									"dependsOn": [
 										{
-											"activity": "Extract Next Token",
+											"activity": "Extract Next Token Aithusa",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -1219,7 +1210,7 @@
 									"userProperties": [],
 									"typeProperties": {
 										"dataset": {
-											"referenceName": "Twitter_RawJSON_Temp",
+											"referenceName": "json_Aithusa",
 											"type": "DatasetReference",
 											"parameters": {}
 										},
@@ -1273,19 +1264,19 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "RestResource_Next_Token",
+											"referenceName": "RestResource_Aithusa_7days_NextToken",
 											"type": "DatasetReference",
 											"parameters": {
 												"query": "@variables('Query')",
 												"tweet_fields": "@variables('Tweet Fields')",
-												"max_results": "@variables('max_results')",
+												"max_results": "@variables('max_result')",
 												"next_token": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token"
 											}
 										}
 									],
 									"outputs": [
 										{
-											"referenceName": "Twitter_RawJSON_Temp",
+											"referenceName": "json_Aithusa",
 											"type": "DatasetReference",
 											"parameters": {}
 										}
@@ -1316,7 +1307,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "Get Next Token",
+								"referenceName": "Get Next Token for Aithusa",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
@@ -1357,22 +1348,25 @@
 					},
 					"loops": {
 						"type": "String"
+					},
+					"next_token": {
+						"type": "String"
 					}
 				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/RestResourceTwitter7days')]",
-				"[concat(variables('workspaceId'), '/datasets/Twitter_RawJSON_Temp')]",
-				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs')]",
-				"[concat(variables('workspaceId'), '/dataflows/Merge JSON to CSV')]",
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_7days')]",
+				"[concat(variables('workspaceId'), '/datasets/json_Aithusa')]",
+				"[concat(variables('workspaceId'), '/datasets/Raw_Aithusa_Outputs')]",
+				"[concat(variables('workspaceId'), '/dataflows/Merge JSONs and Convert to CSV for Aithusa')]",
 				"[concat(variables('workspaceId'), '/integrationRuntimes/WarmIntegrationRuntime')]",
-				"[concat(variables('workspaceId'), '/datasets/Merged_JSON_folder')]",
+				"[concat(variables('workspaceId'), '/datasets/Merged_Aithusa_JSON_folder')]",
 				"[concat(variables('workspaceId'), '/datasets/Merged_output_csv')]",
 				"[concat(variables('workspaceId'), '/datasets/DedicatedSqlPoolTable1')]",
 				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]",
-				"[concat(variables('workspaceId'), '/dataflows/Get Next Token')]",
-				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]"
+				"[concat(variables('workspaceId'), '/dataflows/Get Next Token for Aithusa')]",
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_7days_NextToken')]"
 			]
 		},
 		{
@@ -2114,7 +2108,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Initial Query",
+						"name": "Copy data1",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -2127,95 +2121,33 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET"
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
 							},
 							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
+								"type": "RestSink",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": 10,
+								"requestMethod": "POST",
+								"writeBatchSize": 10000,
+								"httpCompressionType": "none"
 							},
 							"enableStaging": false
 						},
 						"inputs": [
 							{
-								"referenceName": "RestService_Aithusa",
+								"referenceName": "AzureSqlTable1",
 								"type": "DatasetReference",
-								"parameters": {
-									"Query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en -is:retweet -is:reply",
-									"max_results": "10",
-									"tweet_fields": "id,text,created_at,lang,public_metrics",
-									"start_year": "2023",
-									"start_month": "03",
-									"start_day": "17",
-									"start_hour": "00",
-									"start_minute": "00",
-									"start_second": "01",
-									"end_year": "2023",
-									"end_month": "03",
-									"end_day": "20",
-									"end_hour": "00",
-									"end_minute": "00",
-									"end_second": "01",
-									"sort_order": "recency",
-									"next_token": "b26v89c19zqg8o3fqka1ul12l1v52f39wscygv1iaubul"
-								}
+								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "json_Aithusa",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "Copy data1_copy1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET",
-								"paginationRules": {
-									"QueryParameters.theNextToken": "$.meta.next_token",
-									"EndCondition:meta.next_token": "NonExist"
-								}
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "RestService_Aithusa",
+								"referenceName": "RestResource_Aithusa",
 								"type": "DatasetReference",
 								"parameters": {
-									"Query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en -is:retweet -is:reply",
+									"Query": "NATO",
 									"max_results": "10",
 									"tweet_fields": "id,text,created_at,lang,public_metrics",
 									"start_year": "2023",
@@ -2231,15 +2163,8 @@
 									"end_minute": "00",
 									"end_second": "01",
 									"sort_order": "recency",
-									"next_token": "b26v89c19zqg8o3fqka1ul12l1v52f39wscygv1iaubul"
+									"next_token": "na"
 								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "json_Aithusa",
-								"type": "DatasetReference",
-								"parameters": {}
 							}
 						]
 					}
@@ -2251,8 +2176,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/RestService_Aithusa')]",
-				"[concat(variables('workspaceId'), '/datasets/json_Aithusa')]"
+				"[concat(variables('workspaceId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa')]"
 			]
 		},
 		{
@@ -2608,6 +2533,163 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/MergedJSON_to_CSV_Aithusa')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "NATO_merged.csv",
+						"folderPath": "Twitter_Aithusa/Merged_Output",
+						"fileSystem": "pendragon"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "id",
+						"type": "String"
+					},
+					{
+						"name": "created_at",
+						"type": "String"
+					},
+					{
+						"name": "text",
+						"type": "String"
+					},
+					{
+						"name": "lang",
+						"type": "String"
+					},
+					{
+						"name": "retweet_count",
+						"type": "String"
+					},
+					{
+						"name": "reply_count",
+						"type": "String"
+					},
+					{
+						"name": "like_count",
+						"type": "String"
+					},
+					{
+						"name": "quote_count",
+						"type": "String"
+					},
+					{
+						"name": "impression_count",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Merged_Aithusa_JSON_folder')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Twitter_Aithusa/Merged_Output",
+						"fileSystem": "pendragon"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"data": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"lang": {
+										"type": "string"
+									},
+									"text": {
+										"type": "string"
+									},
+									"id": {
+										"type": "string"
+									},
+									"public_metrics": {
+										"type": "object",
+										"properties": {
+											"retweet_count": {
+												"type": "integer"
+											},
+											"reply_count": {
+												"type": "integer"
+											},
+											"like_count": {
+												"type": "integer"
+											},
+											"quote_count": {
+												"type": "integer"
+											},
+											"impression_count": {
+												"type": "integer"
+											}
+										}
+									},
+									"created_at": {
+										"type": "string"
+									},
+									"edit_history_tweet_ids": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									}
+								}
+							}
+						},
+						"meta": {
+							"type": "object",
+							"properties": {
+								"newest_id": {
+									"type": "string"
+								},
+								"oldest_id": {
+									"type": "string"
+								},
+								"result_count": {
+									"type": "integer"
+								},
+								"next_token": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Merged_JSON_folder')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -2862,6 +2944,97 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Raw_Aithusa_Outputs')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Twitter_Aithusa/Output",
+						"fileSystem": "pendragon"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"data": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"lang": {
+										"type": "string"
+									},
+									"text": {
+										"type": "string"
+									},
+									"id": {
+										"type": "string"
+									},
+									"public_metrics": {
+										"type": "object",
+										"properties": {
+											"retweet_count": {
+												"type": "integer"
+											},
+											"reply_count": {
+												"type": "integer"
+											},
+											"like_count": {
+												"type": "integer"
+											},
+											"quote_count": {
+												"type": "integer"
+											},
+											"impression_count": {
+												"type": "integer"
+											}
+										}
+									},
+									"created_at": {
+										"type": "string"
+									},
+									"edit_history_tweet_ids": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									}
+								}
+							}
+						},
+						"meta": {
+							"type": "object",
+							"properties": {
+								"newest_id": {
+									"type": "string"
+								},
+								"oldest_id": {
+									"type": "string"
+								},
+								"result_count": {
+									"type": "integer"
+								},
+								"next_token": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Raw_Twitter_Outputs')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -3011,6 +3184,176 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/RestService_Twitter_7days')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/RestResource_Aithusa')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Twitter_RestService_ Aithusa",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Query": {
+						"type": "string",
+						"defaultValue": "NATO"
+					},
+					"max_results": {
+						"type": "string",
+						"defaultValue": "10"
+					},
+					"tweet_fields": {
+						"type": "string",
+						"defaultValue": "id,text,created_at,lang,public_metrics"
+					},
+					"start_year": {
+						"type": "string",
+						"defaultValue": "2023"
+					},
+					"start_month": {
+						"type": "string",
+						"defaultValue": "03"
+					},
+					"start_day": {
+						"type": "string",
+						"defaultValue": "05"
+					},
+					"start_hour": {
+						"type": "string",
+						"defaultValue": "00"
+					},
+					"start_minute": {
+						"type": "string",
+						"defaultValue": "00"
+					},
+					"start_second": {
+						"type": "string",
+						"defaultValue": "01"
+					},
+					"end_year": {
+						"type": "string",
+						"defaultValue": "2023"
+					},
+					"end_month": {
+						"type": "string",
+						"defaultValue": "03"
+					},
+					"end_day": {
+						"type": "string",
+						"defaultValue": "07"
+					},
+					"end_hour": {
+						"type": "string",
+						"defaultValue": "00"
+					},
+					"end_minute": {
+						"type": "string",
+						"defaultValue": "00"
+					},
+					"end_second": {
+						"type": "string",
+						"defaultValue": "01"
+					},
+					"sort_order": {
+						"type": "string",
+						"defaultValue": "recency"
+					},
+					"next_token": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat('/2/tweets/search/recent?query=',dataset().Query,'&start_time=',dataset().start_year,'-',dataset().start_month,'-',dataset().start_day,'T',dataset().start_hour,':',dataset().start_minute,':',dataset().start_second,'.000Z','&end_time=',dataset().end_year,'-',dataset().end_month,'-',dataset().end_day,'T',dataset().end_hour,':',dataset().end_minute,':',dataset().end_second,'.000Z','&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results,'&sort_order=',dataset().sort_order)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/Twitter_RestService_ Aithusa')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/RestResource_Aithusa_7days')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Twitter_RestService_ Aithusa",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"query": {
+						"type": "string",
+						"defaultValue": "NATO"
+					},
+					"tweet_fields": {
+						"type": "string",
+						"defaultValue": "id,text,created_at,lang,public_metrics"
+					},
+					"max_results": {
+						"type": "string",
+						"defaultValue": "10"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/Twitter_RestService_ Aithusa')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/RestResource_Aithusa_7days_NextToken')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Twitter_RestService_ Aithusa",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"query": {
+						"type": "string",
+						"defaultValue": "NATO"
+					},
+					"tweet_fields": {
+						"type": "string",
+						"defaultValue": "id,created_at,text,lang,public_metrics"
+					},
+					"max_results": {
+						"type": "string",
+						"defaultValue": "10"
+					},
+					"next_token": {
+						"type": "string",
+						"defaultValue": "b26v89c19zqg8o3fqka107quvh02v90tb138wylvg69od"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results,'&next_token=',dataset().next_token)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/Twitter_RestService_ Aithusa')]"
 			]
 		},
 		{
@@ -3182,98 +3525,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/Twitter_RestService_AS')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/RestService_Aithusa')]",
-			"type": "Microsoft.Synapse/workspaces/datasets",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Twitter_RestService_ Aithusa",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Query": {
-						"type": "string",
-						"defaultValue": "NATO"
-					},
-					"max_results": {
-						"type": "string",
-						"defaultValue": "10"
-					},
-					"tweet_fields": {
-						"type": "string",
-						"defaultValue": "id,text,created_at,lang,public_metrics"
-					},
-					"start_year": {
-						"type": "string",
-						"defaultValue": "2023"
-					},
-					"start_month": {
-						"type": "string",
-						"defaultValue": "03"
-					},
-					"start_day": {
-						"type": "string",
-						"defaultValue": "05"
-					},
-					"start_hour": {
-						"type": "string",
-						"defaultValue": "00"
-					},
-					"start_minute": {
-						"type": "string",
-						"defaultValue": "00"
-					},
-					"start_second": {
-						"type": "string",
-						"defaultValue": "01"
-					},
-					"end_year": {
-						"type": "string",
-						"defaultValue": "2023"
-					},
-					"end_month": {
-						"type": "string",
-						"defaultValue": "03"
-					},
-					"end_day": {
-						"type": "string",
-						"defaultValue": "07"
-					},
-					"end_hour": {
-						"type": "string",
-						"defaultValue": "00"
-					},
-					"end_minute": {
-						"type": "string",
-						"defaultValue": "00"
-					},
-					"end_second": {
-						"type": "string",
-						"defaultValue": "01"
-					},
-					"sort_order": {
-						"type": "string",
-						"defaultValue": "recency"
-					},
-					"next_token": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {
-					"relativeUrl": {
-						"value": "@concat('/2/tweets/search/recent?query=',dataset().Query,'&start_time=',dataset().start_year,'-',dataset().start_month,'-',dataset().start_day,'T',dataset().start_hour,':',dataset().start_minute,':',dataset().start_second,'.000Z','&end_time=',dataset().end_year,'-',dataset().end_month,'-',dataset().end_day,'T',dataset().end_hour,':',dataset().end_minute,':',dataset().end_second,'.000Z','&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results,'&sort_order=',dataset().sort_order)",
-						"type": "Expression"
-					}
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/Twitter_RestService_ Aithusa')]"
 			]
 		},
 		{
@@ -3667,12 +3918,79 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "NATO_mentions",
-						"folderPath": "Twitter_Aithusa",
+						"fileName": "NATO_Temp",
+						"folderPath": "Twitter_Aithusa/Temp",
 						"fileSystem": "pendragon"
 					}
 				},
-				"schema": {}
+				"schema": {
+					"type": "object",
+					"properties": {
+						"data": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"edit_history_tweet_ids": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									},
+									"id": {
+										"type": "string"
+									},
+									"created_at": {
+										"type": "string"
+									},
+									"text": {
+										"type": "string"
+									},
+									"public_metrics": {
+										"type": "object",
+										"properties": {
+											"retweet_count": {
+												"type": "integer"
+											},
+											"reply_count": {
+												"type": "integer"
+											},
+											"like_count": {
+												"type": "integer"
+											},
+											"quote_count": {
+												"type": "integer"
+											},
+											"impression_count": {
+												"type": "integer"
+											}
+										}
+									},
+									"lang": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"meta": {
+							"type": "object",
+							"properties": {
+								"newest_id": {
+									"type": "string"
+								},
+								"oldest_id": {
+									"type": "string"
+								},
+								"result_count": {
+									"type": "integer"
+								},
+								"next_token": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
@@ -4061,6 +4379,95 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Get Next Token for Aithusa')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "json_Aithusa",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "json_Aithusa",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						}
+					],
+					"sinks": [
+						{
+							"name": "sink1"
+						},
+						{
+							"dataset": {
+								"referenceName": "Raw_Aithusa_Outputs",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumn1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          data as (edit_history_tweet_ids as string[], id as string, created_at as string, text as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), lang as string)[],",
+						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> source1",
+						"source(output(",
+						"          data as (edit_history_tweet_ids as string[], id as string, created_at as string, text as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), lang as string)[],",
+						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> source2",
+						"source1 derive(next_token = meta.next_token) ~> derivedColumn1",
+						"derivedColumn1 sink(validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     store: 'cache',",
+						"     format: 'inline',",
+						"     output: true,",
+						"     saveOrder: 1,",
+						"     mapColumn(",
+						"          next_token",
+						"     )) ~> sink1",
+						"source2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
+						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+						"     ),",
+						"     filePattern:(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.json')),",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 2) ~> sink2"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/json_Aithusa')]",
+				"[concat(variables('workspaceId'), '/datasets/Raw_Aithusa_Outputs')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Get Next Token')]",
 			"type": "Microsoft.Synapse/workspaces/dataflows",
 			"apiVersion": "2019-06-01-preview",
@@ -4089,7 +4496,7 @@
 						},
 						{
 							"dataset": {
-								"referenceName": "Raw_Twitter_Outputs1",
+								"referenceName": "Raw_Twitter_Outputs",
 								"type": "DatasetReference"
 							},
 							"name": "sink2"
@@ -4102,7 +4509,7 @@
 					],
 					"scriptLines": [
 						"source(output(",
-						"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
+						"          data as (edit_history_tweet_ids as string[], id as string, created_at as string, text as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), lang as string)[],",
 						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
 						"     ),",
 						"     allowSchemaDrift: true,",
@@ -4130,6 +4537,10 @@
 						"     )) ~> sink1",
 						"source2 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
+						"     input(",
+						"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
+						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+						"     ),",
 						"     filePattern:(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.json')),",
 						"     umask: 0022,",
 						"     preCommands: [],",
@@ -4142,7 +4553,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/Twitter_RawJSON_Temp')]",
-				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs1')]"
+				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs')]"
 			]
 		},
 		{
@@ -4244,6 +4655,107 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs')]",
 				"[concat(variables('workspaceId'), '/datasets/MergedJSON_to_CSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Merge JSONs and Convert to CSV for Aithusa')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Raw_Aithusa_Outputs",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "MergedJSON_to_CSV_Aithusa",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "flatten1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "sort1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
+						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'arrayOfDocuments') ~> source1",
+						"source1 foldDown(unroll(data, data),",
+						"     mapColumn(",
+						"          data,",
+						"          meta",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: false) ~> flatten1",
+						"flatten1 derive(id = data.id,",
+						"          created_at = data.created_at,",
+						"          text = replace(replace(replace(data.text, '\\n\\n', ' '), '\\n', ' '),'\\\"',''),",
+						"          lang = data.lang,",
+						"          retweet_count = data.public_metrics.retweet_count,",
+						"          reply_count = data.public_metrics.reply_count,",
+						"          like_count = data.public_metrics.like_count,",
+						"          quote_count = data.public_metrics.quote_count,",
+						"          impression_count = data.public_metrics.impression_count) ~> derivedColumn1",
+						"derivedColumn1 sort(desc(id, false)) ~> sort1",
+						"sort1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id as string,",
+						"          created_at as string,",
+						"          text as string,",
+						"          lang as string,",
+						"          retweet_count as string,",
+						"          reply_count as string,",
+						"          like_count as string,",
+						"          quote_count as string,",
+						"          impression_count as string",
+						"     ),",
+						"     partitionFileNames:[(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.csv'))],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          id,",
+						"          created_at,",
+						"          text,",
+						"          lang,",
+						"          retweet_count,",
+						"          reply_count,",
+						"          like_count,",
+						"          quote_count,",
+						"          impression_count",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Raw_Aithusa_Outputs')]",
+				"[concat(variables('workspaceId'), '/datasets/MergedJSON_to_CSV_Aithusa')]"
 			]
 		},
 		{
@@ -4450,6 +4962,26 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT COUNT(*) FROM [dbo].[NATO_Tweets1];\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPoolTest",
+						"poolName": "SQLPoolTest"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/CleansDataFromFolder')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
@@ -4470,7 +5002,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "9285ced5-7ea2-4fc3-b1f9-6a191e66c6ec"
+						"spark.autotune.trackingId": "9a20c3d9-e847-4523-9b56-873570d32737"
 					}
 				},
 				"metadata": {
@@ -4495,15 +5027,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"!pip install azure-storage-file-datalake"
 						],
