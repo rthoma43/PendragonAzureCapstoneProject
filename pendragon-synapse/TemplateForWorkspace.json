@@ -3052,74 +3052,7 @@
 						"fileSystem": "pendragon"
 					}
 				},
-				"schema": {
-					"type": "object",
-					"properties": {
-						"data": {
-							"type": "array",
-							"items": {
-								"type": "object",
-								"properties": {
-									"lang": {
-										"type": "string"
-									},
-									"text": {
-										"type": "string"
-									},
-									"id": {
-										"type": "string"
-									},
-									"public_metrics": {
-										"type": "object",
-										"properties": {
-											"retweet_count": {
-												"type": "integer"
-											},
-											"reply_count": {
-												"type": "integer"
-											},
-											"like_count": {
-												"type": "integer"
-											},
-											"quote_count": {
-												"type": "integer"
-											},
-											"impression_count": {
-												"type": "integer"
-											}
-										}
-									},
-									"created_at": {
-										"type": "string"
-									},
-									"edit_history_tweet_ids": {
-										"type": "array",
-										"items": {
-											"type": "string"
-										}
-									}
-								}
-							}
-						},
-						"meta": {
-							"type": "object",
-							"properties": {
-								"newest_id": {
-									"type": "string"
-								},
-								"oldest_id": {
-									"type": "string"
-								},
-								"result_count": {
-									"type": "integer"
-								},
-								"next_token": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				}
+				"schema": {}
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
@@ -3143,7 +3076,74 @@
 						"fileSystem": "pendragon"
 					}
 				},
-				"schema": {}
+				"schema": {
+					"type": "object",
+					"properties": {
+						"data": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "string"
+									},
+									"lang": {
+										"type": "string"
+									},
+									"public_metrics": {
+										"type": "object",
+										"properties": {
+											"retweet_count": {
+												"type": "integer"
+											},
+											"reply_count": {
+												"type": "integer"
+											},
+											"like_count": {
+												"type": "integer"
+											},
+											"quote_count": {
+												"type": "integer"
+											},
+											"impression_count": {
+												"type": "integer"
+											}
+										}
+									},
+									"edit_history_tweet_ids": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									},
+									"text": {
+										"type": "string"
+									},
+									"created_at": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"meta": {
+							"type": "object",
+							"properties": {
+								"newest_id": {
+									"type": "string"
+								},
+								"oldest_id": {
+									"type": "string"
+								},
+								"result_count": {
+									"type": "integer"
+								},
+								"next_token": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
@@ -4537,10 +4537,6 @@
 						"     )) ~> sink1",
 						"source2 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     input(",
-						"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
-						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
-						"     ),",
 						"     filePattern:(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.json')),",
 						"     umask: 0022,",
 						"     preCommands: [],",
@@ -4566,7 +4562,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "Raw_Twitter_Outputs",
+								"referenceName": "Raw_Twitter_Outputs1",
 								"type": "DatasetReference"
 							},
 							"name": "source1"
@@ -4594,7 +4590,7 @@
 					],
 					"scriptLines": [
 						"source(output(",
-						"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
+						"          data as (id as string, lang as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), edit_history_tweet_ids as string[], text as string, created_at as string)[],",
 						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
 						"     ),",
 						"     allowSchemaDrift: true,",
@@ -4653,7 +4649,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs')]",
+				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs1')]",
 				"[concat(variables('workspaceId'), '/datasets/MergedJSON_to_CSV')]"
 			]
 		},
@@ -5549,6 +5545,18 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "eastus2"
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SparkPoolTest')]",
 			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
@@ -5568,18 +5576,6 @@
 				"sparkVersion": "3.3",
 				"isComputeIsolationEnabled": false,
 				"sessionLevelPackagesEnabled": true,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "eastus2"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
 				"annotations": []
 			},
 			"dependsOn": [],
