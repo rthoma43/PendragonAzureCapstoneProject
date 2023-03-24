@@ -1,6 +1,67 @@
 {
 	"name": "Twitter_Loop",
 	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "RestSink",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": 10,
+						"requestMethod": "POST",
+						"writeBatchSize": 10000,
+						"httpCompressionType": "none"
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "AzureSqlTable1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "RestResource_Aithusa",
+						"type": "DatasetReference",
+						"parameters": {
+							"Query": "NATO",
+							"max_results": "10",
+							"tweet_fields": "id,text,created_at,lang,public_metrics",
+							"start_year": "2023",
+							"start_month": "03",
+							"start_day": "05",
+							"start_hour": "00",
+							"start_minute": "00",
+							"start_second": "01",
+							"end_year": "2023",
+							"end_month": "03",
+							"end_day": "07",
+							"end_hour": "00",
+							"end_minute": "00",
+							"end_second": "01",
+							"sort_order": "recency"
+						}
+					}
+				]
+			}
+		],
 		"annotations": []
 	}
 }
