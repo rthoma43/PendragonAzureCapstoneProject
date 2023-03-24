@@ -6,14 +6,14 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "Twitter_RawJSON_Temp",
+						"referenceName": "json_Aithusa",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
 				},
 				{
 					"dataset": {
-						"referenceName": "Twitter_RawJSON_Temp",
+						"referenceName": "json_Aithusa",
 						"type": "DatasetReference"
 					},
 					"name": "source2"
@@ -25,7 +25,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "Raw_Twitter_Outputs1",
+						"referenceName": "Raw_Aithusa_Outputs",
 						"type": "DatasetReference"
 					},
 					"name": "sink2"
@@ -38,7 +38,7 @@
 			],
 			"scriptLines": [
 				"source(output(",
-				"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
+				"          data as (edit_history_tweet_ids as string[], id as string, created_at as string, text as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), lang as string)[],",
 				"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
 				"     ),",
 				"     allowSchemaDrift: true,",
@@ -66,6 +66,10 @@
 				"     )) ~> sink1",
 				"source2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     input(",
+				"          data as (lang as string, text as string, id as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), created_at as string, edit_history_tweet_ids as string[])[],",
+				"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+				"     ),",
 				"     filePattern:(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.json')),",
 				"     umask: 0022,",
 				"     preCommands: [],",
