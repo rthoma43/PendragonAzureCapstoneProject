@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "Twitter_Aithusa/Merged_Output",
+				"folderPath": "Raw_Twitter_JSONs/Merged_Output",
 				"fileSystem": "pendragon"
 			}
 		},
