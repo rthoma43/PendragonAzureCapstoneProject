@@ -10,8 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "NATO_mentions",
-				"folderPath": "Twitter_Aithusa",
+				"fileName": "NATO_Temp",
+				"folderPath": "Twitter_Aithusa/Temp",
 				"fileSystem": "pendragon"
 			}
 		},
