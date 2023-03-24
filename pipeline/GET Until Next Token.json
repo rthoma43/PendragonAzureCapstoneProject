@@ -193,7 +193,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Merge JSON to CSV",
+						"referenceName": "Merge JSONs and Convert to CSV for Aithusa",
 						"type": "DataFlowReference"
 					},
 					"integrationRuntime": {
