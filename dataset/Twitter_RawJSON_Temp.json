@@ -11,7 +11,7 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": "NATO_Temp",
-				"folderPath": "Raw_Twitter_JSONs/Temp",
+				"folderPath": "Twitter_Aithusa/Temp",
 				"fileSystem": "pendragon"
 			}
 		},
