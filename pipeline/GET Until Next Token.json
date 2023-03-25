@@ -399,7 +399,7 @@
 				"type": "Until",
 				"dependsOn": [
 					{
-						"activity": "Initial GET Past 7 Days",
+						"activity": "Set variable1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -575,6 +575,23 @@
 						}
 					],
 					"timeout": "0.12:00:00"
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Initial GET Past 7 Days",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "anotherPull",
+					"value": false
 				}
 			}
 		],
