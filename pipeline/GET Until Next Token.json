@@ -595,7 +595,7 @@
 				"type": "String"
 			},
 			"anotherPull": {
-				"type": "Boolean"
+				"type": "String"
 			}
 		},
 		"annotations": []
