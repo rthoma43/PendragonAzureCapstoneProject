@@ -589,9 +589,6 @@
 			"Number of Tweets to Pull": {
 				"type": "String"
 			},
-			"loops": {
-				"type": "String"
-			},
 			"next_token": {
 				"type": "String"
 			}
