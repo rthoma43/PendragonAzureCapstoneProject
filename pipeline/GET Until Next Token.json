@@ -406,7 +406,7 @@
 				"type": "Until",
 				"dependsOn": [
 					{
-						"activity": "Data flow1",
+						"activity": "Initial GET Past 7 Days",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -414,10 +414,6 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"expression": {
-						"value": "@not(empty(activity('Data flow1').output.sink1.value[0].next_token))",
-						"type": "Expression"
-					},
 					"activities": [
 						{
 							"name": "Extract Next Token Aithusa",
@@ -536,6 +532,42 @@
 									"type": "DatasetReference"
 								}
 							]
+						},
+						{
+							"name": "If Condition1",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@empty(variables('next_token'))",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Set another pull",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "anotherPull",
+											"value": false
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "Set anotherPull",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "anotherPull",
+											"value": true
+										}
+									}
+								]
+							}
 						}
 					],
 					"timeout": "0.12:00:00"
@@ -544,14 +576,7 @@
 			{
 				"name": "Data flow1",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [
-					{
-						"activity": "Initial GET Past 7 Days",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -591,6 +616,9 @@
 			},
 			"next_token": {
 				"type": "String"
+			},
+			"anotherPull": {
+				"type": "Boolean"
 			}
 		},
 		"annotations": []
