@@ -399,7 +399,7 @@
 				"type": "Until",
 				"dependsOn": [
 					{
-						"activity": "If Condition2",
+						"activity": "Set variable1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -578,8 +578,8 @@
 				}
 			},
 			{
-				"name": "If Condition2",
-				"type": "IfCondition",
+				"name": "Set variable1",
+				"type": "SetVariable",
 				"dependsOn": [
 					{
 						"activity": "Initial GET Past 7 Days",
@@ -590,34 +590,8 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"expression": {
-						"value": "@empty(variables('next_token'))",
-						"type": "Expression"
-					},
-					"ifFalseActivities": [
-						{
-							"name": "Set variable2",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "anotherPull",
-								"value": false
-							}
-						}
-					],
-					"ifTrueActivities": [
-						{
-							"name": "Set variable1",
-							"type": "SetVariable",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "anotherPull",
-								"value": true
-							}
-						}
-					]
+					"variableName": "anotherPull",
+					"value": true
 				}
 			}
 		],
