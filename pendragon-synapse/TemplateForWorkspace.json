@@ -62,6 +62,163 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('workspaceName'), '/CognitiveServices')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlPoolSource",
+								"sqlReaderQuery": "SELECT TOP 10 id, lang, text FROM dbo.NATO_Tweets1;\n",
+								"queryTimeout": "02:00:00"
+							},
+							"dataset": {
+								"referenceName": "DedicatedSqlPoolTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup1').output.value",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Web1",
+									"type": "WebActivity",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"url": "https://pendragon-language.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+										"connectVia": {
+											"referenceName": "AutoResolveIntegrationRuntime",
+											"type": "IntegrationRuntimeReference"
+										},
+										"method": "POST",
+										"headers": {
+											"Content-Type": "application/json",
+											"Ocp-Apim-Subscription-Key": "a3028b5f7e7a462d8a3381e49b9c976d"
+										},
+										"body": {
+											"value": "@'\n{\n    \"kind\": \"KeyPhraseExtraction\",\n    \"parameters\": {\n        \"modelVersion\": \"latest\"\n    },\n    \"analysisInput\":{\n        \"documents\":[\n            {\n                \"language\": \"en\", \"id\": \"',\n                    item().id,\n                    '\", \"text\": \"' , item().text ,'\"\n            }\n        ]\n    }\n}\n'",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Append variable1",
+									"type": "AppendVariable",
+									"dependsOn": [
+										{
+											"activity": "Web1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "KeyPhrases",
+										"value": {
+											"value": "@activity('Web1').output.results.documents[0].keyPhrases[0]",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "ForEach2",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup1').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Append variable2",
+									"type": "AppendVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "text",
+										"value": {
+											"value": "@item().text",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"KeyPhrases": {
+						"type": "Array"
+					},
+					"text": {
+						"type": "Array"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DedicatedSqlPoolTable1')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/GET Loop Next Token RT')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -963,14 +1120,7 @@
 					{
 						"name": "Copy data to Dedicated SQL Pool",
 						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Delete All Existing Rows in NATO_Tweets1 Table",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
+						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -1134,7 +1284,7 @@
 						"type": "Until",
 						"dependsOn": [
 							{
-								"activity": "Data flow1",
+								"activity": "Set variable1",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1143,7 +1293,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@not(empty(activity('Data flow1').output))",
+								"value": "@equals(variables('anotherPull'),['no'])",
 								"type": "Expression"
 							},
 							"activities": [
@@ -1274,14 +1424,57 @@
 											"parameters": {}
 										}
 									]
+								},
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "GET to Temp",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@empty(activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token)",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "Set another pull",
+												"type": "SetVariable",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"variableName": "anotherPull",
+													"value": "['yes']"
+												}
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "Set anotherPull",
+												"type": "SetVariable",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"variableName": "anotherPull",
+													"value": "['no']"
+												}
+											}
+										]
+									}
 								}
 							],
 							"timeout": "0.12:00:00"
 						}
 					},
 					{
-						"name": "Data flow1",
-						"type": "ExecuteDataFlow",
+						"name": "Set variable1",
+						"type": "SetVariable",
 						"dependsOn": [
 							{
 								"activity": "Initial GET Past 7 Days",
@@ -1290,33 +1483,10 @@
 								]
 							}
 						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
 						"userProperties": [],
 						"typeProperties": {
-							"dataflow": {
-								"referenceName": "Get next token variable",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"integrationRuntime": {
-								"referenceName": "WarmIntegrationRuntime",
-								"type": "IntegrationRuntimeReference"
-							},
-							"traceLevel": "None",
-							"cacheSinks": {
-								"firstRowOnly": true
-							}
+							"variableName": "anotherPull",
+							"value": "['yes']"
 						}
 					}
 				],
@@ -1337,11 +1507,11 @@
 					"Number of Tweets to Pull": {
 						"type": "String"
 					},
-					"loops": {
-						"type": "String"
-					},
 					"next_token": {
 						"type": "String"
+					},
+					"anotherPull": {
+						"type": "Boolean"
 					}
 				},
 				"annotations": []
@@ -1356,7 +1526,6 @@
 				"[concat(variables('workspaceId'), '/datasets/Merged_output_csv')]",
 				"[concat(variables('workspaceId'), '/datasets/DedicatedSqlPoolTable1')]",
 				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]",
-				"[concat(variables('workspaceId'), '/dataflows/Get next token variable')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token for Aithusa')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_7days_NextToken')]"
 			]
@@ -5280,7 +5449,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "a81437c9-2887-4c5b-9b7b-290771ae20ac"
+						"spark.autotune.trackingId": "b5597a3d-e441-4260-8091-350d6aec1dcc"
 					}
 				},
 				"metadata": {
@@ -5305,15 +5474,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
