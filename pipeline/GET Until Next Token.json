@@ -544,7 +544,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@empty(variables('next_token'))",
+									"value": "@empty(activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token)",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
@@ -555,7 +555,7 @@
 										"userProperties": [],
 										"typeProperties": {
 											"variableName": "anotherPull",
-											"value": false
+											"value": true
 										}
 									}
 								],
@@ -567,7 +567,7 @@
 										"userProperties": [],
 										"typeProperties": {
 											"variableName": "anotherPull",
-											"value": true
+											"value": false
 										}
 									}
 								]
