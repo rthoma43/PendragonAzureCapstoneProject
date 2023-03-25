@@ -384,14 +384,7 @@
 			{
 				"name": "Delete All Existing Rows in NATO_Tweets1 Table",
 				"type": "SqlPoolStoredProcedure",
-				"dependsOn": [
-					{
-						"activity": "Merge JSONs and Convert to CSV",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
