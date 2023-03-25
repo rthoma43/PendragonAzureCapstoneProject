@@ -555,7 +555,7 @@
 										"userProperties": [],
 										"typeProperties": {
 											"variableName": "anotherPull",
-											"value": true
+											"value": "['yes']"
 										}
 									}
 								],
