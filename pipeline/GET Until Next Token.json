@@ -526,7 +526,7 @@
 										"query": "@variables('Query')",
 										"tweet_fields": "@variables('Tweet Fields')",
 										"max_results": "@variables('max_result')",
-										"next_token": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token"
+										"next_token": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token"
 									}
 								}
 							],
