@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "695c0d42-182c-4d4d-bad7-534ced794e45"
+				"spark.autotune.trackingId": "ad8558ff-6d12-49b5-a4ae-35e6b6e8d04f"
 			}
 		},
 		"metadata": {
@@ -97,6 +97,24 @@
 					"from pyspark.sql.functions import col"
 				],
 				"execution_count": 67
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"print(dir(synapse.ml.cognitive))"
+				],
+				"execution_count": 90
 			},
 			{
 				"cell_type": "code",
@@ -256,32 +274,23 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
-					"from pyspark.sql.functions import col\r\n",
+					"df = spark.createDataFrame([\r\n",
+					"    (\"1\", \"en\", \"I had a wonderful trip to Seattle last week.\"),\r\n",
+					"    (\"2\", \"en\", \"I visited Space Needle 2 times.\")\r\n",
+					"], [\"id\", \"language\", \"text\"])\r\n",
 					"\r\n",
-					"# Create a dataframe that's tied to it's column names\r\n",
-					"df_sentences = spark.createDataFrame([\r\n",
-					"  (\"I am so happy today, its sunny!\", \"en-US\"), \r\n",
-					"  (\"this is a dog\", \"en-US\"), \r\n",
-					"  (\"I am frustrated by this rush hour traffic!\", \"en-US\") \r\n",
-					"], [\"text\", \"language\"])\r\n",
-					"\r\n",
-					"# Run the Text Analytics service with options\r\n",
-					"sentiment = (TextSentiment()\r\n",
-					"    .setTextCol(\"text\")\r\n",
-					"    .setLocation(\"eastasia\") # Set the location of your cognitive service\r\n",
-					"    .setSubscriptionKey(linked_service_name)\r\n",
+					"ner = (TextSentiment()\r\n",
+					"    .setLinkedService(linked_service_name)\r\n",
 					"    .setOutputCol(\"sentiment\")\r\n",
-					"    .setErrorCol(\"error\")\r\n",
-					"    .setLanguageCol(\"language\"))\r\n",
+					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
-					"# Show the results of your text query in a table format\r\n",
-					"\r\n",
-					"display(sentiment.transform(df_sentences).select(\"text\", col(\"sentiment\")['document'].getItem(\"sentiment\").alias(\"sentiment\")))"
+					"display(ner.transform(df))"
 				],
-				"execution_count": 86
+				"execution_count": 92
 			}
 		]
 	}
