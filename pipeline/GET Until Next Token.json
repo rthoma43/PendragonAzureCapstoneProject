@@ -422,7 +422,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "empty(@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token) ",
+						"value": "@not(empty(activity('Data flow1').output))",
 						"type": "Expression"
 					},
 					"activities": [
@@ -569,7 +569,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Get Next Token for Aithusa",
+						"referenceName": "Get next token variable",
 						"type": "DataFlowReference"
 					},
 					"integrationRuntime": {
