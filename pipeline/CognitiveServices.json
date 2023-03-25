@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlPoolSource",
-						"sqlReaderQuery": "SELECT id, lang, text FROM dbo.NATO_Tweets1",
+						"sqlReaderQuery": "SELECT TOP 10 id, lang, text FROM dbo.NATO_Tweets1;\n",
 						"queryTimeout": "02:00:00"
 					},
 					"dataset": {
@@ -70,7 +70,7 @@
 									"Ocp-Apim-Subscription-Key": "a3028b5f7e7a462d8a3381e49b9c976d"
 								},
 								"body": {
-									"value": "@'\n{\n    \"kind\": \"KeyPhraseExtraction\",\n    \"parameters\": {\n        \"modelVersion\": \"latest\"\n    },\n    \"analysisInput\":{\n        \"documents\":[\n            {\n                \"id\":\"item().id\",\n                \"language\":\"item().lang\",\n                \"text\": \"item().text\"\n            }\n        ]\n    }\n}\n'",
+									"value": "@'\n{\n    \"kind\": \"KeyPhraseExtraction\",\n    \"parameters\": {\n        \"modelVersion\": \"latest\"\n    },\n    \"analysisInput\":{\n        \"documents\":[\n            {\n                \"id\":\"item().id\",\n                \"language\":\"en\",\n                \"text\": \"item().text\"\n            }\n        ]\n    }\n}\n'",
 									"type": "Expression"
 								}
 							}
@@ -112,7 +112,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Lookup1').output",
+						"value": "@activity('Lookup1').output.value",
 						"type": "Expression"
 					},
 					"activities": [
@@ -120,7 +120,14 @@
 							"name": "Append variable2",
 							"type": "AppendVariable",
 							"dependsOn": [],
-							"userProperties": []
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "text",
+								"value": {
+									"value": "@item().text",
+									"type": "Expression"
+								}
+							}
 						}
 					]
 				}
