@@ -1112,14 +1112,7 @@
 					{
 						"name": "Delete All Existing Rows in NATO_Tweets1 Table",
 						"type": "SqlPoolStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "Merge JSONs and Convert to CSV",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
+						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -1150,7 +1143,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "empty(@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token) ",
+								"value": "@not(empty(activity('Data flow1').output))",
 								"type": "Expression"
 							},
 							"activities": [
@@ -1270,7 +1263,7 @@
 												"query": "@variables('Query')",
 												"tweet_fields": "@variables('Tweet Fields')",
 												"max_results": "@variables('max_result')",
-												"next_token": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token"
+												"next_token": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token"
 											}
 										}
 									],
@@ -1307,14 +1300,12 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "Get Next Token for Aithusa",
+								"referenceName": "Get next token variable",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
 									"source1": {},
-									"source2": {},
-									"sink1": {},
-									"sink2": {}
+									"sink1": {}
 								}
 							},
 							"staging": {},
@@ -1365,6 +1356,7 @@
 				"[concat(variables('workspaceId'), '/datasets/Merged_output_csv')]",
 				"[concat(variables('workspaceId'), '/datasets/DedicatedSqlPoolTable1')]",
 				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]",
+				"[concat(variables('workspaceId'), '/dataflows/Get next token variable')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token for Aithusa')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_7days_NextToken')]"
 			]
@@ -4553,6 +4545,59 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Get next token variable')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "json_Aithusa",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumn1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          data as (edit_history_tweet_ids as string[], id as string, created_at as string, text as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), lang as string)[],",
+						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> source1",
+						"source1 derive(next_token = meta.next_token) ~> derivedColumn1",
+						"derivedColumn1 sink(validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     store: 'cache',",
+						"     format: 'inline',",
+						"     output: true,",
+						"     saveOrder: 1,",
+						"     mapColumn(",
+						"          next_token",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/json_Aithusa')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Merge JSON to CSV')]",
 			"type": "Microsoft.Synapse/workspaces/dataflows",
 			"apiVersion": "2019-06-01-preview",
@@ -5215,6 +5260,384 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/CognitiveServices')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPoolTest",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "a81437c9-2887-4c5b-9b7b-290771ae20ac"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolTest",
+						"name": "SparkPoolTest",
+						"type": "Spark",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolTest",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.3",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"automaticScaleJobs": false
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"metadata": {},
+						"source": [
+							"# Add required imports\r\n",
+							"import com.microsoft.spark.sqlanalytics\r\n",
+							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+							"from pyspark.sql.functions import col\r\n",
+							"\r\n",
+							"# Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
+							"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\r\n",
+							"\r\n",
+							"# Read from a query\r\n",
+							"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\r\n",
+							"df = (spark.read\r\n",
+							"                     # Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
+							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
+							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							"                     # Defaults to storage path defined in the runtime configurations\r\n",
+							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							"                     # query from which data will be read\r\n",
+							"                     .option(Constants.QUERY, \"select * from dbo.NATO_Tweets1\")\r\n",
+							"                     .synapsesql()\r\n",
+							")"
+						],
+						"outputs": [],
+						"execution_count": 93
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#### Key Phrase Extraction, Named Entity Recognition, Sentiment Analysis"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# select the first 20 records\r\n",
+							"first_20 = sorted_df.limit(20)\r\n",
+							"first_20.show()"
+						],
+						"outputs": [],
+						"execution_count": 97
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"import synapse.ml\r\n",
+							"from synapse.ml.cognitive import *\r\n",
+							"from pyspark.sql.functions import col"
+						],
+						"outputs": [],
+						"execution_count": 94
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"print(dir(synapse.ml.cognitive))"
+						],
+						"outputs": [],
+						"execution_count": 90
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"linked_service_name = \"CognitiveService1\""
+						],
+						"outputs": [],
+						"execution_count": 95
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Langauge Detector"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": true
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"# Run the Text Analytics service with options\r\n",
+							"language = (LanguageDetector()\r\n",
+							"    .setLinkedService(linked_service_name)\r\n",
+							"    .setTextCol(\"text\")\r\n",
+							"    .setOutputCol(\"language\")\r\n",
+							"    .setErrorCol(\"error\"))\r\n",
+							"\r\n",
+							"# Show the results of your text query in a table format\r\n",
+							"display(language.transform(first_20))"
+						],
+						"outputs": [],
+						"execution_count": 96
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Entity Extraction"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"entity = (EntityDetector()\r\n",
+							"    .setLinkedService(linked_service_name)\r\n",
+							"    .setLanguage(\"en\")\r\n",
+							"    .setOutputCol(\"replies\")\r\n",
+							"    .setErrorCol(\"error\"))\r\n",
+							"\r\n",
+							"#display(entity.transform(df))\r\n",
+							"display(entity.transform(first_20).select(\"id\", \"text\", col(\"replies\")['document'].getItem(\"entities\").alias(\"entities\")))"
+						],
+						"outputs": [],
+						"execution_count": 102
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Key Phrase Extractor"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"keyPhrase = (KeyPhraseExtractor()\r\n",
+							"    .setLinkedService(linked_service_name)\r\n",
+							"    .setLanguageCol(\"lang\")\r\n",
+							"    .setOutputCol(\"replies\")\r\n",
+							"    .setErrorCol(\"error\"))\r\n",
+							"\r\n",
+							"display(keyPhrase.transform(first_20).select(\"text\", col(\"replies\")['document'].getItem(\"keyPhrases\").alias(\"keyPhrases\")))"
+						],
+						"outputs": [],
+						"execution_count": 103
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Named Entity Recognition"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": true
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"ner = (NER()\r\n",
+							"    .setLinkedService(linked_service_name)\r\n",
+							"    .setLanguageCol(\"language\")\r\n",
+							"    .setOutputCol(\"replies\")\r\n",
+							"    .setErrorCol(\"error\"))\r\n",
+							"\r\n",
+							"display(ner.transform(first_20).select(\"text\", col(\"replies\")['document'].getItem(\"entities\").alias(\"entities\")))"
+						],
+						"outputs": [],
+						"execution_count": 85
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Sentiment Analysis"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": true
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"sent = (TextSentiment()\r\n",
+							"    .setLinkedService(linked_service_name)\r\n",
+							"    .setOutputCol(\"sentiment\")\r\n",
+							"    .setErrorCol(\"error\"))\r\n",
+							"\r\n",
+							"display(sent.transform(first_20))"
+						],
+						"outputs": [],
+						"execution_count": 92
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/LoadfromSQLPool')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
@@ -5545,16 +5968,484 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"name": "[concat(parameters('workspaceName'), '/OpenAI')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
-				"annotations": []
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPoolTest",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "78fc0f2f-9b10-4a78-a38e-4427ed14eba7"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolTest",
+						"name": "SparkPoolTest",
+						"type": "Spark",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolTest",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.3",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"source": [
+							"# Add required imports\r\n",
+							"import com.microsoft.spark.sqlanalytics\r\n",
+							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+							"from pyspark.sql.functions import col\r\n",
+							"\r\n",
+							"# Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
+							"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\r\n",
+							"\r\n",
+							"# Read from a query\r\n",
+							"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\r\n",
+							"df = (spark.read\r\n",
+							"                     # Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
+							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
+							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							"                     # Defaults to storage path defined in the runtime configurations\r\n",
+							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							"                     # query from which data will be read\r\n",
+							"                     .option(Constants.QUERY, \"select * from dbo.NATO_Tweets1\")\r\n",
+							"                     .synapsesql()\r\n",
+							")"
+						],
+						"outputs": [],
+						"execution_count": 11
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# sort dataframe by date column in ascending order\r\n",
+							"sorted_df = df.orderBy(col(\"impression_count\").desc())\r\n",
+							"\r\n",
+							"# show sorted dataframe\r\n",
+							"sorted_df.show()"
+						],
+						"outputs": [],
+						"execution_count": 54
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# select the first 20 records\r\n",
+							"first_20 = sorted_df.limit(20)\r\n",
+							"first_20.show()"
+						],
+						"outputs": [],
+						"execution_count": 55
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from pyspark.sql.functions import collect_list, concat_ws\r\n",
+							"\r\n",
+							"# concatenate strings in \"text\" column into a single string\r\n",
+							"concatenated_string = first_20.agg(concat_ws(\"\", collect_list(\"text\"))).collect()[0][0]\r\n",
+							"\r\n",
+							"print(concatenated_string)"
+						],
+						"outputs": [],
+						"execution_count": 56
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from pyspark import SparkContext\r\n",
+							"sc = SparkContext.getOrCreate()\r\n",
+							"\r\n",
+							"input_string = concatenated_string\r\n",
+							"\r\n",
+							"def remove_emoji(text):\r\n",
+							"    return text.encode('ascii', 'ignore').decode('ascii')\r\n",
+							"result_string = remove_emoji(input_string)\r\n",
+							"\r\n",
+							"words_rdd = sc.parallelize(result_string.split())\r\n",
+							"filtered_words_rdd = words_rdd.filter(lambda word: not word.startswith(\"#\"))\r\n",
+							"result_string = \" \".join(filtered_words_rdd.collect())\r\n",
+							"\r\n",
+							"words_rdd = sc.parallelize(result_string.split())\r\n",
+							"filtered_words_rdd = words_rdd.filter(lambda word: not word.startswith(\"@\"))\r\n",
+							"result_string = \" \".join(filtered_words_rdd.collect())\r\n",
+							"\r\n",
+							"words_rdd = sc.parallelize(result_string.split())\r\n",
+							"filtered_words_rdd = words_rdd.filter(lambda word: not word.startswith(\"&\"))\r\n",
+							"result_string = \" \".join(filtered_words_rdd.collect())\r\n",
+							"\r\n",
+							"words_rdd = sc.parallelize(result_string.split())\r\n",
+							"filtered_words_rdd = words_rdd.filter(lambda word: not word.startswith(\"https\"))\r\n",
+							"result_string = \" \".join(filtered_words_rdd.collect())\r\n",
+							"\r\n",
+							"print(result_string)\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 57
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#!pip install openai\r\n",
+							"import openai\r\n",
+							"\r\n",
+							"\r\n",
+							"openai.api_type = \"azure\"\r\n",
+							"openai.api_base = \"https://querystructureddata.openai.azure.com/\"\r\n",
+							"openai.api_version = \"2022-12-01\"\r\n",
+							"openai.api_key = \"c607bf2bba454302b492ba369efe54f6\""
+						],
+						"outputs": [],
+						"execution_count": 44
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"p = 'Provide a summary of the text below that captures the main idea. ' + result_string"
+						],
+						"outputs": [],
+						"execution_count": 58
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"p"
+						],
+						"outputs": [],
+						"execution_count": 46
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#Note: The openai-python library support for Azure OpenAI is in preview.\r\n",
+							"import os\r\n",
+							"import openai\r\n",
+							"openai.api_type = \"azure\"\r\n",
+							"openai.api_base = \"https://querystructureddata.openai.azure.com/\"\r\n",
+							"openai.api_version = \"2022-12-01\"\r\n",
+							"openai.api_key = \"c607bf2bba454302b492ba369efe54f6\"\r\n",
+							"\r\n",
+							"# query = input(\"Enter your query in natural language: \")\r\n",
+							"\r\n",
+							"response = openai.Completion.create(\r\n",
+							"  engine=\"SumTest\",\r\n",
+							"  prompt = p,\r\n",
+							"  temperature=0.3,\r\n",
+							"  max_tokens=250,\r\n",
+							"  top_p=1,\r\n",
+							"  frequency_penalty=0,\r\n",
+							"  presence_penalty=0,\r\n",
+							"  best_of=1,\r\n",
+							"  stop=None)\r\n",
+							"\r\n",
+							"response"
+						],
+						"outputs": [],
+						"execution_count": 59
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"p = 'Perform key phrase extraction on the following text. ' + result_string"
+						],
+						"outputs": [],
+						"execution_count": 60
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#Note: The openai-python library support for Azure OpenAI is in preview.\r\n",
+							"import os\r\n",
+							"import openai\r\n",
+							"openai.api_type = \"azure\"\r\n",
+							"openai.api_base = \"https://querystructureddata.openai.azure.com/\"\r\n",
+							"openai.api_version = \"2022-12-01\"\r\n",
+							"openai.api_key = \"c607bf2bba454302b492ba369efe54f6\"\r\n",
+							"\r\n",
+							"# query = input(\"Enter your query in natural language: \")\r\n",
+							"\r\n",
+							"response = openai.Completion.create(\r\n",
+							"  engine=\"SumTest\",\r\n",
+							"  prompt = p,\r\n",
+							"  temperature=0.3,\r\n",
+							"  max_tokens=250,\r\n",
+							"  top_p=1,\r\n",
+							"  frequency_penalty=0,\r\n",
+							"  presence_penalty=0,\r\n",
+							"  best_of=1,\r\n",
+							"  stop=None)\r\n",
+							"\r\n",
+							"response"
+						],
+						"outputs": [],
+						"execution_count": 61
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"p = 'Perform Named Entity Recognition on the following text. ' + result_string"
+						],
+						"outputs": [],
+						"execution_count": 62
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#Note: The openai-python library support for Azure OpenAI is in preview.\r\n",
+							"import os\r\n",
+							"import openai\r\n",
+							"openai.api_type = \"azure\"\r\n",
+							"openai.api_base = \"https://querystructureddata.openai.azure.com/\"\r\n",
+							"openai.api_version = \"2022-12-01\"\r\n",
+							"openai.api_key = \"c607bf2bba454302b492ba369efe54f6\"\r\n",
+							"\r\n",
+							"# query = input(\"Enter your query in natural language: \")\r\n",
+							"\r\n",
+							"response = openai.Completion.create(\r\n",
+							"  engine=\"SumTest\",\r\n",
+							"  prompt = p,\r\n",
+							"  temperature=0.3,\r\n",
+							"  max_tokens=250,\r\n",
+							"  top_p=1,\r\n",
+							"  frequency_penalty=0,\r\n",
+							"  presence_penalty=0,\r\n",
+							"  best_of=1,\r\n",
+							"  stop=None)\r\n",
+							"\r\n",
+							"response"
+						],
+						"outputs": [],
+						"execution_count": 63
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"p = 'What is the overall sentiment of the following text as a percentage. ' + result_string"
+						],
+						"outputs": [],
+						"execution_count": 64
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#Note: The openai-python library support for Azure OpenAI is in preview.\r\n",
+							"import os\r\n",
+							"import openai\r\n",
+							"openai.api_type = \"azure\"\r\n",
+							"openai.api_base = \"https://querystructureddata.openai.azure.com/\"\r\n",
+							"openai.api_version = \"2022-12-01\"\r\n",
+							"openai.api_key = \"c607bf2bba454302b492ba369efe54f6\"\r\n",
+							"\r\n",
+							"# query = input(\"Enter your query in natural language: \")\r\n",
+							"\r\n",
+							"response = openai.Completion.create(\r\n",
+							"  engine=\"SumTest\",\r\n",
+							"  prompt = p,\r\n",
+							"  temperature=0.3,\r\n",
+							"  max_tokens=250,\r\n",
+							"  top_p=1,\r\n",
+							"  frequency_penalty=0,\r\n",
+							"  presence_penalty=0,\r\n",
+							"  best_of=1,\r\n",
+							"  stop=None)\r\n",
+							"\r\n",
+							"response"
+						],
+						"outputs": [],
+						"execution_count": 65
+					}
+				]
 			},
-			"dependsOn": [],
-			"location": "eastus2"
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/SparkPoolTest')]",
@@ -5576,6 +6467,18 @@
 				"sparkVersion": "3.3",
 				"isComputeIsolationEnabled": false,
 				"sessionLevelPackagesEnabled": true,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "eastus2"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
 				"annotations": []
 			},
 			"dependsOn": [],
