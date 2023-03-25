@@ -1,0 +1,109 @@
+{
+	"name": "CognitiveServices",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlPoolSource",
+						"sqlReaderQuery": "SELECT id, lang, text FROM dbo.NATO_Tweets1",
+						"queryTimeout": "02:00:00"
+					},
+					"dataset": {
+						"referenceName": "DedicatedSqlPoolTable1",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup1').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Web1",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://pendragon-language.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+								"connectVia": {
+									"referenceName": "AutoResolveIntegrationRuntime",
+									"type": "IntegrationRuntimeReference"
+								},
+								"method": "POST",
+								"headers": {
+									"Content-Type": "application/json",
+									"Ocp-Apim-Subscription-Key": "a3028b5f7e7a462d8a3381e49b9c976d"
+								},
+								"body": {
+									"value": "@'\n{\n    \"kind\": \"KeyPhraseExtraction\",\n    \"parameters\": {\n        \"modelVersion\": \"latest\"\n    },\n    \"analysisInput\":{\n        \"documents\":[\n            {\n                \"id\":\"item().id\",\n                \"language\":\"item().lang\",\n                \"text\": \"item().text\"\n            }\n        ]\n    }\n}\n'",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Append variable1",
+							"type": "AppendVariable",
+							"dependsOn": [
+								{
+									"activity": "Web1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "KeyPhrases",
+								"value": {
+									"value": "@activity('Web1').output.results.documents.keyPhrases",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"KeyPhrases": {
+				"type": "Array"
+			}
+		},
+		"annotations": []
+	}
+}
