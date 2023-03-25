@@ -238,14 +238,7 @@
 			{
 				"name": "Copy data to Dedicated SQL Pool",
 				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "Delete All Existing Rows in NATO_Tweets1 Table",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -582,33 +575,6 @@
 						}
 					],
 					"timeout": "0.12:00:00"
-				}
-			},
-			{
-				"name": "Data flow1",
-				"type": "ExecuteDataFlow",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataflow": {
-						"referenceName": "Get next token variable",
-						"type": "DataFlowReference"
-					},
-					"integrationRuntime": {
-						"referenceName": "WarmIntegrationRuntime",
-						"type": "IntegrationRuntimeReference"
-					},
-					"traceLevel": "None",
-					"cacheSinks": {
-						"firstRowOnly": true
-					}
 				}
 			},
 			{
