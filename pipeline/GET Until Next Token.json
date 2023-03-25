@@ -415,7 +415,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@not(empty(activity('Data flow1').output))",
+						"value": "@not(empty(activity('Data flow1').output.sink1.value[0].next_token))",
 						"type": "Expression"
 					},
 					"activities": [
