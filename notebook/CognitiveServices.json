@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "ad8558ff-6d12-49b5-a4ae-35e6b6e8d04f"
+				"spark.autotune.trackingId": "a385615b-abe8-4f96-8ee2-2ac4b60c5efe"
 			}
 		},
 		"metadata": {
@@ -76,7 +76,40 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 66
+				"execution_count": 93
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#### Key Phrase Extraction, Named Entity Recognition, Sentiment Analysis"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# select the first 20 records\r\n",
+					"first_20 = sorted_df.limit(20)\r\n",
+					"first_20.show()"
+				],
+				"execution_count": 97
 			},
 			{
 				"cell_type": "code",
@@ -96,7 +129,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 67
+				"execution_count": 94
 			},
 			{
 				"cell_type": "code",
@@ -132,14 +165,27 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 72
+				"execution_count": 95
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Langauge Detector"
+				]
 			},
 			{
 				"cell_type": "code",
 				"metadata": {
 					"jupyter": {
 						"source_hidden": false,
-						"outputs_hidden": false
+						"outputs_hidden": true
 					},
 					"nteract": {
 						"transient": {
@@ -149,16 +195,6 @@
 					"collapsed": false
 				},
 				"source": [
-					"# Create a dataframe that's tied to it's column names\r\n",
-					"df = spark.createDataFrame([\r\n",
-					"  (\"Hello World\",),\r\n",
-					"  (\"Bonjour tout le monde\",),\r\n",
-					"  (\"La carretera estaba atascada. Había mucho tráfico el día de ayer.\",),\r\n",
-					"  (\"你好\",),\r\n",
-					"  (\"こんにちは\",),\r\n",
-					"  (\":) :( :D\",)\r\n",
-					"], [\"text\",])\r\n",
-					"\r\n",
 					"# Run the Text Analytics service with options\r\n",
 					"language = (LanguageDetector()\r\n",
 					"    .setLinkedService(linked_service_name)\r\n",
@@ -167,9 +203,22 @@
 					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
 					"# Show the results of your text query in a table format\r\n",
-					"display(language.transform(df))"
+					"display(language.transform(first_20))"
 				],
-				"execution_count": 78
+				"execution_count": 96
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Entity Extraction"
+				]
 			},
 			{
 				"cell_type": "code",
@@ -186,11 +235,6 @@
 					"collapsed": false
 				},
 				"source": [
-					"df = spark.createDataFrame([\r\n",
-					"    (\"1\", \"Microsoft released Windows 10\"),\r\n",
-					"    (\"2\", \"In 1975, Bill Gates III and Paul Allen founded the company.\")\r\n",
-					"], [\"if\", \"text\"])\r\n",
-					"\r\n",
 					"entity = (EntityDetector()\r\n",
 					"    .setLinkedService(linked_service_name)\r\n",
 					"    .setLanguage(\"en\")\r\n",
@@ -198,9 +242,22 @@
 					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
 					"#display(entity.transform(df))\r\n",
-					"display(entity.transform(df).select(\"if\", \"text\", col(\"replies\")['document'].getItem(\"entities\").alias(\"entities\")))"
+					"display(entity.transform(first_20).select(\"id\", \"text\", col(\"replies\")['document'].getItem(\"entities\").alias(\"entities\")))"
 				],
-				"execution_count": 83
+				"execution_count": 102
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Key Phrase Extractor"
+				]
 			},
 			{
 				"cell_type": "code",
@@ -217,28 +274,35 @@
 					"collapsed": false
 				},
 				"source": [
-					"df = spark.createDataFrame([\r\n",
-					"    (\"en\", \"Hello world. This is some input text that I love.\"),\r\n",
-					"    (\"fr\", \"Bonjour tout le monde\"),\r\n",
-					"    (\"es\", \"La carretera estaba atascada. Había mucho tráfico el día de ayer.\")\r\n",
-					"], [\"lang\", \"text\"])\r\n",
-					"\r\n",
 					"keyPhrase = (KeyPhraseExtractor()\r\n",
 					"    .setLinkedService(linked_service_name)\r\n",
 					"    .setLanguageCol(\"lang\")\r\n",
 					"    .setOutputCol(\"replies\")\r\n",
 					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
-					"display(keyPhrase.transform(df).select(\"text\", col(\"replies\")['document'].getItem(\"keyPhrases\").alias(\"keyPhrases\")))"
+					"display(keyPhrase.transform(first_20).select(\"text\", col(\"replies\")['document'].getItem(\"keyPhrases\").alias(\"keyPhrases\")))"
 				],
-				"execution_count": 84
+				"execution_count": 103
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Named Entity Recognition"
+				]
 			},
 			{
 				"cell_type": "code",
 				"metadata": {
 					"jupyter": {
 						"source_hidden": false,
-						"outputs_hidden": false
+						"outputs_hidden": true
 					},
 					"nteract": {
 						"transient": {
@@ -248,27 +312,35 @@
 					"collapsed": false
 				},
 				"source": [
-					"df = spark.createDataFrame([\r\n",
-					"    (\"1\", \"en\", \"I had a wonderful trip to Seattle last week.\"),\r\n",
-					"    (\"2\", \"en\", \"I visited Space Needle 2 times.\")\r\n",
-					"], [\"id\", \"language\", \"text\"])\r\n",
-					"\r\n",
 					"ner = (NER()\r\n",
 					"    .setLinkedService(linked_service_name)\r\n",
 					"    .setLanguageCol(\"language\")\r\n",
 					"    .setOutputCol(\"replies\")\r\n",
 					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
-					"display(ner.transform(df).select(\"text\", col(\"replies\")['document'].getItem(\"entities\").alias(\"entities\")))"
+					"display(ner.transform(first_20).select(\"text\", col(\"replies\")['document'].getItem(\"entities\").alias(\"entities\")))"
 				],
 				"execution_count": 85
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Sentiment Analysis"
+				]
 			},
 			{
 				"cell_type": "code",
 				"metadata": {
 					"jupyter": {
 						"source_hidden": false,
-						"outputs_hidden": false
+						"outputs_hidden": true
 					},
 					"nteract": {
 						"transient": {
@@ -278,17 +350,12 @@
 					"collapsed": false
 				},
 				"source": [
-					"df = spark.createDataFrame([\r\n",
-					"    (\"1\", \"en\", \"I had a wonderful trip to Seattle last week.\"),\r\n",
-					"    (\"2\", \"en\", \"I visited Space Needle 2 times.\")\r\n",
-					"], [\"id\", \"language\", \"text\"])\r\n",
-					"\r\n",
-					"ner = (TextSentiment()\r\n",
+					"sent = (TextSentiment()\r\n",
 					"    .setLinkedService(linked_service_name)\r\n",
 					"    .setOutputCol(\"sentiment\")\r\n",
 					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
-					"display(ner.transform(df))"
+					"display(sent.transform(first_20))"
 				],
 				"execution_count": 92
 			}
