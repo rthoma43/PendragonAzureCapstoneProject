@@ -399,7 +399,7 @@
 				"type": "Until",
 				"dependsOn": [
 					{
-						"activity": "Set variable1",
+						"activity": "Initial GET Past 7 Days",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -408,7 +408,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@equals(variables('anotherPull'),['no'])",
+						"value": "@equals(variables('anotherPull'), ['no'])",
 						"type": "Expression"
 					},
 					"activities": [
@@ -575,23 +575,6 @@
 						}
 					],
 					"timeout": "0.12:00:00"
-				}
-			},
-			{
-				"name": "Set variable1",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Initial GET Past 7 Days",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "anotherPull",
-					"value": "['yes']"
 				}
 			}
 		],
