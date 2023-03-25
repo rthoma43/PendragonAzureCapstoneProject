@@ -70,7 +70,7 @@
 									"Ocp-Apim-Subscription-Key": "a3028b5f7e7a462d8a3381e49b9c976d"
 								},
 								"body": {
-									"value": "@'\n{\n    \"kind\": \"KeyPhraseExtraction\",\n    \"parameters\": {\n        \"modelVersion\": \"latest\"\n    },\n    \"analysisInput\":{\n        \"documents\":[\n            {\n                \"id\":\"item().id\",\n                \"language\":\"en\",\n                \"text\": \"item().text\"\n            }\n        ]\n    }\n}\n'",
+									"value": "@'\n{\n    \"kind\": \"KeyPhraseExtraction\",\n    \"parameters\": {\n        \"modelVersion\": \"latest\"\n    },\n    \"analysisInput\":{\n        \"documents\":[\n            {\n                \"language\": \"en\", \"id\": \"',\n                    item().id,\n                    '\", \"text\": \"' , item().text ,'\"\n            }\n        ]\n    }\n}\n'",
 									"type": "Expression"
 								}
 							}
@@ -90,7 +90,7 @@
 							"typeProperties": {
 								"variableName": "KeyPhrases",
 								"value": {
-									"value": "@activity('Web1').output.results.documents.keyPhrases",
+									"value": "@activity('Web1').output.results.documents[0].keyPhrases[0]",
 									"type": "Expression"
 								}
 							}
