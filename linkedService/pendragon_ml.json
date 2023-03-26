@@ -1,0 +1,17 @@
+{
+	"name": "pendragon_ml",
+	"properties": {
+		"annotations": [],
+		"type": "AzureMLService",
+		"typeProperties": {
+			"subscriptionId": "57cd2ff8-9306-41d0-9cad-c2052a0a8381",
+			"resourceGroupName": "Spring2023-TeamPendragon",
+			"mlWorkspaceName": "pendragon-ml",
+			"authentication": "MSI"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
