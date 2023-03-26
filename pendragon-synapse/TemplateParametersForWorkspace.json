@@ -20,6 +20,12 @@
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"value": "https://pendragon.dfs.core.windows.net/"
 		},
+		"AzureMLService1_properties_typeProperties_subscriptionId": {
+			"value": "57cd2ff8-9306-41d0-9cad-c2052a0a8381"
+		},
+		"AzureMLService1_properties_typeProperties_resourceGroupName": {
+			"value": "Spring2023-TeamPendragon"
+		},
 		"CognitiveService1_properties_typeProperties_subscriptionId": {
 			"value": "57cd2ff8-9306-41d0-9cad-c2052a0a8381"
 		},
@@ -40,12 +46,6 @@
 		},
 		"pendragon-synapse-WorkspaceDefaultStorage_properties_typeProperties_url": {
 			"value": "https://pendragon.dfs.core.windows.net"
-		},
-		"AzureMLService1_properties_typeProperties_subscriptionId": {
-			"value": "57cd2ff8-9306-41d0-9cad-c2052a0a8381"
-		},
-		"AzureMLService1_properties_typeProperties_resourceGroupName": {
-			"value": "Spring2023-TeamPendragon"
 		}
 	}
 }

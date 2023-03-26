@@ -28,6 +28,14 @@
 			"type": "string",
 			"defaultValue": "https://pendragon.dfs.core.windows.net/"
 		},
+		"AzureMLService1_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "57cd2ff8-9306-41d0-9cad-c2052a0a8381"
+		},
+		"AzureMLService1_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "Spring2023-TeamPendragon"
+		},
 		"CognitiveService1_properties_typeProperties_subscriptionId": {
 			"type": "string",
 			"defaultValue": "57cd2ff8-9306-41d0-9cad-c2052a0a8381"
@@ -55,14 +63,6 @@
 		"pendragon-synapse-WorkspaceDefaultStorage_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://pendragon.dfs.core.windows.net"
-		},
-		"AzureMLService1_properties_typeProperties_subscriptionId": {
-			"type": "string",
-			"defaultValue": "57cd2ff8-9306-41d0-9cad-c2052a0a8381"
-		},
-		"AzureMLService1_properties_typeProperties_resourceGroupName": {
-			"type": "string",
-			"defaultValue": "Spring2023-TeamPendragon"
 		}
 	},
 	"variables": {
@@ -1278,146 +1278,6 @@
 						}
 					},
 					{
-						"name": "Extract Next Token Aithusa copy1",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "Get Next Token for Aithusa",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"source2": {},
-									"sink1": {},
-									"sink2": {}
-								}
-							},
-							"staging": {},
-							"integrationRuntime": {
-								"referenceName": "WarmIntegrationRuntime",
-								"type": "IntegrationRuntimeReference"
-							},
-							"traceLevel": "None",
-							"cacheSinks": {
-								"firstRowOnly": true
-							}
-						}
-					},
-					{
-						"name": "Delete Temp File_copy1",
-						"type": "Delete",
-						"dependsOn": [
-							{
-								"activity": "Extract Next Token Aithusa copy1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "json_Aithusa",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"enableLogging": false,
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							}
-						}
-					},
-					{
-						"name": "GET to Temp_copy1",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Delete Temp File_copy1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET",
-								"paginationRules": {
-									"supportRFC5988": "true"
-								}
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "RestResource_Aithusa_7days_NextToken",
-								"type": "DatasetReference",
-								"parameters": {
-									"query": {
-										"value": "@variables('Query')",
-										"type": "Expression"
-									},
-									"tweet_fields": {
-										"value": "@variables('Tweet Fields')",
-										"type": "Expression"
-									},
-									"max_results": {
-										"value": "@variables('max_results')",
-										"type": "Expression"
-									},
-									"next_token": {
-										"value": "@activity('Extract Next Token Aithusa copy1').output.runStatus.output.sink1.value[0].next_token",
-										"type": "Expression"
-									}
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "json_Aithusa",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
 						"name": "Delete NATO Temp file",
 						"type": "Delete",
 						"dependsOn": [
@@ -1519,10 +1379,10 @@
 				"[concat(variables('workspaceId'), '/datasets/json_Aithusa')]",
 				"[concat(variables('workspaceId'), '/datasets/Raw_Aithusa_Outputs')]",
 				"[concat(variables('workspaceId'), '/datasets/Merged_Aithusa_JSON_folder')]",
-				"[concat(variables('workspaceId'), '/dataflows/Get Next Token for Aithusa')]",
+				"[concat(variables('workspaceId'), '/dataflows/Merge JSONs and Convert to CSV for Aithusa')]",
 				"[concat(variables('workspaceId'), '/integrationRuntimes/WarmIntegrationRuntime')]",
-				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_7days_NextToken')]",
-				"[concat(variables('workspaceId'), '/dataflows/Merge JSONs and Convert to CSV for Aithusa')]"
+				"[concat(variables('workspaceId'), '/dataflows/Get Next Token for Aithusa')]",
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_7days_NextToken')]"
 			]
 		},
 		{
@@ -4200,6 +4060,28 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/AzureMLService1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureMLService",
+				"typeProperties": {
+					"subscriptionId": "[parameters('AzureMLService1_properties_typeProperties_subscriptionId')]",
+					"resourceGroupName": "[parameters('AzureMLService1_properties_typeProperties_resourceGroupName')]",
+					"mlWorkspaceName": "pendragon-ml",
+					"authentication": "MSI"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/AzureSqlDatabase1')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -6755,18 +6637,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "eastus2"
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/SparkPoolTest')]",
 			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
@@ -6792,26 +6662,16 @@
 			"location": "eastus2"
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/AzureMLService1')]",
-			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
-				"annotations": [],
-				"type": "AzureMLService",
-				"typeProperties": {
-					"subscriptionId": "[parameters('AzureMLService1_properties_typeProperties_subscriptionId')]",
-					"resourceGroupName": "[parameters('AzureMLService1_properties_typeProperties_resourceGroupName')]",
-					"mlWorkspaceName": "pendragon-ml",
-					"authentication": "MSI"
-				},
-				"connectVia": {
-					"referenceName": "AutoResolveIntegrationRuntime",
-					"type": "IntegrationRuntimeReference"
-				}
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
-			]
+			"dependsOn": [],
+			"location": "eastus2"
 		}
 	]
 }
