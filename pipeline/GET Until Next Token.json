@@ -294,10 +294,22 @@
 									"referenceName": "RestResource_Aithusa_7days_NextToken",
 									"type": "DatasetReference",
 									"parameters": {
-										"query": "@variables('Query')",
-										"tweet_fields": "@variables('Tweet Fields')",
-										"max_results": "@variables('max_result')",
-										"next_token": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token"
+										"query": {
+											"value": "@variables('Query')",
+											"type": "Expression"
+										},
+										"tweet_fields": {
+											"value": "@variables('Tweet Fields')",
+											"type": "Expression"
+										},
+										"max_results": {
+											"value": "@variables('max_results')",
+											"type": "Expression"
+										},
+										"next_token": {
+											"value": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token",
+											"type": "Expression"
+										}
 									}
 								}
 							],
