@@ -1052,7 +1052,7 @@
 						"type": "Until",
 						"dependsOn": [
 							{
-								"activity": "GET to Temp_copy1",
+								"activity": "Set variable1",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1178,10 +1178,22 @@
 											"referenceName": "RestResource_Aithusa_7days_NextToken",
 											"type": "DatasetReference",
 											"parameters": {
-												"query": "@variables('Query')",
-												"tweet_fields": "@variables('Tweet Fields')",
-												"max_results": "@variables('max_result')",
-												"next_token": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token"
+												"query": {
+													"value": "@variables('Query')",
+													"type": "Expression"
+												},
+												"tweet_fields": {
+													"value": "@variables('Tweet Fields')",
+													"type": "Expression"
+												},
+												"max_results": {
+													"value": "@variables('max_results')",
+													"type": "Expression"
+												},
+												"next_token": {
+													"value": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token",
+													"type": "Expression"
+												}
 											}
 										}
 									],
@@ -1260,14 +1272,7 @@
 					{
 						"name": "Extract Next Token Aithusa copy1",
 						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "Set variable1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
+						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -1403,6 +1408,76 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Delete NATO Temp file",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "GET using Next Token Until Empty",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "json_Aithusa",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "Merge JSONs and Convert to CSV",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Delete NATO Temp file",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Merge JSONs and Convert to CSV for Aithusa",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"integrationRuntime": {
+								"referenceName": "WarmIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"traceLevel": "Fine"
+						}
 					}
 				],
 				"policy": {
@@ -1438,7 +1513,8 @@
 				"[concat(variables('workspaceId'), '/datasets/Merged_Aithusa_JSON_folder')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token for Aithusa')]",
 				"[concat(variables('workspaceId'), '/integrationRuntimes/WarmIntegrationRuntime')]",
-				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_7days_NextToken')]"
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_7days_NextToken')]",
+				"[concat(variables('workspaceId'), '/dataflows/Merge JSONs and Convert to CSV for Aithusa')]"
 			]
 		},
 		{
