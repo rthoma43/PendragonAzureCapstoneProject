@@ -177,7 +177,7 @@
 				"type": "Until",
 				"dependsOn": [
 					{
-						"activity": "GET to Temp_copy1",
+						"activity": "Set variable1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -387,14 +387,7 @@
 			{
 				"name": "Extract Next Token Aithusa copy1",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [
-					{
-						"activity": "Set variable1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -520,6 +513,69 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "Delete NATO Temp file",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "GET using Next Token Until Empty",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "json_Aithusa",
+						"type": "DatasetReference"
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Merge JSONs and Convert to CSV",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Delete NATO Temp file",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Merge JSONs and Convert to CSV for Aithusa",
+						"type": "DataFlowReference"
+					},
+					"integrationRuntime": {
+						"referenceName": "WarmIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
 			}
 		],
 		"variables": {
