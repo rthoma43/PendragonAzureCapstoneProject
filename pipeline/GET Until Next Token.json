@@ -555,7 +555,7 @@
 										"userProperties": [],
 										"typeProperties": {
 											"variableName": "anotherPull",
-											"value": false
+											"value": "false"
 										}
 									}
 								],
@@ -567,7 +567,7 @@
 										"userProperties": [],
 										"typeProperties": {
 											"variableName": "anotherPull",
-											"value": true
+											"value": "true"
 										}
 									}
 								]
@@ -591,7 +591,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "anotherPull",
-					"value": false
+					"value": "false"
 				}
 			}
 		],
@@ -612,7 +612,7 @@
 				"type": "String"
 			},
 			"anotherPull": {
-				"type": "Boolean"
+				"type": "String"
 			}
 		},
 		"annotations": []
