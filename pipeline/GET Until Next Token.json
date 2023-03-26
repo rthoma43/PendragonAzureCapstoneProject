@@ -408,7 +408,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@variables('anotherPull')",
+						"value": "@bool(variables('anotherPull'))",
 						"type": "Expression"
 					},
 					"activities": [
@@ -567,7 +567,7 @@
 										"userProperties": [],
 										"typeProperties": {
 											"variableName": "anotherPull",
-											"value": false
+											"value": true
 										}
 									}
 								]
