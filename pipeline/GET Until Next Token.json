@@ -177,7 +177,7 @@
 				"type": "Until",
 				"dependsOn": [
 					{
-						"activity": "Set variable1",
+						"activity": "GET to Temp_copy1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -371,6 +371,131 @@
 					"variableName": "anotherPull",
 					"value": "false"
 				}
+			},
+			{
+				"name": "Extract Next Token Aithusa copy1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Get Next Token for Aithusa",
+						"type": "DataFlowReference"
+					},
+					"integrationRuntime": {
+						"referenceName": "WarmIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "None",
+					"cacheSinks": {
+						"firstRowOnly": true
+					}
+				}
+			},
+			{
+				"name": "Delete Temp File_copy1",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Extract Next Token Aithusa copy1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "json_Aithusa",
+						"type": "DatasetReference"
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "GET to Temp_copy1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Delete Temp File_copy1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "RestResource_Aithusa_7days_NextToken",
+						"type": "DatasetReference",
+						"parameters": {
+							"query": "@variables('Query')",
+							"tweet_fields": "@variables('Tweet Fields')",
+							"max_results": "@variables('max_result')",
+							"next_token": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "json_Aithusa",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"variables": {
