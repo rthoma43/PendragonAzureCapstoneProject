@@ -1377,10 +1377,22 @@
 								"referenceName": "RestResource_Aithusa_7days_NextToken",
 								"type": "DatasetReference",
 								"parameters": {
-									"query": "@variables('Query')",
-									"tweet_fields": "@variables('Tweet Fields')",
-									"max_results": "@variables('max_result')",
-									"next_token": "@activity('Extract Next Token Aithusa copy1').output.runStatus.output.sink1.value[0].next_token"
+									"query": {
+										"value": "@variables('Query')",
+										"type": "Expression"
+									},
+									"tweet_fields": {
+										"value": "@variables('Tweet Fields')",
+										"type": "Expression"
+									},
+									"max_results": {
+										"value": "@variables('max_results')",
+										"type": "Expression"
+									},
+									"next_token": {
+										"value": "@activity('Extract Next Token Aithusa copy1').output.runStatus.output.sink1.value[0].next_token",
+										"type": "Expression"
+									}
 								}
 							}
 						],
@@ -3022,6 +3034,97 @@
 					}
 				},
 				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Raw_Aithusa_Outputs_withScheme')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Twitter_Aithusa/Output",
+						"fileSystem": "pendragon"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"data": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"edit_history_tweet_ids": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									},
+									"id": {
+										"type": "string"
+									},
+									"created_at": {
+										"type": "string"
+									},
+									"text": {
+										"type": "string"
+									},
+									"public_metrics": {
+										"type": "object",
+										"properties": {
+											"retweet_count": {
+												"type": "integer"
+											},
+											"reply_count": {
+												"type": "integer"
+											},
+											"like_count": {
+												"type": "integer"
+											},
+											"quote_count": {
+												"type": "integer"
+											},
+											"impression_count": {
+												"type": "integer"
+											}
+										}
+									},
+									"lang": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"meta": {
+							"type": "object",
+							"properties": {
+								"newest_id": {
+									"type": "string"
+								},
+								"oldest_id": {
+									"type": "string"
+								},
+								"result_count": {
+									"type": "integer"
+								},
+								"next_token": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
@@ -6540,97 +6643,6 @@
 			},
 			"dependsOn": [],
 			"location": "eastus2"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/Raw_Aithusa_Outputs_withScheme')]",
-			"type": "Microsoft.Synapse/workspaces/datasets",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDataLakeStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "Twitter_Aithusa/Output",
-						"fileSystem": "pendragon"
-					}
-				},
-				"schema": {
-					"type": "object",
-					"properties": {
-						"data": {
-							"type": "array",
-							"items": {
-								"type": "object",
-								"properties": {
-									"edit_history_tweet_ids": {
-										"type": "array",
-										"items": {
-											"type": "string"
-										}
-									},
-									"id": {
-										"type": "string"
-									},
-									"created_at": {
-										"type": "string"
-									},
-									"text": {
-										"type": "string"
-									},
-									"public_metrics": {
-										"type": "object",
-										"properties": {
-											"retweet_count": {
-												"type": "integer"
-											},
-											"reply_count": {
-												"type": "integer"
-											},
-											"like_count": {
-												"type": "integer"
-											},
-											"quote_count": {
-												"type": "integer"
-											},
-											"impression_count": {
-												"type": "integer"
-											}
-										}
-									},
-									"lang": {
-										"type": "string"
-									}
-								}
-							}
-						},
-						"meta": {
-							"type": "object",
-							"properties": {
-								"newest_id": {
-									"type": "string"
-								},
-								"oldest_id": {
-									"type": "string"
-								},
-								"result_count": {
-									"type": "integer"
-								},
-								"next_token": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
-			]
 		}
 	]
 }
