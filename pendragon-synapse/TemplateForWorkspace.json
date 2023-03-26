@@ -3924,21 +3924,6 @@
 							"items": {
 								"type": "object",
 								"properties": {
-									"edit_history_tweet_ids": {
-										"type": "array",
-										"items": {
-											"type": "string"
-										}
-									},
-									"id": {
-										"type": "string"
-									},
-									"created_at": {
-										"type": "string"
-									},
-									"text": {
-										"type": "string"
-									},
 									"public_metrics": {
 										"type": "object",
 										"properties": {
@@ -3959,7 +3944,22 @@
 											}
 										}
 									},
+									"edit_history_tweet_ids": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									},
 									"lang": {
+										"type": "string"
+									},
+									"created_at": {
+										"type": "string"
+									},
+									"text": {
+										"type": "string"
+									},
+									"id": {
 										"type": "string"
 									}
 								}
@@ -4413,7 +4413,7 @@
 					],
 					"scriptLines": [
 						"source(output(",
-						"          data as (edit_history_tweet_ids as string[], id as string, created_at as string, text as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), lang as string)[],",
+						"          data as (public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), edit_history_tweet_ids as string[], lang as string, created_at as string, text as string, id as string)[],",
 						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
 						"     ),",
 						"     allowSchemaDrift: true,",
@@ -4421,7 +4421,7 @@
 						"     ignoreNoFilesFound: false,",
 						"     documentForm: 'documentPerLine') ~> source1",
 						"source(output(",
-						"          data as (edit_history_tweet_ids as string[], id as string, created_at as string, text as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), lang as string)[],",
+						"          data as (public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), edit_history_tweet_ids as string[], lang as string, created_at as string, text as string, id as string)[],",
 						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
 						"     ),",
 						"     allowSchemaDrift: true,",
