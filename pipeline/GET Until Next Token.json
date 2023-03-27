@@ -210,7 +210,7 @@
 										"userProperties": [],
 										"typeProperties": {
 											"variableName": "anotherPull",
-											"value": "false"
+											"value": "true"
 										}
 									}
 								],
@@ -222,7 +222,7 @@
 										"userProperties": [],
 										"typeProperties": {
 											"variableName": "anotherPull",
-											"value": "true"
+											"value": "false"
 										}
 									}
 								]
