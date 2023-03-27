@@ -436,58 +436,12 @@
 									"dependencyConditions": [
 										"Failed"
 									]
-								},
-								{
-									"activity": "Fail1",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								},
-								{
-									"activity": "Fail2",
-									"dependencyConditions": [
-										"Succeeded"
-									]
 								}
 							],
 							"userProperties": [],
 							"typeProperties": {
 								"variableName": "stopUntil",
 								"value": "'true'"
-							}
-						},
-						{
-							"name": "Fail1",
-							"type": "Fail",
-							"dependsOn": [
-								{
-									"activity": "Extract Next Token Aithusa",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"userProperties": [],
-							"typeProperties": {
-								"message": "sad",
-								"errorCode": "500"
-							}
-						},
-						{
-							"name": "Fail2",
-							"type": "Fail",
-							"dependsOn": [
-								{
-									"activity": "If specific date with token",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"userProperties": [],
-							"typeProperties": {
-								"message": "sad2",
-								"errorCode": "500"
 							}
 						}
 					],
