@@ -186,82 +186,11 @@
 							}
 						},
 						{
-							"name": "GET to Temp",
-							"type": "Copy",
-							"dependsOn": [
-								{
-									"activity": "Delete Temp File",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"source": {
-									"type": "RestSource",
-									"httpRequestTimeout": "00:01:40",
-									"requestInterval": "00.00:00:00.010",
-									"requestMethod": "GET",
-									"paginationRules": {
-										"supportRFC5988": "true"
-									}
-								},
-								"sink": {
-									"type": "JsonSink",
-									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings"
-									},
-									"formatSettings": {
-										"type": "JsonWriteSettings"
-									}
-								},
-								"enableStaging": false
-							},
-							"inputs": [
-								{
-									"referenceName": "RestResource_Aithusa_7days_NextToken",
-									"type": "DatasetReference",
-									"parameters": {
-										"query": {
-											"value": "@variables('Query')",
-											"type": "Expression"
-										},
-										"tweet_fields": {
-											"value": "@variables('Tweet Fields')",
-											"type": "Expression"
-										},
-										"max_results": {
-											"value": "@variables('max_results')",
-											"type": "Expression"
-										},
-										"next_token": {
-											"value": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token",
-											"type": "Expression"
-										}
-									}
-								}
-							],
-							"outputs": [
-								{
-									"referenceName": "json_Aithusa",
-									"type": "DatasetReference"
-								}
-							]
-						},
-						{
 							"name": "If Condition1",
 							"type": "IfCondition",
 							"dependsOn": [
 								{
-									"activity": "GET to Temp",
+									"activity": "If specific date with token",
 									"dependencyConditions": [
 										"Succeeded"
 									]
