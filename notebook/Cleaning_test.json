@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "b083e247-2f50-4879-b597-0d3665541c89"
+				"spark.autotune.trackingId": "b814756b-6cfd-4750-9e3d-ff92393d0e23"
 			}
 		},
 		"metadata": {
@@ -50,6 +50,290 @@
 		"cells": [
 			{
 				"cell_type": "code",
+				"source": [
+					"# Install bertopic\n",
+					"!pip install bertopic"
+				],
+				"execution_count": 1
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from bertopic import BERTopic\n",
+					""
+				],
+				"execution_count": 2
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Data processing\n",
+					"import pandas as pd\n",
+					"import numpy as np\n",
+					"# Text preprocessiong\n",
+					"import nltk\n",
+					"nltk.download('stopwords')\n",
+					"nltk.download('omw-1.4')\n",
+					"nltk.download('wordnet')\n",
+					"wn = nltk.WordNetLemmatizer()\n",
+					"# Topic model\n",
+					"from bertopic import BERTopic\n",
+					"# Dimension reduction\n",
+					"from umap import UMAP"
+				],
+				"execution_count": 3
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"!pip install transformers[torch]\n",
+					"from transformers import pipeline;\n",
+					""
+				],
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"sentiment_pipeline = pipeline(\"sentiment-analysis\")\n",
+					"data = [\"I love you\", \"I hate you\"]\n",
+					"\n",
+					"sentiment_pipeline(data)"
+				],
+				"execution_count": 5
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#%%pyspark \n",
+					"\n",
+					"df = spark.read.load('abfss://pendragon@pendragon.dfs.core.windows.net/Raw_Twitter_JSONs/Merged_Output/Twitter20230325213227.csv', format='csv') ## If header exists uncomment line below ##, header=True ) \n",
+					"\n",
+					"display(df.limit(10))"
+				],
+				"execution_count": 13
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"mssparkutils.fs.mount( \n",
+					"    \"abfss://pendragon@pendragon.dfs.core.windows.net\", \n",
+					"    \"/test\", \n",
+					"    {\"linkedService\":\"mygen2account\"} "
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Add required imports\n",
+					"import com.microsoft.spark.sqlanalytics\n",
+					"from com.microsoft.spark.sqlanalytics.Constants import Constants\n",
+					"from pyspark.sql.functions import col\n",
+					"\n",
+					"# Name of the SQL Dedicated Pool or database where to run the query\n",
+					"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\n",
+					"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\n",
+					"\n",
+					"# Read from a query\n",
+					"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\n",
+					"df = (spark.read\n",
+					"                     # Name of the SQL Dedicated Pool or database where to run the query\n",
+					"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\n",
+					"                     .option(Constants.DATABASE, \"SQLPoolTest\")\n",
+					"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\n",
+					"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\n",
+					"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\n",
+					"                     # Defaults to storage path defined in the runtime configurations\n",
+					"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\n",
+					"                     # query from which data will be read\n",
+					"                     .option(Constants.QUERY, \"select * from dbo.NATO_Tweets1\")\n",
+					"                     .synapsesql())"
+				],
+				"execution_count": 9
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df.show()"
+				],
+				"execution_count": 12
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#regex cleaning\n",
+					"\n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					""
 				],
