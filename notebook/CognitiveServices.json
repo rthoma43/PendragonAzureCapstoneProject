@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "8bca0bc5-d804-4ed3-9704-35119923d71f"
+				"spark.autotune.trackingId": "6d368ca9-a6f8-4419-99aa-2d3032375466"
 			}
 		},
 		"metadata": {
@@ -142,7 +142,9 @@
 					"df_filtered = first_20.withColumn(\"cleanText\", regexp_replace(col(\"text\"), regex, ''))\r\n",
 					"\r\n",
 					"# Show the filtered DataFrame\r\n",
-					"df_filtered.select(\"cleanText\").show()"
+					"df_filtered.select(\"cleanText\").show()\r\n",
+					"\r\n",
+					"first_20 = df_filtered"
 				],
 				"execution_count": 12
 			},
@@ -383,15 +385,72 @@
 					"collapsed": false
 				},
 				"source": [
-					"entity = (EntityDetector()\r\n",
+					"# import required libraries\r\n",
+					"import json\r\n",
+					"from pyspark.sql.types import StructType, StructField, StringType\r\n",
+					"import pyspark.sql.functions as F\r\n",
+					"\r\n",
+					"# First, count the total number of rows in the DataFrame\r\n",
+					"num_rows = first_20.count()\r\n",
+					"\r\n",
+					"# Next, calculate the number of batches needed to split the DataFrame into batches of 5\r\n",
+					"num_batches = int(num_rows / 5) + (num_rows % 5 > 0)\r\n",
+					"\r\n",
+					"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
+					"df_batches = first_20.randomSplit([1.0]*num_batches, seed=42)\r\n",
+					"\r\n",
+					"# define the schema for the output DataFrame\r\n",
+					"schema = StructType([\r\n",
+					"    StructField(\"entity_name\", StringType(), True),\r\n",
+					"    StructField(\"entity_url\", StringType(), True)\r\n",
+					"    ])\r\n",
+					"\r\n",
+					"# create an empty DataFrame with the defined schema\r\n",
+					"output_df = spark.createDataFrame([], schema)\r\n",
+					"\r\n",
+					"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
+					"for i in range(num_batches):\r\n",
+					"    batch = df_batches[i].limit(5)\r\n",
+					"    entity = (EntityDetector()\r\n",
 					"    .setLinkedService(linked_service_name)\r\n",
 					"    .setLanguage(\"en\")\r\n",
 					"    .setOutputCol(\"replies\")\r\n",
 					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
-					"display(entity.transform(first_20))"
+					"    ent_batch_output = entity.transform(batch)\r\n",
+					"    #display(ent_batch_output)\r\n",
+					"\r\n",
+					"    # Extract the 'replies' column and convert it to JSON\r\n",
+					"    json_output = ent_batch_output.select(\"replies\").toJSON().collect()\r\n",
+					"\r\n",
+					"    # Deserialize the JSON and extract the 'replies' field\r\n",
+					"    ents = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
+					"\r\n",
+					"    # Print the 'replies' field for each row\r\n",
+					"    for each in ents:\r\n",
+					"        #print(each)\r\n",
+					"        # create a PySpark DataFrame from the JSON string\r\n",
+					"        json_string = each\r\n",
+					"        df = spark.read.json(sc.parallelize([json_string]))\r\n",
+					"\r\n",
+					"        # extract the 'entities' array from the 'document' column\r\n",
+					"        df = df.selectExpr('explode(document.entities) as entities')\r\n",
+					"\r\n",
+					"        # select the 'text' and 'category' fields from the exploded 'entities' array\r\n",
+					"        df = df.select('entities.name', 'entities.url')\r\n",
+					"\r\n",
+					"        # rename the columns\r\n",
+					"        df = df.withColumnRenamed('text', 'entity_name')\r\n",
+					"        df = df.withColumnRenamed('category', 'entity_url')\r\n",
+					"\r\n",
+					"        # show the resulting DataFrame\r\n",
+					"        #df.show()\r\n",
+					"\r\n",
+					"        # Append the batch results dataframe to the main output dataframe\r\n",
+					"        output_df = output_df.union(df)\r\n",
+					"display(output_df)"
 				],
-				"execution_count": 27
+				"execution_count": 82
 			},
 			{
 				"cell_type": "markdown",
@@ -430,7 +489,7 @@
 					"keyphrase_output = keyPhrase.transform(first_20)\r\n",
 					"display(keyPhrase.transform(first_20))"
 				],
-				"execution_count": 54
+				"execution_count": 77
 			},
 			{
 				"cell_type": "markdown",
@@ -467,17 +526,17 @@
 					"# Deserialize the JSON and extract the 'sentiment' field\r\n",
 					"keyphrases = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
 					"\r\n",
-					"output = []\r\n",
+					"kp_output = []\r\n",
 					"\r\n",
 					"# Print the 'sentiment' field for each row\r\n",
 					"for each in keyphrases:\r\n",
 					"    #print(each)\r\n",
 					"    for keyphrase in each['document']['keyPhrases']:\r\n",
-					"        output.append(keyphrase)\r\n",
+					"        kp_output.append(keyphrase)\r\n",
 					"\r\n",
-					"print(output)"
+					"print(kp_output)"
 				],
-				"execution_count": 59
+				"execution_count": 79
 			},
 			{
 				"cell_type": "markdown",
@@ -489,7 +548,7 @@
 					}
 				},
 				"source": [
-					"Collect the key phrases and their counts > 1"
+					"Create a dataframe for the key phrases and their count"
 				]
 			},
 			{
@@ -506,19 +565,19 @@
 					}
 				},
 				"source": [
-					"from collections import Counter\r\n",
+					"# Create a PySpark DataFrame from the array\r\n",
+					"kp_df = spark.createDataFrame([(i, 1) for i in kp_output], ['text', 'count'])\r\n",
 					"\r\n",
-					"# count the occurrences of each word in the array\r\n",
-					"word_counts = Counter(output)\r\n",
+					"# Group by 'text' column and sum the 'count' column to get the count of each unique text\r\n",
+					"kp_df = kp_df.groupBy('text').agg({'count': 'sum'})\r\n",
 					"\r\n",
-					"# select the words that occur more than once\r\n",
-					"result = {word: count for word, count in word_counts.items() if count > 1}\r\n",
+					"# Sort the DataFrame by the 'count' column in descending order\r\n",
+					"kp_df = kp_df.sort(col('sum(count)').desc())\r\n",
 					"\r\n",
-					"# print the result\r\n",
-					"print(result)\r\n",
-					""
+					"# Show the resulting DataFrame\r\n",
+					"display(kp_df)"
 				],
-				"execution_count": 62
+				"execution_count": 80
 			},
 			{
 				"cell_type": "markdown",
@@ -581,7 +640,7 @@
 					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
 					"    ner_batch_output = ner.transform(batch)\r\n",
-					"    display(ner_batch_output)\r\n",
+					"    #display(ner_batch_output)\r\n",
 					"\r\n",
 					"    # Extract the 'replies' column and convert it to JSON\r\n",
 					"    json_output = ner_batch_output.select(\"replies\").toJSON().collect()\r\n",
