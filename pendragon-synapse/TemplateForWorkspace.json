@@ -556,7 +556,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "loops",
-							"value": "20"
+							"value": "5"
 						}
 					},
 					{
@@ -883,71 +883,6 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Initial GET Past 7 Days",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Delete Previous Output Files",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							},
-							{
-								"activity": "Delete Previous Merged Output files",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET",
-								"paginationRules": {
-									"supportRFC5988": "true"
-								}
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "RestResource_Aithusa_7days",
-								"type": "DatasetReference",
-								"parameters": {
-									"query": "@variables('Query')",
-									"tweet_fields": "@variables('Tweet Fields')",
-									"max_results": "@variables('max_results')"
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "json_Aithusa",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
 						"name": "Query",
 						"type": "SetVariable",
 						"dependsOn": [],
@@ -1142,83 +1077,11 @@
 									}
 								},
 								{
-									"name": "GET to Temp",
-									"type": "Copy",
-									"dependsOn": [
-										{
-											"activity": "Delete Temp File",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "RestSource",
-											"httpRequestTimeout": "00:01:40",
-											"requestInterval": "00.00:00:00.010",
-											"requestMethod": "GET",
-											"paginationRules": {
-												"supportRFC5988": "true"
-											}
-										},
-										"sink": {
-											"type": "JsonSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
-											},
-											"formatSettings": {
-												"type": "JsonWriteSettings"
-											}
-										},
-										"enableStaging": false
-									},
-									"inputs": [
-										{
-											"referenceName": "RestResource_Aithusa_7days_NextToken",
-											"type": "DatasetReference",
-											"parameters": {
-												"query": {
-													"value": "@variables('Query')",
-													"type": "Expression"
-												},
-												"tweet_fields": {
-													"value": "@variables('Tweet Fields')",
-													"type": "Expression"
-												},
-												"max_results": {
-													"value": "@variables('max_results')",
-													"type": "Expression"
-												},
-												"next_token": {
-													"value": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "json_Aithusa",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									]
-								},
-								{
 									"name": "If Condition1",
 									"type": "IfCondition",
 									"dependsOn": [
 										{
-											"activity": "GET to Temp",
+											"activity": "If specific date with token",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -1255,6 +1118,201 @@
 											}
 										]
 									}
+								},
+								{
+									"name": "If specific date with token",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "Delete Temp File",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@variables('specific_date')",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "GET Past 7 Days with token",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "RestSource",
+														"httpRequestTimeout": "00:01:40",
+														"requestInterval": "00.00:00:00.010",
+														"requestMethod": "GET",
+														"paginationRules": {
+															"supportRFC5988": "true"
+														}
+													},
+													"sink": {
+														"type": "JsonSink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														},
+														"formatSettings": {
+															"type": "JsonWriteSettings"
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "RestResource_Aithusa_7days_NextToken",
+														"type": "DatasetReference",
+														"parameters": {
+															"query": {
+																"value": "@variables('Query')",
+																"type": "Expression"
+															},
+															"tweet_fields": {
+																"value": "@variables('Tweet Fields')",
+																"type": "Expression"
+															},
+															"max_results": {
+																"value": "@variables('max_results')",
+																"type": "Expression"
+															},
+															"next_token": {
+																"value": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "json_Aithusa",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												]
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "GET with specifc date with token",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "RestSource",
+														"httpRequestTimeout": "00:01:40",
+														"requestInterval": "00.00:00:00.010",
+														"requestMethod": "GET",
+														"paginationRules": {
+															"supportRFC5988": "true"
+														}
+													},
+													"sink": {
+														"type": "JsonSink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														},
+														"formatSettings": {
+															"type": "JsonWriteSettings"
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "RestResource_Aithusa_withToken",
+														"type": "DatasetReference",
+														"parameters": {
+															"Query": {
+																"value": "@variables('Query')",
+																"type": "Expression"
+															},
+															"max_results": {
+																"value": "@variables('max_results')",
+																"type": "Expression"
+															},
+															"tweet_fields": {
+																"value": "@variables('Tweet Fields')",
+																"type": "Expression"
+															},
+															"start_year": {
+																"value": "@variables('start_year')",
+																"type": "Expression"
+															},
+															"start_month": {
+																"value": "@variables('start_month')",
+																"type": "Expression"
+															},
+															"start_day": {
+																"value": "@variables('start_day')",
+																"type": "Expression"
+															},
+															"start_hour": {
+																"value": "@variables('start_hour')",
+																"type": "Expression"
+															},
+															"start_minute": {
+																"value": "@variables('start_minute')",
+																"type": "Expression"
+															},
+															"start_second": "00",
+															"end_year": {
+																"value": "@variables('end_year')",
+																"type": "Expression"
+															},
+															"end_month": {
+																"value": "@variables('end_month')",
+																"type": "Expression"
+															},
+															"end_day": {
+																"value": "@variables('end_day')",
+																"type": "Expression"
+															},
+															"end_hour": {
+																"value": "@variables('end_hour')",
+																"type": "Expression"
+															},
+															"end_minute": {
+																"value": "@variables('end_minute')",
+																"type": "Expression"
+															},
+															"end_second": "01]",
+															"next_token": {
+																"value": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "json_Aithusa",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												]
+											}
+										]
+									}
 								}
 							],
 							"timeout": "0.12:00:00"
@@ -1265,7 +1323,7 @@
 						"type": "SetVariable",
 						"dependsOn": [
 							{
-								"activity": "Initial GET Past 7 Days",
+								"activity": "If specific date",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1346,6 +1404,378 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "End year",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "end_year",
+							"value": "2023"
+						}
+					},
+					{
+						"name": "End month",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "End year",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "end_month",
+							"value": "03"
+						}
+					},
+					{
+						"name": "End day",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "End month",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "end_day",
+							"value": "26"
+						}
+					},
+					{
+						"name": "End hour",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "End day",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "end_hour",
+							"value": "12"
+						}
+					},
+					{
+						"name": "End minute",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "End hour",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "end_minute",
+							"value": "00"
+						}
+					},
+					{
+						"name": "Start year",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "start_year",
+							"value": "2023"
+						}
+					},
+					{
+						"name": "Start month",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Start year",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "start_month",
+							"value": "03"
+						}
+					},
+					{
+						"name": "Start day",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Start month",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "start_day",
+							"value": "25"
+						}
+					},
+					{
+						"name": "Start hour",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Start day",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "start_hour",
+							"value": "00"
+						}
+					},
+					{
+						"name": "Start minute",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Start hour",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "start_minute",
+							"value": "00"
+						}
+					},
+					{
+						"name": "Use date range",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Start minute",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "End minute",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "specific_date",
+							"value": true
+						}
+					},
+					{
+						"name": "If specific date",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "Delete Previous Merged Output files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Delete Previous Output Files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@variables('specific_date')",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "Initial GET Past 7 Days",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "GET",
+											"paginationRules": {
+												"supportRFC5988": "true"
+											}
+										},
+										"sink": {
+											"type": "JsonSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "JsonWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "RestResource_Aithusa_7days",
+											"type": "DatasetReference",
+											"parameters": {
+												"query": {
+													"value": "@variables('Query')",
+													"type": "Expression"
+												},
+												"tweet_fields": {
+													"value": "@variables('Tweet Fields')",
+													"type": "Expression"
+												},
+												"max_results": {
+													"value": "@variables('max_results')",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "json_Aithusa",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "Initial GET with specifc date",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "GET",
+											"paginationRules": {
+												"supportRFC5988": "true"
+											}
+										},
+										"sink": {
+											"type": "JsonSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "JsonWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "RestResource_Aithusa",
+											"type": "DatasetReference",
+											"parameters": {
+												"Query": {
+													"value": "@variables('Query')",
+													"type": "Expression"
+												},
+												"max_results": {
+													"value": "@variables('max_results')",
+													"type": "Expression"
+												},
+												"tweet_fields": {
+													"value": "@variables('Tweet Fields')",
+													"type": "Expression"
+												},
+												"start_year": {
+													"value": "@variables('start_year')",
+													"type": "Expression"
+												},
+												"start_month": {
+													"value": "@variables('start_month')",
+													"type": "Expression"
+												},
+												"start_day": {
+													"value": "@variables('start_day')",
+													"type": "Expression"
+												},
+												"start_hour": {
+													"value": "@variables('start_hour')",
+													"type": "Expression"
+												},
+												"start_minute": {
+													"value": "@variables('start_minute')",
+													"type": "Expression"
+												},
+												"start_second": "00",
+												"end_year": {
+													"value": "@variables('end_year')",
+													"type": "Expression"
+												},
+												"end_month": {
+													"value": "@variables('end_month')",
+													"type": "Expression"
+												},
+												"end_day": {
+													"value": "@variables('end_day')",
+													"type": "Expression"
+												},
+												"end_hour": {
+													"value": "@variables('end_hour')",
+													"type": "Expression"
+												},
+												"end_minute": {
+													"value": "@variables('end_minute')",
+													"type": "Expression"
+												},
+												"end_second": "00"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "json_Aithusa",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							]
+						}
 					}
 				],
 				"policy": {
@@ -1370,19 +1800,54 @@
 					},
 					"anotherPull": {
 						"type": "String"
+					},
+					"specific_date": {
+						"type": "Boolean"
+					},
+					"end_year": {
+						"type": "String"
+					},
+					"end_month": {
+						"type": "String"
+					},
+					"end_day": {
+						"type": "String"
+					},
+					"end_hour": {
+						"type": "String"
+					},
+					"end_minute": {
+						"type": "String"
+					},
+					"start_year": {
+						"type": "String"
+					},
+					"start_month": {
+						"type": "String"
+					},
+					"start_day": {
+						"type": "String"
+					},
+					"start_hour": {
+						"type": "String"
+					},
+					"start_minute": {
+						"type": "String"
 					}
 				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_7days')]",
-				"[concat(variables('workspaceId'), '/datasets/json_Aithusa')]",
 				"[concat(variables('workspaceId'), '/datasets/Raw_Aithusa_Outputs')]",
 				"[concat(variables('workspaceId'), '/datasets/Merged_Aithusa_JSON_folder')]",
+				"[concat(variables('workspaceId'), '/datasets/json_Aithusa')]",
 				"[concat(variables('workspaceId'), '/dataflows/Merge JSONs and Convert to CSV for Aithusa')]",
 				"[concat(variables('workspaceId'), '/integrationRuntimes/WarmIntegrationRuntime')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token for Aithusa')]",
-				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_7days_NextToken')]"
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_7days')]",
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa')]",
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_7days_NextToken')]",
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_withToken')]"
 			]
 		},
 		{
@@ -2177,9 +2642,7 @@
 									"end_day": "07",
 									"end_hour": "00",
 									"end_minute": "00",
-									"end_second": "01",
-									"sort_order": "recency",
-									"next_token": "na"
+									"end_second": "01"
 								}
 							}
 						]
@@ -3237,70 +3700,48 @@
 				},
 				"parameters": {
 					"Query": {
-						"type": "string",
-						"defaultValue": "NATO"
+						"type": "string"
 					},
 					"max_results": {
-						"type": "string",
-						"defaultValue": "10"
+						"type": "string"
 					},
 					"tweet_fields": {
-						"type": "string",
-						"defaultValue": "id,text,created_at,lang,public_metrics"
+						"type": "string"
 					},
 					"start_year": {
-						"type": "string",
-						"defaultValue": "2023"
+						"type": "string"
 					},
 					"start_month": {
-						"type": "string",
-						"defaultValue": "03"
+						"type": "string"
 					},
 					"start_day": {
-						"type": "string",
-						"defaultValue": "05"
+						"type": "string"
 					},
 					"start_hour": {
-						"type": "string",
-						"defaultValue": "00"
+						"type": "string"
 					},
 					"start_minute": {
-						"type": "string",
-						"defaultValue": "00"
+						"type": "string"
 					},
 					"start_second": {
-						"type": "string",
-						"defaultValue": "01"
+						"type": "string"
 					},
 					"end_year": {
-						"type": "string",
-						"defaultValue": "2023"
+						"type": "string"
 					},
 					"end_month": {
-						"type": "string",
-						"defaultValue": "03"
+						"type": "string"
 					},
 					"end_day": {
-						"type": "string",
-						"defaultValue": "07"
+						"type": "string"
 					},
 					"end_hour": {
-						"type": "string",
-						"defaultValue": "00"
+						"type": "string"
 					},
 					"end_minute": {
-						"type": "string",
-						"defaultValue": "00"
+						"type": "string"
 					},
 					"end_second": {
-						"type": "string",
-						"defaultValue": "01"
-					},
-					"sort_order": {
-						"type": "string",
-						"defaultValue": "recency"
-					},
-					"next_token": {
 						"type": "string"
 					}
 				},
@@ -3308,7 +3749,7 @@
 				"type": "RestResource",
 				"typeProperties": {
 					"relativeUrl": {
-						"value": "@concat('/2/tweets/search/recent?query=',dataset().Query,'&start_time=',dataset().start_year,'-',dataset().start_month,'-',dataset().start_day,'T',dataset().start_hour,':',dataset().start_minute,':',dataset().start_second,'.000Z','&end_time=',dataset().end_year,'-',dataset().end_month,'-',dataset().end_day,'T',dataset().end_hour,':',dataset().end_minute,':',dataset().end_second,'.000Z','&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results,'&sort_order=',dataset().sort_order)",
+						"value": "@concat('/2/tweets/search/recent?query=',dataset().Query,'&start_time=',dataset().start_year,'-',dataset().start_month,'-',dataset().start_day,'T',dataset().start_hour,':',dataset().start_minute,':',dataset().start_second,'.000Z','&end_time=',dataset().end_year,'-',dataset().end_month,'-',dataset().end_day,'T',dataset().end_hour,':',dataset().end_minute,':',dataset().end_second,'.000Z','&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results)",
 						"type": "Expression"
 					}
 				},
@@ -3329,16 +3770,13 @@
 				},
 				"parameters": {
 					"query": {
-						"type": "string",
-						"defaultValue": "NATO"
+						"type": "string"
 					},
 					"tweet_fields": {
-						"type": "string",
-						"defaultValue": "id,text,created_at,lang,public_metrics"
+						"type": "string"
 					},
 					"max_results": {
-						"type": "string",
-						"defaultValue": "10"
+						"type": "string"
 					}
 				},
 				"annotations": [],
@@ -3366,20 +3804,16 @@
 				},
 				"parameters": {
 					"query": {
-						"type": "string",
-						"defaultValue": "NATO"
+						"type": "string"
 					},
 					"tweet_fields": {
-						"type": "string",
-						"defaultValue": "id,created_at,text,lang,public_metrics"
+						"type": "string"
 					},
 					"max_results": {
-						"type": "string",
-						"defaultValue": "10"
+						"type": "string"
 					},
 					"next_token": {
-						"type": "string",
-						"defaultValue": "b26v89c19zqg8o3fqka107quvh02v90tb138wylvg69od"
+						"type": "string"
 					}
 				},
 				"annotations": [],
@@ -3387,6 +3821,79 @@
 				"typeProperties": {
 					"relativeUrl": {
 						"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results,'&next_token=',dataset().next_token)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/Twitter_RestService_ Aithusa')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/RestResource_Aithusa_withToken')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Twitter_RestService_ Aithusa",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Query": {
+						"type": "string"
+					},
+					"max_results": {
+						"type": "string"
+					},
+					"tweet_fields": {
+						"type": "string"
+					},
+					"start_year": {
+						"type": "string"
+					},
+					"start_month": {
+						"type": "string"
+					},
+					"start_day": {
+						"type": "string"
+					},
+					"start_hour": {
+						"type": "string"
+					},
+					"start_minute": {
+						"type": "string"
+					},
+					"start_second": {
+						"type": "string"
+					},
+					"end_year": {
+						"type": "string"
+					},
+					"end_month": {
+						"type": "string"
+					},
+					"end_day": {
+						"type": "string"
+					},
+					"end_hour": {
+						"type": "string"
+					},
+					"end_minute": {
+						"type": "string"
+					},
+					"end_second": {
+						"type": "string"
+					},
+					"next_token": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat('/2/tweets/search/recent?query=',dataset().Query,'&start_time=',dataset().start_year,'-',dataset().start_month,'-',dataset().start_day,'T',dataset().start_hour,':',dataset().start_minute,':',dataset().start_second,'.000Z','&end_time=',dataset().end_year,'-',dataset().end_month,'-',dataset().end_day,'T',dataset().end_hour,':',dataset().end_minute,':',dataset().end_second,'.000Z','&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results,'&next_token=',dataset().next_token)",
 						"type": "Expression"
 					}
 				},
@@ -5115,6 +5622,26 @@
 			"properties": {
 				"content": {
 					"query": "DROP TABLE [dbo].[NATO_Tweets1]\nGO\n\nSET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO\n\nCREATE TABLE [dbo].[NATO_Tweets1]\n( \n\t[id] [bigint]  NOT NULL,\n\t[created_at] [datetime2](7)  NULL,\n\t[text] [nvarchar](4000)  NULL,\n\t[lang] [nvarchar](10)  NULL,\n\t[retweet_count] [int]  NULL,\n\t[reply_count] [int]  NULL,\n\t[like_count] [int]  NULL,\n\t[quote_count] [int]  NULL,\n\t[impression_count] [int]  NULL,\n\t[cleanText] [nvarchar](4000)\n)\nWITH\n(\n\tDISTRIBUTION = HASH ( [id] ),\n\tCLUSTERED COLUMNSTORE INDEX\n)\nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPoolTest",
+						"poolName": "SQLPoolTest"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 4')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE PROC [dbo].[cleanTweets]\n\nAS\nBEGIN\nupdate dbo.NATO_Tweets1 set cleanText=text;\nUPDATE dbo.NATO_Tweets1 \nSET text = CASE \n\n             WHEN CHARINDEX('https', text) > 0 \n             THEN LEFT(text, CHARINDEX('https', text) - 1) \n             ELSE text \n           END;\n           delete from dbo.NATO_Tweets1 where text='';\nEND\n",
 					"metadata": {
 						"language": "sql"
 					},
