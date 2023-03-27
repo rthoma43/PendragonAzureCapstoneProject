@@ -7,22 +7,22 @@
 		},
 		"parameters": {
 			"query": {
-				"type": "string",
-				"defaultValue": "NATO"
+				"type": "string"
 			},
 			"tweet_fields": {
-				"type": "string",
-				"defaultValue": "id,text,created_at,lang,public_metrics"
+				"type": "string"
 			},
 			"max_results": {
-				"type": "string",
-				"defaultValue": "10"
+				"type": "string"
 			}
 		},
 		"annotations": [],
 		"type": "RestResource",
 		"typeProperties": {
-			"relativeUrl": "@concat('/2/tweets/search/recent?query=',dataset().query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results)"
+			"relativeUrl": {
+				"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results)",
+				"type": "Expression"
+			}
 		},
 		"schema": []
 	}
