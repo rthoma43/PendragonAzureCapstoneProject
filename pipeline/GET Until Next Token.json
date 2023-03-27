@@ -122,7 +122,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@bool(variables('anotherPull'))",
+						"value": "@bool(variables('stopUntil'))",
 						"type": "Expression"
 					},
 					"activities": [
@@ -199,30 +199,30 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@equals(activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token, '.\\n')",
+									"value": "@equals(activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token, ' ')",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
 									{
-										"name": "Set another pull",
+										"name": "Set stopUntil 1",
 										"type": "SetVariable",
 										"dependsOn": [],
 										"userProperties": [],
 										"typeProperties": {
-											"variableName": "anotherPull",
-											"value": "true"
+											"variableName": "stopUntil",
+											"value": false
 										}
 									}
 								],
 								"ifTrueActivities": [
 									{
-										"name": "Set anotherPull",
+										"name": "Set stopUntil",
 										"type": "SetVariable",
 										"dependsOn": [],
 										"userProperties": [],
 										"typeProperties": {
-											"variableName": "anotherPull",
-											"value": "false"
+											"variableName": "stopUntil",
+											"value": true
 										}
 									}
 								]
@@ -422,7 +422,7 @@
 							}
 						},
 						{
-							"name": "Set anotherPull after fail",
+							"name": "Set stopUntil after fail",
 							"type": "SetVariable",
 							"dependsOn": [
 								{
@@ -440,8 +440,8 @@
 							],
 							"userProperties": [],
 							"typeProperties": {
-								"variableName": "anotherPull",
-								"value": "true"
+								"variableName": "stopUntil",
+								"value": true
 							}
 						}
 					],
@@ -461,8 +461,8 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "anotherPull",
-					"value": "false"
+					"variableName": "stopUntil",
+					"value": false
 				}
 			},
 			{
@@ -915,8 +915,8 @@
 			"next_token": {
 				"type": "String"
 			},
-			"anotherPull": {
-				"type": "String"
+			"stopUntil": {
+				"type": "Boolean"
 			},
 			"specific_date": {
 				"type": "Boolean"
