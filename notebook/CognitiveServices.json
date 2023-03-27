@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "a9e73261-6d00-43ca-bbf6-d357f76c6de7"
+				"spark.autotune.trackingId": "76d960c4-a09f-41bb-8af4-6471490a8156"
 			}
 		},
 		"metadata": {
@@ -76,7 +76,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 83
+				"execution_count": 7
 			},
 			{
 				"cell_type": "markdown",
@@ -117,7 +117,7 @@
 					"first_20 = sorted_df.limit(20)\r\n",
 					"first_20.show()"
 				],
-				"execution_count": 84
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
@@ -137,16 +137,17 @@
 					"\r\n",
 					"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
 					"regex = r'@\\w+|&\\w+|https?://\\S+|#\\w+'\r\n",
+					"regex = r'\\b[@#&]\\w+|\\bhttps\\w*'\r\n",
 					"\r\n",
 					"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
-					"df_filtered = first_20.withColumn(\"cleanText\", regexp_replace(col(\"text\"), regex, ''))\r\n",
+					"df_filtered = first_20.withColumn(\"text\", regexp_replace(col(\"text\"), regex, ''))\r\n",
 					"\r\n",
 					"# Show the filtered DataFrame\r\n",
-					"df_filtered.select(\"cleanText\").show()\r\n",
+					"df_filtered.select(\"text\").show()\r\n",
 					"\r\n",
 					"first_20 = df_filtered"
 				],
-				"execution_count": 85
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -166,7 +167,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 86
+				"execution_count": 10
 			},
 			{
 				"cell_type": "code",
@@ -202,7 +203,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 88
+				"execution_count": 11
 			},
 			{
 				"cell_type": "markdown",
@@ -239,7 +240,7 @@
 					"    \r\n",
 					"sent_output = sent.transform(first_20)"
 				],
-				"execution_count": 89
+				"execution_count": 12
 			},
 			{
 				"cell_type": "code",
@@ -257,7 +258,7 @@
 				"source": [
 					"sent_output.select(\"sentiment\").show()"
 				],
-				"execution_count": 90
+				"execution_count": 13
 			},
 			{
 				"cell_type": "markdown",
@@ -303,7 +304,7 @@
 					"\r\n",
 					"print(output)"
 				],
-				"execution_count": 91
+				"execution_count": 14
 			},
 			{
 				"cell_type": "markdown",
@@ -355,7 +356,7 @@
 					"print(\"Confidence scores:\", confidence_scores)\r\n",
 					""
 				],
-				"execution_count": 92
+				"execution_count": 15
 			},
 			{
 				"cell_type": "markdown",
@@ -450,7 +451,7 @@
 					"        output_df = output_df.union(df)\r\n",
 					"display(output_df)"
 				],
-				"execution_count": 93
+				"execution_count": 16
 			},
 			{
 				"cell_type": "markdown",
@@ -489,7 +490,7 @@
 					"keyphrase_output = keyPhrase.transform(first_20)\r\n",
 					"display(keyPhrase.transform(first_20))"
 				],
-				"execution_count": 94
+				"execution_count": 17
 			},
 			{
 				"cell_type": "markdown",
@@ -536,7 +537,7 @@
 					"\r\n",
 					"print(kp_output)"
 				],
-				"execution_count": 95
+				"execution_count": 18
 			},
 			{
 				"cell_type": "markdown",
@@ -578,7 +579,7 @@
 					"# Show the resulting DataFrame\r\n",
 					"display(kp_df)"
 				],
-				"execution_count": 96
+				"execution_count": 19
 			},
 			{
 				"cell_type": "markdown",
@@ -674,7 +675,7 @@
 					"        output_df = output_df.union(df)\r\n",
 					"display(output_df)"
 				],
-				"execution_count": 97
+				"execution_count": 20
 			}
 		]
 	}
