@@ -348,10 +348,22 @@
 												"referenceName": "RestResource_Aithusa_7days_NextToken",
 												"type": "DatasetReference",
 												"parameters": {
-													"query": "NATO",
-													"tweet_fields": "id,created_at,text,lang,public_metrics",
-													"max_results": "10",
-													"next_token": "b26v89c19zqg8o3fqka107quvh02v90tb138wylvg69od"
+													"query": {
+														"value": "@variables('Query')",
+														"type": "Expression"
+													},
+													"tweet_fields": {
+														"value": "@variables('Tweet Fields')",
+														"type": "Expression"
+													},
+													"max_results": {
+														"value": "@variables('max_results')",
+														"type": "Expression"
+													},
+													"next_token": {
+														"value": "@variables('next_token')",
+														"type": "Expression"
+													}
 												}
 											}
 										],
@@ -365,7 +377,7 @@
 								],
 								"ifTrueActivities": [
 									{
-										"name": "Initial GET with specifc date_copy1",
+										"name": "GET with specifc date with token",
 										"type": "Copy",
 										"dependsOn": [],
 										"policy": {
@@ -399,63 +411,24 @@
 										},
 										"inputs": [
 											{
-												"referenceName": "RestResource_Aithusa",
+												"referenceName": "RestResource_Aithusa_withToken",
 												"type": "DatasetReference",
 												"parameters": {
-													"Query": {
-														"value": "@variables('Query')",
-														"type": "Expression"
-													},
-													"max_results": {
-														"value": "@variables('max_results')",
-														"type": "Expression"
-													},
-													"tweet_fields": {
-														"value": "@variables('Tweet Fields')",
-														"type": "Expression"
-													},
-													"start_year": {
-														"value": "@variables('start_year')",
-														"type": "Expression"
-													},
-													"start_month": {
-														"value": "@variables('start_month')",
-														"type": "Expression"
-													},
-													"start_day": {
-														"value": "@variables('start_day')",
-														"type": "Expression"
-													},
-													"start_hour": {
-														"value": "@variables('start_hour')",
-														"type": "Expression"
-													},
-													"start_minute": {
-														"value": "@variables('start_minute')",
-														"type": "Expression"
-													},
-													"start_second": "00",
-													"end_year": {
-														"value": "@variables('end_year')",
-														"type": "Expression"
-													},
-													"end_month": {
-														"value": "@variables('end_month')",
-														"type": "Expression"
-													},
-													"end_day": {
-														"value": "@variables('end_day')",
-														"type": "Expression"
-													},
-													"end_hour": {
-														"value": "@variables('end_hour')",
-														"type": "Expression"
-													},
-													"end_minute": {
-														"value": "@variables('end_minute')",
-														"type": "Expression"
-													},
-													"end_second": "00"
+													"Query": "NATO",
+													"max_results": "10",
+													"tweet_fields": "id,text,created_at,lang,public_metrics",
+													"start_year": "2023",
+													"start_month": "03",
+													"start_day": "05",
+													"start_hour": "00",
+													"start_minute": "00",
+													"start_second": "01",
+													"end_year": "2023",
+													"end_month": "03",
+													"end_day": "07",
+													"end_hour": "00",
+													"end_minute": "00",
+													"end_second": "01"
 												}
 											}
 										],
