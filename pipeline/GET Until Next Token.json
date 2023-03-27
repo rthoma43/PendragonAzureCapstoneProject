@@ -242,7 +242,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@variables('specific_date')",
+									"value": "@bool(variables('specific_date'))",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
