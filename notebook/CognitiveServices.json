@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "e5cabf4f-f884-4c59-9228-7d109f46edf3"
+				"spark.autotune.trackingId": "c1f42fdd-f741-495e-bfb1-59378a33b010"
 			}
 		},
 		"metadata": {
@@ -76,7 +76,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 33
+				"execution_count": 1
 			},
 			{
 				"cell_type": "markdown",
@@ -117,7 +117,34 @@
 					"first_20 = sorted_df.limit(20)\r\n",
 					"first_20.show()"
 				],
-				"execution_count": 34
+				"execution_count": 2
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.sql.functions import regexp_replace\r\n",
+					"\r\n",
+					"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
+					"regex = r'@\\w+|&\\w+|https?://\\S+|#\\w+'\r\n",
+					"\r\n",
+					"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
+					"df_filtered = first_20.withColumn(\"cleanText\", regexp_replace(col(\"text\"), regex, ''))\r\n",
+					"\r\n",
+					"# Show the filtered DataFrame\r\n",
+					"df_filtered.select(\"cleanText\").show()"
+				],
+				"execution_count": 12
 			},
 			{
 				"cell_type": "code",
@@ -137,7 +164,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 4
+				"execution_count": 13
 			},
 			{
 				"cell_type": "code",
@@ -153,9 +180,9 @@
 					}
 				},
 				"source": [
-					"#print(dir(synapse.ml.cognitive))"
+					"print(dir(synapse.ml.cognitive))"
 				],
-				"execution_count": 90
+				"execution_count": 33
 			},
 			{
 				"cell_type": "code",
@@ -173,7 +200,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 5
+				"execution_count": 14
 			},
 			{
 				"cell_type": "markdown",
@@ -208,11 +235,9 @@
 					"    .setOutputCol(\"sentiment\")\r\n",
 					"    .setErrorCol(\"error\"))\r\n",
 					"    \r\n",
-					"sent_output = sent.transform(first_20)\r\n",
-					"#display(sent.transform(first_20))\r\n",
-					"#display(sent.transform(first_20).select(\"text\", col(\"sentiment\")['document'].getItem(\"sentences\").alias(\"sentences\")))"
+					"sent_output = sent.transform(first_20)"
 				],
-				"execution_count": 96
+				"execution_count": 15
 			},
 			{
 				"cell_type": "code",
@@ -231,6 +256,19 @@
 					"sent_output.select(\"sentiment\").show()"
 				],
 				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"Convert the output to a JSON format and extract the sentiment of each text record into an array"
+				]
 			},
 			{
 				"cell_type": "code",
@@ -258,12 +296,64 @@
 					"\r\n",
 					"# Print the 'sentiment' field for each row\r\n",
 					"for sentiment in sentiments:\r\n",
-					"    print(sentiment)\r\n",
+					"    #print(sentiment)\r\n",
 					"    output.append(sentiment['document']['sentiment'])\r\n",
 					"\r\n",
 					"print(output)"
 				],
-				"execution_count": null
+				"execution_count": 16
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"Calculate the overall sentiment and the confidence scores"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"import collections\r\n",
+					"\r\n",
+					"# Count the occurrences of each value in the array\r\n",
+					"counts = collections.Counter(output)\r\n",
+					"\r\n",
+					"# Get the most common value and its count\r\n",
+					"most_common = counts.most_common(1)[0]\r\n",
+					"most_common_value = most_common[0]\r\n",
+					"most_common_count = most_common[1]\r\n",
+					"\r\n",
+					"print(\"Most common value:\", most_common_value)\r\n",
+					"print(\"Count:\", most_common_count)\r\n",
+					"\r\n",
+					"confidence_scores = {}\r\n",
+					"\r\n",
+					"total_values = len(output)\r\n",
+					"\r\n",
+					"for value, count in counts.items():\r\n",
+					"    confidence_scores[value] = count / total_values\r\n",
+					"\r\n",
+					"print(\"Confidence scores:\", confidence_scores)\r\n",
+					""
+				],
+				"execution_count": 19
 			},
 			{
 				"cell_type": "markdown",
@@ -299,10 +389,9 @@
 					"    .setOutputCol(\"replies\")\r\n",
 					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
-					"#display(entity.transform(df))\r\n",
-					"display(entity.transform(first_20).select(\"id\", \"text\", col(\"replies\")['document'].getItem(\"entities\").alias(\"entities\")))"
+					"display(entity.transform(first_20))"
 				],
-				"execution_count": 6
+				"execution_count": 27
 			},
 			{
 				"cell_type": "markdown",
@@ -338,9 +427,98 @@
 					"    .setOutputCol(\"replies\")\r\n",
 					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
-					"display(keyPhrase.transform(first_20).select(\"text\", col(\"replies\")['document'].getItem(\"keyPhrases\").alias(\"keyPhrases\")))"
+					"keyphrase_output = keyPhrase.transform(first_20)\r\n",
+					"display(keyPhrase.transform(first_20))"
 				],
-				"execution_count": 7
+				"execution_count": 54
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"Convert output to a JSON and collect the results into one array"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"import json\r\n",
+					"\r\n",
+					"# Extract the 'sentiment' column and convert it to JSON\r\n",
+					"json_output = keyphrase_output.select(\"replies\").toJSON().collect()\r\n",
+					"\r\n",
+					"# Deserialize the JSON and extract the 'sentiment' field\r\n",
+					"keyphrases = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
+					"\r\n",
+					"output = []\r\n",
+					"\r\n",
+					"# Print the 'sentiment' field for each row\r\n",
+					"for each in keyphrases:\r\n",
+					"    #print(each)\r\n",
+					"    for keyphrase in each['document']['keyPhrases']:\r\n",
+					"        output.append(keyphrase)\r\n",
+					"\r\n",
+					"print(output)"
+				],
+				"execution_count": 59
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"Collect the key phrases and their counts > 1"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from collections import Counter\r\n",
+					"\r\n",
+					"# count the occurrences of each word in the array\r\n",
+					"word_counts = Counter(output)\r\n",
+					"\r\n",
+					"# select the words that occur more than once\r\n",
+					"result = {word: count for word, count in word_counts.items() if count > 1}\r\n",
+					"\r\n",
+					"# print the result\r\n",
+					"print(result)\r\n",
+					""
+				],
+				"execution_count": 62
 			},
 			{
 				"cell_type": "markdown",
@@ -370,15 +548,128 @@
 					"collapsed": false
 				},
 				"source": [
-					"ner = (NER()\r\n",
+					"# Assuming you have a PySpark DataFrame called 'df'\r\n",
+					"# First, count the total number of rows in the DataFrame\r\n",
+					"num_rows = first_20.count()\r\n",
+					"\r\n",
+					"# Next, calculate the number of batches needed to split the DataFrame into batches of 5\r\n",
+					"num_batches = int(num_rows / 5) + (num_rows % 5 > 0)\r\n",
+					"\r\n",
+					"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
+					"df_batches = first_20.randomSplit([1.0]*num_batches, seed=42)\r\n",
+					"\r\n",
+					"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
+					"for i in range(num_batches):\r\n",
+					"    batch = df_batches[i].limit(5)\r\n",
+					"    ner = (NER()\r\n",
 					"    .setLinkedService(linked_service_name)\r\n",
 					"    .setLanguageCol(\"lang\")\r\n",
 					"    .setOutputCol(\"replies\")\r\n",
 					"    .setErrorCol(\"error\"))\r\n",
-					"display(ner.transform(first_20))\r\n",
-					"#display(ner.transform(first_20).select(\"text\", \"error, col(\"replies\")['document'].getItem(\"entities\").alias(\"entities\")))"
+					"\r\n",
+					"    ner_batch_output = ner.transform(batch)\r\n",
+					"    display(ner_batch_output)"
 				],
-				"execution_count": 13
+				"execution_count": 66
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"# import required libraries\r\n",
+					"import json\r\n",
+					"from pyspark.sql.types import StructType, StructField, StringType\r\n",
+					"import pyspark.sql.functions as F\r\n",
+					"\r\n",
+					"# Extract the 'replies' column and convert it to JSON\r\n",
+					"json_output = ner_batch_output.select(\"replies\").toJSON().collect()\r\n",
+					"\r\n",
+					"# Deserialize the JSON and extract the 'replies' field\r\n",
+					"nes = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
+					"\r\n",
+					"# define the schema for the output DataFrame\r\n",
+					"schema = StructType([\r\n",
+					"    StructField(\"entity_text\", StringType(), True),\r\n",
+					"    StructField(\"entity_category\", StringType(), True)\r\n",
+					"])\r\n",
+					"\r\n",
+					"# create an empty DataFrame with the defined schema\r\n",
+					"output_df = spark.createDataFrame([], schema)\r\n",
+					"\r\n",
+					"# Print the 'replies' field for each row\r\n",
+					"for each in nes:\r\n",
+					"    #print(each)\r\n",
+					"\r\n",
+					"    # create a PySpark DataFrame from the JSON string\r\n",
+					"    json_string = each\r\n",
+					"    df = spark.read.json(sc.parallelize([json_string]))\r\n",
+					"\r\n",
+					"    # extract the 'entities' array from the 'document' column\r\n",
+					"    df = df.selectExpr('explode(document.entities) as entities')\r\n",
+					"\r\n",
+					"    # select the 'text' and 'category' fields from the exploded 'entities' array\r\n",
+					"    df = df.select('entities.text', 'entities.category')\r\n",
+					"\r\n",
+					"    # rename the columns\r\n",
+					"    df = df.withColumnRenamed('text', 'entity_text')\r\n",
+					"    df = df.withColumnRenamed('category', 'entity_category')\r\n",
+					"\r\n",
+					"    # show the resulting DataFrame\r\n",
+					"    #df.show()\r\n",
+					"\r\n",
+					"    # Append the batch results dataframe to the main output dataframe\r\n",
+					"    output_df = output_df.union(df)\r\n",
+					"\r\n",
+					"display(output_df)"
+				],
+				"execution_count": 75
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"import pyspark.sql.functions as F\r\n",
+					"\r\n",
+					"# create a PySpark DataFrame from the JSON string\r\n",
+					"json_string = output\r\n",
+					"df = spark.read.json(sc.parallelize([json_string]))\r\n",
+					"\r\n",
+					"# extract the 'entities' array from the 'document' column\r\n",
+					"df = df.selectExpr('explode(document.entities) as entities')\r\n",
+					"\r\n",
+					"# select the 'text' and 'category' fields from the exploded 'entities' array\r\n",
+					"df = df.select('entities.text', 'entities.category')\r\n",
+					"\r\n",
+					"# rename the columns\r\n",
+					"df = df.withColumnRenamed('text', 'entity_text')\r\n",
+					"df = df.withColumnRenamed('category', 'entity_category')\r\n",
+					"\r\n",
+					"# show the resulting DataFrame\r\n",
+					"df.show()\r\n",
+					""
+				],
+				"execution_count": 69
 			}
 		]
 	}
