@@ -430,6 +430,12 @@
 									"dependencyConditions": [
 										"Failed"
 									]
+								},
+								{
+									"activity": "Extract Next Token Aithusa",
+									"dependencyConditions": [
+										"Failed"
+									]
 								}
 							],
 							"userProperties": [],
