@@ -455,6 +455,185 @@
 					},
 					"traceLevel": "Fine"
 				}
+			},
+			{
+				"name": "End year",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "end_year",
+					"value": "2023"
+				}
+			},
+			{
+				"name": "End month",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "End year",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "end_month",
+					"value": "03"
+				}
+			},
+			{
+				"name": "End day",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "End month",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "end_day",
+					"value": "26"
+				}
+			},
+			{
+				"name": "End hour",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "End day",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "end_hour",
+					"value": "12"
+				}
+			},
+			{
+				"name": "End minute",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "End hour",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "end_minute",
+					"value": "00"
+				}
+			},
+			{
+				"name": "Start year",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "start_year",
+					"value": "2023"
+				}
+			},
+			{
+				"name": "Start month",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Start year",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "start_month",
+					"value": "03"
+				}
+			},
+			{
+				"name": "Start day",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Start month",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "start_day",
+					"value": "25"
+				}
+			},
+			{
+				"name": "Start hour",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Start day",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "start_hour",
+					"value": "00"
+				}
+			},
+			{
+				"name": "Start minute",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Start hour",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "start_minute",
+					"value": "00"
+				}
+			},
+			{
+				"name": "Use date range",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Start minute",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "End minute",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "specific_date",
+					"value": true
+				}
 			}
 		],
 		"variables": {
@@ -474,6 +653,39 @@
 				"type": "String"
 			},
 			"anotherPull": {
+				"type": "String"
+			},
+			"specific_date": {
+				"type": "Boolean"
+			},
+			"end_year": {
+				"type": "String"
+			},
+			"end_month": {
+				"type": "String"
+			},
+			"end_day": {
+				"type": "String"
+			},
+			"end_hour": {
+				"type": "String"
+			},
+			"end_minute": {
+				"type": "String"
+			},
+			"start_year": {
+				"type": "String"
+			},
+			"start_month": {
+				"type": "String"
+			},
+			"start_day": {
+				"type": "String"
+			},
+			"start_hour": {
+				"type": "String"
+			},
+			"start_minute": {
 				"type": "String"
 			}
 		},
