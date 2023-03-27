@@ -403,7 +403,7 @@
 														"value": "@variables('end_minute')",
 														"type": "Expression"
 													},
-													"end_second": "01]",
+													"end_second": "00",
 													"next_token": {
 														"value": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token",
 														"type": "Expression"
