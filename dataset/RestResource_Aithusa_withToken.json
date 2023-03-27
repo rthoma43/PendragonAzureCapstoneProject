@@ -7,64 +7,49 @@
 		},
 		"parameters": {
 			"Query": {
-				"type": "string",
-				"defaultValue": "NATO"
+				"type": "string"
 			},
 			"max_results": {
-				"type": "string",
-				"defaultValue": "10"
+				"type": "string"
 			},
 			"tweet_fields": {
-				"type": "string",
-				"defaultValue": "id,text,created_at,lang,public_metrics"
+				"type": "string"
 			},
 			"start_year": {
-				"type": "string",
-				"defaultValue": "2023"
+				"type": "string"
 			},
 			"start_month": {
-				"type": "string",
-				"defaultValue": "03"
+				"type": "string"
 			},
 			"start_day": {
-				"type": "string",
-				"defaultValue": "05"
+				"type": "string"
 			},
 			"start_hour": {
-				"type": "string",
-				"defaultValue": "00"
+				"type": "string"
 			},
 			"start_minute": {
-				"type": "string",
-				"defaultValue": "00"
+				"type": "string"
 			},
 			"start_second": {
-				"type": "string",
-				"defaultValue": "01"
+				"type": "string"
 			},
 			"end_year": {
-				"type": "string",
-				"defaultValue": "2023"
+				"type": "string"
 			},
 			"end_month": {
-				"type": "string",
-				"defaultValue": "03"
+				"type": "string"
 			},
 			"end_day": {
-				"type": "string",
-				"defaultValue": "07"
+				"type": "string"
 			},
 			"end_hour": {
-				"type": "string",
-				"defaultValue": "00"
+				"type": "string"
 			},
 			"end_minute": {
-				"type": "string",
-				"defaultValue": "00"
+				"type": "string"
 			},
 			"end_second": {
-				"type": "string",
-				"defaultValue": "01"
+				"type": "string"
 			},
 			"next_token": {
 				"type": "string"
