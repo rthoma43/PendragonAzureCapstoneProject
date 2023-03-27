@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "c1f42fdd-f741-495e-bfb1-59378a33b010"
+				"spark.autotune.trackingId": "8bca0bc5-d804-4ed3-9704-35119923d71f"
 			}
 		},
 		"metadata": {
@@ -548,7 +548,11 @@
 					"collapsed": false
 				},
 				"source": [
-					"# Assuming you have a PySpark DataFrame called 'df'\r\n",
+					"# import required libraries\r\n",
+					"import json\r\n",
+					"from pyspark.sql.types import StructType, StructField, StringType\r\n",
+					"import pyspark.sql.functions as F\r\n",
+					"\r\n",
 					"# First, count the total number of rows in the DataFrame\r\n",
 					"num_rows = first_20.count()\r\n",
 					"\r\n",
@@ -557,6 +561,15 @@
 					"\r\n",
 					"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
 					"df_batches = first_20.randomSplit([1.0]*num_batches, seed=42)\r\n",
+					"\r\n",
+					"# define the schema for the output DataFrame\r\n",
+					"schema = StructType([\r\n",
+					"    StructField(\"entity_text\", StringType(), True),\r\n",
+					"    StructField(\"entity_category\", StringType(), True)\r\n",
+					"    ])\r\n",
+					"\r\n",
+					"# create an empty DataFrame with the defined schema\r\n",
+					"output_df = spark.createDataFrame([], schema)\r\n",
 					"\r\n",
 					"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
 					"for i in range(num_batches):\r\n",
@@ -568,108 +581,40 @@
 					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
 					"    ner_batch_output = ner.transform(batch)\r\n",
-					"    display(ner_batch_output)"
-				],
-				"execution_count": 66
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"# import required libraries\r\n",
-					"import json\r\n",
-					"from pyspark.sql.types import StructType, StructField, StringType\r\n",
-					"import pyspark.sql.functions as F\r\n",
+					"    display(ner_batch_output)\r\n",
 					"\r\n",
-					"# Extract the 'replies' column and convert it to JSON\r\n",
-					"json_output = ner_batch_output.select(\"replies\").toJSON().collect()\r\n",
+					"    # Extract the 'replies' column and convert it to JSON\r\n",
+					"    json_output = ner_batch_output.select(\"replies\").toJSON().collect()\r\n",
 					"\r\n",
-					"# Deserialize the JSON and extract the 'replies' field\r\n",
-					"nes = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
+					"    # Deserialize the JSON and extract the 'replies' field\r\n",
+					"    nes = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
 					"\r\n",
-					"# define the schema for the output DataFrame\r\n",
-					"schema = StructType([\r\n",
-					"    StructField(\"entity_text\", StringType(), True),\r\n",
-					"    StructField(\"entity_category\", StringType(), True)\r\n",
-					"])\r\n",
+					"    # Print the 'replies' field for each row\r\n",
+					"    for each in nes:\r\n",
+					"        #print(each)\r\n",
 					"\r\n",
-					"# create an empty DataFrame with the defined schema\r\n",
-					"output_df = spark.createDataFrame([], schema)\r\n",
+					"        # create a PySpark DataFrame from the JSON string\r\n",
+					"        json_string = each\r\n",
+					"        df = spark.read.json(sc.parallelize([json_string]))\r\n",
 					"\r\n",
-					"# Print the 'replies' field for each row\r\n",
-					"for each in nes:\r\n",
-					"    #print(each)\r\n",
+					"        # extract the 'entities' array from the 'document' column\r\n",
+					"        df = df.selectExpr('explode(document.entities) as entities')\r\n",
 					"\r\n",
-					"    # create a PySpark DataFrame from the JSON string\r\n",
-					"    json_string = each\r\n",
-					"    df = spark.read.json(sc.parallelize([json_string]))\r\n",
+					"        # select the 'text' and 'category' fields from the exploded 'entities' array\r\n",
+					"        df = df.select('entities.text', 'entities.category')\r\n",
 					"\r\n",
-					"    # extract the 'entities' array from the 'document' column\r\n",
-					"    df = df.selectExpr('explode(document.entities) as entities')\r\n",
+					"        # rename the columns\r\n",
+					"        df = df.withColumnRenamed('text', 'entity_text')\r\n",
+					"        df = df.withColumnRenamed('category', 'entity_category')\r\n",
 					"\r\n",
-					"    # select the 'text' and 'category' fields from the exploded 'entities' array\r\n",
-					"    df = df.select('entities.text', 'entities.category')\r\n",
+					"        # show the resulting DataFrame\r\n",
+					"        #df.show()\r\n",
 					"\r\n",
-					"    # rename the columns\r\n",
-					"    df = df.withColumnRenamed('text', 'entity_text')\r\n",
-					"    df = df.withColumnRenamed('category', 'entity_category')\r\n",
-					"\r\n",
-					"    # show the resulting DataFrame\r\n",
-					"    #df.show()\r\n",
-					"\r\n",
-					"    # Append the batch results dataframe to the main output dataframe\r\n",
-					"    output_df = output_df.union(df)\r\n",
-					"\r\n",
+					"        # Append the batch results dataframe to the main output dataframe\r\n",
+					"        output_df = output_df.union(df)\r\n",
 					"display(output_df)"
 				],
-				"execution_count": 75
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"import pyspark.sql.functions as F\r\n",
-					"\r\n",
-					"# create a PySpark DataFrame from the JSON string\r\n",
-					"json_string = output\r\n",
-					"df = spark.read.json(sc.parallelize([json_string]))\r\n",
-					"\r\n",
-					"# extract the 'entities' array from the 'document' column\r\n",
-					"df = df.selectExpr('explode(document.entities) as entities')\r\n",
-					"\r\n",
-					"# select the 'text' and 'category' fields from the exploded 'entities' array\r\n",
-					"df = df.select('entities.text', 'entities.category')\r\n",
-					"\r\n",
-					"# rename the columns\r\n",
-					"df = df.withColumnRenamed('text', 'entity_text')\r\n",
-					"df = df.withColumnRenamed('category', 'entity_category')\r\n",
-					"\r\n",
-					"# show the resulting DataFrame\r\n",
-					"df.show()\r\n",
-					""
-				],
-				"execution_count": 69
+				"execution_count": 76
 			}
 		]
 	}
