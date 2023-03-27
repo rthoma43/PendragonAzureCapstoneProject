@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 4",
+	"properties": {
+		"content": {
+			"query": "CREATE PROC [dbo].[cleanTweets]\n\nAS\nBEGIN\nupdate dbo.NATO_Tweets1 set cleanText=text;\nUPDATE dbo.NATO_Tweets1 \nSET text = CASE \n\n             WHEN CHARINDEX('https', text) > 0 \n             THEN LEFT(text, CHARINDEX('https', text) - 1) \n             ELSE text \n           END;\n           delete from dbo.NATO_Tweets1 where text='';\nEND\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "SQLPoolTest",
+				"poolName": "SQLPoolTest"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
