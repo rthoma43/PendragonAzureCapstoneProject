@@ -53,9 +53,18 @@
 						"referenceName": "RestResource_Aithusa_7days",
 						"type": "DatasetReference",
 						"parameters": {
-							"query": "@variables('Query')",
-							"tweet_fields": "@variables('Tweet Fields')",
-							"max_results": "@variables('max_results')"
+							"query": {
+								"value": "@variables('Query')",
+								"type": "Expression"
+							},
+							"tweet_fields": {
+								"value": "@variables('Tweet Fields')",
+								"type": "Expression"
+							},
+							"max_results": {
+								"value": "@variables('max_results')",
+								"type": "Expression"
+							}
 						}
 					}
 				],
