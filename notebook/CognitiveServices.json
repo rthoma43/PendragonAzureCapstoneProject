@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "6d368ca9-a6f8-4419-99aa-2d3032375466"
+				"spark.autotune.trackingId": "a9e73261-6d00-43ca-bbf6-d357f76c6de7"
 			}
 		},
 		"metadata": {
@@ -76,7 +76,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 1
+				"execution_count": 83
 			},
 			{
 				"cell_type": "markdown",
@@ -88,7 +88,7 @@
 					}
 				},
 				"source": [
-					"#### Key Phrase Extraction, Named Entity Recognition, Sentiment Analysis"
+					"# Sentiment Analysis, Entity Extraction, Key Phrase Extraction, Named Entity Recognition"
 				]
 			},
 			{
@@ -117,7 +117,7 @@
 					"first_20 = sorted_df.limit(20)\r\n",
 					"first_20.show()"
 				],
-				"execution_count": 2
+				"execution_count": 84
 			},
 			{
 				"cell_type": "code",
@@ -146,7 +146,7 @@
 					"\r\n",
 					"first_20 = df_filtered"
 				],
-				"execution_count": 12
+				"execution_count": 85
 			},
 			{
 				"cell_type": "code",
@@ -166,7 +166,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 13
+				"execution_count": 86
 			},
 			{
 				"cell_type": "code",
@@ -184,7 +184,7 @@
 				"source": [
 					"print(dir(synapse.ml.cognitive))"
 				],
-				"execution_count": 33
+				"execution_count": 87
 			},
 			{
 				"cell_type": "code",
@@ -202,7 +202,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 14
+				"execution_count": 88
 			},
 			{
 				"cell_type": "markdown",
@@ -239,7 +239,7 @@
 					"    \r\n",
 					"sent_output = sent.transform(first_20)"
 				],
-				"execution_count": 15
+				"execution_count": 89
 			},
 			{
 				"cell_type": "code",
@@ -257,7 +257,7 @@
 				"source": [
 					"sent_output.select(\"sentiment\").show()"
 				],
-				"execution_count": null
+				"execution_count": 90
 			},
 			{
 				"cell_type": "markdown",
@@ -303,7 +303,7 @@
 					"\r\n",
 					"print(output)"
 				],
-				"execution_count": 16
+				"execution_count": 91
 			},
 			{
 				"cell_type": "markdown",
@@ -355,7 +355,7 @@
 					"print(\"Confidence scores:\", confidence_scores)\r\n",
 					""
 				],
-				"execution_count": 19
+				"execution_count": 92
 			},
 			{
 				"cell_type": "markdown",
@@ -450,7 +450,7 @@
 					"        output_df = output_df.union(df)\r\n",
 					"display(output_df)"
 				],
-				"execution_count": 82
+				"execution_count": 93
 			},
 			{
 				"cell_type": "markdown",
@@ -489,7 +489,7 @@
 					"keyphrase_output = keyPhrase.transform(first_20)\r\n",
 					"display(keyPhrase.transform(first_20))"
 				],
-				"execution_count": 77
+				"execution_count": 94
 			},
 			{
 				"cell_type": "markdown",
@@ -536,7 +536,7 @@
 					"\r\n",
 					"print(kp_output)"
 				],
-				"execution_count": 79
+				"execution_count": 95
 			},
 			{
 				"cell_type": "markdown",
@@ -562,7 +562,8 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
 					"# Create a PySpark DataFrame from the array\r\n",
@@ -577,7 +578,7 @@
 					"# Show the resulting DataFrame\r\n",
 					"display(kp_df)"
 				],
-				"execution_count": 80
+				"execution_count": 96
 			},
 			{
 				"cell_type": "markdown",
@@ -673,7 +674,7 @@
 					"        output_df = output_df.union(df)\r\n",
 					"display(output_df)"
 				],
-				"execution_count": 76
+				"execution_count": 97
 			}
 		]
 	}
