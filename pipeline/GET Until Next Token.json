@@ -199,7 +199,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@equals(activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token, 'null')",
+									"value": "@equals(activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token, '.\\n')",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
@@ -563,7 +563,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "end_hour",
-					"value": "12"
+					"value": "2"
 				}
 			},
 			{
