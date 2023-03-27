@@ -991,7 +991,7 @@
 						}
 					},
 					{
-						"name": "GET using Next Token Until Empty",
+						"name": "Until GET Tweets",
 						"type": "Until",
 						"dependsOn": [
 							{
@@ -1004,7 +1004,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@bool(variables('anotherPull'))",
+								"value": "@equals(variables('stopUntil'), 'true')",
 								"type": "Expression"
 							},
 							"activities": [
@@ -1077,7 +1077,7 @@
 									}
 								},
 								{
-									"name": "If Condition1",
+									"name": "If next_token null",
 									"type": "IfCondition",
 									"dependsOn": [
 										{
@@ -1090,30 +1090,30 @@
 									"userProperties": [],
 									"typeProperties": {
 										"expression": {
-											"value": "@empty(activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token)",
+											"value": "@equals(activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token, '\\n')",
 											"type": "Expression"
 										},
 										"ifFalseActivities": [
 											{
-												"name": "Set another pull",
+												"name": "Set stopUntil 1",
 												"type": "SetVariable",
 												"dependsOn": [],
 												"userProperties": [],
 												"typeProperties": {
-													"variableName": "anotherPull",
-													"value": "false"
+													"variableName": "stopUntil",
+													"value": "'false'"
 												}
 											}
 										],
 										"ifTrueActivities": [
 											{
-												"name": "Set anotherPull",
+												"name": "Set stopUntil",
 												"type": "SetVariable",
 												"dependsOn": [],
 												"userProperties": [],
 												"typeProperties": {
-													"variableName": "anotherPull",
-													"value": "true"
+													"variableName": "stopUntil",
+													"value": "'true'"
 												}
 											}
 										]
@@ -1133,7 +1133,7 @@
 									"userProperties": [],
 									"typeProperties": {
 										"expression": {
-											"value": "@variables('specific_date')",
+											"value": "@bool(variables('specific_date'))",
 											"type": "Expression"
 										},
 										"ifFalseActivities": [
@@ -1295,7 +1295,7 @@
 																"value": "@variables('end_minute')",
 																"type": "Expression"
 															},
-															"end_second": "01]",
+															"end_second": "00",
 															"next_token": {
 																"value": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token",
 																"type": "Expression"
@@ -1312,6 +1312,75 @@
 												]
 											}
 										]
+									}
+								},
+								{
+									"name": "Set stopUntil after fail",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "If specific date with token",
+											"dependencyConditions": [
+												"Failed"
+											]
+										},
+										{
+											"activity": "Extract Next Token Aithusa",
+											"dependencyConditions": [
+												"Failed"
+											]
+										},
+										{
+											"activity": "Fail1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										},
+										{
+											"activity": "Fail2",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "stopUntil",
+										"value": "'true'"
+									}
+								},
+								{
+									"name": "Fail1",
+									"type": "Fail",
+									"dependsOn": [
+										{
+											"activity": "Extract Next Token Aithusa",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"message": "sad",
+										"errorCode": "500"
+									}
+								},
+								{
+									"name": "Fail2",
+									"type": "Fail",
+									"dependsOn": [
+										{
+											"activity": "If specific date with token",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"message": "sad2",
+										"errorCode": "500"
 									}
 								}
 							],
@@ -1331,7 +1400,7 @@
 						],
 						"userProperties": [],
 						"typeProperties": {
-							"variableName": "anotherPull",
+							"variableName": "stopUntil",
 							"value": "false"
 						}
 					},
@@ -1340,7 +1409,7 @@
 						"type": "Delete",
 						"dependsOn": [
 							{
-								"activity": "GET using Next Token Until Empty",
+								"activity": "Until GET Tweets",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1463,7 +1532,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "end_hour",
-							"value": "12"
+							"value": "00"
 						}
 					},
 					{
@@ -1480,7 +1549,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "end_minute",
-							"value": "00"
+							"value": "30"
 						}
 					},
 					{
@@ -1524,7 +1593,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "start_day",
-							"value": "25"
+							"value": "26"
 						}
 					},
 					{
@@ -1798,7 +1867,7 @@
 					"next_token": {
 						"type": "String"
 					},
-					"anotherPull": {
+					"stopUntil": {
 						"type": "String"
 					},
 					"specific_date": {
@@ -5676,7 +5745,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "b083e247-2f50-4879-b597-0d3665541c89"
+						"spark.autotune.trackingId": "f30465a1-c4f3-4732-a0ad-e496e7e57764"
 					}
 				},
 				"metadata": {
@@ -5701,13 +5770,312 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
+						"source": [
+							"# Install bertopic\n",
+							"!pip install bertopic"
+						],
+						"outputs": [],
+						"execution_count": 1
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from bertopic import BERTopic\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 2
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Data processing\n",
+							"import pandas as pd\n",
+							"import numpy as np\n",
+							"# Text preprocessiong\n",
+							"import nltk\n",
+							"nltk.download('stopwords')\n",
+							"nltk.download('omw-1.4')\n",
+							"nltk.download('wordnet')\n",
+							"wn = nltk.WordNetLemmatizer()\n",
+							"# Topic model\n",
+							"from bertopic import BERTopic\n",
+							"# Dimension reduction\n",
+							"from umap import UMAP"
+						],
+						"outputs": [],
+						"execution_count": 3
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"!pip install transformers[torch]\n",
+							"from transformers import pipeline;\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 4
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"sentiment_pipeline = pipeline(\"sentiment-analysis\")\n",
+							"data = [\"I love you\", \"I hate you\"]\n",
+							"\n",
+							"sentiment_pipeline(data)"
+						],
+						"outputs": [],
+						"execution_count": 5
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#%%pyspark \n",
+							"\n",
+							"df = spark.read.load('abfss://pendragon@pendragon.dfs.core.windows.net/Raw_Twitter_JSONs/Merged_Output/Twitter20230325213227.csv', format='csv') ## If header exists uncomment line below ##, header=True ) \n",
+							"\n",
+							"display(df.limit(10))"
+						],
+						"outputs": [],
+						"execution_count": 13
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"mssparkutils.fs.mount( \n",
+							"    \"abfss://pendragon@pendragon.dfs.core.windows.net\", \n",
+							"    \"/test\", \n",
+							"    {\"linkedService\":\"mygen2account\"} "
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Add required imports\n",
+							"import com.microsoft.spark.sqlanalytics\n",
+							"from com.microsoft.spark.sqlanalytics.Constants import Constants\n",
+							"from pyspark.sql.functions import col\n",
+							"\n",
+							"# Name of the SQL Dedicated Pool or database where to run the query\n",
+							"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\n",
+							"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\n",
+							"\n",
+							"# Read from a query\n",
+							"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\n",
+							"df = (spark.read\n",
+							"                     # Name of the SQL Dedicated Pool or database where to run the query\n",
+							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\n",
+							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\n",
+							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\n",
+							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\n",
+							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\n",
+							"                     # Defaults to storage path defined in the runtime configurations\n",
+							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\n",
+							"                     # query from which data will be read\n",
+							"                     .option(Constants.QUERY, \"select * from dbo.NATO_Tweets1\")\n",
+							"                     .synapsesql())"
+						],
+						"outputs": [],
+						"execution_count": 9
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df.show()"
+						],
+						"outputs": [],
+						"execution_count": 12
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#regex cleaning\n",
+							"\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							""
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							""
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							""
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
 						"source": [
 							""
 						],
@@ -5976,7 +6344,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "e5cabf4f-f884-4c59-9228-7d109f46edf3"
+						"spark.autotune.trackingId": "76d960c4-a09f-41bb-8af4-6471490a8156"
 					}
 				},
 				"metadata": {
@@ -6035,7 +6403,7 @@
 							")"
 						],
 						"outputs": [],
-						"execution_count": 33
+						"execution_count": 7
 					},
 					{
 						"cell_type": "markdown",
@@ -6047,7 +6415,7 @@
 							}
 						},
 						"source": [
-							"#### Key Phrase Extraction, Named Entity Recognition, Sentiment Analysis"
+							"# Sentiment Analysis, Entity Extraction, Key Phrase Extraction, Named Entity Recognition"
 						]
 					},
 					{
@@ -6077,7 +6445,38 @@
 							"first_20.show()"
 						],
 						"outputs": [],
-						"execution_count": 34
+						"execution_count": 8
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from pyspark.sql.functions import regexp_replace\r\n",
+							"\r\n",
+							"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
+							"regex = r'@\\w+|&\\w+|https?://\\S+|#\\w+'\r\n",
+							"regex = r'\\b[@#&]\\w+|\\bhttps\\w*'\r\n",
+							"\r\n",
+							"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
+							"df_filtered = first_20.withColumn(\"text\", regexp_replace(col(\"text\"), regex, ''))\r\n",
+							"\r\n",
+							"# Show the filtered DataFrame\r\n",
+							"df_filtered.select(\"text\").show()\r\n",
+							"\r\n",
+							"first_20 = df_filtered"
+						],
+						"outputs": [],
+						"execution_count": 9
 					},
 					{
 						"cell_type": "code",
@@ -6098,7 +6497,7 @@
 							"from pyspark.sql.functions import col"
 						],
 						"outputs": [],
-						"execution_count": 4
+						"execution_count": 10
 					},
 					{
 						"cell_type": "code",
@@ -6114,10 +6513,10 @@
 							}
 						},
 						"source": [
-							"#print(dir(synapse.ml.cognitive))"
+							"print(dir(synapse.ml.cognitive))"
 						],
 						"outputs": [],
-						"execution_count": 90
+						"execution_count": 87
 					},
 					{
 						"cell_type": "code",
@@ -6136,7 +6535,7 @@
 							"linked_service_name = \"CognitiveService1\""
 						],
 						"outputs": [],
-						"execution_count": 5
+						"execution_count": 11
 					},
 					{
 						"cell_type": "markdown",
@@ -6171,12 +6570,10 @@
 							"    .setOutputCol(\"sentiment\")\r\n",
 							"    .setErrorCol(\"error\"))\r\n",
 							"    \r\n",
-							"sent_output = sent.transform(first_20)\r\n",
-							"#display(sent.transform(first_20))\r\n",
-							"#display(sent.transform(first_20).select(\"text\", col(\"sentiment\")['document'].getItem(\"sentences\").alias(\"sentences\")))"
+							"sent_output = sent.transform(first_20)"
 						],
 						"outputs": [],
-						"execution_count": 96
+						"execution_count": 12
 					},
 					{
 						"cell_type": "code",
@@ -6195,7 +6592,20 @@
 							"sent_output.select(\"sentiment\").show()"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 13
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"Convert the output to a JSON format and extract the sentiment of each text record into an array"
+						]
 					},
 					{
 						"cell_type": "code",
@@ -6223,13 +6633,66 @@
 							"\r\n",
 							"# Print the 'sentiment' field for each row\r\n",
 							"for sentiment in sentiments:\r\n",
-							"    print(sentiment)\r\n",
+							"    #print(sentiment)\r\n",
 							"    output.append(sentiment['document']['sentiment'])\r\n",
 							"\r\n",
 							"print(output)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 14
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"Calculate the overall sentiment and the confidence scores"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"import collections\r\n",
+							"\r\n",
+							"# Count the occurrences of each value in the array\r\n",
+							"counts = collections.Counter(output)\r\n",
+							"\r\n",
+							"# Get the most common value and its count\r\n",
+							"most_common = counts.most_common(1)[0]\r\n",
+							"most_common_value = most_common[0]\r\n",
+							"most_common_count = most_common[1]\r\n",
+							"\r\n",
+							"print(\"Most common value:\", most_common_value)\r\n",
+							"print(\"Count:\", most_common_count)\r\n",
+							"\r\n",
+							"confidence_scores = {}\r\n",
+							"\r\n",
+							"total_values = len(output)\r\n",
+							"\r\n",
+							"for value, count in counts.items():\r\n",
+							"    confidence_scores[value] = count / total_values\r\n",
+							"\r\n",
+							"print(\"Confidence scores:\", confidence_scores)\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 15
 					},
 					{
 						"cell_type": "markdown",
@@ -6259,17 +6722,73 @@
 							"collapsed": false
 						},
 						"source": [
-							"entity = (EntityDetector()\r\n",
+							"# import required libraries\r\n",
+							"import json\r\n",
+							"from pyspark.sql.types import StructType, StructField, StringType\r\n",
+							"import pyspark.sql.functions as F\r\n",
+							"\r\n",
+							"# First, count the total number of rows in the DataFrame\r\n",
+							"num_rows = first_20.count()\r\n",
+							"\r\n",
+							"# Next, calculate the number of batches needed to split the DataFrame into batches of 5\r\n",
+							"num_batches = int(num_rows / 5) + (num_rows % 5 > 0)\r\n",
+							"\r\n",
+							"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
+							"df_batches = first_20.randomSplit([1.0]*num_batches, seed=42)\r\n",
+							"\r\n",
+							"# define the schema for the output DataFrame\r\n",
+							"schema = StructType([\r\n",
+							"    StructField(\"entity_name\", StringType(), True),\r\n",
+							"    StructField(\"entity_url\", StringType(), True)\r\n",
+							"    ])\r\n",
+							"\r\n",
+							"# create an empty DataFrame with the defined schema\r\n",
+							"output_df = spark.createDataFrame([], schema)\r\n",
+							"\r\n",
+							"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
+							"for i in range(num_batches):\r\n",
+							"    batch = df_batches[i].limit(5)\r\n",
+							"    entity = (EntityDetector()\r\n",
 							"    .setLinkedService(linked_service_name)\r\n",
 							"    .setLanguage(\"en\")\r\n",
 							"    .setOutputCol(\"replies\")\r\n",
 							"    .setErrorCol(\"error\"))\r\n",
 							"\r\n",
-							"#display(entity.transform(df))\r\n",
-							"display(entity.transform(first_20).select(\"id\", \"text\", col(\"replies\")['document'].getItem(\"entities\").alias(\"entities\")))"
+							"    ent_batch_output = entity.transform(batch)\r\n",
+							"    #display(ent_batch_output)\r\n",
+							"\r\n",
+							"    # Extract the 'replies' column and convert it to JSON\r\n",
+							"    json_output = ent_batch_output.select(\"replies\").toJSON().collect()\r\n",
+							"\r\n",
+							"    # Deserialize the JSON and extract the 'replies' field\r\n",
+							"    ents = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
+							"\r\n",
+							"    # Print the 'replies' field for each row\r\n",
+							"    for each in ents:\r\n",
+							"        #print(each)\r\n",
+							"        # create a PySpark DataFrame from the JSON string\r\n",
+							"        json_string = each\r\n",
+							"        df = spark.read.json(sc.parallelize([json_string]))\r\n",
+							"\r\n",
+							"        # extract the 'entities' array from the 'document' column\r\n",
+							"        df = df.selectExpr('explode(document.entities) as entities')\r\n",
+							"\r\n",
+							"        # select the 'text' and 'category' fields from the exploded 'entities' array\r\n",
+							"        df = df.select('entities.name', 'entities.url')\r\n",
+							"\r\n",
+							"        # rename the columns\r\n",
+							"        df = df.withColumnRenamed('text', 'entity_name')\r\n",
+							"        df = df.withColumnRenamed('category', 'entity_url')\r\n",
+							"\r\n",
+							"        # show the resulting DataFrame\r\n",
+							"        #df.show()\r\n",
+							"\r\n",
+							"        # Append the batch results dataframe to the main output dataframe\r\n",
+							"        output_df = output_df.union(df)\r\n",
+							"display(output_df)"
 						],
 						"outputs": [],
-						"execution_count": 6
+						"execution_count": 16
 					},
 					{
 						"cell_type": "markdown",
@@ -6305,10 +6824,102 @@
 							"    .setOutputCol(\"replies\")\r\n",
 							"    .setErrorCol(\"error\"))\r\n",
 							"\r\n",
-							"display(keyPhrase.transform(first_20).select(\"text\", col(\"replies\")['document'].getItem(\"keyPhrases\").alias(\"keyPhrases\")))"
+							"keyphrase_output = keyPhrase.transform(first_20)\r\n",
+							"display(keyPhrase.transform(first_20))"
 						],
 						"outputs": [],
-						"execution_count": 7
+						"execution_count": 17
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"Convert output to a JSON and collect the results into one array"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"import json\r\n",
+							"\r\n",
+							"# Extract the 'sentiment' column and convert it to JSON\r\n",
+							"json_output = keyphrase_output.select(\"replies\").toJSON().collect()\r\n",
+							"\r\n",
+							"# Deserialize the JSON and extract the 'sentiment' field\r\n",
+							"keyphrases = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
+							"\r\n",
+							"kp_output = []\r\n",
+							"\r\n",
+							"# Print the 'sentiment' field for each row\r\n",
+							"for each in keyphrases:\r\n",
+							"    #print(each)\r\n",
+							"    for keyphrase in each['document']['keyPhrases']:\r\n",
+							"        kp_output.append(keyphrase)\r\n",
+							"\r\n",
+							"print(kp_output)"
+						],
+						"outputs": [],
+						"execution_count": 18
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"Create a dataframe for the key phrases and their count"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"# Create a PySpark DataFrame from the array\r\n",
+							"kp_df = spark.createDataFrame([(i, 1) for i in kp_output], ['text', 'count'])\r\n",
+							"\r\n",
+							"# Group by 'text' column and sum the 'count' column to get the count of each unique text\r\n",
+							"kp_df = kp_df.groupBy('text').agg({'count': 'sum'})\r\n",
+							"\r\n",
+							"# Sort the DataFrame by the 'count' column in descending order\r\n",
+							"kp_df = kp_df.sort(col('sum(count)').desc())\r\n",
+							"\r\n",
+							"# Show the resulting DataFrame\r\n",
+							"display(kp_df)"
+						],
+						"outputs": [],
+						"execution_count": 19
 					},
 					{
 						"cell_type": "markdown",
@@ -6338,16 +6949,74 @@
 							"collapsed": false
 						},
 						"source": [
-							"ner = (NER()\r\n",
+							"# import required libraries\r\n",
+							"import json\r\n",
+							"from pyspark.sql.types import StructType, StructField, StringType\r\n",
+							"import pyspark.sql.functions as F\r\n",
+							"\r\n",
+							"# First, count the total number of rows in the DataFrame\r\n",
+							"num_rows = first_20.count()\r\n",
+							"\r\n",
+							"# Next, calculate the number of batches needed to split the DataFrame into batches of 5\r\n",
+							"num_batches = int(num_rows / 5) + (num_rows % 5 > 0)\r\n",
+							"\r\n",
+							"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
+							"df_batches = first_20.randomSplit([1.0]*num_batches, seed=42)\r\n",
+							"\r\n",
+							"# define the schema for the output DataFrame\r\n",
+							"schema = StructType([\r\n",
+							"    StructField(\"entity_text\", StringType(), True),\r\n",
+							"    StructField(\"entity_category\", StringType(), True)\r\n",
+							"    ])\r\n",
+							"\r\n",
+							"# create an empty DataFrame with the defined schema\r\n",
+							"output_df = spark.createDataFrame([], schema)\r\n",
+							"\r\n",
+							"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
+							"for i in range(num_batches):\r\n",
+							"    batch = df_batches[i].limit(5)\r\n",
+							"    ner = (NER()\r\n",
 							"    .setLinkedService(linked_service_name)\r\n",
 							"    .setLanguageCol(\"lang\")\r\n",
 							"    .setOutputCol(\"replies\")\r\n",
 							"    .setErrorCol(\"error\"))\r\n",
-							"display(ner.transform(first_20))\r\n",
-							"#display(ner.transform(first_20).select(\"text\", \"error, col(\"replies\")['document'].getItem(\"entities\").alias(\"entities\")))"
+							"\r\n",
+							"    ner_batch_output = ner.transform(batch)\r\n",
+							"    #display(ner_batch_output)\r\n",
+							"\r\n",
+							"    # Extract the 'replies' column and convert it to JSON\r\n",
+							"    json_output = ner_batch_output.select(\"replies\").toJSON().collect()\r\n",
+							"\r\n",
+							"    # Deserialize the JSON and extract the 'replies' field\r\n",
+							"    nes = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
+							"\r\n",
+							"    # Print the 'replies' field for each row\r\n",
+							"    for each in nes:\r\n",
+							"        #print(each)\r\n",
+							"\r\n",
+							"        # create a PySpark DataFrame from the JSON string\r\n",
+							"        json_string = each\r\n",
+							"        df = spark.read.json(sc.parallelize([json_string]))\r\n",
+							"\r\n",
+							"        # extract the 'entities' array from the 'document' column\r\n",
+							"        df = df.selectExpr('explode(document.entities) as entities')\r\n",
+							"\r\n",
+							"        # select the 'text' and 'category' fields from the exploded 'entities' array\r\n",
+							"        df = df.select('entities.text', 'entities.category')\r\n",
+							"\r\n",
+							"        # rename the columns\r\n",
+							"        df = df.withColumnRenamed('text', 'entity_text')\r\n",
+							"        df = df.withColumnRenamed('category', 'entity_category')\r\n",
+							"\r\n",
+							"        # show the resulting DataFrame\r\n",
+							"        #df.show()\r\n",
+							"\r\n",
+							"        # Append the batch results dataframe to the main output dataframe\r\n",
+							"        output_df = output_df.union(df)\r\n",
+							"display(output_df)"
 						],
 						"outputs": [],
-						"execution_count": 13
+						"execution_count": 20
 					}
 				]
 			},
