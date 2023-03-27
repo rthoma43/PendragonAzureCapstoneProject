@@ -109,7 +109,7 @@
 				}
 			},
 			{
-				"name": "GET using Next Token Until Empty",
+				"name": "Until GET Tweets",
 				"type": "Until",
 				"dependsOn": [
 					{
@@ -186,7 +186,7 @@
 							}
 						},
 						{
-							"name": "If Condition1",
+							"name": "If next_token null",
 							"type": "IfCondition",
 							"dependsOn": [
 								{
@@ -199,7 +199,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@empty(activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token)",
+									"value": "@equals(activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token, 'null')",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
@@ -447,7 +447,7 @@
 				"type": "Delete",
 				"dependsOn": [
 					{
-						"activity": "GET using Next Token Until Empty",
+						"activity": "Until GET Tweets",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -624,7 +624,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "start_day",
-					"value": "25"
+					"value": "26"
 				}
 			},
 			{
