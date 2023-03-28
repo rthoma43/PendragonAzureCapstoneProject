@@ -1,0 +1,17 @@
+{
+	"name": "Create_NATO_NER_Table",
+	"properties": {
+		"content": {
+			"query": "CREATE TABLE [NER].[NATO_NER]\n(\n    [entity_text] NVARCHAR(100) NULL,\n    [entity_category] NVARCHAR(100) NULL\n)\n\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "SQLPoolTest",
+				"poolName": "SQLPoolTest"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
