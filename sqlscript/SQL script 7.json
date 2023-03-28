@@ -2,7 +2,7 @@
 	"name": "SQL script 7",
 	"properties": {
 		"content": {
-			"query": "SELECT * FROM [Sent].[NATO_Sentiment]\nGO\n\n",
+			"query": "SELECT * FROM [Sent].[NATO_Sentiment]\n\n",
 			"metadata": {
 				"language": "sql"
 			},
