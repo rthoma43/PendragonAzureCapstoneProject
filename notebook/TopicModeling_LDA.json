@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "de7fb7f3-fe65-491a-9b20-de1f662ecce6"
+				"spark.autotune.trackingId": "09f92f51-47f9-406c-b482-bfa00b40b00b"
 			}
 		},
 		"metadata": {
@@ -76,7 +76,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 113
+				"execution_count": 157
 			},
 			{
 				"cell_type": "code",
@@ -102,7 +102,7 @@
 					"# select the first 100 records\r\n",
 					"df = df.limit(100)"
 				],
-				"execution_count": 114
+				"execution_count": 158
 			},
 			{
 				"cell_type": "code",
@@ -127,9 +127,9 @@
 					"df = df.withColumn(\"text\", regexp_replace(col(\"text\"), regex, ''))\r\n",
 					"\r\n",
 					"# Show the filtered DataFrame\r\n",
-					"df.select(\"text\").show()"
+					"#df.select(\"text\").show()"
 				],
-				"execution_count": 115
+				"execution_count": 159
 			},
 			{
 				"cell_type": "code",
@@ -170,28 +170,9 @@
 					"# join with original DataFrame\r\n",
 					"df_result = df.join(df_topics, 'id')\r\n",
 					"\r\n",
-					"display(df_result)"
+					"#display(df_result)"
 				],
-				"execution_count": 116
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"display(df_result.filter(df_result.id == 1640576604232638464))"
-				],
-				"execution_count": 156
+				"execution_count": 160
 			},
 			{
 				"cell_type": "code",
@@ -240,14 +221,14 @@
 					"    #print(idx)\r\n",
 					"    topicgroup.append(idx)\r\n",
 					"\r\n",
-					"print(topicgroup)\r\n",
-					"print(topic0confidence)\r\n",
-					"print(topic1confidence)\r\n",
-					"print(topic2confidence)\r\n",
-					"print(topic3confidence)\r\n",
-					"print(topic4confidence)"
+					"#print(topicgroup)\r\n",
+					"#print(topic0confidence)\r\n",
+					"#print(topic1confidence)\r\n",
+					"#print(topic2confidence)\r\n",
+					"#print(topic3confidence)\r\n",
+					"#print(topic4confidence)"
 				],
-				"execution_count": 117
+				"execution_count": 162
 			},
 			{
 				"cell_type": "code",
@@ -289,7 +270,7 @@
 					"    quote_count_values.append(row[\"quote_count\"])\r\n",
 					"    impression_count_values.append(row[\"impression_count\"])"
 				],
-				"execution_count": 118
+				"execution_count": 163
 			},
 			{
 				"cell_type": "code",
@@ -313,7 +294,7 @@
 					"topic3confidence = [float(i) for i in topic3confidence]\r\n",
 					"topic4confidence = [float(i) for i in topic4confidence]"
 				],
-				"execution_count": 130
+				"execution_count": 164
 			},
 			{
 				"cell_type": "code",
@@ -353,6 +334,7 @@
 					"            created_at=created_at_values[i],\r\n",
 					"            text=text_values[i],\r\n",
 					"            lang=lang_values[i],\r\n",
+					"            retweet_count = retweet_count_values[i],\r\n",
 					"            reply_count=reply_count_values[i],\r\n",
 					"            like_count=like_count_values[i],\r\n",
 					"            quote_count=quote_count_values[i],\r\n",
@@ -372,64 +354,7 @@
 					"#display(final_topic_df)\r\n",
 					""
 				],
-				"execution_count": 121
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"final_topic_df.printSchema"
-				],
-				"execution_count": 152
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"# print the column names\r\n",
-					"display(final_topic_df)"
-				],
-				"execution_count": 151
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"display(final_topic_df.filter(final_topic_df.id == 1640576604232638464))"
-				],
-				"execution_count": 155
+				"execution_count": 167
 			},
 			{
 				"cell_type": "markdown",
@@ -500,7 +425,7 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(\"SQLPoolTest.Topic.NATO_Topics\"))"
 				],
-				"execution_count": 153
+				"execution_count": 170
 			}
 		]
 	}
