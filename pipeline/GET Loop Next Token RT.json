@@ -605,6 +605,27 @@
 					},
 					"waitOnCompletion": true
 				}
+			},
+			{
+				"name": "Perform Named Entity Recognition",
+				"description": "Outputs to NER.NATO_NER\nDedicated SQL Pool Table",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Perform Sentiment Analysis",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "CognitiveServices_NER_NATO",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
 			}
 		],
 		"variables": {

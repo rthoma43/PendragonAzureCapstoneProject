@@ -1,5 +1,5 @@
 {
-	"name": "CognitiveServices_Sentiment",
+	"name": "TopicModeling_LDA",
 	"properties": {
 		"nbformat": 4,
 		"nbformat_minor": 2,
@@ -8,16 +8,16 @@
 			"type": "BigDataPoolReference"
 		},
 		"sessionProperties": {
-			"driverMemory": "28g",
-			"driverCores": 4,
-			"executorMemory": "28g",
-			"executorCores": 4,
+			"driverMemory": "112g",
+			"driverCores": 16,
+			"executorMemory": "112g",
+			"executorCores": 16,
 			"numExecutors": 2,
 			"conf": {
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "45d52ca7-1c44-4160-b417-5c106e91a14f"
+				"spark.autotune.trackingId": "1fb4af3e-b23d-4c29-a770-864fe523a0cd"
 			}
 		},
 		"metadata": {
@@ -76,20 +76,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 23
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# Select Sample Size for Testing"
-				]
+				"execution_count": 24
 			},
 			{
 				"cell_type": "code",
@@ -115,20 +102,7 @@
 					"# select the first 100 records\r\n",
 					"df = df.limit(100)"
 				],
-				"execution_count": 24
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# Clean Data: Remove @, #, and links"
-				]
+				"execution_count": 25
 			},
 			{
 				"cell_type": "code",
@@ -155,181 +129,7 @@
 					"# Show the filtered DataFrame\r\n",
 					"df.select(\"text\").show()"
 				],
-				"execution_count": 25
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"## Import libraries"
-				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"import synapse.ml\r\n",
-					"from synapse.ml.cognitive import *\r\n",
-					"from pyspark.sql.functions import col"
-				],
 				"execution_count": 26
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"## Assign Linked Cognitive Service"
-				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"linked_service_name = \"CognitiveService1\""
-				],
-				"execution_count": 27
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# Perform Sentiment Analysis in Batches"
-				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# import required libraries\r\n",
-					"import json\r\n",
-					"from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType\r\n",
-					"from pyspark.sql.functions import col\r\n",
-					"import pyspark.sql.functions as F\r\n",
-					"import collections\r\n",
-					"\r\n",
-					"# Batch size\r\n",
-					"batch_size = 30\r\n",
-					"\r\n",
-					"# First, count the total number of rows in the DataFrame\r\n",
-					"num_rows = df.count()\r\n",
-					"\r\n",
-					"# Next, calculate the number of batches needed to split the DataFrame into batches of equal to the batch_size\r\n",
-					"num_batches = int(num_rows / batch_size) + (num_rows % batch_size > 0)\r\n",
-					"\r\n",
-					"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
-					"df_batches = df.randomSplit([1.0]*num_batches, seed=42)\r\n",
-					"\r\n",
-					"output = []\r\n",
-					"\r\n",
-					"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
-					"for i in range(num_batches):\r\n",
-					"    batch = df_batches[i].limit(batch_size)\r\n",
-					"    sent = (TextSentiment()\r\n",
-					"    .setLinkedService(linked_service_name)\r\n",
-					"    .setOutputCol(\"sentiment\")\r\n",
-					"    .setErrorCol(\"error\"))\r\n",
-					"\r\n",
-					"    sent_batch_output = sent.transform(batch.select(\"text\"))\r\n",
-					"    #display(sent_batch_output)\r\n",
-					"\r\n",
-					"    # Extract the 'sentiment' column and convert it to JSON\r\n",
-					"    json_output = sent_batch_output.select(\"sentiment\").toJSON().collect()\r\n",
-					"\r\n",
-					"    # Deserialize the JSON and extract the 'sentiment' field\r\n",
-					"    sentiments = [json.loads(x)[\"sentiment\"] for x in json_output]\r\n",
-					"\r\n",
-					"    # Print the 'sentiment' field for each row\r\n",
-					"    for sentiment in sentiments:\r\n",
-					"        #print(sentiment)\r\n",
-					"        output.append(sentiment['document']['sentiment'])\r\n",
-					"\r\n",
-					"# Print all sentiments\r\n",
-					"print(output)\r\n",
-					"\r\n",
-					"# Count the occurrences of each value in the array\r\n",
-					"counts = collections.Counter(output)\r\n",
-					"\r\n",
-					"# Get the most common value and its count\r\n",
-					"most_common = counts.most_common(1)[0]\r\n",
-					"most_common_value = most_common[0]\r\n",
-					"most_common_count = most_common[1]\r\n",
-					"\r\n",
-					"#print(\"Most common value:\", most_common_value)\r\n",
-					"#print(\"Count:\", most_common_count)\r\n",
-					"\r\n",
-					"confidence_scores = {}\r\n",
-					"\r\n",
-					"total_values = len(output)\r\n",
-					"\r\n",
-					"for value, count in counts.items():\r\n",
-					"    confidence_scores[value] = count / total_values\r\n",
-					"\r\n",
-					"#print(\"Confidence scores:\", confidence_scores)\r\n",
-					"sentiment_output = [{\"Sentiment\": most_common_value},{\"Count\": most_common_count},{\"Confidence Scores\":confidence_scores}]\r\n",
-					"print(sentiment_output)"
-				],
-				"execution_count": 28
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"## Put the results into a Spark Dataframe"
-				]
 			},
 			{
 				"cell_type": "code",
@@ -346,28 +146,231 @@
 					"collapsed": false
 				},
 				"source": [
+					"from pyspark.ml.feature import Tokenizer, CountVectorizer\r\n",
+					"from pyspark.ml.clustering import LDA\r\n",
+					"\r\n",
+					"# tokenize text\r\n",
+					"tokenizer = Tokenizer(inputCol='text', outputCol='tokens')\r\n",
+					"df_tokens = tokenizer.transform(df)\r\n",
+					"\r\n",
+					"# create document-term matrix\r\n",
+					"vectorizer = CountVectorizer(inputCol='tokens', outputCol='features')\r\n",
+					"model = vectorizer.fit(df_tokens)\r\n",
+					"df_features = model.transform(df_tokens)\r\n",
+					"\r\n",
+					"# fit LDA model\r\n",
+					"num_topics = 5\r\n",
+					"max_iterations = 10\r\n",
+					"lda = LDA(k=num_topics, maxIter=max_iterations)\r\n",
+					"lda_model = lda.fit(df_features)\r\n",
+					"\r\n",
+					"# get topic distribution for each document\r\n",
+					"df_topics = lda_model.transform(df_features).select('id', 'topicDistribution')\r\n",
+					"\r\n",
+					"# join with original DataFrame\r\n",
+					"df_result = df.join(df_topics, 'id')\r\n",
+					"\r\n",
+					"display(df_result)"
+				],
+				"execution_count": 27
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"import json\r\n",
+					"import numpy as np\r\n",
+					"\r\n",
+					"# Extract the 'replies' column and convert it to JSON\r\n",
+					"json_output = df_result.select(\"topicDistribution\").toJSON().collect()\r\n",
+					"\r\n",
+					"# Deserialize the JSON and extract the 'replies' field\r\n",
+					"topics = [json.loads(x)[\"topicDistribution\"] for x in json_output]\r\n",
+					"\r\n",
+					"topicgroup = []\r\n",
+					"topic0confidence = []\r\n",
+					"topic1confidence = []\r\n",
+					"topic2confidence = []\r\n",
+					"topic3confidence = []\r\n",
+					"topic4confidence = []\r\n",
+					"\r\n",
+					"# Print the 'replies' field for each row\r\n",
+					"for topic in topics:\r\n",
+					"    #print(topic)\r\n",
+					"    \r\n",
+					"    # convert JSON array to numpy array\r\n",
+					"    arr = np.array(topic['values'])\r\n",
+					"    topic0confidence.append(arr[0])\r\n",
+					"    topic1confidence.append(arr[1])\r\n",
+					"    topic2confidence.append(arr[2])\r\n",
+					"    topic3confidence.append(arr[3])\r\n",
+					"    topic4confidence.append(arr[4])\r\n",
+					"\r\n",
+					"    # find index of maximum value\r\n",
+					"    idx = np.argmax(arr)\r\n",
+					"    #print(idx)\r\n",
+					"    topicgroup.append(idx)\r\n",
+					"\r\n",
+					"print(topicgroup)\r\n",
+					"print(topic0confidence)\r\n",
+					"print(topic1confidence)\r\n",
+					"print(topic2confidence)\r\n",
+					"print(topic3confidence)\r\n",
+					"print(topic4confidence)"
+				],
+				"execution_count": 28
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# assume df is the DataFrame to extract values from\r\n",
+					"id_values = []\r\n",
+					"created_at_values = []\r\n",
+					"text_values = []\r\n",
+					"lang_values = []\r\n",
+					"retweet_count_values = []\r\n",
+					"reply_count_values = []\r\n",
+					"like_count_values = []\r\n",
+					"quote_count_values = []\r\n",
+					"impression_count_values = []\r\n",
+					"\r\n",
+					"# collect all rows of the DataFrame\r\n",
+					"rows = df.collect()\r\n",
+					"\r\n",
+					"# iterate over rows and extract values from each column\r\n",
+					"for row in rows:\r\n",
+					"    id_values.append(row[\"id\"])\r\n",
+					"    created_at_values.append(row[\"created_at\"])\r\n",
+					"    text_values.append(row[\"text\"])\r\n",
+					"    lang_values.append(row[\"lang\"])\r\n",
+					"    retweet_count_values.append(row[\"retweet_count\"])\r\n",
+					"    reply_count_values.append(row[\"reply_count\"])\r\n",
+					"    like_count_values.append(row[\"like_count\"])\r\n",
+					"    quote_count_values.append(row[\"quote_count\"])\r\n",
+					"    impression_count_values.append(row[\"impression_count\"])"
+				],
+				"execution_count": 37
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"print(type(topic0confidence[0]))"
+				],
+				"execution_count": 50
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Convert nump.int64 to int and numpy.float64 to float\r\n",
+					"topicgroup = [int(i) for i in topicgroup]\r\n",
+					"topic0confidence = [float(i) for i in topic0confidence]\r\n",
+					"topic1confidence = [float(i) for i in topic1confidence]\r\n",
+					"topic2confidence = [float(i) for i in topic2confidence]\r\n",
+					"topic3confidence = [float(i) for i in topic3confidence]\r\n",
+					"topic4confidence = [float(i) for i in topic4confidence]"
+				],
+				"execution_count": 51
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
 					"from pyspark.sql.types import *\r\n",
 					"schema = StructType([\r\n",
-					"    StructField(\"Sentiment\",  StringType(), True),\r\n",
-					"    StructField(\"Count\", IntegerType(), True),\r\n",
-					"    StructField(\"Confidence Score Negative\", FloatType(), True),\r\n",
-					"    StructField(\"Confidence Score Positive\", FloatType(), True),\r\n",
-					"    StructField(\"Confidence Score Neutral\", FloatType(), True),\r\n",
-					"    StructField(\"Confidence Score Mixed\", FloatType(), True)\r\n",
+					"    StructField(\"id\",  LongType(), True),\r\n",
+					"    StructField(\"created_at\", TimestampType(), True),\r\n",
+					"    StructField(\"text\", StringType(), True),\r\n",
+					"    StructField(\"lang\", StringType(), True),\r\n",
+					"    StructField(\"reply_count\", IntegerType(), True),\r\n",
+					"    StructField(\"like_count\", IntegerType(), True),\r\n",
+					"    StructField(\"quote_count\", IntegerType(), True),\r\n",
+					"    StructField(\"impression_count\", IntegerType(), True),\r\n",
+					"    StructField(\"Topic\", IntegerType(), True),\r\n",
+					"    StructField(\"Topic 0 Confidence\", FloatType(), True),\r\n",
+					"    StructField(\"Topic 1 Confidence\", FloatType(), True),\r\n",
+					"    StructField(\"Topic 2 Confidence\", FloatType(), True),\r\n",
+					"    StructField(\"Topic 3 Confidence\", FloatType(), True),\r\n",
+					"    StructField(\"Topic 4 Confidence\", FloatType(), True)\r\n",
 					"])\r\n",
 					"\r\n",
-					"# create row from data\r\n",
-					"row_data = Row(\r\n",
-					"    Sentiment=most_common_value, \r\n",
-					"    Count=most_common_count, \r\n",
-					"    **{f\"Confidence Score {k.capitalize()}\": confidence_scores.get(k, 0.0) for k in ['negative', 'positive', 'neutral', 'mixed']}\r\n",
-					")\r\n",
+					"# create rows\r\n",
+					"rows = [Row(id=id_values[i],\r\n",
+					"            created_at=created_at_values[i],\r\n",
+					"            text=text_values[i],\r\n",
+					"            lang=lang_values[i],\r\n",
+					"            reply_count=reply_count_values[i],\r\n",
+					"            like_count=like_count_values[i],\r\n",
+					"            quote_count=quote_count_values[i],\r\n",
+					"            impression_count=impression_count_values[i],\r\n",
+					"            Topic=topicgroup[i],\r\n",
+					"            topic0confidence=topic0confidence[i],\r\n",
+					"            topic1confidence=topic1confidence[i],\r\n",
+					"            topic2confidence=topic2confidence[i],\r\n",
+					"            topic3confidence=topic3confidence[i],\r\n",
+					"            topic4confidence=topic4confidence[i])\r\n",
+					"        for i in range(len(id_values))]\r\n",
 					"\r\n",
-					"sentiment_output_df = spark.createDataFrame([row_data], schema)\r\n",
+					"# create a DataFrame\r\n",
+					"final_topic_df = spark.createDataFrame(rows, schema)\r\n",
 					"\r\n",
-					"display(sentiment_output_df)"
+					"# show the DataFrame\r\n",
+					"#display(final_topic_df)\r\n",
+					""
 				],
-				"execution_count": 29
+				"execution_count": 54
 			},
 			{
 				"cell_type": "markdown",
@@ -379,17 +382,26 @@
 					}
 				},
 				"source": [
-					"# Write Spark Dataframe to Dedicated SQL Pool Table [Sent].[NATO_Sentiment]\r\n",
+					"# Write Spark Dataframe to Dedicated SQL Pool Table [Topic].[NATO_Topics]\r\n",
 					"# First, create the table in the Dedicated SQL Pool 'SQLPoolTest' using the code below\r\n",
 					"~~~\r\n",
-					"CREATE TABLE [Sent].[NATO_Sentiment]\r\n",
-					"(\r\n",
-					"    [Sentiment] NVARCHAR(10) NULL,\r\n",
-					"    [Count] INT NULL,\r\n",
-					"    [Confidence Score Negative] REAL NULL,\r\n",
-					"    [Confidence Score Positive] REAL NULL,\r\n",
-					"    [Confidence Score Neutral] REAL NULL,\r\n",
-					"    [Confidence Score Mixed] REAL NULL\r\n",
+					"CREATE TABLE [Topic].[NATO_Topics]\r\n",
+					"( \r\n",
+					"\t[id] bigint  NULL,\r\n",
+					"\t[created_at] DATETIME2(7)  NULL,\r\n",
+					"\t[text] NVARCHAR(4000)  NULL,\r\n",
+					"\t[lang] nvarchar(10)  NULL,\r\n",
+					"\t[retweet_count] INT  NULL,\r\n",
+					"\t[reply_count] INT  NULL,\r\n",
+					"\t[like_count] INT  NULL,\r\n",
+					"\t[quote_count] INT  NULL,\r\n",
+					"\t[impression_count] INT  NULL,\r\n",
+					"    [Topic] INT NULL,\r\n",
+					"    [Topic 0 Confidence] REAL NULL,\r\n",
+					"    [Topic 1 Confidence] REAL NULL,\r\n",
+					"    [Topic 2 Confidence] REAL NULL,\r\n",
+					"    [Topic 3 Confidence] REAL NULL,\r\n",
+					"    [Topic 4 Confidence] REAL NULL\r\n",
 					")\r\n",
 					"\r\n",
 					"GO"
@@ -416,7 +428,7 @@
 					"\r\n",
 					"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
 					"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
-					"(sentiment_output_df.write\r\n",
+					"(final_topic_df.write\r\n",
 					" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
 					" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
 					" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
@@ -427,9 +439,9 @@
 					" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
 					" .mode(\"overwrite\")\r\n",
 					" # Required parameter - Three-part table name to which data will be written\r\n",
-					" .synapsesql(\"SQLPoolTest.Sent.NATO_Sentiment\"))"
+					" .synapsesql(\"SQLPoolTest.Topic.NATO_Topics\"))"
 				],
-				"execution_count": 30
+				"execution_count": 55
 			}
 		]
 	}
