@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "eee35e07-7aa6-431b-b824-f03c21b2d571"
+				"spark.autotune.trackingId": "963e1bb9-8358-4e7b-8c7b-9d5c41699776"
 			}
 		},
 		"metadata": {
@@ -144,7 +144,7 @@
 					"from pyspark.sql.functions import regexp_replace\r\n",
 					"\r\n",
 					"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
-					"regex = r'\\b[@#&]\\w+|\\bhttps\\w*'\r\n",
+					"regex = r'@\\w+|&\\w+|https\\w+|#\\w+'\r\n",
 					"\r\n",
 					"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
 					"df = df.withColumn(\"text\", regexp_replace(col(\"text\"), regex, ''))\r\n",
