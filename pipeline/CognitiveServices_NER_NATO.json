@@ -1,0 +1,61 @@
+{
+	"name": "CognitiveServices_NER_NATO",
+	"properties": {
+		"activities": [
+			{
+				"name": "Delete Rows in NATO NER Table",
+				"type": "SqlPoolStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"sqlPool": {
+					"referenceName": "SQLPoolTest",
+					"type": "SqlPoolReference"
+				},
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[DeleteAllNatoNer]"
+				}
+			},
+			{
+				"name": "Run CognitiveServices_NamedEntityRecog Notebook",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "Delete Rows in NATO NER Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "CognitiveServices_NamedEntityRecog",
+						"type": "NotebookReference"
+					},
+					"snapshot": true,
+					"sparkPool": {
+						"referenceName": "SparkPoolTest",
+						"type": "BigDataPoolReference"
+					},
+					"executorSize": "Small",
+					"driverSize": "Small"
+				}
+			}
+		],
+		"annotations": []
+	}
+}
