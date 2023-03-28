@@ -23,7 +23,15 @@
 						"referenceName": "AutoResolveIntegrationRuntime",
 						"type": "IntegrationRuntimeReference"
 					},
-					"method": "GET"
+					"method": "GET",
+					"authentication": {
+						"resource": "https://management.azure.com/",
+						"credential": {
+							"referenceName": "PendragonManagedIdentityCredential",
+							"type": "CredentialReference"
+						},
+						"type": "UserAssignedManagedIdentity"
+					}
 				}
 			},
 			{
