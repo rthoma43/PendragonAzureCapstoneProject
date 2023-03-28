@@ -1,6 +1,9 @@
 {
 	"name": "DeleteAllFromNATOTopics_Procedure",
 	"properties": {
+		"folder": {
+			"name": "SQL_Procedures"
+		},
 		"content": {
 			"query": "CREATE PROCEDURE DeleteAllNATOTopics\nAS\nBEGIN\n    DELETE FROM [Topic].[NATO_Topics];\nEND;",
 			"metadata": {

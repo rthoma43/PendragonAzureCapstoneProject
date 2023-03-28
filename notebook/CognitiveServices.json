@@ -1,6 +1,9 @@
 {
 	"name": "CognitiveServices",
 	"properties": {
+		"folder": {
+			"name": "NLP"
+		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {
@@ -17,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "93ead064-84ec-4f75-a366-e5227d936c52"
+				"spark.autotune.trackingId": "c5d59bc6-a182-4bb3-af65-237182a2ad5f"
 			}
 		},
 		"metadata": {
@@ -41,8 +44,8 @@
 				},
 				"sparkVersion": "3.3",
 				"nodeCount": 3,
-				"cores": 4,
-				"memory": 28,
+				"cores": 16,
+				"memory": 112,
 				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30

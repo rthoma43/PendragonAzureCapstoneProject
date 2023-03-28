@@ -1,6 +1,9 @@
 {
 	"name": "CognitiveServices_Sentiment",
 	"properties": {
+		"folder": {
+			"name": "NLP"
+		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {
@@ -17,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "45d52ca7-1c44-4160-b417-5c106e91a14f"
+				"spark.autotune.trackingId": "e98eedde-04cc-40b5-b668-b8f0d27a1e37"
 			}
 		},
 		"metadata": {

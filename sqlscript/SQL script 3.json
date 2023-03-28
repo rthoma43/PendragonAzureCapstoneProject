@@ -1,6 +1,9 @@
 {
 	"name": "SQL script 3",
 	"properties": {
+		"folder": {
+			"name": "Other"
+		},
 		"content": {
 			"query": "DROP TABLE [dbo].[NATO_Tweets1]\nGO\n\nSET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO\n\nCREATE TABLE [dbo].[NATO_Tweets1]\n( \n\t[id] [bigint]  NOT NULL,\n\t[created_at] [datetime2](7)  NULL,\n\t[text] [nvarchar](4000)  NULL,\n\t[lang] [nvarchar](10)  NULL,\n\t[retweet_count] [int]  NULL,\n\t[reply_count] [int]  NULL,\n\t[like_count] [int]  NULL,\n\t[quote_count] [int]  NULL,\n\t[impression_count] [int]  NULL,\n\t[cleanText] [nvarchar](4000)\n)\nWITH\n(\n\tDISTRIBUTION = HASH ( [id] ),\n\tCLUSTERED COLUMNSTORE INDEX\n)\nGO",
 			"metadata": {

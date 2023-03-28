@@ -1,6 +1,9 @@
 {
 	"name": "DeleteAllFromNATONER_Procedure",
 	"properties": {
+		"folder": {
+			"name": "SQL_Procedures"
+		},
 		"content": {
 			"query": "CREATE PROCEDURE DeleteAllNatoNer\nAS\nBEGIN\n    DELETE FROM [NER].[NATO_NER];\nEND;",
 			"metadata": {

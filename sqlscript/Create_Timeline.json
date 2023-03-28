@@ -1,6 +1,9 @@
 {
 	"name": "Create_Timeline",
 	"properties": {
+		"folder": {
+			"name": "Analytics"
+		},
 		"content": {
 			"query": "SELECT DATEADD(second, (DATEPART(second, created_at) / 10) * 10, DATEADD(minute, DATEDIFF(minute, 0, created_at), 0)) AS IntervalStart,\n       COUNT(*) AS Count\nFROM [dbo].[NATO_Tweets1]\nGROUP BY DATEADD(second, (DATEPART(second, created_at) / 10) * 10, DATEADD(minute, DATEDIFF(minute, 0, created_at), 0))\nORDER BY IntervalStart;",
 			"metadata": {

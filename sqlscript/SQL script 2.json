@@ -1,6 +1,9 @@
 {
 	"name": "SQL script 2",
 	"properties": {
+		"folder": {
+			"name": "Other"
+		},
 		"content": {
 			"query": "CREATE PROCEDURE tweetsClean\nAS\nBEGIN\n     FROM [dbo].[NATO_Tweets1];\nEND;",
 			"metadata": {

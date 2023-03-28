@@ -1,6 +1,9 @@
 {
 	"name": "SQL script 4",
 	"properties": {
+		"folder": {
+			"name": "Other"
+		},
 		"content": {
 			"query": "CREATE PROC [dbo].[cleanTweets]\n\nAS\nBEGIN\nupdate dbo.NATO_Tweets1 set cleanText=text;\nUPDATE dbo.NATO_Tweets1 \nSET text = CASE \n\n             WHEN CHARINDEX('https', text) > 0 \n             THEN LEFT(text, CHARINDEX('https', text) - 1) \n             ELSE text \n           END;\n           delete from dbo.NATO_Tweets1 where text='';\nEND\n",
 			"metadata": {

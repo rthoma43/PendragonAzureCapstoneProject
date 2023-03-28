@@ -1,6 +1,9 @@
 {
 	"name": "ReadWriteSQLPool",
 	"properties": {
+		"folder": {
+			"name": "ReadWrite"
+		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {

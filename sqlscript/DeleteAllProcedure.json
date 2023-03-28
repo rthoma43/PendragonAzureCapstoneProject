@@ -1,6 +1,9 @@
 {
 	"name": "DeleteAllProcedure",
 	"properties": {
+		"folder": {
+			"name": "SQL_Procedures"
+		},
 		"content": {
 			"query": "CREATE PROCEDURE DeleteAllRowsFromNatoTweets1\nAS\nBEGIN\n    DELETE FROM [dbo].[NATO_Tweets1];\nEND;",
 			"metadata": {

@@ -1,5 +1,5 @@
 {
-	"name": "CognitiveServices_NamedEntityRecog",
+	"name": "CogntiveService_KeyPhrases",
 	"properties": {
 		"folder": {
 			"name": "NLP"
@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "c5e54765-bb1c-49b6-a633-77c675558878"
+				"spark.autotune.trackingId": "8b0715db-c182-41d7-bc85-fd18f6eac939"
 			}
 		},
 		"metadata": {
@@ -75,11 +75,11 @@
 					"                     # Defaults to storage path defined in the runtime configurations\r\n",
 					"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
 					"                     # query from which data will be read\r\n",
-					"                     .option(Constants.QUERY, \"select * from dbo.NATO_Tweets1\")\r\n",
+					"                     .option(Constants.QUERY, \"select * from Topic.NATO_Topics WHERE topic = 0\")\r\n",
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 9
+				"execution_count": 180
 			},
 			{
 				"cell_type": "code",
@@ -105,7 +105,7 @@
 					"# select the first 100 records\r\n",
 					"df = df.limit(100)"
 				],
-				"execution_count": 10
+				"execution_count": 181
 			},
 			{
 				"cell_type": "code",
@@ -124,15 +124,16 @@
 					"from pyspark.sql.functions import regexp_replace\r\n",
 					"\r\n",
 					"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
-					"regex = r'@\\w+|&\\w+|https\\w+|#\\w+'\r\n",
+					"regex = r'@\\w+|&\\w+|#\\w+'\r\n",
 					"\r\n",
 					"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
 					"df = df.withColumn(\"text\", regexp_replace(col(\"text\"), regex, ''))\r\n",
+					"df = df.withColumn('text', regexp_replace('text', 'https\\\\S+', ''))\r\n",
 					"\r\n",
 					"# Show the filtered DataFrame\r\n",
 					"df.select(\"text\").show()"
 				],
-				"execution_count": 11
+				"execution_count": 183
 			},
 			{
 				"cell_type": "code",
@@ -152,7 +153,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 12
+				"execution_count": 184
 			},
 			{
 				"cell_type": "code",
@@ -170,7 +171,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 13
+				"execution_count": 185
 			},
 			{
 				"cell_type": "code",
@@ -183,8 +184,7 @@
 						"transient": {
 							"deleting": false
 						}
-					},
-					"collapsed": false
+					}
 				},
 				"source": [
 					"# import required libraries\r\n",
@@ -193,7 +193,7 @@
 					"import pyspark.sql.functions as F\r\n",
 					"\r\n",
 					"# Batch size\r\n",
-					"batch_size = 5\r\n",
+					"batch_size = 100\r\n",
 					"\r\n",
 					"# First, count the total number of rows in the DataFrame\r\n",
 					"num_rows = df.count()\r\n",
@@ -210,74 +210,37 @@
 					"    StructField(\"entity_category\", StringType(), True)\r\n",
 					"    ])\r\n",
 					"\r\n",
+					"kp_output = []\r\n",
+					"\r\n",
 					"# create an empty DataFrame with the defined schema\r\n",
 					"output_df = spark.createDataFrame([], schema)\r\n",
-					"\r\n",
 					"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
 					"for i in range(num_batches):\r\n",
 					"    batch = df_batches[i].limit(batch_size)\r\n",
-					"    ner = (NER()\r\n",
+					"    keyPhrase = (KeyPhraseExtractor()\r\n",
 					"    .setLinkedService(linked_service_name)\r\n",
 					"    .setLanguageCol(\"lang\")\r\n",
 					"    .setOutputCol(\"replies\")\r\n",
 					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
-					"    ner_batch_output = ner.transform(batch)\r\n",
+					"    kp_batch_output = keyPhrase.transform(batch)\r\n",
 					"    #display(ner_batch_output)\r\n",
 					"\r\n",
 					"    # Extract the 'replies' column and convert it to JSON\r\n",
-					"    json_output = ner_batch_output.select(\"replies\").toJSON().collect()\r\n",
-					"    # Deserialize the JSON and extract the 'replies' field\r\n",
-					"    nes = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
+					"    json_output = kp_batch_output.select(\"replies\").toJSON().collect()\r\n",
 					"\r\n",
-					"    # Print the 'replies' field for each row\r\n",
-					"    for each in nes:\r\n",
+					"    # Deserialize the JSON and extract the 'sentiment' field\r\n",
+					"    keyphrases = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
+					"\r\n",
+					"    # Print the 'sentiment' field for each row\r\n",
+					"    for each in keyphrases:\r\n",
 					"        #print(each)\r\n",
+					"        for keyphrase in each['document']['keyPhrases']:\r\n",
+					"            kp_output.append(keyphrase)\r\n",
 					"\r\n",
-					"        # create a PySpark DataFrame from the JSON string\r\n",
-					"        json_string = each\r\n",
-					"        df = spark.read.json(sc.parallelize([json_string]))\r\n",
-					"\r\n",
-					"        # extract the 'entities' array from the 'document' column\r\n",
-					"        df = df.selectExpr('explode(document.entities) as entities')\r\n",
-					"\r\n",
-					"        # select the 'text' and 'category' fields from the exploded 'entities' array\r\n",
-					"        df = df.select('entities.text', 'entities.category')\r\n",
-					"\r\n",
-					"        # rename the columns\r\n",
-					"        df = df.withColumnRenamed('text', 'entity_text')\r\n",
-					"        df = df.withColumnRenamed('category', 'entity_category')\r\n",
-					"\r\n",
-					"        # show the resulting DataFrame\r\n",
-					"        #df.show()\r\n",
-					"\r\n",
-					"        # Append the batch results dataframe to the main output dataframe\r\n",
-					"        output_df = output_df.union(df)\r\n",
-					"display(output_df)"
+					"print(kp_output)"
 				],
-				"execution_count": 14
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# Write Spark Dataframe to Dedicated SQL Pool Table [NER].[NATO_NER]\r\n",
-					"# First, create the table in the Dedicated SQL Pool 'SQLPoolTest' using the code below\r\n",
-					"~~~\r\n",
-					"CREATE TABLE [NER].[NATO_NER]\r\n",
-					"(\r\n",
-					"    [entity_text] NVARCHAR(20) NULL,\r\n",
-					"    [entity_category] NVARCHAR(20) NULL\r\n",
-					")\r\n",
-					"\r\n",
-					"GO"
-				]
+				"execution_count": 186
 			},
 			{
 				"cell_type": "code",
@@ -290,30 +253,23 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
-					"# Write using AAD Auth to internal table\r\n",
-					"# Add required imports\r\n",
-					"import com.microsoft.spark.sqlanalytics\r\n",
-					"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+					"# Create a PySpark DataFrame from the array\r\n",
+					"kp_df = spark.createDataFrame([(i, 1) for i in kp_output], ['text', 'count'])\r\n",
 					"\r\n",
-					"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
-					"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
-					"(output_df.write\r\n",
-					" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
-					" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
-					" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
-					" # Like-wise, if `Constants.TEMP_FOLDER` is not provided, the connector will use the runtime staging directory config (see section on Configuration Options for details).\r\n",
-					" .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
-					" # Choose a save mode that is apt for your use case.\r\n",
-					" # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
-					" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
-					" .mode(\"overwrite\")\r\n",
-					" # Required parameter - Three-part table name to which data will be written\r\n",
-					" .synapsesql(\"SQLPoolTest.NER.NATO_NER\"))"
+					"# Group by 'text' column and sum the 'count' column to get the count of each unique text\r\n",
+					"kp_df = kp_df.groupBy('text').agg({'count': 'sum'})\r\n",
+					"\r\n",
+					"# Sort the DataFrame by the 'count' column in descending order\r\n",
+					"kp_df = kp_df.sort(col('sum(count)').desc())\r\n",
+					"\r\n",
+					"# Show the resulting DataFrame\r\n",
+					"display(kp_df)"
 				],
-				"execution_count": 16
+				"execution_count": 187
 			}
 		]
 	}

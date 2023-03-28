@@ -1,6 +1,9 @@
 {
 	"name": "TopicModeling_LDA",
 	"properties": {
+		"folder": {
+			"name": "NLP"
+		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {
@@ -17,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "09f92f51-47f9-406c-b482-bfa00b40b00b"
+				"spark.autotune.trackingId": "2033b3c9-184f-4946-ac71-a807de08ad55"
 			}
 		},
 		"metadata": {

@@ -1,6 +1,9 @@
 {
 	"name": "DeleteAllFromNATOSentiment_Procedure",
 	"properties": {
+		"folder": {
+			"name": "SQL_Procedures"
+		},
 		"content": {
 			"query": "CREATE PROCEDURE DeleteAllNatoSentiment\nAS\nBEGIN\n    DELETE FROM [Sent].[NATO_Sentiment];\nEND;",
 			"metadata": {
