@@ -1,0 +1,62 @@
+{
+	"name": "TopicModeling_LDA",
+	"properties": {
+		"activities": [
+			{
+				"name": "Delete all from NATO Topics table",
+				"type": "SqlPoolStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"sqlPool": {
+					"referenceName": "SQLPoolTest",
+					"type": "SqlPoolReference"
+				},
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[DeleteAllNATOTopics]"
+				}
+			},
+			{
+				"name": "Perform Topic Modeling LDA",
+				"description": "Outputs to [Topic].[NATO_Topics]",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "Delete all from NATO Topics table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "TopicModeling_LDA",
+						"type": "NotebookReference"
+					},
+					"snapshot": true,
+					"sparkPool": {
+						"referenceName": "SparkPoolTest",
+						"type": "BigDataPoolReference"
+					},
+					"executorSize": "Small",
+					"driverSize": "Small"
+				}
+			}
+		],
+		"annotations": []
+	}
+}
