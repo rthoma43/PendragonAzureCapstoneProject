@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "963e1bb9-8358-4e7b-8c7b-9d5c41699776"
+				"spark.autotune.trackingId": "953a19c4-6af3-4132-884a-679519a5a6c3"
 			}
 		},
 		"metadata": {
@@ -76,7 +76,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 2
+				"execution_count": 1
 			},
 			{
 				"cell_type": "markdown",
@@ -110,9 +110,12 @@
 					"# Sort ascending by 'created_at'\r\n",
 					"from pyspark.sql.functions import desc\r\n",
 					"\r\n",
-					"df = df.orderBy(desc(\"created_at\"))"
+					"df = df.orderBy(desc(\"created_at\"))\r\n",
+					"\r\n",
+					"# select the first 20 records\r\n",
+					"df = df.limit(20)"
 				],
-				"execution_count": 3
+				"execution_count": 2
 			},
 			{
 				"cell_type": "markdown",
@@ -152,7 +155,7 @@
 					"# Show the filtered DataFrame\r\n",
 					"df.select(\"text\").show()"
 				],
-				"execution_count": 4
+				"execution_count": 3
 			},
 			{
 				"cell_type": "markdown",
@@ -185,7 +188,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 5
+				"execution_count": 4
 			},
 			{
 				"cell_type": "markdown",
@@ -216,7 +219,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 6
+				"execution_count": 5
 			},
 			{
 				"cell_type": "markdown",
@@ -313,7 +316,7 @@
 					"sentiment_output = [{\"Sentiment\": most_common_value},{\"Count\": most_common_count},{\"Confidence Scores\":confidence_scores}]\r\n",
 					"print(sentiment_output)"
 				],
-				"execution_count": 7
+				"execution_count": 6
 			},
 			{
 				"cell_type": "markdown",
@@ -357,7 +360,7 @@
 					"\r\n",
 					"display(sentiment_output_df)"
 				],
-				"execution_count": 8
+				"execution_count": 7
 			},
 			{
 				"cell_type": "markdown",
@@ -419,7 +422,7 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(\"SQLPoolTest.Sent.NATO_Sentiment\"))"
 				],
-				"execution_count": 9
+				"execution_count": null
 			}
 		]
 	}
