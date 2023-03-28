@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "ee3c6ce7-fb29-461b-9f24-2e03638f6b9a"
+				"spark.autotune.trackingId": "ab05351c-ab0d-4f40-b57f-2f3eb8f7e0ac"
 			}
 		},
 		"metadata": {
@@ -41,8 +41,8 @@
 				},
 				"sparkVersion": "3.3",
 				"nodeCount": 3,
-				"cores": 4,
-				"memory": 28,
+				"cores": 16,
+				"memory": 112,
 				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
@@ -76,7 +76,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 11
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -97,9 +97,12 @@
 					"# Sort ascending by 'created_at'\r\n",
 					"from pyspark.sql.functions import desc\r\n",
 					"\r\n",
-					"df = df.orderBy(desc(\"created_at\"))"
+					"df = df.orderBy(desc(\"created_at\"))\r\n",
+					"\r\n",
+					"# select the first 100 records\r\n",
+					"df = df.limit(100)"
 				],
-				"execution_count": 17
+				"execution_count": 10
 			},
 			{
 				"cell_type": "code",
@@ -126,7 +129,7 @@
 					"# Show the filtered DataFrame\r\n",
 					"df.select(\"text\").show()"
 				],
-				"execution_count": 19
+				"execution_count": 11
 			},
 			{
 				"cell_type": "code",
@@ -146,7 +149,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 20
+				"execution_count": 12
 			},
 			{
 				"cell_type": "code",
@@ -164,7 +167,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 21
+				"execution_count": 13
 			},
 			{
 				"cell_type": "code",
@@ -249,7 +252,7 @@
 					"        output_df = output_df.union(df)\r\n",
 					"display(output_df)"
 				],
-				"execution_count": 22
+				"execution_count": 14
 			},
 			{
 				"cell_type": "markdown",
@@ -307,7 +310,7 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(\"SQLPoolTest.NER.NATO_NER\"))"
 				],
-				"execution_count": 25
+				"execution_count": 16
 			}
 		]
 	}
