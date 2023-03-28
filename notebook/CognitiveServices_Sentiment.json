@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "16959e12-acff-48e1-8843-685e29c822c4"
+				"spark.autotune.trackingId": "9056627f-636f-48f1-b0ed-0dbaf9bc5efd"
 			}
 		},
 		"metadata": {
@@ -356,11 +356,18 @@
 					"    StructField(\"Confidence Score Mixed\", FloatType(), True)\r\n",
 					"])\r\n",
 					"\r\n",
-					"sentiment_output_df = spark.createDataFrame([(most_common_value, most_common_count, confidence_scores['negative'], confidence_scores['positive'], confidence_scores['neutral'], confidence_scores['mixed'])], schema)\r\n",
+					"# create row from data\r\n",
+					"row_data = Row(\r\n",
+					"    Sentiment=most_common_value, \r\n",
+					"    Count=most_common_count, \r\n",
+					"    **{f\"Confidence Score {k.capitalize()}\": confidence_scores.get(k, 0.0) for k in ['negative', 'positive', 'neutral', 'mixed']}\r\n",
+					")\r\n",
+					"\r\n",
+					"sentiment_output_df = spark.createDataFrame([row_data], schema)\r\n",
 					"\r\n",
 					"display(sentiment_output_df)"
 				],
-				"execution_count": 7
+				"execution_count": 21
 			},
 			{
 				"cell_type": "markdown",
@@ -422,7 +429,7 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(\"SQLPoolTest.Sent.NATO_Sentiment\"))"
 				],
-				"execution_count": null
+				"execution_count": 22
 			}
 		]
 	}
