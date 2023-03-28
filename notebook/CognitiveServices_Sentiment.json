@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "9056627f-636f-48f1-b0ed-0dbaf9bc5efd"
+				"spark.autotune.trackingId": "679674b1-e108-4a6e-99f8-dcc037d80f22"
 			}
 		},
 		"metadata": {
@@ -256,7 +256,7 @@
 					"import collections\r\n",
 					"\r\n",
 					"# Batch size\r\n",
-					"batch_size = 5\r\n",
+					"batch_size = 30\r\n",
 					"\r\n",
 					"# First, count the total number of rows in the DataFrame\r\n",
 					"num_rows = df.count()\r\n",
