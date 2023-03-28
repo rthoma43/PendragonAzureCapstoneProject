@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "1fb4af3e-b23d-4c29-a770-864fe523a0cd"
+				"spark.autotune.trackingId": "de7fb7f3-fe65-491a-9b20-de1f662ecce6"
 			}
 		},
 		"metadata": {
@@ -76,7 +76,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 24
+				"execution_count": 113
 			},
 			{
 				"cell_type": "code",
@@ -102,7 +102,7 @@
 					"# select the first 100 records\r\n",
 					"df = df.limit(100)"
 				],
-				"execution_count": 25
+				"execution_count": 114
 			},
 			{
 				"cell_type": "code",
@@ -129,7 +129,7 @@
 					"# Show the filtered DataFrame\r\n",
 					"df.select(\"text\").show()"
 				],
-				"execution_count": 26
+				"execution_count": 115
 			},
 			{
 				"cell_type": "code",
@@ -172,7 +172,26 @@
 					"\r\n",
 					"display(df_result)"
 				],
-				"execution_count": 27
+				"execution_count": 116
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(df_result.filter(df_result.id == 1640576604232638464))"
+				],
+				"execution_count": 156
 			},
 			{
 				"cell_type": "code",
@@ -228,7 +247,7 @@
 					"print(topic3confidence)\r\n",
 					"print(topic4confidence)"
 				],
-				"execution_count": 28
+				"execution_count": 117
 			},
 			{
 				"cell_type": "code",
@@ -270,25 +289,7 @@
 					"    quote_count_values.append(row[\"quote_count\"])\r\n",
 					"    impression_count_values.append(row[\"impression_count\"])"
 				],
-				"execution_count": 37
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"print(type(topic0confidence[0]))"
-				],
-				"execution_count": 50
+				"execution_count": 118
 			},
 			{
 				"cell_type": "code",
@@ -312,7 +313,7 @@
 					"topic3confidence = [float(i) for i in topic3confidence]\r\n",
 					"topic4confidence = [float(i) for i in topic4confidence]"
 				],
-				"execution_count": 51
+				"execution_count": 130
 			},
 			{
 				"cell_type": "code",
@@ -334,16 +335,17 @@
 					"    StructField(\"created_at\", TimestampType(), True),\r\n",
 					"    StructField(\"text\", StringType(), True),\r\n",
 					"    StructField(\"lang\", StringType(), True),\r\n",
+					"    StructField(\"retweet_count\", IntegerType(), True),\r\n",
 					"    StructField(\"reply_count\", IntegerType(), True),\r\n",
 					"    StructField(\"like_count\", IntegerType(), True),\r\n",
 					"    StructField(\"quote_count\", IntegerType(), True),\r\n",
 					"    StructField(\"impression_count\", IntegerType(), True),\r\n",
-					"    StructField(\"Topic\", IntegerType(), True),\r\n",
-					"    StructField(\"Topic 0 Confidence\", FloatType(), True),\r\n",
-					"    StructField(\"Topic 1 Confidence\", FloatType(), True),\r\n",
-					"    StructField(\"Topic 2 Confidence\", FloatType(), True),\r\n",
-					"    StructField(\"Topic 3 Confidence\", FloatType(), True),\r\n",
-					"    StructField(\"Topic 4 Confidence\", FloatType(), True)\r\n",
+					"    StructField(\"topic\", ShortType(), True),\r\n",
+					"    StructField(\"topic_0_confidence\", FloatType(), True),\r\n",
+					"    StructField(\"topic_1_confidence\", FloatType(), True),\r\n",
+					"    StructField(\"topic_2_confidence\", FloatType(), True),\r\n",
+					"    StructField(\"topic_3_confidence\", FloatType(), True),\r\n",
+					"    StructField(\"topic_4_confidence\", FloatType(), True)\r\n",
 					"])\r\n",
 					"\r\n",
 					"# create rows\r\n",
@@ -354,13 +356,13 @@
 					"            reply_count=reply_count_values[i],\r\n",
 					"            like_count=like_count_values[i],\r\n",
 					"            quote_count=quote_count_values[i],\r\n",
-					"            impression_count=impression_count_values[i],\r\n",
-					"            Topic=topicgroup[i],\r\n",
-					"            topic0confidence=topic0confidence[i],\r\n",
-					"            topic1confidence=topic1confidence[i],\r\n",
-					"            topic2confidence=topic2confidence[i],\r\n",
-					"            topic3confidence=topic3confidence[i],\r\n",
-					"            topic4confidence=topic4confidence[i])\r\n",
+					"            impression_count = impression_count_values[i],\r\n",
+					"            topic = topicgroup[i],\r\n",
+					"            topic_0_confidence = topic0confidence[i],\r\n",
+					"            topic_1_confidence = topic1confidence[i],\r\n",
+					"            topic_2_confidence = topic2confidence[i],\r\n",
+					"            topic_3_confidence = topic3confidence[i],\r\n",
+					"            topic_4_confidence = topic4confidence[i])\r\n",
 					"        for i in range(len(id_values))]\r\n",
 					"\r\n",
 					"# create a DataFrame\r\n",
@@ -370,7 +372,64 @@
 					"#display(final_topic_df)\r\n",
 					""
 				],
-				"execution_count": 54
+				"execution_count": 121
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"final_topic_df.printSchema"
+				],
+				"execution_count": 152
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"# print the column names\r\n",
+					"display(final_topic_df)"
+				],
+				"execution_count": 151
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(final_topic_df.filter(final_topic_df.id == 1640576604232638464))"
+				],
+				"execution_count": 155
 			},
 			{
 				"cell_type": "markdown",
@@ -396,12 +455,12 @@
 					"\t[like_count] INT  NULL,\r\n",
 					"\t[quote_count] INT  NULL,\r\n",
 					"\t[impression_count] INT  NULL,\r\n",
-					"    [Topic] INT NULL,\r\n",
-					"    [Topic 0 Confidence] REAL NULL,\r\n",
-					"    [Topic 1 Confidence] REAL NULL,\r\n",
-					"    [Topic 2 Confidence] REAL NULL,\r\n",
-					"    [Topic 3 Confidence] REAL NULL,\r\n",
-					"    [Topic 4 Confidence] REAL NULL\r\n",
+					"    [topic] SMALLINT NULL,\r\n",
+					"    [topic_0_confidence] REAL NULL,\r\n",
+					"    [topic_1_confidence] REAL NULL,\r\n",
+					"    [topic_2_confidence] REAL NULL,\r\n",
+					"    [topic_3_confidence] REAL NULL,\r\n",
+					"    [topic_4_confidence] REAL NULL\r\n",
 					")\r\n",
 					"\r\n",
 					"GO"
@@ -441,7 +500,7 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(\"SQLPoolTest.Topic.NATO_Topics\"))"
 				],
-				"execution_count": 55
+				"execution_count": 153
 			}
 		]
 	}
