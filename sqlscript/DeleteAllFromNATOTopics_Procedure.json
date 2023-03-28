@@ -1,0 +1,17 @@
+{
+	"name": "DeleteAllFromNATOTopics_Procedure",
+	"properties": {
+		"content": {
+			"query": "CREATE PROCEDURE DeleteAllNATOTopics\nAS\nBEGIN\n    DELETE FROM [Topic].[NATO_Topics];\nEND;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "SQLPoolTest",
+				"poolName": "SQLPoolTest"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
