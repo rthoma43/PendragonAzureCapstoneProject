@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "0610258a-25d8-4dd1-adf2-70f8b13be1db"
+				"spark.autotune.trackingId": "b741241e-6ec0-484e-b748-9a2209d5ab08"
 			}
 		},
 		"metadata": {
@@ -408,11 +408,14 @@
 					"from pyspark.sql.types import StructType, StructField, StringType\r\n",
 					"import pyspark.sql.functions as F\r\n",
 					"\r\n",
+					"# Batch size\r\n",
+					"batch_size = 5\r\n",
+					"\r\n",
 					"# First, count the total number of rows in the DataFrame\r\n",
 					"num_rows = first_20.count()\r\n",
 					"\r\n",
 					"# Next, calculate the number of batches needed to split the DataFrame into batches of 5\r\n",
-					"num_batches = int(num_rows / 5) + (num_rows % 5 > 0)\r\n",
+					"num_batches = int(num_rows / batch_size) + (num_rows % batch_size > 0)\r\n",
 					"\r\n",
 					"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
 					"df_batches = first_20.randomSplit([1.0]*num_batches, seed=42)\r\n",
@@ -428,14 +431,14 @@
 					"\r\n",
 					"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
 					"for i in range(num_batches):\r\n",
-					"    batch = df_batches[i].limit(5)\r\n",
+					"    batch = df_batches[i].limit(batch_size)\r\n",
 					"    entity = (EntityDetector()\r\n",
 					"    .setLinkedService(linked_service_name)\r\n",
 					"    .setLanguage(\"en\")\r\n",
 					"    .setOutputCol(\"replies\")\r\n",
 					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
-					"    ent_batch_output = entity.transform(batch)\r\n",
+					"    ent_batch_output = entity.transform(batch.select(\"text\"))\r\n",
 					"    #display(ent_batch_output)\r\n",
 					"\r\n",
 					"    # Extract the 'replies' column and convert it to JSON\r\n",
@@ -447,7 +450,7 @@
 					"    # Print the 'replies' field for each row\r\n",
 					"    for each in ents:\r\n",
 					"        #print(each)\r\n",
-					"        \r\n",
+					"\r\n",
 					"        # create a PySpark DataFrame from the JSON string\r\n",
 					"        json_string = each\r\n",
 					"        df = spark.read.json(sc.parallelize([json_string]))\r\n",
@@ -469,7 +472,7 @@
 					"        output_df = output_df.union(df)\r\n",
 					"display(output_df)"
 				],
-				"execution_count": 16
+				"execution_count": 60
 			},
 			{
 				"cell_type": "markdown",
@@ -505,7 +508,7 @@
 					"    .setOutputCol(\"replies\")\r\n",
 					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
-					"keyphrase_output = keyPhrase.transform(first_20)\r\n",
+					"keyphrase_output = keyPhrase.transform(first_20.select(\"text\"))\r\n",
 					"display(keyPhrase.transform(first_20))"
 				],
 				"execution_count": 17
@@ -598,6 +601,48 @@
 					"display(kp_df)"
 				],
 				"execution_count": 19
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# import required libraries\r\n",
+					"import json\r\n",
+					"from pyspark.sql.types import StructType, StructField, StringType\r\n",
+					"import pyspark.sql.functions as F\r\n",
+					"\r\n",
+					"# Batch size\r\n",
+					"batch_size = 5\r\n",
+					"\r\n",
+					"# First, count the total number of rows in the DataFrame\r\n",
+					"num_rows = first_20.count()\r\n",
+					"\r\n",
+					"# Next, calculate the number of batches needed to split the DataFrame into batches of 5\r\n",
+					"num_batches = int(num_rows / batch_size) + (num_rows % batch_size > 0)\r\n",
+					"\r\n",
+					"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
+					"df_batches = first_20.randomSplit([1.0]*num_batches, seed=42)\r\n",
+					"\r\n",
+					"# define the schema for the output DataFrame\r\n",
+					"schema = StructType([\r\n",
+					"    StructField(\"entity_name\", StringType(), True),\r\n",
+					"    StructField(\"entity_url\", StringType(), True)\r\n",
+					"    ])\r\n",
+					"\r\n",
+					"# create an empty DataFrame with the defined schema\r\n",
+					"output_df = spark.createDataFrame([], schema)"
+				],
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
