@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "52800141-049c-492b-8d32-07ba1d7ba5c6"
+				"spark.autotune.trackingId": "267a70b9-b80e-4c2f-8dd5-83df9546066e"
 			}
 		},
 		"metadata": {
@@ -76,7 +76,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 1
+				"execution_count": 61
 			},
 			{
 				"cell_type": "markdown",
@@ -117,7 +117,7 @@
 					"first_20 = sorted_df.limit(20)\r\n",
 					"first_20.show()"
 				],
-				"execution_count": 2
+				"execution_count": 62
 			},
 			{
 				"cell_type": "code",
@@ -147,7 +147,7 @@
 					"\r\n",
 					"first_20 = df_filtered"
 				],
-				"execution_count": 3
+				"execution_count": 63
 			},
 			{
 				"cell_type": "code",
@@ -167,7 +167,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 4
+				"execution_count": 64
 			},
 			{
 				"cell_type": "code",
@@ -203,7 +203,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 5
+				"execution_count": 65
 			},
 			{
 				"cell_type": "markdown",
@@ -217,48 +217,6 @@
 				"source": [
 					"## Sentiment"
 				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": true
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"sent = (TextSentiment()\r\n",
-					"    .setLinkedService(linked_service_name)\r\n",
-					"    .setOutputCol(\"sentiment\")\r\n",
-					"    .setErrorCol(\"error\"))\r\n",
-					"    \r\n",
-					"sent_output = sent.transform(first_20.select(\"text\"))"
-				],
-				"execution_count": 12
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"sent_output.select(\"sentiment\").show()"
-				],
-				"execution_count": 13
 			},
 			{
 				"cell_type": "markdown",
