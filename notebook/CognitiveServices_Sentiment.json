@@ -1,0 +1,13 @@
+{
+	"name": "CognitiveServices_Sentiment",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"metadata": {
+			"language_info": {
+				"name": "python"
+			}
+		},
+		"cells": []
+	}
+}
