@@ -70,6 +70,84 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('workspaceName'), '/CognitiveServices_NER_NATO')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Delete Rows in NATO NER Table",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "SQLPoolTest",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[dbo].[DeleteAllNatoNer]"
+						}
+					},
+					{
+						"name": "Run CognitiveServices_NamedEntityRecog Notebook",
+						"type": "SynapseNotebook",
+						"dependsOn": [
+							{
+								"activity": "Delete Rows in NATO NER Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebook": {
+								"referenceName": "CognitiveServices_NamedEntityRecog",
+								"type": "NotebookReference"
+							},
+							"snapshot": true,
+							"sparkPool": {
+								"referenceName": "SparkPoolTest",
+								"type": "BigDataPoolReference"
+							},
+							"executorSize": "Small",
+							"conf": {
+								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.minExecutors": null,
+								"spark.dynamicAllocation.maxExecutors": null
+							},
+							"driverSize": "Small",
+							"numExecutors": null
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]",
+				"[concat(variables('workspaceId'), '/notebooks/CognitiveServices_NamedEntityRecog')]",
+				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolTest')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/CognitiveServices_Sentiment_NATO')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -5700,12 +5778,12 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/CreateNATOSentimentTable_Procedure')]",
+			"name": "[concat(parameters('workspaceName'), '/Create_NATO_NER_Table')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "CREATE PROCEDURE CreateNATOSentimentTable\nAS\nBEGIN\n    CREATE TABLE [Sent].[NATO_Sentiment]\n(\n    [Sentiment] NVARCHAR(10) NULL,\n    [Count] INT NULL,\n    [Confidence Score Negative] REAL NULL,\n    [Confidence Score Positive] REAL NULL,\n    [Confidence Score Neutral] REAL NULL,\n    [Confidence Score Mixed] REAL NULL\n);\nEND;",
+					"query": "CREATE TABLE [NER].[NATO_NER]\n(\n    [entity_text] NVARCHAR(100) NULL,\n    [entity_category] NVARCHAR(100) NULL\n)\n\nGO",
 					"metadata": {
 						"language": "sql"
 					},
@@ -5766,6 +5844,26 @@
 			"properties": {
 				"content": {
 					"query": "SELECT DATEADD(second, (DATEPART(second, created_at) / 10) * 10, DATEADD(minute, DATEDIFF(minute, 0, created_at), 0)) AS IntervalStart,\n       COUNT(*) AS Count\nFROM [dbo].[NATO_Tweets1]\nGROUP BY DATEADD(second, (DATEPART(second, created_at) / 10) * 10, DATEADD(minute, DATEDIFF(minute, 0, created_at), 0))\nORDER BY IntervalStart;",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPoolTest",
+						"poolName": "SQLPoolTest"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DeleteAllFromNATONER_Procedure')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE PROCEDURE DeleteAllNatoNer\nAS\nBEGIN\n    DELETE FROM [NER].[NATO_NER];\nEND;",
 					"metadata": {
 						"language": "sql"
 					},
@@ -5905,7 +6003,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "SELECT * FROM [Sent].[NATO_Sentiment]\nGO\n\n",
+					"query": "SELECT * FROM [Sent].[NATO_Sentiment]\n\n",
 					"metadata": {
 						"language": "sql"
 					},
@@ -6537,7 +6635,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "c11c287f-c18b-4b6d-956f-1b31462ac21d"
+						"spark.autotune.trackingId": "93ead064-84ec-4f75-a366-e5227d936c52"
 					}
 				},
 				"metadata": {
@@ -6657,7 +6755,7 @@
 							"from pyspark.sql.functions import regexp_replace\r\n",
 							"\r\n",
 							"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
-							"regex = r'@\\w+|&\\w+|https?://\\S+|#\\w+'\r\n",
+							"regex = r'@\\w+|&\\w+|https\\w+|#\\w+'\r\n",
 							"regex = r'\\b[@#&]\\w+|\\bhttps\\w*'\r\n",
 							"\r\n",
 							"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
@@ -7336,7 +7434,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/CognitiveServices_Sentiment')]",
+			"name": "[concat(parameters('workspaceName'), '/CognitiveServices_NamedEntityRecog')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -7356,7 +7454,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "eee35e07-7aa6-431b-b824-f03c21b2d571"
+						"spark.autotune.trackingId": "ee3c6ce7-fb29-461b-9f24-2e03638f6b9a"
 					}
 				},
 				"metadata": {
@@ -7415,7 +7513,332 @@
 							")"
 						],
 						"outputs": [],
-						"execution_count": 2
+						"execution_count": 11
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Select sample size for testing\r\n",
+							"\r\n",
+							"# Sort ascending by 'created_at'\r\n",
+							"from pyspark.sql.functions import desc\r\n",
+							"\r\n",
+							"df = df.orderBy(desc(\"created_at\"))"
+						],
+						"outputs": [],
+						"execution_count": 17
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from pyspark.sql.functions import regexp_replace\r\n",
+							"\r\n",
+							"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
+							"regex = r'@\\w+|&\\w+|https\\w+|#\\w+'\r\n",
+							"\r\n",
+							"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
+							"df = df.withColumn(\"text\", regexp_replace(col(\"text\"), regex, ''))\r\n",
+							"\r\n",
+							"# Show the filtered DataFrame\r\n",
+							"df.select(\"text\").show()"
+						],
+						"outputs": [],
+						"execution_count": 19
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"import synapse.ml\r\n",
+							"from synapse.ml.cognitive import *\r\n",
+							"from pyspark.sql.functions import col"
+						],
+						"outputs": [],
+						"execution_count": 20
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"linked_service_name = \"CognitiveService1\""
+						],
+						"outputs": [],
+						"execution_count": 21
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"# import required libraries\r\n",
+							"import json\r\n",
+							"from pyspark.sql.types import StructType, StructField, StringType\r\n",
+							"import pyspark.sql.functions as F\r\n",
+							"\r\n",
+							"# Batch size\r\n",
+							"batch_size = 5\r\n",
+							"\r\n",
+							"# First, count the total number of rows in the DataFrame\r\n",
+							"num_rows = df.count()\r\n",
+							"\r\n",
+							"# Next, calculate the number of batches needed to split the DataFrame into batches of 5\r\n",
+							"num_batches = int(num_rows / batch_size) + (num_rows % batch_size > 0)\r\n",
+							"\r\n",
+							"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
+							"df_batches = df.randomSplit([1.0]*num_batches, seed=42)\r\n",
+							"\r\n",
+							"# define the schema for the output DataFrame\r\n",
+							"schema = StructType([\r\n",
+							"    StructField(\"entity_text\", StringType(), True),\r\n",
+							"    StructField(\"entity_category\", StringType(), True)\r\n",
+							"    ])\r\n",
+							"\r\n",
+							"# create an empty DataFrame with the defined schema\r\n",
+							"output_df = spark.createDataFrame([], schema)\r\n",
+							"\r\n",
+							"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
+							"for i in range(num_batches):\r\n",
+							"    batch = df_batches[i].limit(batch_size)\r\n",
+							"    ner = (NER()\r\n",
+							"    .setLinkedService(linked_service_name)\r\n",
+							"    .setLanguageCol(\"lang\")\r\n",
+							"    .setOutputCol(\"replies\")\r\n",
+							"    .setErrorCol(\"error\"))\r\n",
+							"\r\n",
+							"    ner_batch_output = ner.transform(batch)\r\n",
+							"    #display(ner_batch_output)\r\n",
+							"\r\n",
+							"    # Extract the 'replies' column and convert it to JSON\r\n",
+							"    json_output = ner_batch_output.select(\"replies\").toJSON().collect()\r\n",
+							"    # Deserialize the JSON and extract the 'replies' field\r\n",
+							"    nes = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
+							"\r\n",
+							"    # Print the 'replies' field for each row\r\n",
+							"    for each in nes:\r\n",
+							"        #print(each)\r\n",
+							"\r\n",
+							"        # create a PySpark DataFrame from the JSON string\r\n",
+							"        json_string = each\r\n",
+							"        df = spark.read.json(sc.parallelize([json_string]))\r\n",
+							"\r\n",
+							"        # extract the 'entities' array from the 'document' column\r\n",
+							"        df = df.selectExpr('explode(document.entities) as entities')\r\n",
+							"\r\n",
+							"        # select the 'text' and 'category' fields from the exploded 'entities' array\r\n",
+							"        df = df.select('entities.text', 'entities.category')\r\n",
+							"\r\n",
+							"        # rename the columns\r\n",
+							"        df = df.withColumnRenamed('text', 'entity_text')\r\n",
+							"        df = df.withColumnRenamed('category', 'entity_category')\r\n",
+							"\r\n",
+							"        # show the resulting DataFrame\r\n",
+							"        #df.show()\r\n",
+							"\r\n",
+							"        # Append the batch results dataframe to the main output dataframe\r\n",
+							"        output_df = output_df.union(df)\r\n",
+							"display(output_df)"
+						],
+						"outputs": [],
+						"execution_count": 22
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Write Spark Dataframe to Dedicated SQL Pool Table [NER].[NATO_NER]\r\n",
+							"# First, create the table in the Dedicated SQL Pool 'SQLPoolTest' using the code below\r\n",
+							"~~~\r\n",
+							"CREATE TABLE [NER].[NATO_NER]\r\n",
+							"(\r\n",
+							"    [entity_text] NVARCHAR(20) NULL,\r\n",
+							"    [entity_category] NVARCHAR(20) NULL\r\n",
+							")\r\n",
+							"\r\n",
+							"GO"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Write using AAD Auth to internal table\r\n",
+							"# Add required imports\r\n",
+							"import com.microsoft.spark.sqlanalytics\r\n",
+							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+							"\r\n",
+							"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
+							"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
+							"(output_df.write\r\n",
+							" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							" # Like-wise, if `Constants.TEMP_FOLDER` is not provided, the connector will use the runtime staging directory config (see section on Configuration Options for details).\r\n",
+							" .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							" # Choose a save mode that is apt for your use case.\r\n",
+							" # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
+							" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
+							" .mode(\"overwrite\")\r\n",
+							" # Required parameter - Three-part table name to which data will be written\r\n",
+							" .synapsesql(\"SQLPoolTest.NER.NATO_NER\"))"
+						],
+						"outputs": [],
+						"execution_count": 25
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CognitiveServices_Sentiment')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPoolTest",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "fe88d38e-3b01-4e17-88e4-3dadf0653708"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolTest",
+						"name": "SparkPoolTest",
+						"type": "Spark",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolTest",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.3",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"automaticScaleJobs": false
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"metadata": {},
+						"source": [
+							"# Add required imports\r\n",
+							"import com.microsoft.spark.sqlanalytics\r\n",
+							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+							"from pyspark.sql.functions import col\r\n",
+							"\r\n",
+							"# Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
+							"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\r\n",
+							"\r\n",
+							"# Read from a query\r\n",
+							"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\r\n",
+							"df = (spark.read\r\n",
+							"                     # Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
+							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
+							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							"                     # Defaults to storage path defined in the runtime configurations\r\n",
+							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							"                     # query from which data will be read\r\n",
+							"                     .option(Constants.QUERY, \"select * from dbo.NATO_Tweets1\")\r\n",
+							"                     .synapsesql()\r\n",
+							")"
+						],
+						"outputs": [],
+						"execution_count": 1
 					},
 					{
 						"cell_type": "markdown",
@@ -7449,10 +7872,13 @@
 							"# Sort ascending by 'created_at'\r\n",
 							"from pyspark.sql.functions import desc\r\n",
 							"\r\n",
-							"df = df.orderBy(desc(\"created_at\"))"
+							"df = df.orderBy(desc(\"created_at\"))\r\n",
+							"\r\n",
+							"# select the first 20 records\r\n",
+							"df = df.limit(20)"
 						],
 						"outputs": [],
-						"execution_count": 3
+						"execution_count": 2
 					},
 					{
 						"cell_type": "markdown",
@@ -7484,7 +7910,7 @@
 							"from pyspark.sql.functions import regexp_replace\r\n",
 							"\r\n",
 							"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
-							"regex = r'\\b[@#&]\\w+|\\bhttps\\w*'\r\n",
+							"regex = r'@\\w+|&\\w+|https\\w+|#\\w+'\r\n",
 							"\r\n",
 							"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
 							"df = df.withColumn(\"text\", regexp_replace(col(\"text\"), regex, ''))\r\n",
@@ -7493,7 +7919,7 @@
 							"df.select(\"text\").show()"
 						],
 						"outputs": [],
-						"execution_count": 4
+						"execution_count": 3
 					},
 					{
 						"cell_type": "markdown",
@@ -7527,7 +7953,7 @@
 							"from pyspark.sql.functions import col"
 						],
 						"outputs": [],
-						"execution_count": 5
+						"execution_count": 4
 					},
 					{
 						"cell_type": "markdown",
@@ -7559,7 +7985,7 @@
 							"linked_service_name = \"CognitiveService1\""
 						],
 						"outputs": [],
-						"execution_count": 6
+						"execution_count": 5
 					},
 					{
 						"cell_type": "markdown",
@@ -7657,7 +8083,7 @@
 							"print(sentiment_output)"
 						],
 						"outputs": [],
-						"execution_count": 7
+						"execution_count": 6
 					},
 					{
 						"cell_type": "markdown",
@@ -7702,7 +8128,7 @@
 							"display(sentiment_output_df)"
 						],
 						"outputs": [],
-						"execution_count": 8
+						"execution_count": 7
 					},
 					{
 						"cell_type": "markdown",
@@ -7765,337 +8191,7 @@
 							" .synapsesql(\"SQLPoolTest.Sent.NATO_Sentiment\"))"
 						],
 						"outputs": [],
-						"execution_count": 9
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/LoadfromSQLPool')]",
-			"type": "Microsoft.Synapse/workspaces/notebooks",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"nbformat": 4,
-				"nbformat_minor": 2,
-				"bigDataPool": {
-					"referenceName": "SparkPoolTest",
-					"type": "BigDataPoolReference"
-				},
-				"sessionProperties": {
-					"driverMemory": "28g",
-					"driverCores": 4,
-					"executorMemory": "28g",
-					"executorCores": 4,
-					"numExecutors": 2,
-					"conf": {
-						"spark.dynamicAllocation.enabled": "false",
-						"spark.dynamicAllocation.minExecutors": "2",
-						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "2aa6efde-df82-4393-ae30-814b3a7a34c5"
-					}
-				},
-				"metadata": {
-					"saveOutput": true,
-					"enableDebugMode": false,
-					"kernelspec": {
-						"name": "synapse_pyspark",
-						"display_name": "Synapse PySpark"
-					},
-					"language_info": {
-						"name": "python"
-					},
-					"a365ComputeOptions": {
-						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolTest",
-						"name": "SparkPoolTest",
-						"type": "Spark",
-						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolTest",
-						"auth": {
-							"type": "AAD",
-							"authResource": "https://dev.azuresynapse.net"
-						},
-						"sparkVersion": "3.3",
-						"nodeCount": 3,
-						"cores": 4,
-						"memory": 28
-					},
-					"sessionKeepAliveTimeout": 30
-				},
-				"cells": [
-					{
-						"cell_type": "markdown",
-						"metadata": {
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"## Read from a query using Azure AD based authentication\r\n",
-							"\r\n",
-							"https://learn.microsoft.com/en-us/azure/synapse-analytics/spark/synapse-spark-sql-pool-import-export?tabs=python%2Cpython1%2Cscala2%2Cscala3%2Cscala4%2Cscala5"
-						]
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"# Add required imports\r\n",
-							"import com.microsoft.spark.sqlanalytics\r\n",
-							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
-							"from pyspark.sql.functions import col\r\n",
-							"\r\n",
-							"# Name of the SQL Dedicated Pool or database where to run the query\r\n",
-							"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
-							"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\r\n",
-							"\r\n",
-							"# Read from a query\r\n",
-							"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\r\n",
-							"dfToReadFromQueryAsOption = (spark.read\r\n",
-							"                     # Name of the SQL Dedicated Pool or database where to run the query\r\n",
-							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
-							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
-							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
-							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
-							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
-							"                     # Defaults to storage path defined in the runtime configurations\r\n",
-							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
-							"                     # query from which data will be read\r\n",
-							"                     .option(Constants.QUERY, \"select * from dbo.NATO_Tweets1\")\r\n",
-							"                     .synapsesql()\r\n",
-							")\r\n",
-							"\r\n",
-							"dfToReadFromQueryAsArgument = (spark.read\r\n",
-							"                     # Name of the SQL Dedicated Pool or database where to run the query\r\n",
-							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
-							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
-							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
-							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
-							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
-							"                     # Defaults to storage path defined in the runtime configurations\r\n",
-							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
-							"                     # query from which data will be read\r\n",
-							"                     .synapsesql(\"select * from dbo.NATO_Tweets1\")\r\n",
-							")\r\n",
-							"\r\n",
-							"# Show contents of the dataframe\r\n",
-							"dfToReadFromQueryAsOption.show()\r\n",
-							"dfToReadFromQueryAsArgument.show()"
-						],
-						"outputs": [],
-						"execution_count": 40
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"df = dfToReadFromQueryAsArgument"
-						],
-						"outputs": [],
-						"execution_count": 43
-					},
-					{
-						"cell_type": "markdown",
-						"metadata": {
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"## Text Analytics\r\n",
-							"https://learn.microsoft.com/en-us/azure/synapse-analytics/machine-learning/tutorial-text-analytics-use-mmlspark"
-						]
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"import synapse.ml\r\n",
-							"from synapse.ml.cognitive import *\r\n",
-							"from pyspark.sql.functions import col"
-						],
-						"outputs": [],
-						"execution_count": 48
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"linked_service_name = \"CognitiveService1\""
-						],
-						"outputs": [],
-						"execution_count": 57
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"# Create a dataframe that's tied to it's column names\r\n",
-							"df = spark.createDataFrame([\r\n",
-							"  (\"Hello World\",),\r\n",
-							"  (\"Bonjour tout le monde\",),\r\n",
-							"  (\"La carretera estaba atascada. Había mucho tráfico el día de ayer.\",),\r\n",
-							"  (\"你好\",),\r\n",
-							"  (\"こんにちは\",),\r\n",
-							"  (\":) :( :D\",)\r\n",
-							"], [\"text\",])\r\n",
-							"\r\n",
-							"# Run the Text Analytics service with options\r\n",
-							"language = (LanguageDetector()\r\n",
-							"    .setLinkedService(linked_service_name)\r\n",
-							"    .setTextCol(\"text\")\r\n",
-							"    .setOutputCol(\"language\")\r\n",
-							"    .setErrorCol(\"error\"))\r\n",
-							"\r\n",
-							"# Show the results of your text query in a table format\r\n",
-							"display(language.transform(df))\r\n",
-							""
-						],
-						"outputs": [],
-						"execution_count": 58
-					},
-					{
-						"cell_type": "markdown",
-						"metadata": {
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"## Remove special characters"
-						]
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"from pyspark.sql.functions import regexp_replace\r\n",
-							"\r\n",
-							"# remove special characters from text column\r\n",
-							"df = df.withColumn(\"text\", regexp_replace(df[\"text\"], \"[^a-zA-Z0-9\\\\s]\", \"\"))\r\n",
-							"\r\n",
-							"df_text = df.select('text')\r\n",
-							"\r\n",
-							"# show resulting dataframe\r\n",
-							"df_text.show()"
-						],
-						"outputs": [],
-						"execution_count": 47
-					},
-					{
-						"cell_type": "markdown",
-						"metadata": {
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"## Write back to SQLPoolTest dbo.NATO_Tweets1 table using Azure AD based authentication"
-						]
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"# Write using AAD Auth to internal table\r\n",
-							"# Add required imports\r\n",
-							"import com.microsoft.spark.sqlanalytics\r\n",
-							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
-							"\r\n",
-							"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
-							"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
-							"(df.write\r\n",
-							" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
-							" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
-							" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
-							" # Like-wise, if `Constants.TEMP_FOLDER` is not provided, the connector will use the runtime staging directory config (see section on Configuration Options for details).\r\n",
-							" .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
-							" # Choose a save mode that is apt for your use case.\r\n",
-							" # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
-							" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
-							" .mode(\"overwrite\")\r\n",
-							" # Required parameter - Three-part table name to which data will be written\r\n",
-							" .synapsesql(\"SQLPoolTest.dbo.NATO_Tweets1\"))"
-						],
-						"outputs": [],
-						"execution_count": 44
+						"execution_count": null
 					}
 				]
 			},
@@ -8576,6 +8672,336 @@
 						],
 						"outputs": [],
 						"execution_count": 65
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ReadWriteSQLPool')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPoolTest",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "2aa6efde-df82-4393-ae30-814b3a7a34c5"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolTest",
+						"name": "SparkPoolTest",
+						"type": "Spark",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolTest",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.3",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Read from a query using Azure AD based authentication\r\n",
+							"\r\n",
+							"https://learn.microsoft.com/en-us/azure/synapse-analytics/spark/synapse-spark-sql-pool-import-export?tabs=python%2Cpython1%2Cscala2%2Cscala3%2Cscala4%2Cscala5"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Add required imports\r\n",
+							"import com.microsoft.spark.sqlanalytics\r\n",
+							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+							"from pyspark.sql.functions import col\r\n",
+							"\r\n",
+							"# Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
+							"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\r\n",
+							"\r\n",
+							"# Read from a query\r\n",
+							"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\r\n",
+							"dfToReadFromQueryAsOption = (spark.read\r\n",
+							"                     # Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
+							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
+							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							"                     # Defaults to storage path defined in the runtime configurations\r\n",
+							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							"                     # query from which data will be read\r\n",
+							"                     .option(Constants.QUERY, \"select * from dbo.NATO_Tweets1\")\r\n",
+							"                     .synapsesql()\r\n",
+							")\r\n",
+							"\r\n",
+							"dfToReadFromQueryAsArgument = (spark.read\r\n",
+							"                     # Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
+							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
+							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							"                     # Defaults to storage path defined in the runtime configurations\r\n",
+							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							"                     # query from which data will be read\r\n",
+							"                     .synapsesql(\"select * from dbo.NATO_Tweets1\")\r\n",
+							")\r\n",
+							"\r\n",
+							"# Show contents of the dataframe\r\n",
+							"dfToReadFromQueryAsOption.show()\r\n",
+							"dfToReadFromQueryAsArgument.show()"
+						],
+						"outputs": [],
+						"execution_count": 40
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df = dfToReadFromQueryAsArgument"
+						],
+						"outputs": [],
+						"execution_count": 43
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Text Analytics\r\n",
+							"https://learn.microsoft.com/en-us/azure/synapse-analytics/machine-learning/tutorial-text-analytics-use-mmlspark"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"import synapse.ml\r\n",
+							"from synapse.ml.cognitive import *\r\n",
+							"from pyspark.sql.functions import col"
+						],
+						"outputs": [],
+						"execution_count": 48
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"linked_service_name = \"CognitiveService1\""
+						],
+						"outputs": [],
+						"execution_count": 57
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Create a dataframe that's tied to it's column names\r\n",
+							"df = spark.createDataFrame([\r\n",
+							"  (\"Hello World\",),\r\n",
+							"  (\"Bonjour tout le monde\",),\r\n",
+							"  (\"La carretera estaba atascada. Había mucho tráfico el día de ayer.\",),\r\n",
+							"  (\"你好\",),\r\n",
+							"  (\"こんにちは\",),\r\n",
+							"  (\":) :( :D\",)\r\n",
+							"], [\"text\",])\r\n",
+							"\r\n",
+							"# Run the Text Analytics service with options\r\n",
+							"language = (LanguageDetector()\r\n",
+							"    .setLinkedService(linked_service_name)\r\n",
+							"    .setTextCol(\"text\")\r\n",
+							"    .setOutputCol(\"language\")\r\n",
+							"    .setErrorCol(\"error\"))\r\n",
+							"\r\n",
+							"# Show the results of your text query in a table format\r\n",
+							"display(language.transform(df))\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 58
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Remove special characters"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from pyspark.sql.functions import regexp_replace\r\n",
+							"\r\n",
+							"# remove special characters from text column\r\n",
+							"df = df.withColumn(\"text\", regexp_replace(df[\"text\"], \"[^a-zA-Z0-9\\\\s]\", \"\"))\r\n",
+							"\r\n",
+							"df_text = df.select('text')\r\n",
+							"\r\n",
+							"# show resulting dataframe\r\n",
+							"df_text.show()"
+						],
+						"outputs": [],
+						"execution_count": 47
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Write back to SQLPoolTest dbo.NATO_Tweets1 table using Azure AD based authentication"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Write using AAD Auth to internal table\r\n",
+							"# Add required imports\r\n",
+							"import com.microsoft.spark.sqlanalytics\r\n",
+							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+							"\r\n",
+							"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
+							"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
+							"(df.write\r\n",
+							" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							" # Like-wise, if `Constants.TEMP_FOLDER` is not provided, the connector will use the runtime staging directory config (see section on Configuration Options for details).\r\n",
+							" .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							" # Choose a save mode that is apt for your use case.\r\n",
+							" # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
+							" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
+							" .mode(\"overwrite\")\r\n",
+							" # Required parameter - Three-part table name to which data will be written\r\n",
+							" .synapsesql(\"SQLPoolTest.dbo.NATO_Tweets1\"))"
+						],
+						"outputs": [],
+						"execution_count": 44
 					}
 				]
 			},
