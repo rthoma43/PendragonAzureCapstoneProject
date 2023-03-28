@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "76d960c4-a09f-41bb-8af4-6471490a8156"
+				"spark.autotune.trackingId": "0610258a-25d8-4dd1-adf2-70f8b13be1db"
 			}
 		},
 		"metadata": {
@@ -76,7 +76,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 7
+				"execution_count": 1
 			},
 			{
 				"cell_type": "markdown",
@@ -117,7 +117,7 @@
 					"first_20 = sorted_df.limit(20)\r\n",
 					"first_20.show()"
 				],
-				"execution_count": 8
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -147,7 +147,7 @@
 					"\r\n",
 					"first_20 = df_filtered"
 				],
-				"execution_count": 9
+				"execution_count": 3
 			},
 			{
 				"cell_type": "code",
@@ -167,7 +167,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 10
+				"execution_count": 4
 			},
 			{
 				"cell_type": "code",
@@ -185,7 +185,7 @@
 				"source": [
 					"print(dir(synapse.ml.cognitive))"
 				],
-				"execution_count": 87
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
@@ -203,7 +203,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 11
+				"execution_count": 5
 			},
 			{
 				"cell_type": "markdown",
@@ -238,7 +238,7 @@
 					"    .setOutputCol(\"sentiment\")\r\n",
 					"    .setErrorCol(\"error\"))\r\n",
 					"    \r\n",
-					"sent_output = sent.transform(first_20)"
+					"sent_output = sent.transform(first_20.select(\"text\"))"
 				],
 				"execution_count": 12
 			},
@@ -270,7 +270,8 @@
 					}
 				},
 				"source": [
-					"Convert the output to a JSON format and extract the sentiment of each text record into an array"
+					"You can send up to 125,000 characters across all documents contained in the asynchronous request. Each tweet is a maximum length of 4,000 characters.\r\n",
+					"125,000/4,000 = 31 Tweets"
 				]
 			},
 			{
@@ -284,56 +285,55 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
+					"# import required libraries\r\n",
 					"import json\r\n",
+					"from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType\r\n",
+					"from pyspark.sql.functions import col\r\n",
+					"import pyspark.sql.functions as F\r\n",
+					"import collections\r\n",
 					"\r\n",
-					"# Extract the 'sentiment' column and convert it to JSON\r\n",
-					"json_output = sent_output.select(\"sentiment\").toJSON().collect()\r\n",
+					"# Batch size\r\n",
+					"batch_size = 5\r\n",
 					"\r\n",
-					"# Deserialize the JSON and extract the 'sentiment' field\r\n",
-					"sentiments = [json.loads(x)[\"sentiment\"] for x in json_output]\r\n",
+					"# First, count the total number of rows in the DataFrame\r\n",
+					"num_rows = first_20.count()\r\n",
+					"\r\n",
+					"# Next, calculate the number of batches needed to split the DataFrame into batches of equal to the batch_size\r\n",
+					"num_batches = int(num_rows / batch_size) + (num_rows % batch_size > 0)\r\n",
+					"\r\n",
+					"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
+					"df_batches = first_20.randomSplit([1.0]*num_batches, seed=42)\r\n",
 					"\r\n",
 					"output = []\r\n",
 					"\r\n",
-					"# Print the 'sentiment' field for each row\r\n",
-					"for sentiment in sentiments:\r\n",
-					"    #print(sentiment)\r\n",
-					"    output.append(sentiment['document']['sentiment'])\r\n",
+					"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
+					"for i in range(num_batches):\r\n",
+					"    batch = df_batches[i].limit(batch_size)\r\n",
+					"    sent = (TextSentiment()\r\n",
+					"    .setLinkedService(linked_service_name)\r\n",
+					"    .setOutputCol(\"sentiment\")\r\n",
+					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
-					"print(output)"
-				],
-				"execution_count": 14
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"Calculate the overall sentiment and the confidence scores"
-				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"import collections\r\n",
+					"    sent_batch_output = sent.transform(batch.select(\"text\"))\r\n",
+					"    #display(sent_batch_output)\r\n",
+					"\r\n",
+					"    # Extract the 'sentiment' column and convert it to JSON\r\n",
+					"    json_output = sent_batch_output.select(\"sentiment\").toJSON().collect()\r\n",
+					"\r\n",
+					"    # Deserialize the JSON and extract the 'sentiment' field\r\n",
+					"    sentiments = [json.loads(x)[\"sentiment\"] for x in json_output]\r\n",
+					"\r\n",
+					"    # Print the 'sentiment' field for each row\r\n",
+					"    for sentiment in sentiments:\r\n",
+					"        #print(sentiment)\r\n",
+					"        output.append(sentiment['document']['sentiment'])\r\n",
+					"\r\n",
+					"# Print all sentiments\r\n",
+					"print(output)\r\n",
 					"\r\n",
 					"# Count the occurrences of each value in the array\r\n",
 					"counts = collections.Counter(output)\r\n",
@@ -343,8 +343,8 @@
 					"most_common_value = most_common[0]\r\n",
 					"most_common_count = most_common[1]\r\n",
 					"\r\n",
-					"print(\"Most common value:\", most_common_value)\r\n",
-					"print(\"Count:\", most_common_count)\r\n",
+					"#print(\"Most common value:\", most_common_value)\r\n",
+					"#print(\"Count:\", most_common_count)\r\n",
 					"\r\n",
 					"confidence_scores = {}\r\n",
 					"\r\n",
@@ -353,10 +353,27 @@
 					"for value, count in counts.items():\r\n",
 					"    confidence_scores[value] = count / total_values\r\n",
 					"\r\n",
-					"print(\"Confidence scores:\", confidence_scores)\r\n",
-					""
+					"#print(\"Confidence scores:\", confidence_scores)\r\n",
+					"sentiment_output = [{\"Sentiment\": most_common_value},{\"Count\": most_common_count},{\"Confidence Scores\":confidence_scores}]\r\n",
+					"print(sentiment_output)\r\n",
+					"\r\n",
+					"# Add to DataFrame\r\n",
+					"\r\n",
+					"# Define the schema of the DataFrame\r\n",
+					"schema = StructType([\r\n",
+					"    StructField(\"Sentiment\", StringType(), True),\r\n",
+					"    StructField(\"Count\", IntegerType(), True),\r\n",
+					"    StructField(\"Negative\", DoubleType(), True),\r\n",
+					"    StructField(\"Positive\", DoubleType(), True),\r\n",
+					"    StructField(\"Neutral\", DoubleType(), True),\r\n",
+					"    StructField(\"Mixed\", DoubleType(), True)\r\n",
+					"])\r\n",
+					"\r\n",
+					"sentiment_output_df = spark.createDataFrame([(most_common_value, most_common_count, confidence_scores['negative'], confidence_scores['positive'], confidence_scores['neutral'], confidence_scores['mixed'])], schema)\r\n",
+					"\r\n",
+					"display(sentiment_output_df)"
 				],
-				"execution_count": 15
+				"execution_count": 58
 			},
 			{
 				"cell_type": "markdown",
@@ -430,6 +447,7 @@
 					"    # Print the 'replies' field for each row\r\n",
 					"    for each in ents:\r\n",
 					"        #print(each)\r\n",
+					"        \r\n",
 					"        # create a PySpark DataFrame from the JSON string\r\n",
 					"        json_string = each\r\n",
 					"        df = spark.read.json(sc.parallelize([json_string]))\r\n",
