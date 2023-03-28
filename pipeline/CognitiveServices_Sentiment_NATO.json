@@ -23,7 +23,7 @@
 				}
 			},
 			{
-				"name": "Notebook1",
+				"name": "Run CognitiveServices_Sentiment Notebook",
 				"type": "SynapseNotebook",
 				"dependsOn": [
 					{

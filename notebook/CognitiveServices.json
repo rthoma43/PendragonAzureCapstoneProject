@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "267a70b9-b80e-4c2f-8dd5-83df9546066e"
+				"spark.autotune.trackingId": "c11c287f-c18b-4b6d-956f-1b31462ac21d"
 			}
 		},
 		"metadata": {
@@ -76,7 +76,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 61
+				"execution_count": 1
 			},
 			{
 				"cell_type": "markdown",
@@ -117,7 +117,7 @@
 					"first_20 = sorted_df.limit(20)\r\n",
 					"first_20.show()"
 				],
-				"execution_count": 62
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -147,7 +147,7 @@
 					"\r\n",
 					"first_20 = df_filtered"
 				],
-				"execution_count": 63
+				"execution_count": 3
 			},
 			{
 				"cell_type": "code",
@@ -167,7 +167,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 64
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -203,7 +203,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 65
+				"execution_count": 6
 			},
 			{
 				"cell_type": "markdown",
@@ -249,7 +249,7 @@
 				"source": [
 					"# import required libraries\r\n",
 					"import json\r\n",
-					"from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType\r\n",
+					"from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType\r\n",
 					"from pyspark.sql.functions import col\r\n",
 					"import pyspark.sql.functions as F\r\n",
 					"import collections\r\n",
@@ -321,17 +321,115 @@
 					"schema = StructType([\r\n",
 					"    StructField(\"Sentiment\", StringType(), True),\r\n",
 					"    StructField(\"Count\", IntegerType(), True),\r\n",
-					"    StructField(\"Negative\", DoubleType(), True),\r\n",
-					"    StructField(\"Positive\", DoubleType(), True),\r\n",
-					"    StructField(\"Neutral\", DoubleType(), True),\r\n",
-					"    StructField(\"Mixed\", DoubleType(), True)\r\n",
+					"    StructField(\"Confidence Score Negative\", FloatType(), True),\r\n",
+					"    StructField(\"Confidence Score Positive\", FloatType(), True),\r\n",
+					"    StructField(\"Confidence Score Neutral\", FloatType(), True),\r\n",
+					"    StructField(\"Confidence Score Mixed\", FloatType(), True)\r\n",
 					"])\r\n",
 					"\r\n",
 					"sentiment_output_df = spark.createDataFrame([(most_common_value, most_common_count, confidence_scores['negative'], confidence_scores['positive'], confidence_scores['neutral'], confidence_scores['mixed'])], schema)\r\n",
 					"\r\n",
 					"display(sentiment_output_df)"
 				],
-				"execution_count": 58
+				"execution_count": 7
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"dir(pyspark.sql.types)"
+				],
+				"execution_count": 15
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"from pyspark.sql.types import *\r\n",
+					"schema = StructType([\r\n",
+					"    StructField(\"Sentiment\",  StringType(), True),\r\n",
+					"    StructField(\"Count\", IntegerType(), True),\r\n",
+					"    StructField(\"Confidence Score Negative\", FloatType(), True),\r\n",
+					"    StructField(\"Confidence Score Positive\", FloatType(), True),\r\n",
+					"    StructField(\"Confidence Score Neutral\", FloatType(), True),\r\n",
+					"    StructField(\"Confidence Score Mixed\", FloatType(), True)\r\n",
+					"])\r\n",
+					"\r\n",
+					"sentiment_output_df = spark.createDataFrame([(most_common_value, most_common_count, confidence_scores['negative'], confidence_scores['positive'], confidence_scores['neutral'], confidence_scores['mixed'])], schema)\r\n",
+					"\r\n",
+					"display(sentiment_output_df)"
+				],
+				"execution_count": 33
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"Load results to the SQL Pool NATO_Sentiment table"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Write using AAD Auth to internal table\r\n",
+					"# Add required imports\r\n",
+					"import com.microsoft.spark.sqlanalytics\r\n",
+					"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+					"\r\n",
+					"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
+					"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
+					"(sentiment_output_df.write\r\n",
+					" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+					" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+					" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+					" # Like-wise, if `Constants.TEMP_FOLDER` is not provided, the connector will use the runtime staging directory config (see section on Configuration Options for details).\r\n",
+					" .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+					" # Choose a save mode that is apt for your use case.\r\n",
+					" # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
+					" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
+					" .mode(\"overwrite\")\r\n",
+					" # Required parameter - Three-part table name to which data will be written\r\n",
+					" .synapsesql(\"SQLPoolTest.Sent.NATO_Sentiment\"))"
+				],
+				"execution_count": 38
 			},
 			{
 				"cell_type": "markdown",

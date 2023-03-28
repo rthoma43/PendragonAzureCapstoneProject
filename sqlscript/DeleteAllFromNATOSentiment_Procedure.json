@@ -1,0 +1,17 @@
+{
+	"name": "DeleteAllFromNATOSentiment_Procedure",
+	"properties": {
+		"content": {
+			"query": "CREATE PROCEDURE DeleteAllNatoSentiment\nAS\nBEGIN\n    DELETE FROM [Sent].[NATO_Sentiment];\nEND;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "SQLPoolTest",
+				"poolName": "SQLPoolTest"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
