@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "e98eedde-04cc-40b5-b668-b8f0d27a1e37"
+				"spark.autotune.trackingId": "8eb1c48d-00aa-4786-8077-2a282dc96f8e"
 			}
 		},
 		"metadata": {
@@ -75,11 +75,11 @@
 					"                     # Defaults to storage path defined in the runtime configurations\r\n",
 					"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
 					"                     # query from which data will be read\r\n",
-					"                     .option(Constants.QUERY, \"select * from dbo.NATO_Tweets1\")\r\n",
+					"                     .option(Constants.QUERY, \"select * from Topic.NATO_Topics where topic = 0\")\r\n",
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 23
+				"execution_count": 1
 			},
 			{
 				"cell_type": "markdown",
@@ -118,20 +118,7 @@
 					"# select the first 100 records\r\n",
 					"df = df.limit(100)"
 				],
-				"execution_count": 24
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# Clean Data: Remove @, #, and links"
-				]
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -144,21 +131,13 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
-					"from pyspark.sql.functions import regexp_replace\r\n",
-					"\r\n",
-					"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
-					"regex = r'@\\w+|&\\w+|https\\w+|#\\w+'\r\n",
-					"\r\n",
-					"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
-					"df = df.withColumn(\"text\", regexp_replace(col(\"text\"), regex, ''))\r\n",
-					"\r\n",
-					"# Show the filtered DataFrame\r\n",
-					"df.select(\"text\").show()"
+					"display(df)"
 				],
-				"execution_count": 25
+				"execution_count": 6
 			},
 			{
 				"cell_type": "markdown",
@@ -191,7 +170,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 26
+				"execution_count": 3
 			},
 			{
 				"cell_type": "markdown",
@@ -222,7 +201,31 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 27
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"sent = (TextSentiment()\r\n",
+					"    .setLinkedService(linked_service_name)\r\n",
+					"    .setTextCol(\"cleantext\")\r\n",
+					"    .setOutputCol(\"sentiment\")\r\n",
+					"    .setErrorCol(\"error\"))\r\n",
+					"output = sent.transform(df)\r\n",
+					"output.printSchema"
+				],
+				"execution_count": 9
 			},
 			{
 				"cell_type": "markdown",
@@ -248,12 +251,13 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
 					"# import required libraries\r\n",
 					"import json\r\n",
-					"from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType\r\n",
+					"from pyspark.sql.types import *\r\n",
 					"from pyspark.sql.functions import col\r\n",
 					"import pyspark.sql.functions as F\r\n",
 					"import collections\r\n",
@@ -270,18 +274,93 @@
 					"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
 					"df_batches = df.randomSplit([1.0]*num_batches, seed=42)\r\n",
 					"\r\n",
-					"output = []\r\n",
+					"from pyspark.sql.types import *\r\n",
+					"schema = StructType([\r\n",
+					"    StructField(\"id\",  LongType(), True),\r\n",
+					"    StructField(\"created_at\", TimestampType(), True),\r\n",
+					"    StructField(\"text\", StringType(), True),\r\n",
+					"    StructField(\"cleantext\", StringType(), True),\r\n",
+					"    StructField(\"lang\", StringType(), True),\r\n",
+					"    StructField(\"retweet_count\", IntegerType(), True),\r\n",
+					"    StructField(\"reply_count\", IntegerType(), True),\r\n",
+					"    StructField(\"like_count\", IntegerType(), True),\r\n",
+					"    StructField(\"quote_count\", IntegerType(), True),\r\n",
+					"    StructField(\"impression_count\", IntegerType(), True),\r\n",
+					"    StructField(\"topic\", ShortType(), True),\r\n",
+					"    StructField(\"topic_0_confidence\", FloatType(), True),\r\n",
+					"    StructField(\"topic_1_confidence\", FloatType(), True),\r\n",
+					"    StructField(\"topic_2_confidence\", FloatType(), True),\r\n",
+					"    StructField(\"topic_3_confidence\", FloatType(), True),\r\n",
+					"    StructField(\"topic_4_confidence\", FloatType(), True),\r\n",
+					"    StructField(\"sentiment\", StringType(), True),\r\n",
+					"    StructField(\"negative_score\", FloatType(), True),\r\n",
+					"    StructField(\"positive_score\", FloatType(), True),\r\n",
+					"    StructField(\"neutral_score\", FloatType(), True),\r\n",
+					"    StructField(\"mixed_score\", FloatType(), True)\r\n",
+					"])\r\n",
+					"\r\n",
+					"# create a DataFrame\r\n",
+					"sentiment_output_df =  spark.createDataFrame([], schema)\r\n",
 					"\r\n",
 					"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
 					"for i in range(num_batches):\r\n",
 					"    batch = df_batches[i].limit(batch_size)\r\n",
 					"    sent = (TextSentiment()\r\n",
 					"    .setLinkedService(linked_service_name)\r\n",
+					"    .setTextCol(\"cleantext\")\r\n",
 					"    .setOutputCol(\"sentiment\")\r\n",
 					"    .setErrorCol(\"error\"))\r\n",
 					"\r\n",
-					"    sent_batch_output = sent.transform(batch.select(\"text\"))\r\n",
+					"    sent_batch_output = sent.transform(batch)\r\n",
 					"    #display(sent_batch_output)\r\n",
+					"\r\n",
+					"    # Create arrays for each original column values\r\n",
+					"    id_values = []\r\n",
+					"    created_at_values = []\r\n",
+					"    text_values = []\r\n",
+					"    cleantext_values = []\r\n",
+					"    lang_values = []\r\n",
+					"    retweet_count_values = []\r\n",
+					"    reply_count_values = []\r\n",
+					"    like_count_values = []\r\n",
+					"    quote_count_values = []\r\n",
+					"    impression_count_values = []\r\n",
+					"    topicgroup_values = []\r\n",
+					"    topic0confidence_values = []\r\n",
+					"    topic1confidence_values = []\r\n",
+					"    topic2confidence_values = []\r\n",
+					"    topic3confidence_values = []\r\n",
+					"    topic4confidence_values = []\r\n",
+					"\r\n",
+					"\r\n",
+					"    # collect all rows of the batch DataFrame\r\n",
+					"    rows = batch.collect()\r\n",
+					"\r\n",
+					"    # iterate over rows and extract values from each column\r\n",
+					"    for row in rows:\r\n",
+					"        id_values.append(row[\"id\"])\r\n",
+					"        created_at_values.append(row[\"created_at\"])\r\n",
+					"        text_values.append(row[\"text\"])\r\n",
+					"        cleantext_values.append(row['cleantext'])\r\n",
+					"        lang_values.append(row[\"lang\"])\r\n",
+					"        retweet_count_values.append(row[\"retweet_count\"])\r\n",
+					"        reply_count_values.append(row[\"reply_count\"])\r\n",
+					"        like_count_values.append(row[\"like_count\"])\r\n",
+					"        quote_count_values.append(row[\"quote_count\"])\r\n",
+					"        impression_count_values.append(row[\"impression_count\"])\r\n",
+					"        topicgroup_values.append(row['topic'])\r\n",
+					"        topic0confidence_values.append(row['topic_0_confidence'])\r\n",
+					"        topic1confidence_values.append(row['topic_1_confidence'])\r\n",
+					"        topic2confidence_values.append(row['topic_2_confidence'])\r\n",
+					"        topic3confidence_values.append(row['topic_3_confidence'])\r\n",
+					"        topic4confidence_values.append(row['topic_4_confidence'])\r\n",
+					"\r\n",
+					"    # Create arrays for new column values\r\n",
+					"    batch_sentiments = []\r\n",
+					"    batch_negative_scores = []\r\n",
+					"    batch_positive_scores = []\r\n",
+					"    batch_neutral_scores = []\r\n",
+					"    batch_mixed_scores = []\r\n",
 					"\r\n",
 					"    # Extract the 'sentiment' column and convert it to JSON\r\n",
 					"    json_output = sent_batch_output.select(\"sentiment\").toJSON().collect()\r\n",
@@ -292,8 +371,66 @@
 					"    # Print the 'sentiment' field for each row\r\n",
 					"    for sentiment in sentiments:\r\n",
 					"        #print(sentiment)\r\n",
-					"        output.append(sentiment['document']['sentiment'])\r\n",
+					"        batch_sentiments.append(sentiment['document']['sentiment'])\r\n",
+					"        batch_negative_scores.append(sentiment['document']['confidenceScores'].get(\"negative\", 0.0))\r\n",
+					"        batch_positive_scores.append(sentiment['document']['confidenceScores'].get(\"positive\", 0.0))\r\n",
+					"        batch_neutral_scores.append(sentiment['document']['confidenceScores'].get(\"neutral\", 0.0))\r\n",
+					"        batch_mixed_scores.append(sentiment['document']['confidenceScores'].get(\"mixed\", 0.0))\r\n",
+					"    \r\n",
+					"    # create rows\r\n",
+					"    rows = [Row(id=id_values[i],\r\n",
+					"                created_at=created_at_values[i],\r\n",
+					"                text=text_values[i],\r\n",
+					"                cleanText = cleantext_values[i],\r\n",
+					"                lang=lang_values[i],\r\n",
+					"                retweet_count = retweet_count_values[i],\r\n",
+					"                reply_count=reply_count_values[i],\r\n",
+					"                like_count=like_count_values[i],\r\n",
+					"                quote_count=quote_count_values[i],\r\n",
+					"                impression_count = impression_count_values[i],\r\n",
+					"                topic = topicgroup_values[i],\r\n",
+					"                topic_0_confidence = topic0confidence_values[i],\r\n",
+					"                topic_1_confidence = topic1confidence_values[i],\r\n",
+					"                topic_2_confidence = topic2confidence_values[i],\r\n",
+					"                topic_3_confidence = topic3confidence_values[i],\r\n",
+					"                topic_4_confidence = topic4confidence_values[i],\r\n",
+					"                sentiment = batch_sentiments[i],\r\n",
+					"                negative_score = batch_negative_scores[i],\r\n",
+					"                positive_score = batch_positive_scores[i],\r\n",
+					"                neutral_score = batch_neutral_scores[i],\r\n",
+					"                mixed_score = batch_mixed_scores[i] )\r\n",
+					"            for i in range(len(id_values))]\r\n",
 					"\r\n",
+					"    # create batch dataframe\r\n",
+					"    batch_df = spark.createDataFrame(rows, schema)\r\n",
+					"\r\n",
+					"    # Append the batch results dataframe to the main output dataframe\r\n",
+					"    sentiment_output_df = sentiment_output_df.union(batch_df)\r\n",
+					"\r\n",
+					"print(batch_sentiments)\r\n",
+					"print(batch_negative_scores)\r\n",
+					"print(batch_positive_scores)\r\n",
+					"print(batch_neutral_scores)\r\n",
+					"print(batch_mixed_scores)\r\n",
+					"\r\n",
+					"display(sentiment_output_df)"
+				],
+				"execution_count": 20
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
 					"# Print all sentiments\r\n",
 					"print(output)\r\n",
 					"\r\n",
@@ -319,7 +456,7 @@
 					"sentiment_output = [{\"Sentiment\": most_common_value},{\"Count\": most_common_count},{\"Confidence Scores\":confidence_scores}]\r\n",
 					"print(sentiment_output)"
 				],
-				"execution_count": 28
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
