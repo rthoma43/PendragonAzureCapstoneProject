@@ -5,7 +5,7 @@
 			"name": "Explore"
 		},
 		"content": {
-			"query": "SELECT COUNT(*) FROM [dbo].[NATO_Tweets1];\n",
+			"query": "SELECT * FROM [Sent].[NATO_Sentiment];",
 			"metadata": {
 				"language": "sql"
 			},

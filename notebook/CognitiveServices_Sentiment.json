@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "9430f3a3-e53f-463a-abbd-ccd7f2048148"
+				"spark.autotune.trackingId": "2a2f23eb-3511-421d-9794-99cecc1e34b4"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 1
+				"execution_count": 21
 			},
 			{
 				"cell_type": "markdown",
@@ -118,7 +118,7 @@
 					"# select the first 100 records\r\n",
 					"df = df.limit(100)"
 				],
-				"execution_count": 2
+				"execution_count": 22
 			},
 			{
 				"cell_type": "code",
@@ -137,7 +137,7 @@
 				"source": [
 					"display(df)"
 				],
-				"execution_count": 6
+				"execution_count": 23
 			},
 			{
 				"cell_type": "markdown",
@@ -170,7 +170,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 3
+				"execution_count": 24
 			},
 			{
 				"cell_type": "markdown",
@@ -201,7 +201,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 4
+				"execution_count": 25
 			},
 			{
 				"cell_type": "code",
@@ -225,7 +225,7 @@
 					"output = sent.transform(df)\r\n",
 					"output.printSchema"
 				],
-				"execution_count": 9
+				"execution_count": 26
 			},
 			{
 				"cell_type": "markdown",
@@ -407,107 +407,9 @@
 					"    # Append the batch results dataframe to the main output dataframe\r\n",
 					"    sentiment_output_df = sentiment_output_df.union(batch_df)\r\n",
 					"\r\n",
-					"print(batch_sentiments)\r\n",
-					"print(batch_negative_scores)\r\n",
-					"print(batch_positive_scores)\r\n",
-					"print(batch_neutral_scores)\r\n",
-					"print(batch_mixed_scores)\r\n",
-					"\r\n",
 					"display(sentiment_output_df)"
 				],
-				"execution_count": 20
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# Print all sentiments\r\n",
-					"print(output)\r\n",
-					"\r\n",
-					"# Count the occurrences of each value in the array\r\n",
-					"counts = collections.Counter(output)\r\n",
-					"\r\n",
-					"# Get the most common value and its count\r\n",
-					"most_common = counts.most_common(1)[0]\r\n",
-					"most_common_value = most_common[0]\r\n",
-					"most_common_count = most_common[1]\r\n",
-					"\r\n",
-					"#print(\"Most common value:\", most_common_value)\r\n",
-					"#print(\"Count:\", most_common_count)\r\n",
-					"\r\n",
-					"confidence_scores = {}\r\n",
-					"\r\n",
-					"total_values = len(output)\r\n",
-					"\r\n",
-					"for value, count in counts.items():\r\n",
-					"    confidence_scores[value] = count / total_values\r\n",
-					"\r\n",
-					"#print(\"Confidence scores:\", confidence_scores)\r\n",
-					"sentiment_output = [{\"Sentiment\": most_common_value},{\"Count\": most_common_count},{\"Confidence Scores\":confidence_scores}]\r\n",
-					"print(sentiment_output)"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"## Put the results into a Spark Dataframe"
-				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"from pyspark.sql.types import *\r\n",
-					"schema = StructType([\r\n",
-					"    StructField(\"Sentiment\",  StringType(), True),\r\n",
-					"    StructField(\"Count\", IntegerType(), True),\r\n",
-					"    StructField(\"Confidence Score Negative\", FloatType(), True),\r\n",
-					"    StructField(\"Confidence Score Positive\", FloatType(), True),\r\n",
-					"    StructField(\"Confidence Score Neutral\", FloatType(), True),\r\n",
-					"    StructField(\"Confidence Score Mixed\", FloatType(), True)\r\n",
-					"])\r\n",
-					"\r\n",
-					"# create row from data\r\n",
-					"row_data = Row(\r\n",
-					"    Sentiment=most_common_value, \r\n",
-					"    Count=most_common_count, \r\n",
-					"    **{f\"Confidence Score {k.capitalize()}\": confidence_scores.get(k, 0.0) for k in ['negative', 'positive', 'neutral', 'mixed']}\r\n",
-					")\r\n",
-					"\r\n",
-					"sentiment_output_df = spark.createDataFrame([row_data], schema)\r\n",
-					"\r\n",
-					"display(sentiment_output_df)"
-				],
-				"execution_count": 29
+				"execution_count": 27
 			},
 			{
 				"cell_type": "markdown",
@@ -524,12 +426,27 @@
 					"~~~\r\n",
 					"CREATE TABLE [Sent].[NATO_Sentiment]\r\n",
 					"(\r\n",
-					"    [Sentiment] NVARCHAR(10) NULL,\r\n",
-					"    [Count] INT NULL,\r\n",
-					"    [Confidence Score Negative] REAL NULL,\r\n",
-					"    [Confidence Score Positive] REAL NULL,\r\n",
-					"    [Confidence Score Neutral] REAL NULL,\r\n",
-					"    [Confidence Score Mixed] REAL NULL\r\n",
+					"    [id] bigint  NULL,\r\n",
+					"\t[created_at] DATETIME2(7)  NULL,\r\n",
+					"\t[text] NVARCHAR(4000)  NULL,\r\n",
+					"\t[cleantext] NVARCHAR(4000)  NULL,\r\n",
+					"\t[lang] nvarchar(10)  NULL,\r\n",
+					"\t[retweet_count] INT  NULL,\r\n",
+					"\t[reply_count] INT  NULL,\r\n",
+					"\t[like_count] INT  NULL,\r\n",
+					"\t[quote_count] INT  NULL,\r\n",
+					"\t[impression_count] INT  NULL,\r\n",
+					"    [topic] SMALLINT NULL,\r\n",
+					"    [topic_0_confidence] REAL NULL,\r\n",
+					"    [topic_1_confidence] REAL NULL,\r\n",
+					"    [topic_2_confidence] REAL NULL,\r\n",
+					"    [topic_3_confidence] REAL NULL,\r\n",
+					"    [topic_4_confidence] REAL NULL,\r\n",
+					"    [sentiment] NVARCHAR(20) NULL,\r\n",
+					"    [negative_score] REAL NULL,\r\n",
+					"    [positive_score] REAL NULL,\r\n",
+					"    [neutral_score] REAL NULL,\r\n",
+					"    [mixed_score] REAL NULL\r\n",
 					")\r\n",
 					"\r\n",
 					"GO"
@@ -569,7 +486,7 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(\"SQLPoolTest.Sent.NATO_Sentiment\"))"
 				],
-				"execution_count": 30
+				"execution_count": 34
 			}
 		]
 	}
