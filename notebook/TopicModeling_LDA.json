@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "2033b3c9-184f-4946-ac71-a807de08ad55"
+				"spark.autotune.trackingId": "fd4e390a-bd7b-4ee3-b831-0918abfd51a9"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 157
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -105,7 +105,26 @@
 					"# select the first 100 records\r\n",
 					"df = df.limit(100)"
 				],
-				"execution_count": 158
+				"execution_count": 10
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(df)"
+				],
+				"execution_count": 17
 			},
 			{
 				"cell_type": "code",
@@ -121,18 +140,81 @@
 					}
 				},
 				"source": [
-					"from pyspark.sql.functions import regexp_replace\r\n",
+					"from pyspark.sql.functions import first\r\n",
+					"# select the first element of the 'col1' column\r\n",
+					"first_element = df.select(first('text')).collect()[0][0]\r\n",
 					"\r\n",
-					"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
-					"regex = r'@\\w+|&\\w+|https\\w+|#\\w+'\r\n",
+					"print(first_element)\r\n",
 					"\r\n",
-					"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
-					"df = df.withColumn(\"text\", regexp_replace(col(\"text\"), regex, ''))\r\n",
-					"\r\n",
-					"# Show the filtered DataFrame\r\n",
-					"#df.select(\"text\").show()"
+					"text = first_element.encode('ascii', 'ignore').decode('ascii')\r\n",
+					"print(text)"
 				],
-				"execution_count": 159
+				"execution_count": 23
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.sql.functions import udf, regexp_replace, lower\r\n",
+					"from pyspark.sql.types import StringType\r\n",
+					"import re\r\n",
+					"import nltk\r\n",
+					"nltk.download('stopwords')\r\n",
+					"from nltk.corpus import stopwords\r\n",
+					"\r\n",
+					"# define a user-defined function to preprocess the text\r\n",
+					"def preprocess_text(text):\r\n",
+					"    # remove URLs\r\n",
+					"    text = re.sub(r'http\\S+', '', text)\r\n",
+					"    # remove hashtags and mentions\r\n",
+					"    text = re.sub(r'[@#]\\S+', '', text)\r\n",
+					"    # remove emojis and other special characters\r\n",
+					"    text = text.encode('ascii', 'ignore').decode('ascii')\r\n",
+					"    # convert text to lowercase\r\n",
+					"    text = text.lower()\r\n",
+					"    # remove stop words\r\n",
+					"    stop_words = set(stopwords.words('english'))\r\n",
+					"    words = text.split()\r\n",
+					"    words = [word for word in words if word not in stop_words]\r\n",
+					"    text = ' '.join(words)\r\n",
+					"    return text\r\n",
+					"\r\n",
+					"# define a user-defined function to apply the preprocessing to a DataFrame column\r\n",
+					"preprocess_text_udf = udf(preprocess_text, StringType())\r\n",
+					"\r\n",
+					"# apply the preprocessing to a DataFrame column\r\n",
+					"df = df.withColumn('cleanText', preprocess_text_udf('text'))\r\n",
+					""
+				],
+				"execution_count": 24
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"display(df)"
+				],
+				"execution_count": 26
 			},
 			{
 				"cell_type": "code",
@@ -173,9 +255,9 @@
 					"# join with original DataFrame\r\n",
 					"df_result = df.join(df_topics, 'id')\r\n",
 					"\r\n",
-					"#display(df_result)"
+					"display(df_result)"
 				],
-				"execution_count": 160
+				"execution_count": 12
 			},
 			{
 				"cell_type": "code",
@@ -231,7 +313,7 @@
 					"#print(topic3confidence)\r\n",
 					"#print(topic4confidence)"
 				],
-				"execution_count": 162
+				"execution_count": 13
 			},
 			{
 				"cell_type": "code",
@@ -273,7 +355,7 @@
 					"    quote_count_values.append(row[\"quote_count\"])\r\n",
 					"    impression_count_values.append(row[\"impression_count\"])"
 				],
-				"execution_count": 163
+				"execution_count": 14
 			},
 			{
 				"cell_type": "code",
@@ -297,7 +379,7 @@
 					"topic3confidence = [float(i) for i in topic3confidence]\r\n",
 					"topic4confidence = [float(i) for i in topic4confidence]"
 				],
-				"execution_count": 164
+				"execution_count": 15
 			},
 			{
 				"cell_type": "code",
@@ -310,7 +392,8 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
 					"from pyspark.sql.types import *\r\n",
@@ -354,10 +437,10 @@
 					"final_topic_df = spark.createDataFrame(rows, schema)\r\n",
 					"\r\n",
 					"# show the DataFrame\r\n",
-					"#display(final_topic_df)\r\n",
+					"display(final_topic_df)\r\n",
 					""
 				],
-				"execution_count": 167
+				"execution_count": 16
 			},
 			{
 				"cell_type": "markdown",
@@ -428,7 +511,7 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(\"SQLPoolTest.Topic.NATO_Topics\"))"
 				],
-				"execution_count": 170
+				"execution_count": null
 			}
 		]
 	}
