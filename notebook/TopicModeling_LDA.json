@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "a60338e1-f9a4-45c0-bbe5-d1dc1167fd8d"
+				"spark.autotune.trackingId": "7bbf9545-416f-4779-adf3-c48025f1ed57"
 			}
 		},
 		"metadata": {
@@ -82,6 +82,19 @@
 				"execution_count": 1
 			},
 			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Sort by created_at and sample if needed"
+				]
+			},
+			{
 				"cell_type": "code",
 				"metadata": {
 					"jupyter": {
@@ -104,10 +117,23 @@
 					"df = df.orderBy(desc(\"created_at\"))\r\n",
 					"\r\n",
 					"# select the first 100 records\r\n",
-					"df = df.limit(100)\r\n",
-					"display(df)"
+					"#df = df.limit(100)"
 				],
 				"execution_count": 2
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Clean data\r\n",
+					"Remove special characters, URLs, hashtags, mentions, emojis, and stopwords"
+				]
 			},
 			{
 				"cell_type": "code",
@@ -164,9 +190,25 @@
 					"\r\n",
 					"# Apply the UDF to the 'text' column of the dataframe and store the result in a new column named 'cleanText'\r\n",
 					"df = df.withColumn('cleanText', clean_text_udf('text'))\r\n",
-					"display(df)"
+					"#display(df)"
 				],
 				"execution_count": 7
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Perform Topic Modeling\r\n",
+					"## Pyspark ML Clustering LDA (Latent Dirichlet Allocation)\r\n",
+					"https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.clustering.LDA.html\r\n",
+					"## 5 Topics"
+				]
 			},
 			{
 				"cell_type": "code",
@@ -207,9 +249,22 @@
 					"# join with original DataFrame\r\n",
 					"df_result = df.join(df_topics, 'id')\r\n",
 					"\r\n",
-					"display(df_result)"
+					"#display(df_result)"
 				],
 				"execution_count": 8
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Parse topicDistribution output column for the topic group and confidence values"
+				]
 			},
 			{
 				"cell_type": "code",
@@ -268,6 +323,19 @@
 				"execution_count": 9
 			},
 			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Collect the original dataframe column values"
+				]
+			},
+			{
 				"cell_type": "code",
 				"metadata": {
 					"jupyter": {
@@ -312,6 +380,19 @@
 				"execution_count": 14
 			},
 			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Convert new values to proper int of float data types"
+				]
+			},
+			{
 				"cell_type": "code",
 				"metadata": {
 					"jupyter": {
@@ -334,6 +415,19 @@
 					"topic4confidence = [float(i) for i in topic4confidence]"
 				],
 				"execution_count": 11
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Create a final output dataframe by mapping the values to their proper schema "
+				]
 			},
 			{
 				"cell_type": "code",
@@ -393,8 +487,7 @@
 					"final_topic_df = spark.createDataFrame(rows, schema)\r\n",
 					"\r\n",
 					"# show the DataFrame\r\n",
-					"display(final_topic_df)\r\n",
-					""
+					"#display(final_topic_df)"
 				],
 				"execution_count": 16
 			},
