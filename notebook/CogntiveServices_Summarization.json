@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "7f79fa35-e107-4346-a6d8-9238cc3426e0"
+				"spark.autotune.trackingId": "ad026822-6b18-4d08-98dd-2a11dcc928d3"
 			}
 		},
 		"metadata": {
@@ -131,6 +131,337 @@
 					}
 				},
 				"source": [
+					"from pyspark.sql.functions import *\r\n",
+					"from pyspark.sql.types import StringType\r\n",
+					"import re\r\n",
+					"from azure.ai.textanalytics import TextAnalyticsClient\r\n",
+					"from azure.core.credentials import AzureKeyCredential\r\n",
+					"from azure.core.credentials import AzureKeyCredential\r\n",
+					"from azure.ai.textanalytics import (TextAnalyticsClient,ExtractSummaryAction) "
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"key = \"a3028b5f7e7a462d8a3381e49b9c976d\"\r\n",
+					"endpoint = \"https://pendragon-language.cognitiveservices.azure.com/\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"!pip install openai\r\n",
+					"import openai\r\n",
+					"\r\n",
+					"openai.api_type = \"azure\"\r\n",
+					"openai.api_base = \"https://querystructureddata.openai.azure.com/\"\r\n",
+					"openai.api_version = \"2022-12-01\"\r\n",
+					"openai.api_key = \"c607bf2bba454302b492ba369efe54f6\""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Define a UDF (user-defined function) to apply the regular expressions and stop words removal to each row of the dataframe\r\n",
+					"def clean_text(text):\r\n",
+					"    # Remove URLs, hashtags, mentions, and emojis using regular expressions\r\n",
+					"    text = re.sub(url_regex, '', text)\r\n",
+					"    text = re.sub(hashtag_regex, '', text)\r\n",
+					"    text = re.sub(mention_regex, '', text)\r\n",
+					"    text = re.sub(emoji_regex, '', text)\r\n",
+					"\r\n",
+					"    # Remove special characters\r\n",
+					"    text = re.sub(special_chars_regex, '', text)\r\n",
+					"\r\n",
+					"    return text"
+				],
+				"execution_count": 58
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Define regular expressions for special characters, URLs, hashtags, mentions, and emojis\r\n",
+					"special_chars_regex = r'[^\\w\\s]'\r\n",
+					"url_regex = r'https?://\\S+'\r\n",
+					"hashtag_regex = r'#\\w+'\r\n",
+					"mention_regex = r'@\\w+'\r\n",
+					"emoji_regex = r'[^\\w\\s\\ufe0f]+'\r\n",
+					"\r\n",
+					"# Define the UDF as a Spark SQL function\r\n",
+					"clean_text_udf = udf(clean_text, StringType())"
+				],
+				"execution_count": 59
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"def split_into_batches(input_string, max_chars_per_batch):\r\n",
+					"    current_batch = \"\"\r\n",
+					"    result = []\r\n",
+					"    for c in input_string:\r\n",
+					"        if len(current_batch) + 1 > max_chars_per_batch:\r\n",
+					"            result.append(current_batch)\r\n",
+					"            current_batch = c\r\n",
+					"        else:\r\n",
+					"            current_batch += c\r\n",
+					"    if current_batch:\r\n",
+					"        result.append(current_batch)\r\n",
+					"    return result"
+				],
+				"execution_count": 60
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Authenticate the client using your key and endpoint \r\n",
+					"def authenticate_client():\r\n",
+					"    ta_credential = AzureKeyCredential(key)\r\n",
+					"    text_analytics_client = TextAnalyticsClient(\r\n",
+					"            endpoint=endpoint, \r\n",
+					"            credential=ta_credential)\r\n",
+					"    return text_analytics_client\r\n",
+					"\r\n",
+					"client = authenticate_client()"
+				],
+				"execution_count": 61
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Example method for summarizing text\r\n",
+					"def sample_extractive_summarization(client,doc):\r\n",
+					"\r\n",
+					"    document = doc\r\n",
+					"\r\n",
+					"    poller = client.begin_analyze_actions(\r\n",
+					"        document,\r\n",
+					"        actions=[\r\n",
+					"            ExtractSummaryAction(max_sentence_count=20)\r\n",
+					"        ],\r\n",
+					"    )\r\n",
+					"    document_results = poller.result()\r\n",
+					"    for result in document_results:\r\n",
+					"        extract_summary_result = result[0]  # first document, first result\r\n",
+					"        #if extract_summary_result.is_error:\r\n",
+					"            #print(\"...Is an error with code '{}' and message '{}'\".format(\r\n",
+					"            #    extract_summary_result.code, extract_summary_result.message\r\n",
+					"            #))\r\n",
+					"        #else:\r\n",
+					"            #print(\"Summary extracted: \\n{}\".format(\r\n",
+					"            #    \" \".join([sentence.text for sentence in extract_summary_result.sentences]))\r\n",
+					"            #)\r\n",
+					"    return(\" \".join([sentence.text for sentence in extract_summary_result.sentences]))"
+				],
+				"execution_count": 62
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"schema = StructType([\r\n",
+					"    StructField(\"topic\", ShortType(), True),\r\n",
+					"    StructField(\"abstractive_summary\", StringType(), True)\r\n",
+					"    ])"
+				],
+				"execution_count": 63
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Cognitive Services Extractive to OpenAI Abstractive Summarization"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"def Abstractive_Summarization(dataframe, topic):\r\n",
+					"    # Apply the UDF to the 'text' column of the dataframe and store the result in a new column named 'cleanText'\r\n",
+					"    df = dataframe.withColumn('cleanText', clean_text_udf('text'))\r\n",
+					"    \r\n",
+					"    df = df.withColumn('text_trimmed', regexp_replace(df['cleanText'], '\\s{2,}', ' '))\r\n",
+					"    df = df.withColumn('text_trimmed', trim(df['text_trimmed']))\r\n",
+					"    text_col = df.select('text_trimmed')\r\n",
+					"    text_list = text_col.rdd.map(lambda row: row[0]).collect()\r\n",
+					"    result = \" \".join([text + \".\" for text in text_list])\r\n",
+					"    document = [result]\r\n",
+					"\r\n",
+					"    input_string = document[0]\r\n",
+					"    max_chars_per_batch = 125000\r\n",
+					"    result = split_into_batches(input_string, max_chars_per_batch)\r\n",
+					"    #print(len(result[0]))\r\n",
+					"\r\n",
+					"\r\n",
+					"    ex_summaries = []\r\n",
+					"    for each in result:\r\n",
+					"        ex_summary = sample_extractive_summarization(client,[each])\r\n",
+					"        ex_summaries.append([ex_summary])\r\n",
+					"\r\n",
+					"    ab_summaries = []\r\n",
+					"\r\n",
+					"    for each in ex_summaries:\r\n",
+					"        #print(each)\r\n",
+					"        p = 'Provide a summary of the text below that captures the main idea. ' + each[0]\r\n",
+					"\r\n",
+					"        response = openai.Completion.create(\r\n",
+					"        engine=\"SumTest\",\r\n",
+					"        prompt = p,\r\n",
+					"        temperature=0.3,\r\n",
+					"        max_tokens=250,\r\n",
+					"        top_p=1,\r\n",
+					"        frequency_penalty=0,\r\n",
+					"        presence_penalty=0,\r\n",
+					"        best_of=1,\r\n",
+					"        stop=None)\r\n",
+					"\r\n",
+					"        #print(response['choices'][0]['text'])\r\n",
+					"        ab_summaries.append(response['choices'][0]['text'])\r\n",
+					"\r\n",
+					"    #print(ab_summaries)\r\n",
+					"\r\n",
+					"    p = 'Provide a summary of the text below that captures the main idea. ' + ''.join(ab_summaries)\r\n",
+					"\r\n",
+					"    response = openai.Completion.create(\r\n",
+					"    engine=\"SumTest\",\r\n",
+					"    prompt = p,\r\n",
+					"    temperature=0.3,\r\n",
+					"    max_tokens=250,\r\n",
+					"    top_p=1,\r\n",
+					"    frequency_penalty=0,\r\n",
+					"    presence_penalty=0,\r\n",
+					"    best_of=1,\r\n",
+					"    stop=None)\r\n",
+					"\r\n",
+					"    final_ab_summarization = response['choices'][0]['text']\r\n",
+					"    #print(response['choices'][0]['text'])\r\n",
+					"\r\n",
+					"    # create a DataFrame\r\n",
+					"    return(spark.createDataFrame([(topic, final_ab_summarization)], schema))\r\n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
 					"topic = 0\r\n",
 					"df_topic0 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 0\")\r\n",
 					"df_topic0.count()"
@@ -148,14 +479,28 @@
 						"transient": {
 							"deleting": false
 						}
+					}
+				},
+				"source": [
+					"display(Abstractive_Summarization(dataframe = df_topic0, topic=0)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
 					},
 					"collapsed": false
 				},
 				"source": [
-					"import re\r\n",
-					"from pyspark.sql.functions import udf\r\n",
-					"from pyspark.sql.types import StringType\r\n",
-					"\r\n",
 					"# Define regular expressions for special characters, URLs, hashtags, mentions, and emojis\r\n",
 					"special_chars_regex = r'[^\\w\\s]'\r\n",
 					"url_regex = r'https?://\\S+'\r\n",
@@ -178,8 +523,6 @@
 					"    return text\r\n",
 					"\r\n",
 					"# Define the UDF as a Spark SQL function\r\n",
-					"from pyspark.sql.functions import udf\r\n",
-					"from pyspark.sql.types import StringType\r\n",
 					"clean_text_udf = udf(clean_text, StringType())\r\n",
 					"\r\n",
 					"# Apply the UDF to the 'text' column of the dataframe and store the result in a new column named 'cleanText'\r\n",
@@ -203,9 +546,6 @@
 					"collapsed": false
 				},
 				"source": [
-					"from pyspark.sql.functions import trim\r\n",
-					"from pyspark.sql.functions import regexp_replace\r\n",
-					"\r\n",
 					"df_topic0 = df_topic0.withColumn('text_trimmed', regexp_replace(df_topic0['cleanText'], '\\s{2,}', ' '))\r\n",
 					"df_topic0 = df_topic0.withColumn('text_trimmed', trim(df_topic0['text_trimmed']))\r\n",
 					"text_col = df_topic0.select('text_trimmed')\r\n",
@@ -264,12 +604,6 @@
 					}
 				},
 				"source": [
-					"key = \"a3028b5f7e7a462d8a3381e49b9c976d\"\r\n",
-					"endpoint = \"https://pendragon-language.cognitiveservices.azure.com/\"\r\n",
-					"\r\n",
-					"from azure.ai.textanalytics import TextAnalyticsClient\r\n",
-					"from azure.core.credentials import AzureKeyCredential\r\n",
-					"\r\n",
 					"# Authenticate the client using your key and endpoint \r\n",
 					"def authenticate_client():\r\n",
 					"    ta_credential = AzureKeyCredential(key)\r\n",
@@ -282,11 +616,6 @@
 					"\r\n",
 					"# Example method for summarizing text\r\n",
 					"def sample_extractive_summarization(client,doc):\r\n",
-					"    from azure.core.credentials import AzureKeyCredential\r\n",
-					"    from azure.ai.textanalytics import (\r\n",
-					"        TextAnalyticsClient,\r\n",
-					"        ExtractSummaryAction\r\n",
-					"    ) \r\n",
 					"\r\n",
 					"    document = doc\r\n",
 					"\r\n",
@@ -333,30 +662,6 @@
 					"#print(ex_summaries)"
 				],
 				"execution_count": 34
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"!pip install openai\r\n",
-					"import openai\r\n",
-					"\r\n",
-					"openai.api_type = \"azure\"\r\n",
-					"openai.api_base = \"https://querystructureddata.openai.azure.com/\"\r\n",
-					"openai.api_version = \"2022-12-01\"\r\n",
-					"openai.api_key = \"c607bf2bba454302b492ba369efe54f6\""
-				],
-				"execution_count": 35
 			},
 			{
 				"cell_type": "code",
