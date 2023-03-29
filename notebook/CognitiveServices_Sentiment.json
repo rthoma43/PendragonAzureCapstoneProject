@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "8eb1c48d-00aa-4786-8077-2a282dc96f8e"
+				"spark.autotune.trackingId": "9430f3a3-e53f-463a-abbd-ccd7f2048148"
 			}
 		},
 		"metadata": {
@@ -75,7 +75,7 @@
 					"                     # Defaults to storage path defined in the runtime configurations\r\n",
 					"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
 					"                     # query from which data will be read\r\n",
-					"                     .option(Constants.QUERY, \"select * from Topic.NATO_Topics where topic = 0\")\r\n",
+					"                     .option(Constants.QUERY, \"select * from Topic.NATO_Topics\")\r\n",
 					"                     .synapsesql()\r\n",
 					")"
 				],
