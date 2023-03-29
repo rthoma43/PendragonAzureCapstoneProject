@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "e8cb2f67-41ee-44d7-91c3-9f359de72eb6"
+				"spark.autotune.trackingId": "35f221c2-df44-4346-831e-e0fa04e651d3"
 			}
 		},
 		"metadata": {
@@ -92,7 +92,8 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
 					"# Select sample size for testing\r\n",
@@ -103,7 +104,8 @@
 					"df = df.orderBy(desc(\"created_at\"))\r\n",
 					"\r\n",
 					"# select the first 100 records\r\n",
-					"df = df.limit(100)"
+					"df = df.limit(100)\r\n",
+					"display(df)"
 				],
 				"execution_count": 2
 			},
@@ -118,120 +120,53 @@
 						"transient": {
 							"deleting": false
 						}
-					}
-				},
-				"source": [
-					"import pyspark.sql.functions as F\r\n",
-					"import pyspark.sql.types as T\r\n",
-					"\r\n",
-					"# define a UDF to clean the text\r\n",
-					"def clean_text(text):\r\n",
-					"    # remove URLs\r\n",
-					"    text = re.sub(r'http\\S+', '', text)\r\n",
-					"    # remove hashtags and mentions\r\n",
-					"    text = re.sub(r'@\\w+|#\\w+', '', text)\r\n",
-					"    # remove special characters and emojis\r\n",
-					"    text = re.sub(r'[^\\w\\s]+|[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]', '', text)\r\n",
-					"    # convert to lowercase\r\n",
-					"    text = text.lower()\r\n",
-					"    # remove stop words\r\n",
-					"    words = text.split()\r\n",
-					"    words = [word for word in words if word not in stop_words]\r\n",
-					"    # join the words back into a sentence\r\n",
-					"    text = ' '.join(words)\r\n",
-					"    return text\r\n",
-					"\r\n",
-					"# create a UDF from the clean_text function\r\n",
-					"clean_text_udf = F.udf(clean_text, T.StringType())\r\n",
-					"\r\n",
-					"# apply the UDF to the text column and store the result in a new column called cleanText\r\n",
-					"df = df.withColumn('cleanText', clean_text_udf('text'))\r\n",
-					""
-				],
-				"execution_count": 4
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
 					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
+					"collapsed": false
 				},
 				"source": [
-					"display(df)"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"from pyspark.sql.functions import udf, regexp_replace, lower\r\n",
-					"from pyspark.sql.types import StringType\r\n",
 					"import re\r\n",
-					"import nltk\r\n",
-					"#nltk.download('stopwords')\r\n",
-					"from nltk.corpus import stopwords\r\n",
+					"from pyspark.ml.feature import StopWordsRemover\r\n",
+					"from pyspark.sql.functions import udf\r\n",
+					"from pyspark.sql.types import StringType\r\n",
 					"\r\n",
-					"# define a user-defined function to preprocess the text\r\n",
-					"def preprocess_text(text):\r\n",
-					"    # remove URLs\r\n",
-					"    text = re.sub(r'http\\S+', '', text)\r\n",
-					"    # remove hashtags and mentions\r\n",
-					"    text = re.sub(r'[@#]\\S+', '', text)\r\n",
-					"    # remove emojis and other special characters\r\n",
-					"    text = text.encode('ascii', 'ignore').decode('ascii')\r\n",
-					"    # convert text to lowercase\r\n",
-					"    text = text.lower()\r\n",
-					"    # remove stop words\r\n",
-					"    stop_words = set(stopwords.words('english'))\r\n",
+					"# Define regular expressions for special characters, URLs, hashtags, mentions, and emojis\r\n",
+					"special_chars_regex = r'[^\\w\\s]'\r\n",
+					"url_regex = r'https?://\\S+'\r\n",
+					"hashtag_regex = r'#\\w+'\r\n",
+					"mention_regex = r'@\\w+'\r\n",
+					"emoji_regex = r'[^\\w\\s\\ufe0f]+'\r\n",
+					"\r\n",
+					"# Define a list of stop words\r\n",
+					"stop_words = StopWordsRemover().getStopWords()\r\n",
+					"\r\n",
+					"# Define a UDF (user-defined function) to apply the regular expressions and stop words removal to each row of the dataframe\r\n",
+					"def clean_text(text):\r\n",
+					"    # Remove URLs, hashtags, mentions, and emojis using regular expressions\r\n",
+					"    text = re.sub(url_regex, '', text)\r\n",
+					"    text = re.sub(hashtag_regex, '', text)\r\n",
+					"    text = re.sub(mention_regex, '', text)\r\n",
+					"    text = re.sub(emoji_regex, '', text)\r\n",
+					"\r\n",
+					"    # Remove special characters and convert to lowercase\r\n",
+					"    text = re.sub(special_chars_regex, '', text).lower()\r\n",
+					"\r\n",
+					"    # Remove stop words\r\n",
 					"    words = text.split()\r\n",
-					"    words = [word for word in words if word not in stop_words]\r\n",
+					"    words = [w for w in words if w not in stop_words]\r\n",
 					"    text = ' '.join(words)\r\n",
+					"\r\n",
 					"    return text\r\n",
 					"\r\n",
-					"# define a user-defined function to apply the preprocessing to a DataFrame column\r\n",
-					"preprocess_text_udf = udf(preprocess_text, StringType())\r\n",
+					"# Define the UDF as a Spark SQL function\r\n",
+					"from pyspark.sql.functions import udf\r\n",
+					"from pyspark.sql.types import StringType\r\n",
+					"clean_text_udf = udf(clean_text, StringType())\r\n",
 					"\r\n",
-					"# apply the preprocessing to a DataFrame column\r\n",
-					"df = df.withColumn('cleanText', preprocess_text_udf('text'))\r\n",
-					""
-				],
-				"execution_count": 3
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
+					"# Apply the UDF to the 'text' column of the dataframe and store the result in a new column named 'cleanText'\r\n",
+					"df = df.withColumn('cleanText', clean_text_udf('text'))\r\n",
 					"display(df)"
 				],
-				"execution_count": 26
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
@@ -252,7 +187,7 @@
 					"from pyspark.ml.clustering import LDA\r\n",
 					"\r\n",
 					"# tokenize text\r\n",
-					"tokenizer = Tokenizer(inputCol='text', outputCol='tokens')\r\n",
+					"tokenizer = Tokenizer(inputCol='cleanText', outputCol='tokens')\r\n",
 					"df_tokens = tokenizer.transform(df)\r\n",
 					"\r\n",
 					"# create document-term matrix\r\n",
@@ -274,7 +209,7 @@
 					"\r\n",
 					"display(df_result)"
 				],
-				"execution_count": 12
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
@@ -330,7 +265,7 @@
 					"#print(topic3confidence)\r\n",
 					"#print(topic4confidence)"
 				],
-				"execution_count": 13
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -372,7 +307,7 @@
 					"    quote_count_values.append(row[\"quote_count\"])\r\n",
 					"    impression_count_values.append(row[\"impression_count\"])"
 				],
-				"execution_count": 14
+				"execution_count": 10
 			},
 			{
 				"cell_type": "code",
@@ -396,7 +331,7 @@
 					"topic3confidence = [float(i) for i in topic3confidence]\r\n",
 					"topic4confidence = [float(i) for i in topic4confidence]"
 				],
-				"execution_count": 15
+				"execution_count": 11
 			},
 			{
 				"cell_type": "code",
@@ -457,7 +392,7 @@
 					"display(final_topic_df)\r\n",
 					""
 				],
-				"execution_count": 16
+				"execution_count": 12
 			},
 			{
 				"cell_type": "markdown",
