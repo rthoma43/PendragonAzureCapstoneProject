@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "c9dcd477-7ed1-48b7-a0e4-9c9737aecdcb"
+				"spark.autotune.trackingId": "e9b8b2d6-e49d-455b-b8fb-84961629db41"
 			}
 		},
 		"metadata": {
@@ -573,6 +573,43 @@
 				"execution_count": null
 			},
 			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"NameEntity_df = topic0_NER.union(topic1_NER).union(topic2_NER)"
+				],
+				"execution_count": 100
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(NameEntity_df)"
+				],
+				"execution_count": 101
+			},
+			{
 				"cell_type": "markdown",
 				"metadata": {
 					"nteract": {
@@ -616,7 +653,7 @@
 					"\r\n",
 					"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
 					"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
-					"(output_df.write\r\n",
+					"(NameEntity_df.write\r\n",
 					" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
 					" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
 					" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
@@ -629,7 +666,7 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(\"SQLPoolTest.NER.NATO_NER\"))"
 				],
-				"execution_count": 16
+				"execution_count": 102
 			}
 		]
 	}

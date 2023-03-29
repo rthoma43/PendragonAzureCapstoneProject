@@ -5,7 +5,7 @@
 			"name": "Explore"
 		},
 		"content": {
-			"query": "drop TABLE [NER].[NATO_NER];",
+			"query": "SELECT * FROM [NER].[NATO_NER];",
 			"metadata": {
 				"language": "sql"
 			},
