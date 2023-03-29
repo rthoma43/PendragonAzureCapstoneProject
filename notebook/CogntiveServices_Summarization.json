@@ -1,0 +1,131 @@
+{
+	"name": "CogntiveServices_Summarization",
+	"properties": {
+		"folder": {
+			"name": "NLP"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "SparkPoolTest",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "112g",
+			"driverCores": 16,
+			"executorMemory": "112g",
+			"executorCores": 16,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "0aeebe40-5f54-4377-9a3a-397c73c5bcdd"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolTest",
+				"name": "SparkPoolTest",
+				"type": "Spark",
+				"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolTest",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.3",
+				"nodeCount": 3,
+				"cores": 16,
+				"memory": 112,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"pip install azure-ai-textanalytics==5.3.0b1"
+				],
+				"execution_count": 1
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"key = \"a3028b5f7e7a462d8a3381e49b9c976d\"\r\n",
+					"endpoint = \"https://pendragon-language.cognitiveservices.azure.com/\"\r\n",
+					"\r\n",
+					"from azure.ai.textanalytics import TextAnalyticsClient\r\n",
+					"from azure.core.credentials import AzureKeyCredential\r\n",
+					"\r\n",
+					"# Authenticate the client using your key and endpoint \r\n",
+					"def authenticate_client():\r\n",
+					"    ta_credential = AzureKeyCredential(key)\r\n",
+					"    text_analytics_client = TextAnalyticsClient(\r\n",
+					"            endpoint=endpoint, \r\n",
+					"            credential=ta_credential)\r\n",
+					"    return text_analytics_client\r\n",
+					"\r\n",
+					"client = authenticate_client()\r\n",
+					"\r\n",
+					"# Example method for summarizing text\r\n",
+					"def sample_extractive_summarization(client):\r\n",
+					"    from azure.core.credentials import AzureKeyCredential\r\n",
+					"    from azure.ai.textanalytics import (\r\n",
+					"        TextAnalyticsClient,\r\n",
+					"        ExtractSummaryAction\r\n",
+					"    ) \r\n",
+					"\r\n",
+					"    document = [\r\n",
+					"        \"The extractive summarization feature uses natural language processing techniques to locate key sentences in an unstructured text document. \"\r\n",
+					"        \"These sentences collectively convey the main idea of the document. This feature is provided as an API for developers. \" \r\n",
+					"        \"They can use it to build intelligent solutions based on the relevant information extracted to support various use cases. \"\r\n",
+					"        \"In the public preview, extractive summarization supports several languages. It is based on pretrained multilingual transformer models, part of our quest for holistic representations. \"\r\n",
+					"        \"It draws its strength from transfer learning across monolingual and harness the shared nature of languages to produce models of improved quality and efficiency. \"\r\n",
+					"    ]\r\n",
+					"\r\n",
+					"    poller = client.begin_analyze_actions(\r\n",
+					"        document,\r\n",
+					"        actions=[\r\n",
+					"            ExtractSummaryAction(max_sentence_count=4)\r\n",
+					"        ],\r\n",
+					"    )\r\n",
+					"    document_results = poller.result()\r\n",
+					"    for result in document_results:\r\n",
+					"        extract_summary_result = result[0]  # first document, first result\r\n",
+					"        if extract_summary_result.is_error:\r\n",
+					"            print(\"...Is an error with code '{}' and message '{}'\".format(\r\n",
+					"                extract_summary_result.code, extract_summary_result.message\r\n",
+					"            ))\r\n",
+					"        else:\r\n",
+					"            print(\"Summary extracted: \\n{}\".format(\r\n",
+					"                \" \".join([sentence.text for sentence in extract_summary_result.sentences]))\r\n",
+					"            )\r\n",
+					"\r\n",
+					"sample_extractive_summarization(client)"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}

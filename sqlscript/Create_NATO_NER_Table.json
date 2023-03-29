@@ -5,7 +5,7 @@
 			"name": "Create_Tables"
 		},
 		"content": {
-			"query": "CREATE TABLE [NER].[NATO_NER]\n(\n    [entity_text] NVARCHAR(100) NULL,\n    [entity_category] NVARCHAR(100) NULL\n)\n\nGO",
+			"query": "CREATE TABLE [NER].[NATO_NER]\n(\n    [entity_text] NVARCHAR(100) NULL,\n    [entity_category] NVARCHAR(100) NULL,\n    [topic] INT NULL\n)\n\nGO",
 			"metadata": {
 				"language": "sql"
 			},

@@ -5,7 +5,7 @@
 			"name": "Explore"
 		},
 		"content": {
-			"query": "SELECT * FROM [Sent].[NATO_Sentiment];",
+			"query": "drop TABLE [NER].[NATO_NER];",
 			"metadata": {
 				"language": "sql"
 			},
