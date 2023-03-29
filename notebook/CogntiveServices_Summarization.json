@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "6d2989f4-e9ed-4f8f-b3f6-f3d69244d692"
+				"spark.autotune.trackingId": "67ebfedf-230f-46af-8775-b280375b56c2"
 			}
 		},
 		"metadata": {
@@ -56,7 +56,7 @@
 				"source": [
 					"pip install azure-ai-textanalytics==5.3.0b1"
 				],
-				"execution_count": 77
+				"execution_count": 1
 			},
 			{
 				"cell_type": "code",
@@ -77,7 +77,7 @@
 					"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 78
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -115,7 +115,7 @@
 					"    )\r\n",
 					"    return(df)"
 				],
-				"execution_count": 79
+				"execution_count": 3
 			},
 			{
 				"cell_type": "code",
@@ -131,10 +131,10 @@
 					}
 				},
 				"source": [
-					"df_topic0 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment\")\r\n",
+					"df_topic0 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 0\")\r\n",
 					"df_topic0.count()"
 				],
-				"execution_count": 80
+				"execution_count": 4
 			},
 			{
 				"cell_type": "code",
@@ -152,7 +152,6 @@
 				},
 				"source": [
 					"import re\r\n",
-					"from pyspark.ml.feature import StopWordsRemover\r\n",
 					"from pyspark.sql.functions import udf\r\n",
 					"from pyspark.sql.types import StringType\r\n",
 					"\r\n",
@@ -186,7 +185,7 @@
 					"df_topic0 = df_topic0.withColumn('cleanText', clean_text_udf('text'))\r\n",
 					"display(df_topic0)"
 				],
-				"execution_count": 81
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -213,9 +212,9 @@
 					"result = \" \".join([text + \".\" for text in text_list])\r\n",
 					"document = [result]\r\n",
 					"\r\n",
-					"print(document)"
+					"#print(document)"
 				],
-				"execution_count": 82
+				"execution_count": 6
 			},
 			{
 				"cell_type": "code",
@@ -246,10 +245,9 @@
 					"input_string = document[0]\r\n",
 					"max_chars_per_batch = 125000\r\n",
 					"result = split_into_batches(input_string, max_chars_per_batch)\r\n",
-					"print(len(result[0]))\r\n",
-					""
+					"print(len(result[0]))"
 				],
-				"execution_count": 102
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
@@ -310,7 +308,7 @@
 					"            #)\r\n",
 					"    return(\" \".join([sentence.text for sentence in extract_summary_result.sentences]))"
 				],
-				"execution_count": 110
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
@@ -331,9 +329,9 @@
 					"    ex_summary = sample_extractive_summarization(client,[each])\r\n",
 					"    ex_summaries.append([ex_summary])\r\n",
 					"    #print(ex_summary)\r\n",
-					"print(ex_summaries)"
+					"#print(ex_summaries)"
 				],
-				"execution_count": 114
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -352,13 +350,12 @@
 					"!pip install openai\r\n",
 					"import openai\r\n",
 					"\r\n",
-					"\r\n",
 					"openai.api_type = \"azure\"\r\n",
 					"openai.api_base = \"https://querystructureddata.openai.azure.com/\"\r\n",
 					"openai.api_version = \"2022-12-01\"\r\n",
 					"openai.api_key = \"c607bf2bba454302b492ba369efe54f6\""
 				],
-				"execution_count": null
+				"execution_count": 10
 			},
 			{
 				"cell_type": "code",
@@ -374,8 +371,11 @@
 					}
 				},
 				"source": [
+					"ab_summaries = []\r\n",
+					"\r\n",
 					"for each in ex_summaries:\r\n",
-					"    p = 'Provide a summary of the text below that captures the main idea. ' + ex_summary\r\n",
+					"    #print(each)\r\n",
+					"    p = 'Provide a summary of the text below that captures the main idea. ' + each[0]\r\n",
 					"\r\n",
 					"    response = openai.Completion.create(\r\n",
 					"    engine=\"SumTest\",\r\n",
@@ -388,66 +388,70 @@
 					"    best_of=1,\r\n",
 					"    stop=None)\r\n",
 					"\r\n",
-					"    print(response)"
-				],
-				"execution_count": 116
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"p = 'Provide a summary of the text below that captures the main idea. ' + ex_summary"
-				],
-				"execution_count": 106
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"#Note: The openai-python library support for Azure OpenAI is in preview.\r\n",
-					"import os\r\n",
-					"import openai\r\n",
-					"openai.api_type = \"azure\"\r\n",
-					"openai.api_base = \"https://querystructureddata.openai.azure.com/\"\r\n",
-					"openai.api_version = \"2022-12-01\"\r\n",
-					"openai.api_key = \"c607bf2bba454302b492ba369efe54f6\"\r\n",
+					"    #print(response['choices'][0]['text'])\r\n",
+					"    ab_summaries.append(response['choices'][0]['text'])\r\n",
 					"\r\n",
-					"# query = input(\"Enter your query in natural language: \")\r\n",
+					"print(ab_summaries)"
+				],
+				"execution_count": 23
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"p = 'Provide a summary of the text below that captures the main idea. ' + ''.join(ab_summaries)\r\n",
 					"\r\n",
 					"response = openai.Completion.create(\r\n",
-					"  engine=\"SumTest\",\r\n",
-					"  prompt = p,\r\n",
-					"  temperature=0.3,\r\n",
-					"  max_tokens=250,\r\n",
-					"  top_p=1,\r\n",
-					"  frequency_penalty=0,\r\n",
-					"  presence_penalty=0,\r\n",
-					"  best_of=1,\r\n",
-					"  stop=None)\r\n",
+					"engine=\"SumTest\",\r\n",
+					"prompt = p,\r\n",
+					"temperature=0.3,\r\n",
+					"max_tokens=250,\r\n",
+					"top_p=1,\r\n",
+					"frequency_penalty=0,\r\n",
+					"presence_penalty=0,\r\n",
+					"best_of=1,\r\n",
+					"stop=None)\r\n",
 					"\r\n",
-					"response"
+					"final_ab_summarization = response['choices'][0]['text']\r\n",
+					"print(response['choices'][0]['text'])"
 				],
-				"execution_count": 107
+				"execution_count": 25
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.sql.types import *\r\n",
+					"schema = StructType([\r\n",
+					"    StructField(\"topic\",  IntegerType(), True),\r\n",
+					"    StructField(\"abstractive_summary\", StringType(), True)\r\n",
+					"    ])\r\n",
+					"\r\n",
+					"# create a DataFrame\r\n",
+					"ab_summarization_df =  spark.createDataFrame([topic, final_ab_summarization], schema)\r\n",
+					"display(ab_summarization_df)"
+				],
+				"execution_count": null
 			}
 		]
 	}
