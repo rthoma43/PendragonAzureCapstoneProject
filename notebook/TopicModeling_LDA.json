@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "fd4e390a-bd7b-4ee3-b831-0918abfd51a9"
+				"spark.autotune.trackingId": "e8cb2f67-41ee-44d7-91c3-9f359de72eb6"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 9
+				"execution_count": 1
 			},
 			{
 				"cell_type": "code",
@@ -105,26 +105,7 @@
 					"# select the first 100 records\r\n",
 					"df = df.limit(100)"
 				],
-				"execution_count": 10
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"display(df)"
-				],
-				"execution_count": 17
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -140,16 +121,52 @@
 					}
 				},
 				"source": [
-					"from pyspark.sql.functions import first\r\n",
-					"# select the first element of the 'col1' column\r\n",
-					"first_element = df.select(first('text')).collect()[0][0]\r\n",
+					"import pyspark.sql.functions as F\r\n",
+					"import pyspark.sql.types as T\r\n",
 					"\r\n",
-					"print(first_element)\r\n",
+					"# define a UDF to clean the text\r\n",
+					"def clean_text(text):\r\n",
+					"    # remove URLs\r\n",
+					"    text = re.sub(r'http\\S+', '', text)\r\n",
+					"    # remove hashtags and mentions\r\n",
+					"    text = re.sub(r'@\\w+|#\\w+', '', text)\r\n",
+					"    # remove special characters and emojis\r\n",
+					"    text = re.sub(r'[^\\w\\s]+|[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]', '', text)\r\n",
+					"    # convert to lowercase\r\n",
+					"    text = text.lower()\r\n",
+					"    # remove stop words\r\n",
+					"    words = text.split()\r\n",
+					"    words = [word for word in words if word not in stop_words]\r\n",
+					"    # join the words back into a sentence\r\n",
+					"    text = ' '.join(words)\r\n",
+					"    return text\r\n",
 					"\r\n",
-					"text = first_element.encode('ascii', 'ignore').decode('ascii')\r\n",
-					"print(text)"
+					"# create a UDF from the clean_text function\r\n",
+					"clean_text_udf = F.udf(clean_text, T.StringType())\r\n",
+					"\r\n",
+					"# apply the UDF to the text column and store the result in a new column called cleanText\r\n",
+					"df = df.withColumn('cleanText', clean_text_udf('text'))\r\n",
+					""
 				],
-				"execution_count": 23
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"display(df)"
+				],
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -169,7 +186,7 @@
 					"from pyspark.sql.types import StringType\r\n",
 					"import re\r\n",
 					"import nltk\r\n",
-					"nltk.download('stopwords')\r\n",
+					"#nltk.download('stopwords')\r\n",
 					"from nltk.corpus import stopwords\r\n",
 					"\r\n",
 					"# define a user-defined function to preprocess the text\r\n",
@@ -196,7 +213,7 @@
 					"df = df.withColumn('cleanText', preprocess_text_udf('text'))\r\n",
 					""
 				],
-				"execution_count": 24
+				"execution_count": 3
 			},
 			{
 				"cell_type": "code",
