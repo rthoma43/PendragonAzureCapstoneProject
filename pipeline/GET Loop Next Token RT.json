@@ -584,48 +584,6 @@
 				"typeProperties": {
 					"storedProcedureName": "[dbo].[DeleteAllRowsFromNatoTweets1]"
 				}
-			},
-			{
-				"name": "Perform Sentiment Analysis",
-				"description": "Outputs to Sent.NATO_Sentiment Dedicated SQL Pool Table",
-				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "Copy data to Dedicated SQL Pool",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"pipeline": {
-						"referenceName": "CognitiveServices_Sentiment_NATO",
-						"type": "PipelineReference"
-					},
-					"waitOnCompletion": true
-				}
-			},
-			{
-				"name": "Perform Named Entity Recognition",
-				"description": "Outputs to NER.NATO_NER\nDedicated SQL Pool Table",
-				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "Perform Sentiment Analysis",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"pipeline": {
-						"referenceName": "CognitiveServices_NER_NATO",
-						"type": "PipelineReference"
-					},
-					"waitOnCompletion": true
-				}
 			}
 		],
 		"variables": {
