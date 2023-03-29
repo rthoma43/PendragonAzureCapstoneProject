@@ -314,7 +314,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "loops",
-					"value": "5"
+					"value": "10"
 				}
 			},
 			{
@@ -583,6 +583,26 @@
 				},
 				"typeProperties": {
 					"storedProcedureName": "[dbo].[DeleteAllRowsFromNatoTweets1]"
+				}
+			},
+			{
+				"name": "Execute NLP_Analysis Pipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Copy data to Dedicated SQL Pool",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NLP_Analysis",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
 				}
 			}
 		],
