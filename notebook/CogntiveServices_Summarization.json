@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "b3c14297-dbdb-4b2e-bd2e-f89e675fd979"
+				"spark.autotune.trackingId": "58757f76-b0b8-4420-9310-da732def164a"
 			}
 		},
 		"metadata": {
@@ -63,7 +63,7 @@
 				"source": [
 					"# Cognitive Services Extractive Summary for inputs into OpenAI for Abstractive Summary \r\n",
 					"## For Each topic\r\n",
-					"### Possibly will fail if number of tweets in a topic group is less than 30 ab_summaries\r\n",
+					"**Possibly will fail if number of tweets in a topic group is less than 30 ab_summaries**\r\n",
 					"<hr>"
 				]
 			},
