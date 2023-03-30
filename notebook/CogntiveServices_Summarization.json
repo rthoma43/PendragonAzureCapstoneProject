@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "94cc77b6-4b2b-4953-855f-4b6271b0602a"
+				"spark.autotune.trackingId": "831c0733-106b-4924-8f46-5a3e996ee7b0"
 			}
 		},
 		"metadata": {
@@ -96,7 +96,7 @@
 				"source": [
 					"pip install azure-ai-textanalytics==5.3.0b1"
 				],
-				"execution_count": 117
+				"execution_count": 91
 			},
 			{
 				"cell_type": "code",
@@ -114,7 +114,7 @@
 				"source": [
 					"!pip install openai"
 				],
-				"execution_count": 118
+				"execution_count": 92
 			},
 			{
 				"cell_type": "code",
@@ -134,15 +134,16 @@
 					"import com.microsoft.spark.sqlanalytics\r\n",
 					"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
 					"from pyspark.sql.functions import *\r\n",
-					"from pyspark.sql.types import StringType\r\n",
+					"from pyspark.sql.types import *\r\n",
 					"import re\r\n",
 					"from azure.ai.textanalytics import TextAnalyticsClient\r\n",
 					"from azure.core.credentials import AzureKeyCredential\r\n",
 					"from azure.core.credentials import AzureKeyCredential\r\n",
 					"from azure.ai.textanalytics import (TextAnalyticsClient,ExtractSummaryAction) \r\n",
-					"import openai"
+					"import openai\r\n",
+					"import time"
 				],
-				"execution_count": 119
+				"execution_count": 121
 			},
 			{
 				"cell_type": "code",
@@ -181,7 +182,7 @@
 					"    )\r\n",
 					"    return(df)"
 				],
-				"execution_count": 120
+				"execution_count": 94
 			},
 			{
 				"cell_type": "code",
@@ -201,7 +202,7 @@
 					"key = \"a3028b5f7e7a462d8a3381e49b9c976d\"\r\n",
 					"endpoint = \"https://pendragon-language.cognitiveservices.azure.com/\""
 				],
-				"execution_count": 121
+				"execution_count": 95
 			},
 			{
 				"cell_type": "code",
@@ -223,7 +224,7 @@
 					"openai.api_version = \"2022-12-01\"\r\n",
 					"openai.api_key = \"c607bf2bba454302b492ba369efe54f6\""
 				],
-				"execution_count": 122
+				"execution_count": 96
 			},
 			{
 				"cell_type": "code",
@@ -252,7 +253,7 @@
 					"\r\n",
 					"    return text"
 				],
-				"execution_count": 123
+				"execution_count": 97
 			},
 			{
 				"cell_type": "code",
@@ -278,7 +279,7 @@
 					"# Define the UDF as a Spark SQL function\r\n",
 					"clean_text_udf = udf(clean_text, StringType())"
 				],
-				"execution_count": 124
+				"execution_count": 98
 			},
 			{
 				"cell_type": "code",
@@ -308,7 +309,7 @@
 					"        result.append(current_batch)\r\n",
 					"    return result"
 				],
-				"execution_count": 125
+				"execution_count": 99
 			},
 			{
 				"cell_type": "code",
@@ -334,7 +335,7 @@
 					"\r\n",
 					"client = authenticate_client()"
 				],
-				"execution_count": 126
+				"execution_count": 100
 			},
 			{
 				"cell_type": "code",
@@ -374,7 +375,7 @@
 					"            #)\r\n",
 					"    return(\" \".join([sentence.text for sentence in extract_summary_result.sentences]))"
 				],
-				"execution_count": 127
+				"execution_count": 101
 			},
 			{
 				"cell_type": "code",
@@ -396,7 +397,7 @@
 					"    StructField(\"abstractive_summary\", StringType(), True)\r\n",
 					"    ])"
 				],
-				"execution_count": 128
+				"execution_count": 102
 			},
 			{
 				"cell_type": "markdown",
@@ -455,27 +456,43 @@
 					"\r\n",
 					"    ab_summaries = []\r\n",
 					"\r\n",
-					"    # Create a list of abstractive summaries for each extractive summary\r\n",
-					"    for each in ex_summaries:\r\n",
-					"        #print(each)\r\n",
-					"        p = 'Provide a summary of the text below that captures the main idea. ' + each[0]\r\n",
+					"    print(ex_summaries)\r\n",
+					"    max_retries = 3\r\n",
+					"    retry_delay_secs = 10\r\n",
 					"\r\n",
-					"        response = openai.Completion.create(\r\n",
-					"        engine=\"SumTest\",\r\n",
-					"        prompt = p,\r\n",
-					"        temperature=0.3,\r\n",
-					"        max_tokens=250,\r\n",
-					"        top_p=1,\r\n",
-					"        frequency_penalty=0,\r\n",
-					"        presence_penalty=0,\r\n",
-					"        best_of=1,\r\n",
-					"        stop=None)\r\n",
+					"    retries = 3\r\n",
+					"    delay = 65\r\n",
 					"\r\n",
-					"        #print(response['choices'][0]['text'])\r\n",
-					"        ab_summaries.append(response['choices'][0]['text'])\r\n",
+					"    for i in range(retries):\r\n",
+					"        try:\r\n",
+					"            # Create a list of abstractive summaries for each extractive summary\r\n",
+					"            for each in ex_summaries:\r\n",
+					"                #print(each[0])\r\n",
+					"                p = 'Provide a summary of the text below that captures the main idea. ' + each[0]\r\n",
+					"                #print(p)\r\n",
 					"\r\n",
-					"    #print(ab_summaries)\r\n",
+					"                response = openai.Completion.create(\r\n",
+					"                engine=\"SumTest\",\r\n",
+					"                prompt = p,\r\n",
+					"                temperature=0.3,\r\n",
+					"                max_tokens=250,\r\n",
+					"                top_p=1,\r\n",
+					"                frequency_penalty=0,\r\n",
+					"                presence_penalty=0,\r\n",
+					"                best_of=1,\r\n",
+					"                stop=None)\r\n",
 					"\r\n",
+					"                #print(response['choices'][0]['text'])\r\n",
+					"                ab_summaries.append(response['choices'][0]['text'])\r\n",
+					"            #print(ab_summaries)\r\n",
+					"            print(\"Code succeeded!\")\r\n",
+					"            break # Break out of the loop if code succeeds\r\n",
+					"        except:\r\n",
+					"            time.sleep(delay)\r\n",
+					"            ab_summaries = []\r\n",
+					"\r\n",
+					"    else:\r\n",
+					"        raise Exception(f\"Failed after {retries} retries\")\r\n",
 					"\r\n",
 					"    # Create one abstractive summary using the collection of abstractive summaries created above\r\n",
 					"    p = 'Provide a summary of the text below that captures the main idea. ' + ''.join(ab_summaries)\r\n",
@@ -498,7 +515,7 @@
 					"    return(spark.createDataFrame([(topic, final_ab_summarization)], schema))\r\n",
 					""
 				],
-				"execution_count": 129
+				"execution_count": 127
 			},
 			{
 				"cell_type": "markdown",
@@ -530,7 +547,7 @@
 					"df_topic0 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 0\")\r\n",
 					"df_topic0.count()"
 				],
-				"execution_count": 130
+				"execution_count": 104
 			},
 			{
 				"cell_type": "code",
@@ -550,7 +567,43 @@
 					"topic0_summary = Abstractive_Summarization(dataframe = df_topic0, topic=0)\r\n",
 					"display(topic0_summary)"
 				],
-				"execution_count": 131
+				"execution_count": 105
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"ex_summaries"
+				],
+				"execution_count": 112
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"time.sleep(61)"
+				],
+				"execution_count": 106
 			},
 			{
 				"cell_type": "markdown",
@@ -582,7 +635,7 @@
 					"df_topic1 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 1\")\r\n",
 					"df_topic1.count()"
 				],
-				"execution_count": null
+				"execution_count": 107
 			},
 			{
 				"cell_type": "code",
@@ -601,6 +654,81 @@
 				"source": [
 					"topic1_summary = Abstractive_Summarization(dataframe = df_topic1, topic=1)\r\n",
 					"display(topic1_summary)"
+				],
+				"execution_count": 108
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"time.sleep(61)"
+				],
+				"execution_count": 109
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df_topic2 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 2\")\r\n",
+					"df_topic2.count()"
+				],
+				"execution_count": 110
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"topic2_summary = Abstractive_Summarization(dataframe = df_topic2, topic=2)\r\n",
+					"display(topic2_summary)"
+				],
+				"execution_count": 128
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"time.sleep(61)"
 				],
 				"execution_count": null
 			},
@@ -653,6 +781,24 @@
 				"source": [
 					"topic3_summary = Abstractive_Summarization(dataframe = df_topic3, topic=3)\r\n",
 					"display(topic3_summary)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"time.sleep(61)"
 				],
 				"execution_count": null
 			},
