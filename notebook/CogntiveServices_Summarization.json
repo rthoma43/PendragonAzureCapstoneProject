@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "831c0733-106b-4924-8f46-5a3e996ee7b0"
+				"spark.autotune.trackingId": "49a8c46f-1645-451c-b53e-88ec5ba05431"
 			}
 		},
 		"metadata": {
@@ -96,7 +96,7 @@
 				"source": [
 					"pip install azure-ai-textanalytics==5.3.0b1"
 				],
-				"execution_count": 91
+				"execution_count": 129
 			},
 			{
 				"cell_type": "code",
@@ -114,7 +114,7 @@
 				"source": [
 					"!pip install openai"
 				],
-				"execution_count": 92
+				"execution_count": 130
 			},
 			{
 				"cell_type": "code",
@@ -143,7 +143,7 @@
 					"import openai\r\n",
 					"import time"
 				],
-				"execution_count": 121
+				"execution_count": 131
 			},
 			{
 				"cell_type": "code",
@@ -182,7 +182,7 @@
 					"    )\r\n",
 					"    return(df)"
 				],
-				"execution_count": 94
+				"execution_count": 132
 			},
 			{
 				"cell_type": "code",
@@ -202,7 +202,7 @@
 					"key = \"a3028b5f7e7a462d8a3381e49b9c976d\"\r\n",
 					"endpoint = \"https://pendragon-language.cognitiveservices.azure.com/\""
 				],
-				"execution_count": 95
+				"execution_count": 133
 			},
 			{
 				"cell_type": "code",
@@ -224,7 +224,7 @@
 					"openai.api_version = \"2022-12-01\"\r\n",
 					"openai.api_key = \"c607bf2bba454302b492ba369efe54f6\""
 				],
-				"execution_count": 96
+				"execution_count": 134
 			},
 			{
 				"cell_type": "code",
@@ -253,7 +253,7 @@
 					"\r\n",
 					"    return text"
 				],
-				"execution_count": 97
+				"execution_count": 135
 			},
 			{
 				"cell_type": "code",
@@ -279,7 +279,7 @@
 					"# Define the UDF as a Spark SQL function\r\n",
 					"clean_text_udf = udf(clean_text, StringType())"
 				],
-				"execution_count": 98
+				"execution_count": 136
 			},
 			{
 				"cell_type": "code",
@@ -309,7 +309,7 @@
 					"        result.append(current_batch)\r\n",
 					"    return result"
 				],
-				"execution_count": 99
+				"execution_count": 137
 			},
 			{
 				"cell_type": "code",
@@ -335,7 +335,7 @@
 					"\r\n",
 					"client = authenticate_client()"
 				],
-				"execution_count": 100
+				"execution_count": 138
 			},
 			{
 				"cell_type": "code",
@@ -375,7 +375,7 @@
 					"            #)\r\n",
 					"    return(\" \".join([sentence.text for sentence in extract_summary_result.sentences]))"
 				],
-				"execution_count": 101
+				"execution_count": 139
 			},
 			{
 				"cell_type": "code",
@@ -397,7 +397,7 @@
 					"    StructField(\"abstractive_summary\", StringType(), True)\r\n",
 					"    ])"
 				],
-				"execution_count": 102
+				"execution_count": 140
 			},
 			{
 				"cell_type": "markdown",
@@ -515,7 +515,7 @@
 					"    return(spark.createDataFrame([(topic, final_ab_summarization)], schema))\r\n",
 					""
 				],
-				"execution_count": 127
+				"execution_count": 141
 			},
 			{
 				"cell_type": "markdown",
@@ -547,7 +547,7 @@
 					"df_topic0 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 0\")\r\n",
 					"df_topic0.count()"
 				],
-				"execution_count": 104
+				"execution_count": 142
 			},
 			{
 				"cell_type": "code",
@@ -567,25 +567,7 @@
 					"topic0_summary = Abstractive_Summarization(dataframe = df_topic0, topic=0)\r\n",
 					"display(topic0_summary)"
 				],
-				"execution_count": 105
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"ex_summaries"
-				],
-				"execution_count": 112
+				"execution_count": 143
 			},
 			{
 				"cell_type": "code",
@@ -603,7 +585,7 @@
 				"source": [
 					"time.sleep(61)"
 				],
-				"execution_count": 106
+				"execution_count": 145
 			},
 			{
 				"cell_type": "markdown",
@@ -635,7 +617,7 @@
 					"df_topic1 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 1\")\r\n",
 					"df_topic1.count()"
 				],
-				"execution_count": 107
+				"execution_count": 146
 			},
 			{
 				"cell_type": "code",
@@ -655,7 +637,7 @@
 					"topic1_summary = Abstractive_Summarization(dataframe = df_topic1, topic=1)\r\n",
 					"display(topic1_summary)"
 				],
-				"execution_count": 108
+				"execution_count": 147
 			},
 			{
 				"cell_type": "code",
@@ -673,7 +655,7 @@
 				"source": [
 					"time.sleep(61)"
 				],
-				"execution_count": 109
+				"execution_count": 148
 			},
 			{
 				"cell_type": "code",
@@ -692,7 +674,7 @@
 					"df_topic2 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 2\")\r\n",
 					"df_topic2.count()"
 				],
-				"execution_count": 110
+				"execution_count": 149
 			},
 			{
 				"cell_type": "code",
@@ -712,7 +694,7 @@
 					"topic2_summary = Abstractive_Summarization(dataframe = df_topic2, topic=2)\r\n",
 					"display(topic2_summary)"
 				],
-				"execution_count": 128
+				"execution_count": 150
 			},
 			{
 				"cell_type": "code",
