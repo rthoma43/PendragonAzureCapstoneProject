@@ -7538,7 +7538,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "f4d78db8-0b4e-45ca-9d2c-b672b552e8e9"
+						"spark.autotune.trackingId": "ce1c3f6d-d355-4789-9593-bd47ff0329da"
 					}
 				},
 				"metadata": {
@@ -7563,13 +7563,15 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 16,
-						"memory": 112
+						"memory": 112,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -8977,7 +8979,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "571e6115-e43d-4646-8413-7dabd92439f3"
+						"spark.autotune.trackingId": "6e67348a-0004-48b7-8b80-b204e6900db9"
 					}
 				},
 				"metadata": {
@@ -9020,7 +9022,7 @@
 						"source": [
 							"# Cognitive Services Extractive Summary for inputs into OpenAI for Abstractive Summary \r\n",
 							"## For Each topic\r\n",
-							"**Possibly will fail if number of tweets in a topic group is less than 30 ab_summaries**\r\n",
+							"**Possibly will fail if number of tweets in a topic group is less than 30 tweets**\r\n",
 							"<hr>"
 						]
 					},
@@ -9054,7 +9056,7 @@
 							"pip install azure-ai-textanalytics==5.3.0b1"
 						],
 						"outputs": [],
-						"execution_count": 117
+						"execution_count": 129
 					},
 					{
 						"cell_type": "code",
@@ -9073,7 +9075,7 @@
 							"!pip install openai"
 						],
 						"outputs": [],
-						"execution_count": 118
+						"execution_count": 130
 					},
 					{
 						"cell_type": "code",
@@ -9093,16 +9095,17 @@
 							"import com.microsoft.spark.sqlanalytics\r\n",
 							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
 							"from pyspark.sql.functions import *\r\n",
-							"from pyspark.sql.types import StringType\r\n",
+							"from pyspark.sql.types import *\r\n",
 							"import re\r\n",
 							"from azure.ai.textanalytics import TextAnalyticsClient\r\n",
 							"from azure.core.credentials import AzureKeyCredential\r\n",
 							"from azure.core.credentials import AzureKeyCredential\r\n",
 							"from azure.ai.textanalytics import (TextAnalyticsClient,ExtractSummaryAction) \r\n",
-							"import openai"
+							"import openai\r\n",
+							"import time"
 						],
 						"outputs": [],
-						"execution_count": 119
+						"execution_count": 131
 					},
 					{
 						"cell_type": "code",
@@ -9142,7 +9145,7 @@
 							"    return(df)"
 						],
 						"outputs": [],
-						"execution_count": 120
+						"execution_count": 132
 					},
 					{
 						"cell_type": "code",
@@ -9163,7 +9166,7 @@
 							"endpoint = \"https://pendragon-language.cognitiveservices.azure.com/\""
 						],
 						"outputs": [],
-						"execution_count": 121
+						"execution_count": 133
 					},
 					{
 						"cell_type": "code",
@@ -9186,7 +9189,7 @@
 							"openai.api_key = \"c607bf2bba454302b492ba369efe54f6\""
 						],
 						"outputs": [],
-						"execution_count": 122
+						"execution_count": 134
 					},
 					{
 						"cell_type": "code",
@@ -9216,7 +9219,7 @@
 							"    return text"
 						],
 						"outputs": [],
-						"execution_count": 123
+						"execution_count": 135
 					},
 					{
 						"cell_type": "code",
@@ -9243,7 +9246,7 @@
 							"clean_text_udf = udf(clean_text, StringType())"
 						],
 						"outputs": [],
-						"execution_count": 124
+						"execution_count": 136
 					},
 					{
 						"cell_type": "code",
@@ -9274,7 +9277,7 @@
 							"    return result"
 						],
 						"outputs": [],
-						"execution_count": 125
+						"execution_count": 137
 					},
 					{
 						"cell_type": "code",
@@ -9301,7 +9304,7 @@
 							"client = authenticate_client()"
 						],
 						"outputs": [],
-						"execution_count": 126
+						"execution_count": 138
 					},
 					{
 						"cell_type": "code",
@@ -9342,7 +9345,7 @@
 							"    return(\" \".join([sentence.text for sentence in extract_summary_result.sentences]))"
 						],
 						"outputs": [],
-						"execution_count": 127
+						"execution_count": 139
 					},
 					{
 						"cell_type": "code",
@@ -9365,7 +9368,7 @@
 							"    ])"
 						],
 						"outputs": [],
-						"execution_count": 128
+						"execution_count": 140
 					},
 					{
 						"cell_type": "markdown",
@@ -9424,27 +9427,43 @@
 							"\r\n",
 							"    ab_summaries = []\r\n",
 							"\r\n",
-							"    # Create a list of abstractive summaries for each extractive summary\r\n",
-							"    for each in ex_summaries:\r\n",
-							"        #print(each)\r\n",
-							"        p = 'Provide a summary of the text below that captures the main idea. ' + each[0]\r\n",
+							"    print(ex_summaries)\r\n",
+							"    max_retries = 3\r\n",
+							"    retry_delay_secs = 10\r\n",
 							"\r\n",
-							"        response = openai.Completion.create(\r\n",
-							"        engine=\"SumTest\",\r\n",
-							"        prompt = p,\r\n",
-							"        temperature=0.3,\r\n",
-							"        max_tokens=250,\r\n",
-							"        top_p=1,\r\n",
-							"        frequency_penalty=0,\r\n",
-							"        presence_penalty=0,\r\n",
-							"        best_of=1,\r\n",
-							"        stop=None)\r\n",
+							"    retries = 3\r\n",
+							"    delay = 65\r\n",
 							"\r\n",
-							"        #print(response['choices'][0]['text'])\r\n",
-							"        ab_summaries.append(response['choices'][0]['text'])\r\n",
+							"    for i in range(retries):\r\n",
+							"        try:\r\n",
+							"            # Create a list of abstractive summaries for each extractive summary\r\n",
+							"            for each in ex_summaries:\r\n",
+							"                #print(each[0])\r\n",
+							"                p = 'Provide a summary of the text below that captures the main idea. ' + each[0]\r\n",
+							"                #print(p)\r\n",
 							"\r\n",
-							"    #print(ab_summaries)\r\n",
+							"                response = openai.Completion.create(\r\n",
+							"                engine=\"SumTest\",\r\n",
+							"                prompt = p,\r\n",
+							"                temperature=0.3,\r\n",
+							"                max_tokens=250,\r\n",
+							"                top_p=1,\r\n",
+							"                frequency_penalty=0,\r\n",
+							"                presence_penalty=0,\r\n",
+							"                best_of=1,\r\n",
+							"                stop=None)\r\n",
 							"\r\n",
+							"                #print(response['choices'][0]['text'])\r\n",
+							"                ab_summaries.append(response['choices'][0]['text'])\r\n",
+							"            #print(ab_summaries)\r\n",
+							"            print(\"Code succeeded!\")\r\n",
+							"            break # Break out of the loop if code succeeds\r\n",
+							"        except:\r\n",
+							"            time.sleep(delay)\r\n",
+							"            ab_summaries = []\r\n",
+							"\r\n",
+							"    else:\r\n",
+							"        raise Exception(f\"Failed after {retries} retries\")\r\n",
 							"\r\n",
 							"    # Create one abstractive summary using the collection of abstractive summaries created above\r\n",
 							"    p = 'Provide a summary of the text below that captures the main idea. ' + ''.join(ab_summaries)\r\n",
@@ -9468,7 +9487,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 129
+						"execution_count": 141
 					},
 					{
 						"cell_type": "markdown",
@@ -9501,7 +9520,7 @@
 							"df_topic0.count()"
 						],
 						"outputs": [],
-						"execution_count": 130
+						"execution_count": 142
 					},
 					{
 						"cell_type": "code",
@@ -9522,7 +9541,26 @@
 							"display(topic0_summary)"
 						],
 						"outputs": [],
-						"execution_count": 131
+						"execution_count": 143
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"time.sleep(61)"
+						],
+						"outputs": [],
+						"execution_count": 145
 					},
 					{
 						"cell_type": "markdown",
@@ -9555,7 +9593,7 @@
 							"df_topic1.count()"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 146
 					},
 					{
 						"cell_type": "code",
@@ -9574,6 +9612,85 @@
 						"source": [
 							"topic1_summary = Abstractive_Summarization(dataframe = df_topic1, topic=1)\r\n",
 							"display(topic1_summary)"
+						],
+						"outputs": [],
+						"execution_count": 147
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"time.sleep(61)"
+						],
+						"outputs": [],
+						"execution_count": 148
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic2 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 2\")\r\n",
+							"df_topic2.count()"
+						],
+						"outputs": [],
+						"execution_count": 149
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"topic2_summary = Abstractive_Summarization(dataframe = df_topic2, topic=2)\r\n",
+							"display(topic2_summary)"
+						],
+						"outputs": [],
+						"execution_count": 150
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"time.sleep(61)"
 						],
 						"outputs": [],
 						"execution_count": null
@@ -9628,6 +9745,25 @@
 						"source": [
 							"topic3_summary = Abstractive_Summarization(dataframe = df_topic3, topic=3)\r\n",
 							"display(topic3_summary)"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"time.sleep(61)"
 						],
 						"outputs": [],
 						"execution_count": null
