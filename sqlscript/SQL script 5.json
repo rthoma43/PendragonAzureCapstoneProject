@@ -1,0 +1,20 @@
+{
+	"name": "SQL script 5",
+	"properties": {
+		"folder": {
+			"name": "Create_Tables"
+		},
+		"content": {
+			"query": "CREATE TABLE [sum].[NATO_Abstractive_Sum]\n(\n    [topic] NVARCHAR(100) NULL,\n    [ab_] NVARCHAR(100) NULL,\n    [topic] INT NULL\n)\n\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
