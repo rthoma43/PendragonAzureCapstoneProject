@@ -1,17 +1,17 @@
 {
-	"name": "SQL script 5",
+	"name": "Create_NATO_Abstract_Table",
 	"properties": {
 		"folder": {
 			"name": "Create_Tables"
 		},
 		"content": {
-			"query": "CREATE TABLE [sum].[NATO_Abstractive_Sum]\n(\n    [topic] NVARCHAR(100) NULL,\n    [ab_] NVARCHAR(100) NULL,\n    [topic] INT NULL\n)\n\nGO",
+			"query": "CREATE TABLE [sum].[NATO_Abstractive_Sum]\n(\n    [abstractive_summary] NVARCHAR(4000) NULL,\n    [topic] SMALLINT NULL\n)\n\nGO",
 			"metadata": {
 				"language": "sql"
 			},
 			"currentConnection": {
-				"databaseName": "master",
-				"poolName": "Built-in"
+				"databaseName": "SQLPoolTest",
+				"poolName": "SQLPoolTest"
 			},
 			"resultLimit": 5000
 		},
