@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "7849c690-0537-49d3-8f70-1db323598d1d"
+				"spark.autotune.trackingId": "0ed4af8d-dbac-4a4a-93db-52a82a585be9"
 			}
 		},
 		"metadata": {
@@ -96,7 +96,7 @@
 				"source": [
 					"pip install azure-ai-textanalytics==5.3.0b1"
 				],
-				"execution_count": 222
+				"execution_count": 296
 			},
 			{
 				"cell_type": "code",
@@ -114,7 +114,7 @@
 				"source": [
 					"!pip install openai"
 				],
-				"execution_count": 223
+				"execution_count": 297
 			},
 			{
 				"cell_type": "code",
@@ -143,7 +143,7 @@
 					"import openai\r\n",
 					"import time"
 				],
-				"execution_count": 224
+				"execution_count": 298
 			},
 			{
 				"cell_type": "code",
@@ -182,7 +182,7 @@
 					"    )\r\n",
 					"    return(df)"
 				],
-				"execution_count": 225
+				"execution_count": 299
 			},
 			{
 				"cell_type": "code",
@@ -202,7 +202,7 @@
 					"key = \"a3028b5f7e7a462d8a3381e49b9c976d\"\r\n",
 					"endpoint = \"https://pendragon-language.cognitiveservices.azure.com/\""
 				],
-				"execution_count": 226
+				"execution_count": 300
 			},
 			{
 				"cell_type": "code",
@@ -224,7 +224,7 @@
 					"openai.api_version = \"2022-12-01\"\r\n",
 					"openai.api_key = \"c607bf2bba454302b492ba369efe54f6\""
 				],
-				"execution_count": 251
+				"execution_count": 301
 			},
 			{
 				"cell_type": "code",
@@ -253,7 +253,7 @@
 					"\r\n",
 					"    return text"
 				],
-				"execution_count": 228
+				"execution_count": 302
 			},
 			{
 				"cell_type": "code",
@@ -279,7 +279,7 @@
 					"# Define the UDF as a Spark SQL function\r\n",
 					"clean_text_udf = udf(clean_text, StringType())"
 				],
-				"execution_count": 229
+				"execution_count": 303
 			},
 			{
 				"cell_type": "code",
@@ -309,7 +309,7 @@
 					"        result.append(current_batch)\r\n",
 					"    return result"
 				],
-				"execution_count": 230
+				"execution_count": 304
 			},
 			{
 				"cell_type": "code",
@@ -335,7 +335,7 @@
 					"\r\n",
 					"client = authenticate_client()"
 				],
-				"execution_count": 231
+				"execution_count": 305
 			},
 			{
 				"cell_type": "code",
@@ -375,7 +375,7 @@
 					"            #)\r\n",
 					"    return(\" \".join([sentence.text for sentence in extract_summary_result.sentences]))"
 				],
-				"execution_count": 249
+				"execution_count": 306
 			},
 			{
 				"cell_type": "code",
@@ -397,7 +397,7 @@
 					"    StructField(\"abstractive_summary\", StringType(), True)\r\n",
 					"    ])"
 				],
-				"execution_count": 234
+				"execution_count": 307
 			},
 			{
 				"cell_type": "markdown",
@@ -463,7 +463,7 @@
 					"    ab_summaries = []\r\n",
 					"\r\n",
 					"    retries = 3\r\n",
-					"    delay = 65\r\n",
+					"    delay = 300\r\n",
 					"\r\n",
 					"    for i in range(retries):\r\n",
 					"        try:\r\n",
@@ -487,13 +487,14 @@
 					"                #print(response['choices'][0]['text'])\r\n",
 					"\r\n",
 					"                ab_summaries.append(response['choices'][0]['text'])\r\n",
-					"\r\n",
+					"                if len(ex_summaries) > 1:\r\n",
+					"                    time.sleep(61)\r\n",
 					"            #print(ab_summaries)\r\n",
 					"            print(\"Code succeeded!\")\r\n",
 					"            break # Break out of the loop if code succeeds\r\n",
 					"        except:\r\n",
 					"            time.sleep(delay)\r\n",
-					"            print(f\"Failed after {retries} retries\")\r\n",
+					"            raise Exception(f\"Failed after {retries} retries\")\r\n",
 					"            ab_summaries = []\r\n",
 					"\r\n",
 					"    else:\r\n",
@@ -515,12 +516,15 @@
 					" \r\n",
 					"    final_ab_summarization = response['choices'][0]['text']\r\n",
 					"    #print(response['choices'][0]['text'])\r\n",
+					"    print('-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')\r\n",
+					"    print('Abstractive Summary: ', final_ab_summarization)\r\n",
+					"    print('Character Length:', len(final_ab_summarization))\r\n",
 					"\r\n",
 					"    # Put the meta abstractive summary into a data frame and return the data frame object \r\n",
 					"    return(spark.createDataFrame([(topic, final_ab_summarization)], schema))\r\n",
 					""
 				],
-				"execution_count": 252
+				"execution_count": 308
 			},
 			{
 				"cell_type": "markdown",
@@ -552,7 +556,7 @@
 					"df_topic0 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 0\")\r\n",
 					"df_topic0.count()"
 				],
-				"execution_count": 236
+				"execution_count": 309
 			},
 			{
 				"cell_type": "code",
@@ -572,7 +576,7 @@
 					"topic0_summary = Abstractive_Summarization(dataframe = df_topic0, topic=0)\r\n",
 					"display(topic0_summary)"
 				],
-				"execution_count": 253
+				"execution_count": 310
 			},
 			{
 				"cell_type": "code",
@@ -588,9 +592,9 @@
 					}
 				},
 				"source": [
-					"time.sleep(61)"
+					"time.sleep(180)"
 				],
-				"execution_count": null
+				"execution_count": 311
 			},
 			{
 				"cell_type": "markdown",
@@ -622,7 +626,7 @@
 					"df_topic1 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 1\")\r\n",
 					"df_topic1.count()"
 				],
-				"execution_count": null
+				"execution_count": 312
 			},
 			{
 				"cell_type": "code",
@@ -642,7 +646,7 @@
 					"topic1_summary = Abstractive_Summarization(dataframe = df_topic1, topic=1)\r\n",
 					"display(topic1_summary)"
 				],
-				"execution_count": null
+				"execution_count": 313
 			},
 			{
 				"cell_type": "code",
@@ -658,9 +662,9 @@
 					}
 				},
 				"source": [
-					"time.sleep(61)"
+					"time.sleep(180)"
 				],
-				"execution_count": null
+				"execution_count": 314
 			},
 			{
 				"cell_type": "code",
@@ -715,7 +719,7 @@
 					}
 				},
 				"source": [
-					"time.sleep(61)"
+					"time.sleep(180)"
 				],
 				"execution_count": null
 			},
@@ -785,7 +789,7 @@
 					}
 				},
 				"source": [
-					"time.sleep(61)"
+					"time.sleep(180)"
 				],
 				"execution_count": null
 			},
@@ -865,12 +869,71 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
 					"# union the dataframes\r\n",
 					"Topic_Summary_df = topic0_summary.union(topic1_summary).union(topic2_summary).union(topic3_summary).union(topic4_summary)\r\n",
 					"display(Topic_Summary_df)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Write Spark Dataframe to Dedicated SQL Pool Table [sum].[NATO_Abstractive_Sum]\r\n",
+					"# First, create the table in the Dedicated SQL Pool 'SQLPoolTest' using the code below\r\n",
+					"~~~\r\n",
+					"CREATE TABLE [sum].[NATO_Abstractive_Sum]\r\n",
+					"(\r\n",
+					"    [ab_summary] NVARCHAR(4000) NULL,\r\n",
+					"    [topic] INT NULL\r\n",
+					")\r\n",
+					"\r\n",
+					"GO"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Write using AAD Auth to internal table\r\n",
+					"# Add required imports\r\n",
+					"import com.microsoft.spark.sqlanalytics\r\n",
+					"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+					"\r\n",
+					"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
+					"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
+					"(Topic_Summary_df.write\r\n",
+					" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+					" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+					" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+					" # Like-wise, if `Constants.TEMP_FOLDER` is not provided, the connector will use the runtime staging directory config (see section on Configuration Options for details).\r\n",
+					" .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+					" # Choose a save mode that is apt for your use case.\r\n",
+					" # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
+					" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
+					" .mode(\"overwrite\")\r\n",
+					" # Required parameter - Three-part table name to which data will be written\r\n",
+					" .synapsesql(\"SQLPoolTest.sum.NATO_Abstractive_Sum\"))"
 				],
 				"execution_count": null
 			}
