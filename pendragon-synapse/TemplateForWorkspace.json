@@ -70,162 +70,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('workspaceName'), '/CognitiveServices_NER_NATO')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "Delete Rows in NATO NER Table",
-						"type": "SqlPoolStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"sqlPool": {
-							"referenceName": "SQLPoolTest",
-							"type": "SqlPoolReference"
-						},
-						"typeProperties": {
-							"storedProcedureName": "[dbo].[DeleteAllNatoNer]"
-						}
-					},
-					{
-						"name": "Run CognitiveServices_NamedEntityRecog Notebook",
-						"type": "SynapseNotebook",
-						"dependsOn": [
-							{
-								"activity": "Delete Rows in NATO NER Table",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebook": {
-								"referenceName": "CognitiveServices_NamedEntityRecog",
-								"type": "NotebookReference"
-							},
-							"snapshot": true,
-							"sparkPool": {
-								"referenceName": "SparkPoolTest",
-								"type": "BigDataPoolReference"
-							},
-							"executorSize": "Small",
-							"conf": {
-								"spark.dynamicAllocation.enabled": null,
-								"spark.dynamicAllocation.minExecutors": null,
-								"spark.dynamicAllocation.maxExecutors": null
-							},
-							"driverSize": "Small",
-							"numExecutors": null
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]",
-				"[concat(variables('workspaceId'), '/notebooks/CognitiveServices_NamedEntityRecog')]",
-				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolTest')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/CognitiveServices_Sentiment_NATO')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "Delete Rows in NATO Sentiment Table",
-						"type": "SqlPoolStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"sqlPool": {
-							"referenceName": "SQLPoolTest",
-							"type": "SqlPoolReference"
-						},
-						"typeProperties": {
-							"storedProcedureName": "[dbo].[DeleteAllNatoSentiment]"
-						}
-					},
-					{
-						"name": "Run CognitiveServices_Sentiment Notebook",
-						"type": "SynapseNotebook",
-						"dependsOn": [
-							{
-								"activity": "Delete Rows in NATO Sentiment Table",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebook": {
-								"referenceName": "CognitiveServices_Sentiment",
-								"type": "NotebookReference"
-							},
-							"snapshot": true,
-							"sparkPool": {
-								"referenceName": "SparkPoolTest",
-								"type": "BigDataPoolReference"
-							},
-							"executorSize": "Small",
-							"conf": {
-								"spark.dynamicAllocation.enabled": null,
-								"spark.dynamicAllocation.minExecutors": null,
-								"spark.dynamicAllocation.maxExecutors": null
-							},
-							"driverSize": "Small",
-							"numExecutors": null
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]",
-				"[concat(variables('workspaceId'), '/notebooks/CognitiveServices_Sentiment')]",
-				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolTest')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/GET Loop Next Token RT')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -555,7 +399,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "loops",
-							"value": "5"
+							"value": "10"
 						}
 					},
 					{
@@ -838,8 +682,7 @@
 						}
 					},
 					{
-						"name": "Perform Sentiment Analysis",
-						"description": "Outputs to Sent.NATO_Sentiment Dedicated SQL Pool Table",
+						"name": "Execute NLP_Analysis Pipeline",
 						"type": "ExecutePipeline",
 						"dependsOn": [
 							{
@@ -852,29 +695,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "CognitiveServices_Sentiment_NATO",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "Perform Named Entity Recognition",
-						"description": "Outputs to NER.NATO_NER\nDedicated SQL Pool Table",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Perform Sentiment Analysis",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "CognitiveServices_NER_NATO",
+								"referenceName": "NLP_Analysis",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -915,8 +736,7 @@
 				"[concat(variables('workspaceId'), '/datasets/Merged_output_csv')]",
 				"[concat(variables('workspaceId'), '/datasets/DedicatedSqlPoolTable1')]",
 				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]",
-				"[concat(variables('workspaceId'), '/pipelines/CognitiveServices_Sentiment_NATO')]",
-				"[concat(variables('workspaceId'), '/pipelines/CognitiveServices_NER_NATO')]",
+				"[concat(variables('workspaceId'), '/pipelines/NLP_Analysis')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]"
 			]
@@ -2315,6 +2135,153 @@
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Twitter2')]",
 				"[concat(variables('workspaceId'), '/datasets/Twitter_test_rt_Json')]",
 				"[concat(variables('workspaceId'), '/dataflows/Twitter_Parse_JSON_to_CSV')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/NLP_Analysis')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Delete all from NATO Topics Table",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "SQLPoolTest",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[dbo].[DeleteAllNATOTopics]"
+						}
+					},
+					{
+						"name": "Perform Topic Modeling LDA",
+						"description": "Outputs to [Topic].[NATO_Topics]",
+						"type": "SynapseNotebook",
+						"dependsOn": [
+							{
+								"activity": "Delete all from NATO Topics Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebook": {
+								"referenceName": "TopicModeling_LDA",
+								"type": "NotebookReference"
+							},
+							"snapshot": true,
+							"sparkPool": {
+								"referenceName": "SparkPoolTest",
+								"type": "BigDataPoolReference"
+							},
+							"executorSize": "Small",
+							"conf": {
+								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.minExecutors": null,
+								"spark.dynamicAllocation.maxExecutors": null
+							},
+							"driverSize": "Small",
+							"numExecutors": null
+						}
+					},
+					{
+						"name": "Delete all from NATO Sentiment Table",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Perform Topic Modeling LDA",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "SQLPoolTest",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[dbo].[DeleteAllNatoSentiment]"
+						}
+					},
+					{
+						"name": "Perform Sentiment Analysis",
+						"description": "Outputs to [Sent].[NATO_Sent]",
+						"type": "SynapseNotebook",
+						"dependsOn": [
+							{
+								"activity": "Delete all from NATO Sentiment Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebook": {
+								"referenceName": "CognitiveServices_Sentiment",
+								"type": "NotebookReference"
+							},
+							"snapshot": true,
+							"sparkPool": {
+								"referenceName": "SparkPoolTest",
+								"type": "BigDataPoolReference"
+							},
+							"executorSize": "Small",
+							"conf": {
+								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.minExecutors": null,
+								"spark.dynamicAllocation.maxExecutors": null
+							},
+							"driverSize": "Small",
+							"numExecutors": null
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]",
+				"[concat(variables('workspaceId'), '/notebooks/TopicModeling_LDA')]",
+				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolTest')]",
+				"[concat(variables('workspaceId'), '/notebooks/CognitiveServices_Sentiment')]"
 			]
 		},
 		{
@@ -5809,7 +5776,7 @@
 					"name": "Create_Tables"
 				},
 				"content": {
-					"query": "CREATE TABLE [NER].[NATO_NER]\n(\n    [entity_text] NVARCHAR(100) NULL,\n    [entity_category] NVARCHAR(100) NULL\n)\n\nGO",
+					"query": "CREATE TABLE [NER].[NATO_NER]\n(\n    [entity_text] NVARCHAR(100) NULL,\n    [entity_category] NVARCHAR(100) NULL,\n    [topic] INT NULL\n)\n\nGO",
 					"metadata": {
 						"language": "sql"
 					},
@@ -5832,7 +5799,30 @@
 					"name": "Create_Tables"
 				},
 				"content": {
-					"query": "CREATE TABLE [Sent].[NATO_Sentiment]\n(\n    [Sentiment] NVARCHAR(10) NULL,\n    [Count] INT NULL,\n    [Confidence Score Negative] REAL NULL,\n    [Confidence Score Positive] REAL NULL,\n    [Confidence Score Neutral] REAL NULL,\n    [Confidence Score Mixed] REAL NULL\n)\n\nGO\n",
+					"query": "CREATE TABLE [Sent].[NATO_Sentiment]\n(\n    [id] bigint  NULL,\n\t[created_at] DATETIME2(7)  NULL,\n\t[text] NVARCHAR(4000)  NULL,\n\t[cleantext] NVARCHAR(4000)  NULL,\n\t[lang] nvarchar(10)  NULL,\n\t[retweet_count] INT  NULL,\n\t[reply_count] INT  NULL,\n\t[like_count] INT  NULL,\n\t[quote_count] INT  NULL,\n\t[impression_count] INT  NULL,\n    [topic] SMALLINT NULL,\n    [topic_0_confidence] REAL NULL,\n    [topic_1_confidence] REAL NULL,\n    [topic_2_confidence] REAL NULL,\n    [topic_3_confidence] REAL NULL,\n    [topic_4_confidence] REAL NULL,\n    [sentiment] NVARCHAR(20) NULL,\n    [negative_score] REAL NULL,\n    [positive_score] REAL NULL,\n    [neutral_score] REAL NULL,\n    [mixed_score] REAL NULL\n)\n\nGO\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPoolTest",
+						"poolName": "SQLPoolTest"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Create_NATO_Topic_Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "Create_Tables"
+				},
+				"content": {
+					"query": "CREATE TABLE [Topic].[NATO_Topics]\n( \n\t[id] bigint  NULL,\n\t[created_at] DATETIME2(7)  NULL,\n\t[text] NVARCHAR(4000)  NULL,\n\t[cleantext] NVARCHAR(4000)  NULL,\n\t[lang] nvarchar(10)  NULL,\n\t[retweet_count] INT  NULL,\n\t[reply_count] INT  NULL,\n\t[like_count] INT  NULL,\n\t[quote_count] INT  NULL,\n\t[impression_count] INT  NULL,\n    [topic] SMALLINT NULL,\n    [topic_0_confidence] REAL NULL,\n    [topic_1_confidence] REAL NULL,\n    [topic_2_confidence] REAL NULL,\n    [topic_3_confidence] REAL NULL,\n    [topic_4_confidence] REAL NULL\n)\n\nGO",
 					"metadata": {
 						"language": "sql"
 					},
@@ -5939,6 +5929,29 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/DeleteAllFromNATOTopics_Procedure')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "SQL_Procedures"
+				},
+				"content": {
+					"query": "CREATE PROCEDURE DeleteAllNATOTopics\nAS\nBEGIN\n    DELETE FROM [Topic].[NATO_Topics];\nEND;",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPoolTest",
+						"poolName": "SQLPoolTest"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/DeleteAllProcedure')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
@@ -5970,7 +5983,7 @@
 					"name": "Explore"
 				},
 				"content": {
-					"query": "SELECT COUNT(*) FROM [dbo].[NATO_Tweets1];\n",
+					"query": "SELECT * FROM [NER].[NATO_NER];",
 					"metadata": {
 						"language": "sql"
 					},
@@ -6046,6 +6059,29 @@
 					"currentConnection": {
 						"databaseName": "SQLPoolTest",
 						"poolName": "SQLPoolTest"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 5')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "Create_Tables"
+				},
+				"content": {
+					"query": "CREATE TABLE [sum].[NATO_Abstractive_Sum]\n(\n    [topic] NVARCHAR(100) NULL,\n    [ab_] NVARCHAR(100) NULL,\n    [topic] INT NULL\n)\n\nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
 					},
 					"resultLimit": 5000
 				},
@@ -6680,7 +6716,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "bad2d677-e8e6-40f7-aedb-96298a929ac8"
+						"spark.autotune.trackingId": "c5d59bc6-a182-4bb3-af65-237182a2ad5f"
 					}
 				},
 				"metadata": {
@@ -6705,15 +6741,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 16,
-						"memory": 112,
-						"automaticScaleJobs": false
+						"memory": 112
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -7504,7 +7538,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "ffe26c57-fb08-4354-ae92-0e4146722763"
+						"spark.autotune.trackingId": "f4d78db8-0b4e-45ca-9d2c-b672b552e8e9"
 					}
 				},
 				"metadata": {
@@ -7529,43 +7563,60 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 16,
-						"memory": 112,
-						"automaticScaleJobs": false
+						"memory": 112
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
 							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
-							"from pyspark.sql.functions import col\r\n",
-							"\r\n",
-							"# Name of the SQL Dedicated Pool or database where to run the query\r\n",
-							"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
-							"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\r\n",
-							"\r\n",
-							"# Read from a query\r\n",
-							"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\r\n",
-							"df = (spark.read\r\n",
-							"                     # Name of the SQL Dedicated Pool or database where to run the query\r\n",
-							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
-							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
-							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
-							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
-							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
-							"                     # Defaults to storage path defined in the runtime configurations\r\n",
-							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
-							"                     # query from which data will be read\r\n",
-							"                     .option(Constants.QUERY, \"select * from dbo.NATO_Tweets1\")\r\n",
-							"                     .synapsesql()\r\n",
-							")"
+							"from pyspark.sql.functions import col"
 						],
 						"outputs": [],
-						"execution_count": 9
+						"execution_count": 65
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"def QueryDataSQLPool (query):\r\n",
+							"    # Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"    # Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
+							"    spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\r\n",
+							"\r\n",
+							"    # Read from a query\r\n",
+							"    # Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\r\n",
+							"    df = (spark.read\r\n",
+							"                        # Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"                        # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
+							"                        .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
+							"                        # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							"                        # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							"                        .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							"                        # Defaults to storage path defined in the runtime configurations\r\n",
+							"                        .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							"                        # query from which data will be read\r\n",
+							"                        .option(Constants.QUERY, query)\r\n",
+							"                        .synapsesql()\r\n",
+							"    )\r\n",
+							"    return(df)"
+						],
+						"outputs": [],
+						"execution_count": 74
 					},
 					{
 						"cell_type": "code",
@@ -7589,38 +7640,10 @@
 							"df = df.orderBy(desc(\"created_at\"))\r\n",
 							"\r\n",
 							"# select the first 100 records\r\n",
-							"df = df.limit(100)"
+							"#df = df.limit(100)"
 						],
 						"outputs": [],
-						"execution_count": 10
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"from pyspark.sql.functions import regexp_replace\r\n",
-							"\r\n",
-							"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
-							"regex = r'@\\w+|&\\w+|https\\w+|#\\w+'\r\n",
-							"\r\n",
-							"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
-							"df = df.withColumn(\"text\", regexp_replace(col(\"text\"), regex, ''))\r\n",
-							"\r\n",
-							"# Show the filtered DataFrame\r\n",
-							"df.select(\"text\").show()"
-						],
-						"outputs": [],
-						"execution_count": 11
+						"execution_count": 66
 					},
 					{
 						"cell_type": "code",
@@ -7641,7 +7664,7 @@
 							"from pyspark.sql.functions import col"
 						],
 						"outputs": [],
-						"execution_count": 12
+						"execution_count": 67
 					},
 					{
 						"cell_type": "code",
@@ -7660,7 +7683,43 @@
 							"linked_service_name = \"CognitiveService1\""
 						],
 						"outputs": [],
-						"execution_count": 13
+						"execution_count": 68
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Create function to run NER and output dataframe"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# import required libraries\r\n",
+							"import json\r\n",
+							"from pyspark.sql.types import *\r\n",
+							"import pyspark.sql.functions as F\r\n",
+							"from pyspark.sql.functions import lit"
+						],
+						"outputs": [],
+						"execution_count": 78
 					},
 					{
 						"cell_type": "code",
@@ -7677,76 +7736,415 @@
 							"collapsed": false
 						},
 						"source": [
-							"# import required libraries\r\n",
-							"import json\r\n",
-							"from pyspark.sql.types import StructType, StructField, StringType\r\n",
-							"import pyspark.sql.functions as F\r\n",
+							"def NamedEntityRecognition(dataframe, batchsize, topic):\r\n",
+							"    if dataframe.count() > topic:\r\n",
 							"\r\n",
-							"# Batch size\r\n",
-							"batch_size = 5\r\n",
+							"        # Batch size\r\n",
+							"        batch_size = batchsize\r\n",
 							"\r\n",
-							"# First, count the total number of rows in the DataFrame\r\n",
-							"num_rows = df.count()\r\n",
+							"        # First, count the total number of rows in the DataFrame\r\n",
+							"        num_rows = dataframe.count()\r\n",
 							"\r\n",
-							"# Next, calculate the number of batches needed to split the DataFrame into batches of 5\r\n",
-							"num_batches = int(num_rows / batch_size) + (num_rows % batch_size > 0)\r\n",
+							"        # Next, calculate the number of batches needed to split the DataFrame into batches of 5\r\n",
+							"        num_batches = int(num_rows / batch_size) + (num_rows % batch_size > 0)\r\n",
 							"\r\n",
-							"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
-							"df_batches = df.randomSplit([1.0]*num_batches, seed=42)\r\n",
+							"        # Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
+							"        df_batches = dataframe.randomSplit([1.0]*num_batches, seed=42)\r\n",
 							"\r\n",
-							"# define the schema for the output DataFrame\r\n",
-							"schema = StructType([\r\n",
-							"    StructField(\"entity_text\", StringType(), True),\r\n",
-							"    StructField(\"entity_category\", StringType(), True)\r\n",
-							"    ])\r\n",
+							"        # define the schema for the output DataFrame\r\n",
+							"        schema = StructType([\r\n",
+							"            StructField(\"entity_text\", StringType(), True),\r\n",
+							"            StructField(\"entity_category\", StringType(), True),\r\n",
+							"            StructField(\"topic\", IntegerType(),True)\r\n",
+							"            ])\r\n",
 							"\r\n",
-							"# create an empty DataFrame with the defined schema\r\n",
-							"output_df = spark.createDataFrame([], schema)\r\n",
+							"        # create an empty DataFrame with the defined schema\r\n",
+							"        output_df = spark.createDataFrame([], schema)\r\n",
 							"\r\n",
-							"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
-							"for i in range(num_batches):\r\n",
-							"    batch = df_batches[i].limit(batch_size)\r\n",
-							"    ner = (NER()\r\n",
-							"    .setLinkedService(linked_service_name)\r\n",
-							"    .setLanguageCol(\"lang\")\r\n",
-							"    .setOutputCol(\"replies\")\r\n",
-							"    .setErrorCol(\"error\"))\r\n",
+							"        entities = []\r\n",
+							"        categories = []\r\n",
 							"\r\n",
-							"    ner_batch_output = ner.transform(batch)\r\n",
-							"    #display(ner_batch_output)\r\n",
+							"        # Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
+							"        for i in range(num_batches):\r\n",
+							"            batch = df_batches[i].limit(batch_size)\r\n",
+							"            ner = (NER()\r\n",
+							"            .setLinkedService(linked_service_name)\r\n",
+							"            .setTextCol(\"cleantext\")\r\n",
+							"            .setLanguageCol(\"lang\")\r\n",
+							"            .setOutputCol(\"replies\")\r\n",
+							"            .setErrorCol(\"error\"))\r\n",
 							"\r\n",
-							"    # Extract the 'replies' column and convert it to JSON\r\n",
-							"    json_output = ner_batch_output.select(\"replies\").toJSON().collect()\r\n",
-							"    # Deserialize the JSON and extract the 'replies' field\r\n",
-							"    nes = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
+							"            ner_batch_output = ner.transform(batch)\r\n",
+							"            #display(ner_batch_output)\r\n",
 							"\r\n",
-							"    # Print the 'replies' field for each row\r\n",
-							"    for each in nes:\r\n",
-							"        #print(each)\r\n",
+							"            # Extract the 'replies' column and convert it to JSON\r\n",
+							"            json_output = ner_batch_output.select(\"replies\").toJSON().collect()\r\n",
 							"\r\n",
-							"        # create a PySpark DataFrame from the JSON string\r\n",
-							"        json_string = each\r\n",
-							"        df = spark.read.json(sc.parallelize([json_string]))\r\n",
+							"            # Deserialize the JSON and extract the 'replies' field\r\n",
+							"            nes = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
 							"\r\n",
-							"        # extract the 'entities' array from the 'document' column\r\n",
-							"        df = df.selectExpr('explode(document.entities) as entities')\r\n",
+							"            # Print the 'replies' field for each row\r\n",
+							"            for each in nes:\r\n",
+							"                #print(each)\r\n",
+							"                # convert the dictionary to a JSON string\r\n",
+							"                json_str = json.dumps(each)\r\n",
 							"\r\n",
-							"        # select the 'text' and 'category' fields from the exploded 'entities' array\r\n",
-							"        df = df.select('entities.text', 'entities.category')\r\n",
+							"                # parse the JSON string\r\n",
+							"                json_data = json.loads(json_str)\r\n",
 							"\r\n",
-							"        # rename the columns\r\n",
-							"        df = df.withColumnRenamed('text', 'entity_text')\r\n",
-							"        df = df.withColumnRenamed('category', 'entity_category')\r\n",
+							"                # extract all the 'text' values from the JSON and put them into an array\r\n",
+							"                entities = entities + [entity['text'] for entity in json_data['document']['entities']]\r\n",
+							"                categories = categories + [entity['category'] for entity in json_data['document']['entities']]\r\n",
 							"\r\n",
-							"        # show the resulting DataFrame\r\n",
-							"        #df.show()\r\n",
 							"\r\n",
-							"        # Append the batch results dataframe to the main output dataframe\r\n",
-							"        output_df = output_df.union(df)\r\n",
-							"display(output_df)"
+							"        # create rows\r\n",
+							"        rows = [Row(entity_text=entities[i],\r\n",
+							"                    entity_category=categories[i],\r\n",
+							"                    topic = topic\r\n",
+							"                    )\r\n",
+							"                for i in range(len(entities))]\r\n",
+							"\r\n",
+							"        # create batch dataframe\r\n",
+							"        ner_df = spark.createDataFrame(rows, schema)\r\n",
+							"        return(ner_df)"
 						],
 						"outputs": [],
-						"execution_count": 14
+						"execution_count": 90
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Topic 0 NER"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic0 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 0\")\r\n",
+							"df_topic0.count()"
+						],
+						"outputs": [],
+						"execution_count": 91
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"topic0_NER = NamedEntityRecognition(dataframe = df_topic0, batchsize = 5, topic = 0)"
+						],
+						"outputs": [],
+						"execution_count": 92
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Topic 1 NER"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic1 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 1\")\r\n",
+							"df_topic1.count()"
+						],
+						"outputs": [],
+						"execution_count": 93
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"topic1_NER = NamedEntityRecognition(dataframe = df_topic1, batchsize = 5, topic = 1)"
+						],
+						"outputs": [],
+						"execution_count": 94
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Topic 2 NER"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic2 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 2\")\r\n",
+							"df_topic2.count()"
+						],
+						"outputs": [],
+						"execution_count": 95
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"topic2_NER = NamedEntityRecognition(dataframe = df_topic2, batchsize = 5, topic = 2)"
+						],
+						"outputs": [],
+						"execution_count": 96
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Topic 3 NER"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic3 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 3\")\r\n",
+							"df_topic3.count()"
+						],
+						"outputs": [],
+						"execution_count": 97
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"topic3_NER = NamedEntityRecognition(dataframe = df_topic3, batchsize = 5, topic = 3)"
+						],
+						"outputs": [],
+						"execution_count": 98
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Topic 4 NER"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic4 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 4\")\r\n",
+							"df_topic4.count()"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"topic4_NER = NamedEntityRecognition(dataframe = df_topic4, batchsize = 5, topic = 4)"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Union all Topic NER dataframes together"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# union the dataframes\r\n",
+							"NameEntity_df = topic0_NER.union(topic1_NER).union(topic2_NER).union(topic3_NER).union(topic4_NER)\r\n",
+							"display(NameEntity_df)"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"NameEntity_df = topic0_NER.union(topic1_NER).union(topic2_NER)"
+						],
+						"outputs": [],
+						"execution_count": 100
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"display(NameEntity_df)"
+						],
+						"outputs": [],
+						"execution_count": 101
 					},
 					{
 						"cell_type": "markdown",
@@ -7763,8 +8161,9 @@
 							"~~~\r\n",
 							"CREATE TABLE [NER].[NATO_NER]\r\n",
 							"(\r\n",
-							"    [entity_text] NVARCHAR(20) NULL,\r\n",
-							"    [entity_category] NVARCHAR(20) NULL\r\n",
+							"    [entity_text] NVARCHAR(100) NULL,\r\n",
+							"    [entity_category] NVARCHAR(100) NULL,\r\n",
+							"    [topic] INT NULL\r\n",
 							")\r\n",
 							"\r\n",
 							"GO"
@@ -7791,7 +8190,7 @@
 							"\r\n",
 							"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
 							"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
-							"(output_df.write\r\n",
+							"(NameEntity_df.write\r\n",
 							" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
 							" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
 							" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
@@ -7805,7 +8204,7 @@
 							" .synapsesql(\"SQLPoolTest.NER.NATO_NER\"))"
 						],
 						"outputs": [],
-						"execution_count": 16
+						"execution_count": 102
 					}
 				]
 			},
@@ -7835,7 +8234,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "ff5d68f6-f9d4-49b5-ab3c-dc8eb4e81186"
+						"spark.autotune.trackingId": "2aa1ead5-facb-477f-864e-41e15ea33d8b"
 					}
 				},
 				"metadata": {
@@ -7860,15 +8259,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 16,
-						"memory": 112,
-						"automaticScaleJobs": false
+						"memory": 112
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -7891,12 +8288,12 @@
 							"                     # Defaults to storage path defined in the runtime configurations\r\n",
 							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
 							"                     # query from which data will be read\r\n",
-							"                     .option(Constants.QUERY, \"select * from dbo.NATO_Tweets1\")\r\n",
+							"                     .option(Constants.QUERY, \"select * from Topic.NATO_Topics\")\r\n",
 							"                     .synapsesql()\r\n",
 							")"
 						],
 						"outputs": [],
-						"execution_count": 23
+						"execution_count": 21
 					},
 					{
 						"cell_type": "markdown",
@@ -7908,7 +8305,7 @@
 							}
 						},
 						"source": [
-							"# Select Sample Size for Testing"
+							"## Sort by created_at and sample if needed for testing"
 						]
 					},
 					{
@@ -7933,51 +8330,10 @@
 							"df = df.orderBy(desc(\"created_at\"))\r\n",
 							"\r\n",
 							"# select the first 100 records\r\n",
-							"df = df.limit(100)"
+							"#df = df.limit(100)"
 						],
 						"outputs": [],
-						"execution_count": 24
-					},
-					{
-						"cell_type": "markdown",
-						"metadata": {
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"# Clean Data: Remove @, #, and links"
-						]
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"from pyspark.sql.functions import regexp_replace\r\n",
-							"\r\n",
-							"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
-							"regex = r'@\\w+|&\\w+|https\\w+|#\\w+'\r\n",
-							"\r\n",
-							"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
-							"df = df.withColumn(\"text\", regexp_replace(col(\"text\"), regex, ''))\r\n",
-							"\r\n",
-							"# Show the filtered DataFrame\r\n",
-							"df.select(\"text\").show()"
-						],
-						"outputs": [],
-						"execution_count": 25
+						"execution_count": 22
 					},
 					{
 						"cell_type": "markdown",
@@ -8011,7 +8367,7 @@
 							"from pyspark.sql.functions import col"
 						],
 						"outputs": [],
-						"execution_count": 26
+						"execution_count": 24
 					},
 					{
 						"cell_type": "markdown",
@@ -8043,7 +8399,7 @@
 							"linked_service_name = \"CognitiveService1\""
 						],
 						"outputs": [],
-						"execution_count": 27
+						"execution_count": 25
 					},
 					{
 						"cell_type": "markdown",
@@ -8069,12 +8425,13 @@
 								"transient": {
 									"deleting": false
 								}
-							}
+							},
+							"collapsed": false
 						},
 						"source": [
 							"# import required libraries\r\n",
 							"import json\r\n",
-							"from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType\r\n",
+							"from pyspark.sql.types import *\r\n",
 							"from pyspark.sql.functions import col\r\n",
 							"import pyspark.sql.functions as F\r\n",
 							"import collections\r\n",
@@ -8091,18 +8448,93 @@
 							"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
 							"df_batches = df.randomSplit([1.0]*num_batches, seed=42)\r\n",
 							"\r\n",
-							"output = []\r\n",
+							"from pyspark.sql.types import *\r\n",
+							"schema = StructType([\r\n",
+							"    StructField(\"id\",  LongType(), True),\r\n",
+							"    StructField(\"created_at\", TimestampType(), True),\r\n",
+							"    StructField(\"text\", StringType(), True),\r\n",
+							"    StructField(\"cleantext\", StringType(), True),\r\n",
+							"    StructField(\"lang\", StringType(), True),\r\n",
+							"    StructField(\"retweet_count\", IntegerType(), True),\r\n",
+							"    StructField(\"reply_count\", IntegerType(), True),\r\n",
+							"    StructField(\"like_count\", IntegerType(), True),\r\n",
+							"    StructField(\"quote_count\", IntegerType(), True),\r\n",
+							"    StructField(\"impression_count\", IntegerType(), True),\r\n",
+							"    StructField(\"topic\", ShortType(), True),\r\n",
+							"    StructField(\"topic_0_confidence\", FloatType(), True),\r\n",
+							"    StructField(\"topic_1_confidence\", FloatType(), True),\r\n",
+							"    StructField(\"topic_2_confidence\", FloatType(), True),\r\n",
+							"    StructField(\"topic_3_confidence\", FloatType(), True),\r\n",
+							"    StructField(\"topic_4_confidence\", FloatType(), True),\r\n",
+							"    StructField(\"sentiment\", StringType(), True),\r\n",
+							"    StructField(\"negative_score\", FloatType(), True),\r\n",
+							"    StructField(\"positive_score\", FloatType(), True),\r\n",
+							"    StructField(\"neutral_score\", FloatType(), True),\r\n",
+							"    StructField(\"mixed_score\", FloatType(), True)\r\n",
+							"])\r\n",
+							"\r\n",
+							"# create a DataFrame\r\n",
+							"sentiment_output_df =  spark.createDataFrame([], schema)\r\n",
 							"\r\n",
 							"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
 							"for i in range(num_batches):\r\n",
 							"    batch = df_batches[i].limit(batch_size)\r\n",
 							"    sent = (TextSentiment()\r\n",
 							"    .setLinkedService(linked_service_name)\r\n",
+							"    .setTextCol(\"cleantext\")\r\n",
 							"    .setOutputCol(\"sentiment\")\r\n",
 							"    .setErrorCol(\"error\"))\r\n",
 							"\r\n",
-							"    sent_batch_output = sent.transform(batch.select(\"text\"))\r\n",
+							"    sent_batch_output = sent.transform(batch)\r\n",
 							"    #display(sent_batch_output)\r\n",
+							"\r\n",
+							"    # Create arrays for each original column values\r\n",
+							"    id_values = []\r\n",
+							"    created_at_values = []\r\n",
+							"    text_values = []\r\n",
+							"    cleantext_values = []\r\n",
+							"    lang_values = []\r\n",
+							"    retweet_count_values = []\r\n",
+							"    reply_count_values = []\r\n",
+							"    like_count_values = []\r\n",
+							"    quote_count_values = []\r\n",
+							"    impression_count_values = []\r\n",
+							"    topicgroup_values = []\r\n",
+							"    topic0confidence_values = []\r\n",
+							"    topic1confidence_values = []\r\n",
+							"    topic2confidence_values = []\r\n",
+							"    topic3confidence_values = []\r\n",
+							"    topic4confidence_values = []\r\n",
+							"\r\n",
+							"\r\n",
+							"    # collect all rows of the batch DataFrame\r\n",
+							"    rows = batch.collect()\r\n",
+							"\r\n",
+							"    # iterate over rows and extract values from each column\r\n",
+							"    for row in rows:\r\n",
+							"        id_values.append(row[\"id\"])\r\n",
+							"        created_at_values.append(row[\"created_at\"])\r\n",
+							"        text_values.append(row[\"text\"])\r\n",
+							"        cleantext_values.append(row['cleantext'])\r\n",
+							"        lang_values.append(row[\"lang\"])\r\n",
+							"        retweet_count_values.append(row[\"retweet_count\"])\r\n",
+							"        reply_count_values.append(row[\"reply_count\"])\r\n",
+							"        like_count_values.append(row[\"like_count\"])\r\n",
+							"        quote_count_values.append(row[\"quote_count\"])\r\n",
+							"        impression_count_values.append(row[\"impression_count\"])\r\n",
+							"        topicgroup_values.append(row['topic'])\r\n",
+							"        topic0confidence_values.append(row['topic_0_confidence'])\r\n",
+							"        topic1confidence_values.append(row['topic_1_confidence'])\r\n",
+							"        topic2confidence_values.append(row['topic_2_confidence'])\r\n",
+							"        topic3confidence_values.append(row['topic_3_confidence'])\r\n",
+							"        topic4confidence_values.append(row['topic_4_confidence'])\r\n",
+							"\r\n",
+							"    # Create arrays for new column values\r\n",
+							"    batch_sentiments = []\r\n",
+							"    batch_negative_scores = []\r\n",
+							"    batch_positive_scores = []\r\n",
+							"    batch_neutral_scores = []\r\n",
+							"    batch_mixed_scores = []\r\n",
 							"\r\n",
 							"    # Extract the 'sentiment' column and convert it to JSON\r\n",
 							"    json_output = sent_batch_output.select(\"sentiment\").toJSON().collect()\r\n",
@@ -8113,87 +8545,46 @@
 							"    # Print the 'sentiment' field for each row\r\n",
 							"    for sentiment in sentiments:\r\n",
 							"        #print(sentiment)\r\n",
-							"        output.append(sentiment['document']['sentiment'])\r\n",
+							"        batch_sentiments.append(sentiment['document']['sentiment'])\r\n",
+							"        batch_negative_scores.append(sentiment['document']['confidenceScores'].get(\"negative\", 0.0))\r\n",
+							"        batch_positive_scores.append(sentiment['document']['confidenceScores'].get(\"positive\", 0.0))\r\n",
+							"        batch_neutral_scores.append(sentiment['document']['confidenceScores'].get(\"neutral\", 0.0))\r\n",
+							"        batch_mixed_scores.append(sentiment['document']['confidenceScores'].get(\"mixed\", 0.0))\r\n",
+							"    \r\n",
+							"    # create rows\r\n",
+							"    rows = [Row(id=id_values[i],\r\n",
+							"                created_at=created_at_values[i],\r\n",
+							"                text=text_values[i],\r\n",
+							"                cleanText = cleantext_values[i],\r\n",
+							"                lang=lang_values[i],\r\n",
+							"                retweet_count = retweet_count_values[i],\r\n",
+							"                reply_count=reply_count_values[i],\r\n",
+							"                like_count=like_count_values[i],\r\n",
+							"                quote_count=quote_count_values[i],\r\n",
+							"                impression_count = impression_count_values[i],\r\n",
+							"                topic = topicgroup_values[i],\r\n",
+							"                topic_0_confidence = topic0confidence_values[i],\r\n",
+							"                topic_1_confidence = topic1confidence_values[i],\r\n",
+							"                topic_2_confidence = topic2confidence_values[i],\r\n",
+							"                topic_3_confidence = topic3confidence_values[i],\r\n",
+							"                topic_4_confidence = topic4confidence_values[i],\r\n",
+							"                sentiment = batch_sentiments[i],\r\n",
+							"                negative_score = batch_negative_scores[i],\r\n",
+							"                positive_score = batch_positive_scores[i],\r\n",
+							"                neutral_score = batch_neutral_scores[i],\r\n",
+							"                mixed_score = batch_mixed_scores[i] )\r\n",
+							"            for i in range(len(id_values))]\r\n",
 							"\r\n",
-							"# Print all sentiments\r\n",
-							"print(output)\r\n",
+							"    # create batch dataframe\r\n",
+							"    batch_df = spark.createDataFrame(rows, schema)\r\n",
 							"\r\n",
-							"# Count the occurrences of each value in the array\r\n",
-							"counts = collections.Counter(output)\r\n",
+							"    # Append the batch results dataframe to the main output dataframe\r\n",
+							"    sentiment_output_df = sentiment_output_df.union(batch_df)\r\n",
 							"\r\n",
-							"# Get the most common value and its count\r\n",
-							"most_common = counts.most_common(1)[0]\r\n",
-							"most_common_value = most_common[0]\r\n",
-							"most_common_count = most_common[1]\r\n",
-							"\r\n",
-							"#print(\"Most common value:\", most_common_value)\r\n",
-							"#print(\"Count:\", most_common_count)\r\n",
-							"\r\n",
-							"confidence_scores = {}\r\n",
-							"\r\n",
-							"total_values = len(output)\r\n",
-							"\r\n",
-							"for value, count in counts.items():\r\n",
-							"    confidence_scores[value] = count / total_values\r\n",
-							"\r\n",
-							"#print(\"Confidence scores:\", confidence_scores)\r\n",
-							"sentiment_output = [{\"Sentiment\": most_common_value},{\"Count\": most_common_count},{\"Confidence Scores\":confidence_scores}]\r\n",
-							"print(sentiment_output)"
+							"#display(sentiment_output_df)"
 						],
 						"outputs": [],
-						"execution_count": 28
-					},
-					{
-						"cell_type": "markdown",
-						"metadata": {
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"## Put the results into a Spark Dataframe"
-						]
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							},
-							"collapsed": false
-						},
-						"source": [
-							"from pyspark.sql.types import *\r\n",
-							"schema = StructType([\r\n",
-							"    StructField(\"Sentiment\",  StringType(), True),\r\n",
-							"    StructField(\"Count\", IntegerType(), True),\r\n",
-							"    StructField(\"Confidence Score Negative\", FloatType(), True),\r\n",
-							"    StructField(\"Confidence Score Positive\", FloatType(), True),\r\n",
-							"    StructField(\"Confidence Score Neutral\", FloatType(), True),\r\n",
-							"    StructField(\"Confidence Score Mixed\", FloatType(), True)\r\n",
-							"])\r\n",
-							"\r\n",
-							"# create row from data\r\n",
-							"row_data = Row(\r\n",
-							"    Sentiment=most_common_value, \r\n",
-							"    Count=most_common_count, \r\n",
-							"    **{f\"Confidence Score {k.capitalize()}\": confidence_scores.get(k, 0.0) for k in ['negative', 'positive', 'neutral', 'mixed']}\r\n",
-							")\r\n",
-							"\r\n",
-							"sentiment_output_df = spark.createDataFrame([row_data], schema)\r\n",
-							"\r\n",
-							"display(sentiment_output_df)"
-						],
-						"outputs": [],
-						"execution_count": 29
+						"execution_count": 27
 					},
 					{
 						"cell_type": "markdown",
@@ -8210,12 +8601,27 @@
 							"~~~\r\n",
 							"CREATE TABLE [Sent].[NATO_Sentiment]\r\n",
 							"(\r\n",
-							"    [Sentiment] NVARCHAR(10) NULL,\r\n",
-							"    [Count] INT NULL,\r\n",
-							"    [Confidence Score Negative] REAL NULL,\r\n",
-							"    [Confidence Score Positive] REAL NULL,\r\n",
-							"    [Confidence Score Neutral] REAL NULL,\r\n",
-							"    [Confidence Score Mixed] REAL NULL\r\n",
+							"    [id] bigint  NULL,\r\n",
+							"\t[created_at] DATETIME2(7)  NULL,\r\n",
+							"\t[text] NVARCHAR(4000)  NULL,\r\n",
+							"\t[cleantext] NVARCHAR(4000)  NULL,\r\n",
+							"\t[lang] nvarchar(10)  NULL,\r\n",
+							"\t[retweet_count] INT  NULL,\r\n",
+							"\t[reply_count] INT  NULL,\r\n",
+							"\t[like_count] INT  NULL,\r\n",
+							"\t[quote_count] INT  NULL,\r\n",
+							"\t[impression_count] INT  NULL,\r\n",
+							"    [topic] SMALLINT NULL,\r\n",
+							"    [topic_0_confidence] REAL NULL,\r\n",
+							"    [topic_1_confidence] REAL NULL,\r\n",
+							"    [topic_2_confidence] REAL NULL,\r\n",
+							"    [topic_3_confidence] REAL NULL,\r\n",
+							"    [topic_4_confidence] REAL NULL,\r\n",
+							"    [sentiment] NVARCHAR(20) NULL,\r\n",
+							"    [negative_score] REAL NULL,\r\n",
+							"    [positive_score] REAL NULL,\r\n",
+							"    [neutral_score] REAL NULL,\r\n",
+							"    [mixed_score] REAL NULL\r\n",
 							")\r\n",
 							"\r\n",
 							"GO"
@@ -8256,7 +8662,1063 @@
 							" .synapsesql(\"SQLPoolTest.Sent.NATO_Sentiment\"))"
 						],
 						"outputs": [],
-						"execution_count": 30
+						"execution_count": 34
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CogntiveService_KeyPhrases')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "NLP"
+				},
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPoolTest",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "8b0715db-c182-41d7-bc85-fd18f6eac939"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolTest",
+						"name": "SparkPoolTest",
+						"type": "Spark",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolTest",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.3",
+						"nodeCount": 3,
+						"cores": 16,
+						"memory": 112
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"source": [
+							"# Add required imports\r\n",
+							"import com.microsoft.spark.sqlanalytics\r\n",
+							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+							"from pyspark.sql.functions import col\r\n",
+							"\r\n",
+							"# Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
+							"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\r\n",
+							"\r\n",
+							"# Read from a query\r\n",
+							"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\r\n",
+							"df = (spark.read\r\n",
+							"                     # Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
+							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
+							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							"                     # Defaults to storage path defined in the runtime configurations\r\n",
+							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							"                     # query from which data will be read\r\n",
+							"                     .option(Constants.QUERY, \"select * from Topic.NATO_Topics WHERE topic = 0\")\r\n",
+							"                     .synapsesql()\r\n",
+							")"
+						],
+						"outputs": [],
+						"execution_count": 180
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Select sample size for testing\r\n",
+							"\r\n",
+							"# Sort ascending by 'created_at'\r\n",
+							"from pyspark.sql.functions import desc\r\n",
+							"\r\n",
+							"df = df.orderBy(desc(\"created_at\"))\r\n",
+							"\r\n",
+							"# select the first 100 records\r\n",
+							"df = df.limit(100)"
+						],
+						"outputs": [],
+						"execution_count": 181
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from pyspark.sql.functions import regexp_replace\r\n",
+							"\r\n",
+							"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
+							"regex = r'@\\w+|&\\w+|#\\w+'\r\n",
+							"\r\n",
+							"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
+							"df = df.withColumn(\"text\", regexp_replace(col(\"text\"), regex, ''))\r\n",
+							"df = df.withColumn('text', regexp_replace('text', 'https\\\\S+', ''))\r\n",
+							"\r\n",
+							"# Show the filtered DataFrame\r\n",
+							"df.select(\"text\").show()"
+						],
+						"outputs": [],
+						"execution_count": 183
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"import synapse.ml\r\n",
+							"from synapse.ml.cognitive import *\r\n",
+							"from pyspark.sql.functions import col"
+						],
+						"outputs": [],
+						"execution_count": 184
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"linked_service_name = \"CognitiveService1\""
+						],
+						"outputs": [],
+						"execution_count": 185
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# import required libraries\r\n",
+							"import json\r\n",
+							"from pyspark.sql.types import StructType, StructField, StringType\r\n",
+							"import pyspark.sql.functions as F\r\n",
+							"\r\n",
+							"# Batch size\r\n",
+							"batch_size = 100\r\n",
+							"\r\n",
+							"# First, count the total number of rows in the DataFrame\r\n",
+							"num_rows = df.count()\r\n",
+							"\r\n",
+							"# Next, calculate the number of batches needed to split the DataFrame into batches of 5\r\n",
+							"num_batches = int(num_rows / batch_size) + (num_rows % batch_size > 0)\r\n",
+							"\r\n",
+							"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
+							"df_batches = df.randomSplit([1.0]*num_batches, seed=42)\r\n",
+							"\r\n",
+							"# define the schema for the output DataFrame\r\n",
+							"schema = StructType([\r\n",
+							"    StructField(\"entity_text\", StringType(), True),\r\n",
+							"    StructField(\"entity_category\", StringType(), True)\r\n",
+							"    ])\r\n",
+							"\r\n",
+							"kp_output = []\r\n",
+							"\r\n",
+							"# create an empty DataFrame with the defined schema\r\n",
+							"output_df = spark.createDataFrame([], schema)\r\n",
+							"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
+							"for i in range(num_batches):\r\n",
+							"    batch = df_batches[i].limit(batch_size)\r\n",
+							"    keyPhrase = (KeyPhraseExtractor()\r\n",
+							"    .setLinkedService(linked_service_name)\r\n",
+							"    .setLanguageCol(\"lang\")\r\n",
+							"    .setOutputCol(\"replies\")\r\n",
+							"    .setErrorCol(\"error\"))\r\n",
+							"\r\n",
+							"    kp_batch_output = keyPhrase.transform(batch)\r\n",
+							"    #display(ner_batch_output)\r\n",
+							"\r\n",
+							"    # Extract the 'replies' column and convert it to JSON\r\n",
+							"    json_output = kp_batch_output.select(\"replies\").toJSON().collect()\r\n",
+							"\r\n",
+							"    # Deserialize the JSON and extract the 'sentiment' field\r\n",
+							"    keyphrases = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
+							"\r\n",
+							"    # Print the 'sentiment' field for each row\r\n",
+							"    for each in keyphrases:\r\n",
+							"        #print(each)\r\n",
+							"        for keyphrase in each['document']['keyPhrases']:\r\n",
+							"            kp_output.append(keyphrase)\r\n",
+							"\r\n",
+							"print(kp_output)"
+						],
+						"outputs": [],
+						"execution_count": 186
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"# Create a PySpark DataFrame from the array\r\n",
+							"kp_df = spark.createDataFrame([(i, 1) for i in kp_output], ['text', 'count'])\r\n",
+							"\r\n",
+							"# Group by 'text' column and sum the 'count' column to get the count of each unique text\r\n",
+							"kp_df = kp_df.groupBy('text').agg({'count': 'sum'})\r\n",
+							"\r\n",
+							"# Sort the DataFrame by the 'count' column in descending order\r\n",
+							"kp_df = kp_df.sort(col('sum(count)').desc())\r\n",
+							"\r\n",
+							"# Show the resulting DataFrame\r\n",
+							"display(kp_df)"
+						],
+						"outputs": [],
+						"execution_count": 187
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CogntiveServices_Summarization')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "NLP"
+				},
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPoolTest",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "112g",
+					"driverCores": 16,
+					"executorMemory": "112g",
+					"executorCores": 16,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "571e6115-e43d-4646-8413-7dabd92439f3"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolTest",
+						"name": "SparkPoolTest",
+						"type": "Spark",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolTest",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.3",
+						"nodeCount": 3,
+						"cores": 16,
+						"memory": 112,
+						"automaticScaleJobs": false
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Cognitive Services Extractive Summary for inputs into OpenAI for Abstractive Summary \r\n",
+							"## For Each topic\r\n",
+							"**Possibly will fail if number of tweets in a topic group is less than 30 ab_summaries**\r\n",
+							"<hr>"
+						]
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"### Install necessary packags and create functions"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"pip install azure-ai-textanalytics==5.3.0b1"
+						],
+						"outputs": [],
+						"execution_count": 117
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"!pip install openai"
+						],
+						"outputs": [],
+						"execution_count": 118
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Add required imports\r\n",
+							"import com.microsoft.spark.sqlanalytics\r\n",
+							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+							"from pyspark.sql.functions import *\r\n",
+							"from pyspark.sql.types import StringType\r\n",
+							"import re\r\n",
+							"from azure.ai.textanalytics import TextAnalyticsClient\r\n",
+							"from azure.core.credentials import AzureKeyCredential\r\n",
+							"from azure.core.credentials import AzureKeyCredential\r\n",
+							"from azure.ai.textanalytics import (TextAnalyticsClient,ExtractSummaryAction) \r\n",
+							"import openai"
+						],
+						"outputs": [],
+						"execution_count": 119
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Create function to pull data from the Dedicated SQL Pool\r\n",
+							"def QueryDataSQLPool (query):\r\n",
+							"    # Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"    # Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
+							"    spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\r\n",
+							"\r\n",
+							"    # Read from a query\r\n",
+							"    # Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\r\n",
+							"    df = (spark.read\r\n",
+							"                        # Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"                        # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
+							"                        .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
+							"                        # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							"                        # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							"                        .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							"                        # Defaults to storage path defined in the runtime configurations\r\n",
+							"                        .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							"                        # query from which data will be read\r\n",
+							"                        .option(Constants.QUERY, query)\r\n",
+							"                        .synapsesql()\r\n",
+							"    )\r\n",
+							"    return(df)"
+						],
+						"outputs": [],
+						"execution_count": 120
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Enter Cognitive Services credentials\r\n",
+							"key = \"a3028b5f7e7a462d8a3381e49b9c976d\"\r\n",
+							"endpoint = \"https://pendragon-language.cognitiveservices.azure.com/\""
+						],
+						"outputs": [],
+						"execution_count": 121
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Enter Azure OpenAI API credentials \r\n",
+							"openai.api_type = \"azure\"\r\n",
+							"openai.api_base = \"https://querystructureddata.openai.azure.com/\"\r\n",
+							"openai.api_version = \"2022-12-01\"\r\n",
+							"openai.api_key = \"c607bf2bba454302b492ba369efe54f6\""
+						],
+						"outputs": [],
+						"execution_count": 122
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Define a UDF (user-defined function) to apply the regular expressions and stop words removal to each row of the dataframe\r\n",
+							"def clean_text(text):\r\n",
+							"    # Remove URLs, hashtags, mentions, and emojis using regular expressions\r\n",
+							"    text = re.sub(url_regex, '', text)\r\n",
+							"    text = re.sub(hashtag_regex, '', text)\r\n",
+							"    text = re.sub(mention_regex, '', text)\r\n",
+							"    text = re.sub(emoji_regex, '', text)\r\n",
+							"\r\n",
+							"    # Remove special characters\r\n",
+							"    text = re.sub(special_chars_regex, '', text)\r\n",
+							"\r\n",
+							"    return text"
+						],
+						"outputs": [],
+						"execution_count": 123
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Define regular expressions for special characters, URLs, hashtags, mentions, and emojis\r\n",
+							"special_chars_regex = r'[^\\w\\s]'\r\n",
+							"url_regex = r'https?://\\S+'\r\n",
+							"hashtag_regex = r'#\\w+'\r\n",
+							"mention_regex = r'@\\w+'\r\n",
+							"emoji_regex = r'[^\\w\\s\\ufe0f]+'\r\n",
+							"\r\n",
+							"# Define the UDF as a Spark SQL function\r\n",
+							"clean_text_udf = udf(clean_text, StringType())"
+						],
+						"outputs": [],
+						"execution_count": 124
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Create function to split input to Cogntive Services Extractive Summarization into batches of 125000 characters max\r\n",
+							"def split_into_batches(input_string, max_chars_per_batch):\r\n",
+							"    current_batch = \"\"\r\n",
+							"    result = []\r\n",
+							"    for c in input_string:\r\n",
+							"        if len(current_batch) + 1 > max_chars_per_batch:\r\n",
+							"            result.append(current_batch)\r\n",
+							"            current_batch = c\r\n",
+							"        else:\r\n",
+							"            current_batch += c\r\n",
+							"    if current_batch:\r\n",
+							"        result.append(current_batch)\r\n",
+							"    return result"
+						],
+						"outputs": [],
+						"execution_count": 125
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Create function to authenticate the client using your key and endpoint \r\n",
+							"def authenticate_client():\r\n",
+							"    ta_credential = AzureKeyCredential(key)\r\n",
+							"    text_analytics_client = TextAnalyticsClient(\r\n",
+							"            endpoint=endpoint, \r\n",
+							"            credential=ta_credential)\r\n",
+							"    return text_analytics_client\r\n",
+							"\r\n",
+							"client = authenticate_client()"
+						],
+						"outputs": [],
+						"execution_count": 126
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Creat function to apply Exractive Summarization\r\n",
+							"def sample_extractive_summarization(client,doc):\r\n",
+							"\r\n",
+							"    document = doc\r\n",
+							"\r\n",
+							"    poller = client.begin_analyze_actions(\r\n",
+							"        document,\r\n",
+							"        actions=[\r\n",
+							"            ExtractSummaryAction(max_sentence_count=20)\r\n",
+							"        ],\r\n",
+							"    )\r\n",
+							"    document_results = poller.result()\r\n",
+							"    for result in document_results:\r\n",
+							"        extract_summary_result = result[0]  # first document, first result\r\n",
+							"        #if extract_summary_result.is_error:\r\n",
+							"            #print(\"...Is an error with code '{}' and message '{}'\".format(\r\n",
+							"            #    extract_summary_result.code, extract_summary_result.message\r\n",
+							"            #))\r\n",
+							"        #else:\r\n",
+							"            #print(\"Summary extracted: \\n{}\".format(\r\n",
+							"            #    \" \".join([sentence.text for sentence in extract_summary_result.sentences]))\r\n",
+							"            #)\r\n",
+							"    return(\" \".join([sentence.text for sentence in extract_summary_result.sentences]))"
+						],
+						"outputs": [],
+						"execution_count": 127
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Define dataframe schema\r\n",
+							"schema = StructType([\r\n",
+							"    StructField(\"topic\", ShortType(), True),\r\n",
+							"    StructField(\"abstractive_summary\", StringType(), True)\r\n",
+							"    ])"
+						],
+						"outputs": [],
+						"execution_count": 128
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Cognitive Services Extractive to OpenAI Abstractive Summarization"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"def Abstractive_Summarization(dataframe, topic):\r\n",
+							"    # Apply the UDF to the 'text' column of the dataframe and store the result in a new column named 'cleanText'\r\n",
+							"    df = dataframe.withColumn('cleanText', clean_text_udf('text'))\r\n",
+							"    \r\n",
+							"    # Remove empty spaces equal to or bigger than 2 spaces\r\n",
+							"    df = df.withColumn('text_trimmed', regexp_replace(df['cleanText'], '\\s{2,}', ' '))\r\n",
+							"    # Remove empty spaces before and after text.\r\n",
+							"    df = df.withColumn('text_trimmed', trim(df['text_trimmed']))\r\n",
+							"    text_col = df.select('text_trimmed')\r\n",
+							"    # Collect all tweets into a list\r\n",
+							"    text_list = text_col.rdd.map(lambda row: row[0]).collect()\r\n",
+							"    # Join all tweets into a single document\r\n",
+							"    result = \" \".join([text + \".\" for text in text_list])\r\n",
+							"    document = [result]\r\n",
+							"    # Extract the string that contains all tweets\r\n",
+							"    input_string = document[0]\r\n",
+							"\r\n",
+							"    # Split the string into batches of 125000 characters maximum\r\n",
+							"    max_chars_per_batch = 125000\r\n",
+							"    result = split_into_batches(input_string, max_chars_per_batch)\r\n",
+							"    #print(len(result[0]))\r\n",
+							"\r\n",
+							"    # For each batch create an extractive summary of 20 sentences\r\n",
+							"    ex_summaries = []\r\n",
+							"    for each in result:\r\n",
+							"        ex_summary = sample_extractive_summarization(client,[each])\r\n",
+							"        ex_summaries.append([ex_summary])\r\n",
+							"\r\n",
+							"    ab_summaries = []\r\n",
+							"\r\n",
+							"    # Create a list of abstractive summaries for each extractive summary\r\n",
+							"    for each in ex_summaries:\r\n",
+							"        #print(each)\r\n",
+							"        p = 'Provide a summary of the text below that captures the main idea. ' + each[0]\r\n",
+							"\r\n",
+							"        response = openai.Completion.create(\r\n",
+							"        engine=\"SumTest\",\r\n",
+							"        prompt = p,\r\n",
+							"        temperature=0.3,\r\n",
+							"        max_tokens=250,\r\n",
+							"        top_p=1,\r\n",
+							"        frequency_penalty=0,\r\n",
+							"        presence_penalty=0,\r\n",
+							"        best_of=1,\r\n",
+							"        stop=None)\r\n",
+							"\r\n",
+							"        #print(response['choices'][0]['text'])\r\n",
+							"        ab_summaries.append(response['choices'][0]['text'])\r\n",
+							"\r\n",
+							"    #print(ab_summaries)\r\n",
+							"\r\n",
+							"\r\n",
+							"    # Create one abstractive summary using the collection of abstractive summaries created above\r\n",
+							"    p = 'Provide a summary of the text below that captures the main idea. ' + ''.join(ab_summaries)\r\n",
+							"\r\n",
+							"    response = openai.Completion.create(\r\n",
+							"    engine=\"SumTest\",\r\n",
+							"    prompt = p,\r\n",
+							"    temperature=0.3,\r\n",
+							"    max_tokens=250,\r\n",
+							"    top_p=1,\r\n",
+							"    frequency_penalty=0,\r\n",
+							"    presence_penalty=0,\r\n",
+							"    best_of=1,\r\n",
+							"    stop=None)\r\n",
+							" \r\n",
+							"    final_ab_summarization = response['choices'][0]['text']\r\n",
+							"    #print(response['choices'][0]['text'])\r\n",
+							"\r\n",
+							"    # Put the meta abstractive summary into a data frame and return the data frame object \r\n",
+							"    return(spark.createDataFrame([(topic, final_ab_summarization)], schema))\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 129
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Topic 0 Summary"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic0 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 0\")\r\n",
+							"df_topic0.count()"
+						],
+						"outputs": [],
+						"execution_count": 130
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"topic0_summary = Abstractive_Summarization(dataframe = df_topic0, topic=0)\r\n",
+							"display(topic0_summary)"
+						],
+						"outputs": [],
+						"execution_count": 131
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Topic 1 Summary"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic1 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 1\")\r\n",
+							"df_topic1.count()"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"topic1_summary = Abstractive_Summarization(dataframe = df_topic1, topic=1)\r\n",
+							"display(topic1_summary)"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Topic 3 Summary"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic3 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 3\")\r\n",
+							"df_topic3.count()"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"topic3_summary = Abstractive_Summarization(dataframe = df_topic3, topic=3)\r\n",
+							"display(topic3_summary)"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Topic 4 Summary"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic4 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 4\")\r\n",
+							"df_topic4.count()"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"topic4_summary = Abstractive_Summarization(dataframe = df_topic4, topic=4)\r\n",
+							"display(topic4_summary)"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Union dataframes"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# union the dataframes\r\n",
+							"Topic_Summary_df = topic0_summary.union(topic1_summary).union(topic2_summary).union(topic3_summary).union(topic4_summary)\r\n",
+							"display(Topic_Summary_df)"
+						],
+						"outputs": [],
+						"execution_count": null
 					}
 				]
 			},
@@ -9079,43 +10541,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/SparkPoolTest')]",
-			"type": "Microsoft.Synapse/workspaces/bigDataPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"autoPause": {
-					"enabled": true,
-					"delayInMinutes": 15
-				},
-				"autoScale": {
-					"enabled": true,
-					"maxNodeCount": 10,
-					"minNodeCount": 3
-				},
-				"nodeCount": 0,
-				"nodeSize": "Small",
-				"nodeSizeFamily": "MemoryOptimized",
-				"sparkVersion": "3.3",
-				"isComputeIsolationEnabled": false,
-				"sessionLevelPackagesEnabled": true,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "eastus2"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "eastus2"
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/TopicModeling_LDA')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
@@ -9139,7 +10564,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "2ed54b3e-6d6e-47f1-981b-f0636daa0771"
+						"spark.autotune.trackingId": "c68dfa68-0548-436d-91af-a54cbcaa9c84"
 					}
 				},
 				"metadata": {
@@ -9164,15 +10589,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 16,
-						"memory": 112,
-						"automaticScaleJobs": false
+						"memory": 112
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -9200,7 +10623,20 @@
 							")"
 						],
 						"outputs": [],
-						"execution_count": 157
+						"execution_count": 1
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Sort by created_at and sample if needed"
+						]
 					},
 					{
 						"cell_type": "code",
@@ -9213,7 +10649,8 @@
 								"transient": {
 									"deleting": false
 								}
-							}
+							},
+							"collapsed": false
 						},
 						"source": [
 							"# Select sample size for testing\r\n",
@@ -9224,10 +10661,24 @@
 							"df = df.orderBy(desc(\"created_at\"))\r\n",
 							"\r\n",
 							"# select the first 100 records\r\n",
-							"df = df.limit(100)"
+							"#df = df.limit(100)"
 						],
 						"outputs": [],
-						"execution_count": 158
+						"execution_count": 2
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Clean data\r\n",
+							"Remove special characters, URLs, hashtags, mentions, emojis, and stopwords"
+						]
 					},
 					{
 						"cell_type": "code",
@@ -9240,22 +10691,70 @@
 								"transient": {
 									"deleting": false
 								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"import re\r\n",
+							"from pyspark.ml.feature import StopWordsRemover\r\n",
+							"from pyspark.sql.functions import udf\r\n",
+							"from pyspark.sql.types import StringType\r\n",
+							"\r\n",
+							"# Define regular expressions for special characters, URLs, hashtags, mentions, and emojis\r\n",
+							"special_chars_regex = r'[^\\w\\s]'\r\n",
+							"url_regex = r'https?://\\S+'\r\n",
+							"hashtag_regex = r'#\\w+'\r\n",
+							"mention_regex = r'@\\w+'\r\n",
+							"emoji_regex = r'[^\\w\\s\\ufe0f]+'\r\n",
+							"\r\n",
+							"# Define a list of stop words\r\n",
+							"stop_words = StopWordsRemover().getStopWords()\r\n",
+							"\r\n",
+							"# Define a UDF (user-defined function) to apply the regular expressions and stop words removal to each row of the dataframe\r\n",
+							"def clean_text(text):\r\n",
+							"    # Remove URLs, hashtags, mentions, and emojis using regular expressions\r\n",
+							"    text = re.sub(url_regex, '', text)\r\n",
+							"    text = re.sub(hashtag_regex, '', text)\r\n",
+							"    text = re.sub(mention_regex, '', text)\r\n",
+							"    text = re.sub(emoji_regex, '', text)\r\n",
+							"\r\n",
+							"    # Remove special characters and convert to lowercase\r\n",
+							"    text = re.sub(special_chars_regex, '', text).lower()\r\n",
+							"\r\n",
+							"    # Remove stop words\r\n",
+							"    words = text.split()\r\n",
+							"    words = [w for w in words if w not in stop_words]\r\n",
+							"    text = ' '.join(words)\r\n",
+							"\r\n",
+							"    return text\r\n",
+							"\r\n",
+							"# Define the UDF as a Spark SQL function\r\n",
+							"from pyspark.sql.functions import udf\r\n",
+							"from pyspark.sql.types import StringType\r\n",
+							"clean_text_udf = udf(clean_text, StringType())\r\n",
+							"\r\n",
+							"# Apply the UDF to the 'text' column of the dataframe and store the result in a new column named 'cleanText'\r\n",
+							"df = df.withColumn('cleanText', clean_text_udf('text'))\r\n",
+							"#display(df)"
+						],
+						"outputs": [],
+						"execution_count": 7
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
 							}
 						},
 						"source": [
-							"from pyspark.sql.functions import regexp_replace\r\n",
-							"\r\n",
-							"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
-							"regex = r'@\\w+|&\\w+|https\\w+|#\\w+'\r\n",
-							"\r\n",
-							"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
-							"df = df.withColumn(\"text\", regexp_replace(col(\"text\"), regex, ''))\r\n",
-							"\r\n",
-							"# Show the filtered DataFrame\r\n",
-							"#df.select(\"text\").show()"
-						],
-						"outputs": [],
-						"execution_count": 159
+							"## Perform Topic Modeling\r\n",
+							"## Pyspark ML Clustering LDA (Latent Dirichlet Allocation)\r\n",
+							"https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.clustering.LDA.html\r\n",
+							"## 5 Topics"
+						]
 					},
 					{
 						"cell_type": "code",
@@ -9276,7 +10775,7 @@
 							"from pyspark.ml.clustering import LDA\r\n",
 							"\r\n",
 							"# tokenize text\r\n",
-							"tokenizer = Tokenizer(inputCol='text', outputCol='tokens')\r\n",
+							"tokenizer = Tokenizer(inputCol='cleanText', outputCol='tokens')\r\n",
 							"df_tokens = tokenizer.transform(df)\r\n",
 							"\r\n",
 							"# create document-term matrix\r\n",
@@ -9299,7 +10798,20 @@
 							"#display(df_result)"
 						],
 						"outputs": [],
-						"execution_count": 160
+						"execution_count": 8
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Parse topicDistribution output column for the topic group and confidence values"
+						]
 					},
 					{
 						"cell_type": "code",
@@ -9356,7 +10868,20 @@
 							"#print(topic4confidence)"
 						],
 						"outputs": [],
-						"execution_count": 162
+						"execution_count": 9
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Collect the original dataframe column values"
+						]
 					},
 					{
 						"cell_type": "code",
@@ -9376,6 +10901,7 @@
 							"id_values = []\r\n",
 							"created_at_values = []\r\n",
 							"text_values = []\r\n",
+							"cleantext_values = []\r\n",
 							"lang_values = []\r\n",
 							"retweet_count_values = []\r\n",
 							"reply_count_values = []\r\n",
@@ -9396,10 +10922,24 @@
 							"    reply_count_values.append(row[\"reply_count\"])\r\n",
 							"    like_count_values.append(row[\"like_count\"])\r\n",
 							"    quote_count_values.append(row[\"quote_count\"])\r\n",
-							"    impression_count_values.append(row[\"impression_count\"])"
+							"    impression_count_values.append(row[\"impression_count\"])\r\n",
+							"    cleantext_values.append(row['cleanText'])"
 						],
 						"outputs": [],
-						"execution_count": 163
+						"execution_count": 14
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Convert new values to proper int of float data types"
+						]
 					},
 					{
 						"cell_type": "code",
@@ -9424,7 +10964,20 @@
 							"topic4confidence = [float(i) for i in topic4confidence]"
 						],
 						"outputs": [],
-						"execution_count": 164
+						"execution_count": 11
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Create a final output dataframe by mapping the values to their proper schema "
+						]
 					},
 					{
 						"cell_type": "code",
@@ -9437,7 +10990,8 @@
 								"transient": {
 									"deleting": false
 								}
-							}
+							},
+							"collapsed": false
 						},
 						"source": [
 							"from pyspark.sql.types import *\r\n",
@@ -9445,6 +10999,7 @@
 							"    StructField(\"id\",  LongType(), True),\r\n",
 							"    StructField(\"created_at\", TimestampType(), True),\r\n",
 							"    StructField(\"text\", StringType(), True),\r\n",
+							"    StructField(\"cleantext\", StringType(), True),\r\n",
 							"    StructField(\"lang\", StringType(), True),\r\n",
 							"    StructField(\"retweet_count\", IntegerType(), True),\r\n",
 							"    StructField(\"reply_count\", IntegerType(), True),\r\n",
@@ -9463,6 +11018,7 @@
 							"rows = [Row(id=id_values[i],\r\n",
 							"            created_at=created_at_values[i],\r\n",
 							"            text=text_values[i],\r\n",
+							"            cleanText = cleantext_values[i],\r\n",
 							"            lang=lang_values[i],\r\n",
 							"            retweet_count = retweet_count_values[i],\r\n",
 							"            reply_count=reply_count_values[i],\r\n",
@@ -9481,11 +11037,10 @@
 							"final_topic_df = spark.createDataFrame(rows, schema)\r\n",
 							"\r\n",
 							"# show the DataFrame\r\n",
-							"#display(final_topic_df)\r\n",
-							""
+							"#display(final_topic_df)"
 						],
 						"outputs": [],
-						"execution_count": 167
+						"execution_count": 16
 					},
 					{
 						"cell_type": "markdown",
@@ -9505,6 +11060,7 @@
 							"\t[id] bigint  NULL,\r\n",
 							"\t[created_at] DATETIME2(7)  NULL,\r\n",
 							"\t[text] NVARCHAR(4000)  NULL,\r\n",
+							"\t[cleantext] NVARCHAR(4000)  NULL,\r\n",
 							"\t[lang] nvarchar(10)  NULL,\r\n",
 							"\t[retweet_count] INT  NULL,\r\n",
 							"\t[reply_count] INT  NULL,\r\n",
@@ -9557,418 +11113,48 @@
 							" .synapsesql(\"SQLPoolTest.Topic.NATO_Topics\"))"
 						],
 						"outputs": [],
-						"execution_count": 170
+						"execution_count": 17
 					}
 				]
 			},
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/Create_NATO_Topic_Table')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"name": "[concat(parameters('workspaceName'), '/SparkPoolTest')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
-				"folder": {
-					"name": "Create_Tables"
+				"autoPause": {
+					"enabled": true,
+					"delayInMinutes": 15
 				},
-				"content": {
-					"query": "CREATE TABLE [Topic].[NATO_Topics]\n( \n\t[id] bigint  NULL,\n\t[created_at] DATETIME2(7)  NULL,\n\t[text] NVARCHAR(4000)  NULL,\n\t[lang] nvarchar(10)  NULL,\n\t[retweet_count] INT  NULL,\n\t[reply_count] INT  NULL,\n\t[like_count] INT  NULL,\n\t[quote_count] INT  NULL,\n\t[impression_count] INT  NULL,\n    [topic] SMALLINT NULL,\n    [topic_0_confidence] REAL NULL,\n    [topic_1_confidence] REAL NULL,\n    [topic_2_confidence] REAL NULL,\n    [topic_3_confidence] REAL NULL,\n    [topic_4_confidence] REAL NULL\n)\n\nGO",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "SQLPoolTest",
-						"poolName": "SQLPoolTest"
-					},
-					"resultLimit": 5000
+				"autoScale": {
+					"enabled": true,
+					"maxNodeCount": 10,
+					"minNodeCount": 3
 				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/TopicModeling_LDA')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "Delete all from NATO Topics table",
-						"type": "SqlPoolStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"sqlPool": {
-							"referenceName": "SQLPoolTest",
-							"type": "SqlPoolReference"
-						},
-						"typeProperties": {
-							"storedProcedureName": "[dbo].[DeleteAllNATOTopics]"
-						}
-					},
-					{
-						"name": "Perform Topic Modeling LDA",
-						"description": "Outputs to [Topic].[NATO_Topics]",
-						"type": "SynapseNotebook",
-						"dependsOn": [
-							{
-								"activity": "Delete all from NATO Topics table",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebook": {
-								"referenceName": "TopicModeling_LDA",
-								"type": "NotebookReference"
-							},
-							"snapshot": true,
-							"sparkPool": {
-								"referenceName": "SparkPoolTest",
-								"type": "BigDataPoolReference"
-							},
-							"executorSize": "Small",
-							"conf": {},
-							"driverSize": "Small"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
+				"nodeCount": 3,
+				"nodeSize": "Large",
+				"nodeSizeFamily": "MemoryOptimized",
+				"sparkVersion": "3.3",
+				"isComputeIsolationEnabled": false,
+				"sessionLevelPackagesEnabled": true,
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]",
-				"[concat(variables('workspaceId'), '/notebooks/TopicModeling_LDA')]",
-				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolTest')]"
-			]
+			"dependsOn": [],
+			"location": "eastus2"
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/DeleteAllFromNATOTopics_Procedure')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
-				"folder": {
-					"name": "SQL_Procedures"
-				},
-				"content": {
-					"query": "CREATE PROCEDURE DeleteAllNATOTopics\nAS\nBEGIN\n    DELETE FROM [Topic].[NATO_Topics];\nEND;",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "SQLPoolTest",
-						"poolName": "SQLPoolTest"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
 			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/CogntiveService_KeyPhrases')]",
-			"type": "Microsoft.Synapse/workspaces/notebooks",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"folder": {
-					"name": "NLP"
-				},
-				"nbformat": 4,
-				"nbformat_minor": 2,
-				"bigDataPool": {
-					"referenceName": "SparkPoolTest",
-					"type": "BigDataPoolReference"
-				},
-				"sessionProperties": {
-					"driverMemory": "28g",
-					"driverCores": 4,
-					"executorMemory": "28g",
-					"executorCores": 4,
-					"numExecutors": 2,
-					"conf": {
-						"spark.dynamicAllocation.enabled": "false",
-						"spark.dynamicAllocation.minExecutors": "2",
-						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "64a0a61d-9f70-4d5b-9380-6e05e94f4676"
-					}
-				},
-				"metadata": {
-					"saveOutput": true,
-					"enableDebugMode": false,
-					"kernelspec": {
-						"name": "synapse_pyspark",
-						"display_name": "Synapse PySpark"
-					},
-					"language_info": {
-						"name": "python"
-					},
-					"a365ComputeOptions": {
-						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolTest",
-						"name": "SparkPoolTest",
-						"type": "Spark",
-						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolTest",
-						"auth": {
-							"type": "AAD",
-							"authResource": "https://dev.azuresynapse.net"
-						},
-						"sparkVersion": "3.3",
-						"nodeCount": 3,
-						"cores": 16,
-						"memory": 112,
-						"automaticScaleJobs": false
-					},
-					"sessionKeepAliveTimeout": 30
-				},
-				"cells": [
-					{
-						"cell_type": "code",
-						"metadata": {},
-						"source": [
-							"# Add required imports\r\n",
-							"import com.microsoft.spark.sqlanalytics\r\n",
-							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
-							"from pyspark.sql.functions import col\r\n",
-							"\r\n",
-							"# Name of the SQL Dedicated Pool or database where to run the query\r\n",
-							"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
-							"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\r\n",
-							"\r\n",
-							"# Read from a query\r\n",
-							"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\r\n",
-							"df = (spark.read\r\n",
-							"                     # Name of the SQL Dedicated Pool or database where to run the query\r\n",
-							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
-							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
-							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
-							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
-							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
-							"                     # Defaults to storage path defined in the runtime configurations\r\n",
-							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
-							"                     # query from which data will be read\r\n",
-							"                     .option(Constants.QUERY, \"select * from Topic.NATO_Topics WHERE topic = 0\")\r\n",
-							"                     .synapsesql()\r\n",
-							")"
-						],
-						"outputs": [],
-						"execution_count": 180
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"# Select sample size for testing\r\n",
-							"\r\n",
-							"# Sort ascending by 'created_at'\r\n",
-							"from pyspark.sql.functions import desc\r\n",
-							"\r\n",
-							"df = df.orderBy(desc(\"created_at\"))\r\n",
-							"\r\n",
-							"# select the first 100 records\r\n",
-							"df = df.limit(100)"
-						],
-						"outputs": [],
-						"execution_count": 181
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"from pyspark.sql.functions import regexp_replace\r\n",
-							"\r\n",
-							"# Define the regular expression pattern to match words starting with @, &, or https\r\n",
-							"regex = r'@\\w+|&\\w+|#\\w+'\r\n",
-							"\r\n",
-							"# Apply the regexp_replace function to the text column and create a new column with the filtered text\r\n",
-							"df = df.withColumn(\"text\", regexp_replace(col(\"text\"), regex, ''))\r\n",
-							"df = df.withColumn('text', regexp_replace('text', 'https\\\\S+', ''))\r\n",
-							"\r\n",
-							"# Show the filtered DataFrame\r\n",
-							"df.select(\"text\").show()"
-						],
-						"outputs": [],
-						"execution_count": 183
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"import synapse.ml\r\n",
-							"from synapse.ml.cognitive import *\r\n",
-							"from pyspark.sql.functions import col"
-						],
-						"outputs": [],
-						"execution_count": 184
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"linked_service_name = \"CognitiveService1\""
-						],
-						"outputs": [],
-						"execution_count": 185
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"# import required libraries\r\n",
-							"import json\r\n",
-							"from pyspark.sql.types import StructType, StructField, StringType\r\n",
-							"import pyspark.sql.functions as F\r\n",
-							"\r\n",
-							"# Batch size\r\n",
-							"batch_size = 100\r\n",
-							"\r\n",
-							"# First, count the total number of rows in the DataFrame\r\n",
-							"num_rows = df.count()\r\n",
-							"\r\n",
-							"# Next, calculate the number of batches needed to split the DataFrame into batches of 5\r\n",
-							"num_batches = int(num_rows / batch_size) + (num_rows % batch_size > 0)\r\n",
-							"\r\n",
-							"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
-							"df_batches = df.randomSplit([1.0]*num_batches, seed=42)\r\n",
-							"\r\n",
-							"# define the schema for the output DataFrame\r\n",
-							"schema = StructType([\r\n",
-							"    StructField(\"entity_text\", StringType(), True),\r\n",
-							"    StructField(\"entity_category\", StringType(), True)\r\n",
-							"    ])\r\n",
-							"\r\n",
-							"kp_output = []\r\n",
-							"\r\n",
-							"# create an empty DataFrame with the defined schema\r\n",
-							"output_df = spark.createDataFrame([], schema)\r\n",
-							"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
-							"for i in range(num_batches):\r\n",
-							"    batch = df_batches[i].limit(batch_size)\r\n",
-							"    keyPhrase = (KeyPhraseExtractor()\r\n",
-							"    .setLinkedService(linked_service_name)\r\n",
-							"    .setLanguageCol(\"lang\")\r\n",
-							"    .setOutputCol(\"replies\")\r\n",
-							"    .setErrorCol(\"error\"))\r\n",
-							"\r\n",
-							"    kp_batch_output = keyPhrase.transform(batch)\r\n",
-							"    #display(ner_batch_output)\r\n",
-							"\r\n",
-							"    # Extract the 'replies' column and convert it to JSON\r\n",
-							"    json_output = kp_batch_output.select(\"replies\").toJSON().collect()\r\n",
-							"\r\n",
-							"    # Deserialize the JSON and extract the 'sentiment' field\r\n",
-							"    keyphrases = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
-							"\r\n",
-							"    # Print the 'sentiment' field for each row\r\n",
-							"    for each in keyphrases:\r\n",
-							"        #print(each)\r\n",
-							"        for keyphrase in each['document']['keyPhrases']:\r\n",
-							"            kp_output.append(keyphrase)\r\n",
-							"\r\n",
-							"print(kp_output)"
-						],
-						"outputs": [],
-						"execution_count": 186
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							},
-							"collapsed": false
-						},
-						"source": [
-							"# Create a PySpark DataFrame from the array\r\n",
-							"kp_df = spark.createDataFrame([(i, 1) for i in kp_output], ['text', 'count'])\r\n",
-							"\r\n",
-							"# Group by 'text' column and sum the 'count' column to get the count of each unique text\r\n",
-							"kp_df = kp_df.groupBy('text').agg({'count': 'sum'})\r\n",
-							"\r\n",
-							"# Sort the DataFrame by the 'count' column in descending order\r\n",
-							"kp_df = kp_df.sort(col('sum(count)').desc())\r\n",
-							"\r\n",
-							"# Show the resulting DataFrame\r\n",
-							"display(kp_df)"
-						],
-						"outputs": [],
-						"execution_count": 187
-					}
-				]
-			},
-			"dependsOn": []
+			"dependsOn": [],
+			"location": "eastus2"
 		}
 	]
 }
