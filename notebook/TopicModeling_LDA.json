@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "46d016b8-36a2-4b19-9f5b-35335785a545"
+				"spark.autotune.trackingId": "7893136e-58b0-4a30-87ff-30f391ef4c92"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 82
+				"execution_count": 120
 			},
 			{
 				"cell_type": "code",
@@ -98,7 +98,7 @@
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *"
 				],
-				"execution_count": 83
+				"execution_count": 121
 			},
 			{
 				"cell_type": "markdown",
@@ -138,7 +138,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 84
+				"execution_count": 122
 			},
 			{
 				"cell_type": "markdown",
@@ -223,7 +223,47 @@
 					"\r\n",
 					"display(df)"
 				],
-				"execution_count": 88
+				"execution_count": 123
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.ml.feature import RegexTokenizer\r\n",
+					"\r\n",
+					"tokenizer = RegexTokenizer(inputCol=\"cleanText\", outputCol=\"tokens\", pattern=\"\\\\s+\")\r\n",
+					"df_tokens = tokenizer.transform(df)\r\n",
+					"df_tokens"
+				],
+				"execution_count": 124
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df_tokens.show()"
+				],
+				"execution_count": 126
 			},
 			{
 				"cell_type": "markdown",
@@ -256,11 +296,10 @@
 					"collapsed": false
 				},
 				"source": [
-					"from pyspark.ml.feature import Tokenizer, CountVectorizer\r\n",
 					"from pyspark.ml.clustering import LDA\r\n",
+					"from pyspark.ml.feature import Tokenizer, CountVectorizer\r\n",
 					"\r\n",
-					"# tokenize text\r\n",
-					"tokenizer = Tokenizer(inputCol='cleanText', outputCol='tokens')\r\n",
+					"tokenizer = Tokenizer(inputCol=\"cleanText\", outputCol=\"tokens\")\r\n",
 					"df_tokens = tokenizer.transform(df)\r\n",
 					"\r\n",
 					"# create document-term matrix\r\n",
@@ -272,17 +311,17 @@
 					"num_topics = 5\r\n",
 					"max_iterations = 10\r\n",
 					"lda = LDA(k=num_topics, maxIter=max_iterations)\r\n",
-					"lda_model = lda.fit(df_features)\r\n",
+					"lda_model = lda.fit(df)\r\n",
 					"\r\n",
 					"# get topic distribution for each document\r\n",
-					"df_topics = lda_model.transform(df_features).select('id', 'topicDistribution')\r\n",
+					"df_topics = lda_model.transform(df).select('id', 'topicDistribution')\r\n",
 					"\r\n",
 					"# join with original DataFrame\r\n",
 					"df_result = df.join(df_topics, 'id')\r\n",
 					"\r\n",
 					"display(df_result)"
 				],
-				"execution_count": 62
+				"execution_count": 128
 			},
 			{
 				"cell_type": "markdown",
