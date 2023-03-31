@@ -265,6 +265,23 @@
 												"type": "DatasetReference"
 											}
 										]
+									},
+									{
+										"name": "Set variable3",
+										"type": "SetVariable",
+										"dependsOn": [
+											{
+												"activity": "GET Past 7 Days with token",
+												"dependencyConditions": [
+													"Failed"
+												]
+											}
+										],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "stopUntil",
+											"value": "'true'"
+										}
 									}
 								],
 								"ifTrueActivities": [
@@ -373,6 +390,23 @@
 												"type": "DatasetReference"
 											}
 										]
+									},
+									{
+										"name": "Set variable2",
+										"type": "SetVariable",
+										"dependsOn": [
+											{
+												"activity": "GET with specifc date with token",
+												"dependencyConditions": [
+													"Failed"
+												]
+											}
+										],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "stopUntil",
+											"value": "'true'"
+										}
 									}
 								]
 							}
