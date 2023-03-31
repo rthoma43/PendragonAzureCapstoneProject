@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "ae553cb9-392c-4c52-84f6-492922d5c4db"
+				"spark.autotune.trackingId": "46d016b8-36a2-4b19-9f5b-35335785a545"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 68
+				"execution_count": 82
 			},
 			{
 				"cell_type": "code",
@@ -98,7 +98,7 @@
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *"
 				],
-				"execution_count": 69
+				"execution_count": 83
 			},
 			{
 				"cell_type": "markdown",
@@ -138,7 +138,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 70
+				"execution_count": 84
 			},
 			{
 				"cell_type": "markdown",
@@ -165,14 +165,11 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
-					"import nltk\r\n",
-					"nltk.download('punkt')\r\n",
 					"import re\r\n",
-					"from nltk.corpus import stopwords\r\n",
-					"nltk.download('stopwords')\r\n",
 					"\r\n",
 					"# Define regular expressions for special characters, URLs, hashtags, mentions, and emojis\r\n",
 					"special_chars_regex = r'[^\\w\\s]'\r\n",
@@ -180,8 +177,24 @@
 					"mentions_hashtag_regex = r'@\\w+|#\\w+'\r\n",
 					"emoji_regex = r'[^\\w\\s\\ufe0f]+'\r\n",
 					"extra_spaces_regex = r'\\s{2,}'\r\n",
+					"stopwords = [\"i\", \"me\", \"my\", \"myself\", \"we\", \"our\", \"ours\", \"ourselves\",\r\n",
+					"                 \"you\", \"your\", \"yours\", \"yourself\", \"yourselves\", \"he\", \"him\",\r\n",
+					"                 \"his\", \"himself\", \"she\", \"her\", \"hers\", \"herself\", \"it\", \"its\",\r\n",
+					"                 \"itself\", \"they\", \"them\", \"their\", \"theirs\", \"themselves\",\r\n",
+					"                 \"what\", \"which\", \"who\", \"whom\", \"this\", \"that\", \"these\",\r\n",
+					"                 \"those\", \"am\", \"is\", \"are\", \"was\", \"were\", \"be\", \"been\",\r\n",
+					"                 \"being\", \"have\", \"has\", \"had\", \"having\", \"do\", \"does\", \"did\",\r\n",
+					"                 \"doing\", \"a\", \"an\", \"the\", \"and\", \"but\", \"if\", \"or\", \"because\",\r\n",
+					"                 \"as\", \"until\", \"while\", \"of\", \"at\", \"by\", \"for\", \"with\", \"about\",\r\n",
+					"                 \"against\", \"between\", \"into\", \"through\", \"during\", \"before\",\r\n",
+					"                 \"after\", \"above\", \"below\", \"to\", \"from\", \"up\", \"down\", \"in\",\r\n",
+					"                 \"out\", \"on\", \"off\", \"over\", \"under\", \"again\", \"further\",\r\n",
+					"                 \"then\", \"once\", \"here\", \"there\", \"when\", \"where\", \"why\",\r\n",
+					"                 \"how\", \"all\", \"any\", \"both\", \"each\", \"few\", \"more\", \"most\",\r\n",
+					"                 \"other\", \"some\", \"such\", \"no\", \"nor\", \"not\", \"only\", \"own\",\r\n",
+					"                 \"same\", \"so\", \"than\", \"too\", \"very\", \"s\", \"t\", \"can\", \"will\",\r\n",
+					"                 \"just\", \"don\", \"should\", \"now\"]\r\n",
 					"\r\n",
-					"# Define a function to clean the text\r\n",
 					"def clean_text(text):\r\n",
 					"    # Convert text to lowercase\r\n",
 					"    text = text.lower()\r\n",
@@ -195,51 +208,7 @@
 					"    text = re.sub(emoji_regex, '', text)\r\n",
 					"    # Remove empty spaces equal to or bigger than 2 spaces\r\n",
 					"    text = re.sub(extra_spaces_regex, ' ', text)\r\n",
-					"    \r\n",
-					"    # Tokenize the text\r\n",
-					"    tokens = nltk.word_tokenize(text)\r\n",
-					"    # Remove stop words\r\n",
-					"    stopwords_list = stopwords.words('english')\r\n",
-					"    tokens = [token for token in tokens if token not in stopwords_list]\r\n",
-					"    # Remove any remaining noise\r\n",
-					"    tokens = [re.sub(r'[^\\w\\s]', ' ', token) for token in tokens]\r\n",
-					"    return ' '.join(tokens)\r\n",
-					"\r\n",
-					"# Define a UDF to apply the clean_text function\r\n",
-					"clean_text_udf = udf(clean_text, StringType())"
-				],
-				"execution_count": 60
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"import re\r\n",
-					"from pyspark.ml.feature import StopWordsRemover\r\n",
-					"\r\n",
-					"def clean_text(text):\r\n",
-					"    # Remove URLs\r\n",
-					"    text = re.sub(r'http\\S+', '', text)\r\n",
-					"    # Remove emojis\r\n",
-					"    text = text.encode('ascii', 'ignore').decode('ascii')\r\n",
-					"    # Remove words that start with \"#\"\r\n",
-					"    text = re.sub(r'#\\w+', '', text)\r\n",
-					"    # Remove words that start with \"@\"\r\n",
-					"    text = re.sub(r'@\\w+', '', text)\r\n",
-					"    # Remove stopwords\r\n",
-					"    stopwords = StopWordsRemover.loadDefaultStopWords(\"english\")\r\n",
-					"    stopwordsRemover = StopWordsRemover(inputCol=\"words\", outputCol=\"filtered\").setStopWords(stopwords)\r\n",
-					"    text = ' '.join(stopwordsRemover.transform(text.split(\" \")).select('filtered').rdd.flatMap(lambda x: x).collect())\r\n",
+					"    text = ' '.join([word for word in text.split() if word.lower() not in stopwords])\r\n",
 					"    # Remove empty spaces\r\n",
 					"    text = ' '.join(text.split())\r\n",
 					"    return text\r\n",
@@ -251,44 +220,10 @@
 					"clean_text_udf = udf(clean_text, StringType())\r\n",
 					"\r\n",
 					"df = df.withColumn(\"clean_text\", clean_text_udf(\"text\"))\r\n",
+					"\r\n",
 					"display(df)"
 				],
-				"execution_count": 81
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"import time\r\n",
-					"\r\n",
-					"# Retry the code 3 times with 5 min delay if failure\r\n",
-					"\r\n",
-					"retries = 3\r\n",
-					"delay = 120\r\n",
-					"\r\n",
-					"for i in range(retries):\r\n",
-					"    try:\r\n",
-					"        # Apply the clean_text function to the text column and add the cleaned text to a new column cleanText\r\n",
-					"        df = df.withColumn('cleanText', clean_text_udf(df['text']))\r\n",
-					"        display(df)\r\n",
-					"        break # Break out of the loop if code succeeds\r\n",
-					"    \r\n",
-					"    except:\r\n",
-					"        time.sleep(delay)\r\n",
-					"        print('Failed')"
-				],
-				"execution_count": 61
+				"execution_count": 88
 			},
 			{
 				"cell_type": "markdown",
