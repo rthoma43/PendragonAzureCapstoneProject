@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "ba57ecdf-838b-45d4-a2ae-e25f7d8535d7"
+				"spark.autotune.trackingId": "f86d897d-66d1-40a2-9286-08cdafb49287"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 45
+				"execution_count": 51
 			},
 			{
 				"cell_type": "code",
@@ -98,7 +98,7 @@
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *"
 				],
-				"execution_count": 46
+				"execution_count": 52
 			},
 			{
 				"cell_type": "markdown",
@@ -138,7 +138,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 47
+				"execution_count": 53
 			},
 			{
 				"cell_type": "markdown",
@@ -208,7 +208,7 @@
 					"# Define a UDF to apply the clean_text function\r\n",
 					"clean_text_udf = udf(clean_text, StringType())"
 				],
-				"execution_count": 48
+				"execution_count": 54
 			},
 			{
 				"cell_type": "code",
@@ -225,6 +225,8 @@
 					"collapsed": false
 				},
 				"source": [
+					"import time\r\n",
+					"\r\n",
 					"# Retry the code 3 times with 5 min delay if failure\r\n",
 					"\r\n",
 					"retries = 3\r\n",
@@ -241,7 +243,7 @@
 					"        time.sleep(delay)\r\n",
 					"        print('Failed')"
 				],
-				"execution_count": 50
+				"execution_count": 56
 			},
 			{
 				"cell_type": "markdown",
