@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "67b24c9d-bed4-412a-83a5-37b0101b9023"
+				"spark.autotune.trackingId": "ae553cb9-392c-4c52-84f6-492922d5c4db"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 57
+				"execution_count": 68
 			},
 			{
 				"cell_type": "code",
@@ -98,7 +98,7 @@
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *"
 				],
-				"execution_count": 58
+				"execution_count": 69
 			},
 			{
 				"cell_type": "markdown",
@@ -138,7 +138,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 59
+				"execution_count": 70
 			},
 			{
 				"cell_type": "markdown",
@@ -209,6 +209,51 @@
 					"clean_text_udf = udf(clean_text, StringType())"
 				],
 				"execution_count": 60
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"import re\r\n",
+					"from pyspark.ml.feature import StopWordsRemover\r\n",
+					"\r\n",
+					"def clean_text(text):\r\n",
+					"    # Remove URLs\r\n",
+					"    text = re.sub(r'http\\S+', '', text)\r\n",
+					"    # Remove emojis\r\n",
+					"    text = text.encode('ascii', 'ignore').decode('ascii')\r\n",
+					"    # Remove words that start with \"#\"\r\n",
+					"    text = re.sub(r'#\\w+', '', text)\r\n",
+					"    # Remove words that start with \"@\"\r\n",
+					"    text = re.sub(r'@\\w+', '', text)\r\n",
+					"    # Remove stopwords\r\n",
+					"    stopwords = StopWordsRemover.loadDefaultStopWords(\"english\")\r\n",
+					"    stopwordsRemover = StopWordsRemover(inputCol=\"words\", outputCol=\"filtered\").setStopWords(stopwords)\r\n",
+					"    text = ' '.join(stopwordsRemover.transform(text.split(\" \")).select('filtered').rdd.flatMap(lambda x: x).collect())\r\n",
+					"    # Remove empty spaces\r\n",
+					"    text = ' '.join(text.split())\r\n",
+					"    return text\r\n",
+					"\r\n",
+					"# Apply the function to the \"text\" column of the DataFrame\r\n",
+					"from pyspark.sql.functions import udf\r\n",
+					"from pyspark.sql.types import StringType\r\n",
+					"\r\n",
+					"clean_text_udf = udf(clean_text, StringType())\r\n",
+					"\r\n",
+					"df = df.withColumn(\"clean_text\", clean_text_udf(\"text\"))\r\n",
+					"display(df)"
+				],
+				"execution_count": 81
 			},
 			{
 				"cell_type": "code",
