@@ -7734,7 +7734,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "bcf1eaf9-a0c3-4c11-a69e-0a48485efd28"
+						"spark.autotune.trackingId": "00016fe7-e2b3-4433-93ef-19cfff33e7a3"
 					}
 				},
 				"metadata": {
@@ -8432,7 +8432,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "cfb766e2-8f41-49fd-8291-5999b0d5d200"
+						"spark.autotune.trackingId": "3b1ced4a-86e6-4937-a5f0-8b39e47dee9d"
 					}
 				},
 				"metadata": {
@@ -11065,7 +11065,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "687acd34-4f9e-4732-bd4e-8b0af77b6fe8"
+						"spark.autotune.trackingId": "67b24c9d-bed4-412a-83a5-37b0101b9023"
 					}
 				},
 				"metadata": {
@@ -11126,7 +11126,7 @@
 							")"
 						],
 						"outputs": [],
-						"execution_count": 10
+						"execution_count": 57
 					},
 					{
 						"cell_type": "code",
@@ -11146,7 +11146,7 @@
 							"from pyspark.sql.types import *"
 						],
 						"outputs": [],
-						"execution_count": 11
+						"execution_count": 58
 					},
 					{
 						"cell_type": "markdown",
@@ -11187,7 +11187,7 @@
 							"#df = df.limit(100)"
 						],
 						"outputs": [],
-						"execution_count": 12
+						"execution_count": 59
 					},
 					{
 						"cell_type": "markdown",
@@ -11243,7 +11243,7 @@
 							"    # Remove emojis\r\n",
 							"    text = re.sub(emoji_regex, '', text)\r\n",
 							"    # Remove empty spaces equal to or bigger than 2 spaces\r\n",
-							"    text = re.sub(extra_spaces_regex, '', text)\r\n",
+							"    text = re.sub(extra_spaces_regex, ' ', text)\r\n",
 							"    \r\n",
 							"    # Tokenize the text\r\n",
 							"    tokens = nltk.word_tokenize(text)\r\n",
@@ -11258,7 +11258,7 @@
 							"clean_text_udf = udf(clean_text, StringType())"
 						],
 						"outputs": [],
-						"execution_count": 16
+						"execution_count": 60
 					},
 					{
 						"cell_type": "code",
@@ -11275,14 +11275,26 @@
 							"collapsed": false
 						},
 						"source": [
-							"# Apply the UDF to the 'text' column of the dataframe and store the result in a new column named 'cleanText'\r\n",
-							"import nltk\r\n",
-							"nltk.download('punkt')\r\n",
-							"df = df.withColumn('cleanText', clean_text_udf(df['text']))\r\n",
-							"display(df)"
+							"import time\r\n",
+							"\r\n",
+							"# Retry the code 3 times with 5 min delay if failure\r\n",
+							"\r\n",
+							"retries = 3\r\n",
+							"delay = 120\r\n",
+							"\r\n",
+							"for i in range(retries):\r\n",
+							"    try:\r\n",
+							"        # Apply the clean_text function to the text column and add the cleaned text to a new column cleanText\r\n",
+							"        df = df.withColumn('cleanText', clean_text_udf(df['text']))\r\n",
+							"        display(df)\r\n",
+							"        break # Break out of the loop if code succeeds\r\n",
+							"    \r\n",
+							"    except:\r\n",
+							"        time.sleep(delay)\r\n",
+							"        print('Failed')"
 						],
 						"outputs": [],
-						"execution_count": 17
+						"execution_count": 61
 					},
 					{
 						"cell_type": "markdown",
@@ -11339,10 +11351,10 @@
 							"# join with original DataFrame\r\n",
 							"df_result = df.join(df_topics, 'id')\r\n",
 							"\r\n",
-							"#display(df_result)"
+							"display(df_result)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 62
 					},
 					{
 						"cell_type": "markdown",
@@ -11412,7 +11424,7 @@
 							"#print(topic4confidence)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 63
 					},
 					{
 						"cell_type": "markdown",
@@ -11470,7 +11482,7 @@
 							"    cleantext_values.append(row['cleanText'])"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 64
 					},
 					{
 						"cell_type": "markdown",
@@ -11508,7 +11520,7 @@
 							"topic4confidence = [float(i) for i in topic4confidence]"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 65
 					},
 					{
 						"cell_type": "markdown",
@@ -11581,10 +11593,10 @@
 							"final_topic_df = spark.createDataFrame(rows, schema)\r\n",
 							"\r\n",
 							"# show the DataFrame\r\n",
-							"#display(final_topic_df)"
+							"display(final_topic_df)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 66
 					},
 					{
 						"cell_type": "markdown",
@@ -11749,7 +11761,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "4c82762e-f0f8-48b5-820f-890b39f558cf"
+						"spark.autotune.trackingId": "765e198b-5a30-403f-ae62-952e12e40f25"
 					}
 				},
 				"metadata": {
