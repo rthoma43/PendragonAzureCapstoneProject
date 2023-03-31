@@ -468,7 +468,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "stopUntil",
-					"value": "false"
+					"value": "'false'"
 				}
 			},
 			{
