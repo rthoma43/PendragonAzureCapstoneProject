@@ -619,7 +619,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "end_minute",
-					"value": "30"
+					"value": "00"
 				}
 			},
 			{
@@ -663,7 +663,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "start_day",
-					"value": "26"
+					"value": "24"
 				}
 			},
 			{
