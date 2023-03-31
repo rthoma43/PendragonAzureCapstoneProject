@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "29a02e75-98d3-4155-938a-f0de48adeed3"
+				"spark.autotune.trackingId": "67b24c9d-bed4-412a-83a5-37b0101b9023"
 			}
 		},
 		"metadata": {
@@ -371,7 +371,7 @@
 					"#print(topic3confidence)\r\n",
 					"#print(topic4confidence)"
 				],
-				"execution_count": null
+				"execution_count": 63
 			},
 			{
 				"cell_type": "markdown",
@@ -428,7 +428,7 @@
 					"    impression_count_values.append(row[\"impression_count\"])\r\n",
 					"    cleantext_values.append(row['cleanText'])"
 				],
-				"execution_count": null
+				"execution_count": 64
 			},
 			{
 				"cell_type": "markdown",
@@ -465,7 +465,7 @@
 					"topic3confidence = [float(i) for i in topic3confidence]\r\n",
 					"topic4confidence = [float(i) for i in topic4confidence]"
 				],
-				"execution_count": null
+				"execution_count": 65
 			},
 			{
 				"cell_type": "markdown",
@@ -538,9 +538,9 @@
 					"final_topic_df = spark.createDataFrame(rows, schema)\r\n",
 					"\r\n",
 					"# show the DataFrame\r\n",
-					"#display(final_topic_df)"
+					"display(final_topic_df)"
 				],
-				"execution_count": null
+				"execution_count": 66
 			},
 			{
 				"cell_type": "markdown",
