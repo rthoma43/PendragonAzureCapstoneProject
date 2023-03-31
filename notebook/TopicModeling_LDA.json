@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "f3d7a0f3-3113-4d9c-a53b-f789995d48b3"
+				"spark.autotune.trackingId": "5bacc9c7-dec1-4634-a56c-1bce3f45598e"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 18
+				"execution_count": 25
 			},
 			{
 				"cell_type": "code",
@@ -98,7 +98,7 @@
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *"
 				],
-				"execution_count": 19
+				"execution_count": 26
 			},
 			{
 				"cell_type": "markdown",
@@ -138,7 +138,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 20
+				"execution_count": 27
 			},
 			{
 				"cell_type": "markdown",
@@ -194,7 +194,7 @@
 					"    # Remove emojis\r\n",
 					"    text = re.sub(emoji_regex, '', text)\r\n",
 					"    # Remove empty spaces equal to or bigger than 2 spaces\r\n",
-					"    text = re.sub(extra_spaces_regex, '', text)\r\n",
+					"    text = re.sub(extra_spaces_regex, ' ', text)\r\n",
 					"    \r\n",
 					"    # Tokenize the text\r\n",
 					"    tokens = nltk.word_tokenize(text)\r\n",
@@ -208,7 +208,7 @@
 					"# Define a UDF to apply the clean_text function\r\n",
 					"clean_text_udf = udf(clean_text, StringType())"
 				],
-				"execution_count": 21
+				"execution_count": 31
 			},
 			{
 				"cell_type": "code",
@@ -228,10 +228,11 @@
 					"# Apply the UDF to the 'text' column of the dataframe and store the result in a new column named 'cleanText'\r\n",
 					"import nltk\r\n",
 					"nltk.download('punkt')\r\n",
-					"df = df.withColumn('cleanText', clean_text_udf(df.text))\r\n",
+					"# Apply the clean_text function to the text column and add the cleaned text to a new column cleanText\r\n",
+					"df = df.withColumn('cleanText', clean_text_udf(df['text']))\r\n",
 					"display(df)"
 				],
-				"execution_count": 24
+				"execution_count": 32
 			},
 			{
 				"cell_type": "markdown",
