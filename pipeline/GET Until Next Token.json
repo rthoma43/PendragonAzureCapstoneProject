@@ -127,6 +127,257 @@
 					},
 					"activities": [
 						{
+							"name": "If Condition1",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "Extract Next Token Aithusa",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@equals(activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token, '\\n')",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Delete Temp File",
+										"type": "Delete",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "json_Aithusa",
+												"type": "DatasetReference"
+											},
+											"enableLogging": false,
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											}
+										}
+									},
+									{
+										"name": "If specific date with token",
+										"type": "IfCondition",
+										"dependsOn": [
+											{
+												"activity": "Delete Temp File",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"userProperties": [],
+										"typeProperties": {
+											"expression": {
+												"value": "@bool(variables('specific_date'))",
+												"type": "Expression"
+											},
+											"ifFalseActivities": [
+												{
+													"name": "GET Past 7 Days with token",
+													"type": "Copy",
+													"dependsOn": [],
+													"policy": {
+														"timeout": "0.12:00:00",
+														"retry": 0,
+														"retryIntervalInSeconds": 30,
+														"secureOutput": false,
+														"secureInput": false
+													},
+													"userProperties": [],
+													"typeProperties": {
+														"source": {
+															"type": "RestSource",
+															"httpRequestTimeout": "00:01:40",
+															"requestInterval": "00.00:00:00.010",
+															"requestMethod": "GET",
+															"paginationRules": {
+																"supportRFC5988": "true"
+															}
+														},
+														"sink": {
+															"type": "JsonSink",
+															"storeSettings": {
+																"type": "AzureBlobFSWriteSettings"
+															},
+															"formatSettings": {
+																"type": "JsonWriteSettings"
+															}
+														},
+														"enableStaging": false
+													},
+													"inputs": [
+														{
+															"referenceName": "RestResource_Aithusa_7days_NextToken",
+															"type": "DatasetReference",
+															"parameters": {
+																"query": {
+																	"value": "@variables('Query')",
+																	"type": "Expression"
+																},
+																"tweet_fields": {
+																	"value": "@variables('Tweet Fields')",
+																	"type": "Expression"
+																},
+																"max_results": {
+																	"value": "@variables('max_results')",
+																	"type": "Expression"
+																},
+																"next_token": {
+																	"value": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token",
+																	"type": "Expression"
+																}
+															}
+														}
+													],
+													"outputs": [
+														{
+															"referenceName": "json_Aithusa",
+															"type": "DatasetReference"
+														}
+													]
+												}
+											],
+											"ifTrueActivities": [
+												{
+													"name": "GET with specifc date with token",
+													"type": "Copy",
+													"dependsOn": [],
+													"policy": {
+														"timeout": "0.12:00:00",
+														"retry": 0,
+														"retryIntervalInSeconds": 30,
+														"secureOutput": false,
+														"secureInput": false
+													},
+													"userProperties": [],
+													"typeProperties": {
+														"source": {
+															"type": "RestSource",
+															"httpRequestTimeout": "00:01:40",
+															"requestInterval": "00.00:00:00.010",
+															"requestMethod": "GET",
+															"paginationRules": {
+																"supportRFC5988": "true"
+															}
+														},
+														"sink": {
+															"type": "JsonSink",
+															"storeSettings": {
+																"type": "AzureBlobFSWriteSettings"
+															},
+															"formatSettings": {
+																"type": "JsonWriteSettings"
+															}
+														},
+														"enableStaging": false
+													},
+													"inputs": [
+														{
+															"referenceName": "RestResource_Aithusa_withToken",
+															"type": "DatasetReference",
+															"parameters": {
+																"Query": {
+																	"value": "@variables('Query')",
+																	"type": "Expression"
+																},
+																"max_results": {
+																	"value": "@variables('max_results')",
+																	"type": "Expression"
+																},
+																"tweet_fields": {
+																	"value": "@variables('Tweet Fields')",
+																	"type": "Expression"
+																},
+																"start_year": {
+																	"value": "@variables('start_year')",
+																	"type": "Expression"
+																},
+																"start_month": {
+																	"value": "@variables('start_month')",
+																	"type": "Expression"
+																},
+																"start_day": {
+																	"value": "@variables('start_day')",
+																	"type": "Expression"
+																},
+																"start_hour": {
+																	"value": "@variables('start_hour')",
+																	"type": "Expression"
+																},
+																"start_minute": {
+																	"value": "@variables('start_minute')",
+																	"type": "Expression"
+																},
+																"start_second": "00",
+																"end_year": {
+																	"value": "@variables('end_year')",
+																	"type": "Expression"
+																},
+																"end_month": {
+																	"value": "@variables('end_month')",
+																	"type": "Expression"
+																},
+																"end_day": {
+																	"value": "@variables('end_day')",
+																	"type": "Expression"
+																},
+																"end_hour": {
+																	"value": "@variables('end_hour')",
+																	"type": "Expression"
+																},
+																"end_minute": {
+																	"value": "@variables('end_minute')",
+																	"type": "Expression"
+																},
+																"end_second": "00",
+																"next_token": {
+																	"value": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token",
+																	"type": "Expression"
+																}
+															}
+														}
+													],
+													"outputs": [
+														{
+															"referenceName": "json_Aithusa",
+															"type": "DatasetReference"
+														}
+													]
+												}
+											]
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "Set stopUntil true",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "stopUntil",
+											"value": "'true'"
+										}
+									}
+								]
+							}
+						},
+						{
 							"name": "Extract Next Token Aithusa",
 							"type": "ExecuteDataFlow",
 							"dependsOn": [],
@@ -151,303 +402,6 @@
 								"cacheSinks": {
 									"firstRowOnly": true
 								}
-							}
-						},
-						{
-							"name": "Delete Temp File",
-							"type": "Delete",
-							"dependsOn": [
-								{
-									"activity": "Extract Next Token Aithusa",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"dataset": {
-									"referenceName": "json_Aithusa",
-									"type": "DatasetReference"
-								},
-								"enableLogging": false,
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								}
-							}
-						},
-						{
-							"name": "If next_token null",
-							"type": "IfCondition",
-							"dependsOn": [
-								{
-									"activity": "If specific date with token",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"userProperties": [],
-							"typeProperties": {
-								"expression": {
-									"value": "@empty(activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token)",
-									"type": "Expression"
-								},
-								"ifFalseActivities": [
-									{
-										"name": "Set stopUntil 1",
-										"type": "SetVariable",
-										"dependsOn": [],
-										"userProperties": [],
-										"typeProperties": {
-											"variableName": "stopUntil",
-											"value": "'false'"
-										}
-									}
-								],
-								"ifTrueActivities": [
-									{
-										"name": "Set stopUntil",
-										"type": "SetVariable",
-										"dependsOn": [],
-										"userProperties": [],
-										"typeProperties": {
-											"variableName": "stopUntil",
-											"value": "'true'"
-										}
-									}
-								]
-							}
-						},
-						{
-							"name": "If specific date with token",
-							"type": "IfCondition",
-							"dependsOn": [
-								{
-									"activity": "Delete Temp File",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"userProperties": [],
-							"typeProperties": {
-								"expression": {
-									"value": "@bool(variables('specific_date'))",
-									"type": "Expression"
-								},
-								"ifFalseActivities": [
-									{
-										"name": "GET Past 7 Days with token",
-										"type": "Copy",
-										"dependsOn": [],
-										"policy": {
-											"timeout": "0.12:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"source": {
-												"type": "RestSource",
-												"httpRequestTimeout": "00:01:40",
-												"requestInterval": "00.00:00:00.010",
-												"requestMethod": "GET",
-												"paginationRules": {
-													"supportRFC5988": "true"
-												}
-											},
-											"sink": {
-												"type": "JsonSink",
-												"storeSettings": {
-													"type": "AzureBlobFSWriteSettings"
-												},
-												"formatSettings": {
-													"type": "JsonWriteSettings"
-												}
-											},
-											"enableStaging": false
-										},
-										"inputs": [
-											{
-												"referenceName": "RestResource_Aithusa_7days_NextToken",
-												"type": "DatasetReference",
-												"parameters": {
-													"query": {
-														"value": "@variables('Query')",
-														"type": "Expression"
-													},
-													"tweet_fields": {
-														"value": "@variables('Tweet Fields')",
-														"type": "Expression"
-													},
-													"max_results": {
-														"value": "@variables('max_results')",
-														"type": "Expression"
-													},
-													"next_token": {
-														"value": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token",
-														"type": "Expression"
-													}
-												}
-											}
-										],
-										"outputs": [
-											{
-												"referenceName": "json_Aithusa",
-												"type": "DatasetReference"
-											}
-										]
-									}
-								],
-								"ifTrueActivities": [
-									{
-										"name": "GET with specifc date with token",
-										"type": "Copy",
-										"dependsOn": [],
-										"policy": {
-											"timeout": "0.12:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"source": {
-												"type": "RestSource",
-												"httpRequestTimeout": "00:01:40",
-												"requestInterval": "00.00:00:00.010",
-												"requestMethod": "GET",
-												"paginationRules": {
-													"supportRFC5988": "true"
-												}
-											},
-											"sink": {
-												"type": "JsonSink",
-												"storeSettings": {
-													"type": "AzureBlobFSWriteSettings"
-												},
-												"formatSettings": {
-													"type": "JsonWriteSettings"
-												}
-											},
-											"enableStaging": false
-										},
-										"inputs": [
-											{
-												"referenceName": "RestResource_Aithusa_withToken",
-												"type": "DatasetReference",
-												"parameters": {
-													"Query": {
-														"value": "@variables('Query')",
-														"type": "Expression"
-													},
-													"max_results": {
-														"value": "@variables('max_results')",
-														"type": "Expression"
-													},
-													"tweet_fields": {
-														"value": "@variables('Tweet Fields')",
-														"type": "Expression"
-													},
-													"start_year": {
-														"value": "@variables('start_year')",
-														"type": "Expression"
-													},
-													"start_month": {
-														"value": "@variables('start_month')",
-														"type": "Expression"
-													},
-													"start_day": {
-														"value": "@variables('start_day')",
-														"type": "Expression"
-													},
-													"start_hour": {
-														"value": "@variables('start_hour')",
-														"type": "Expression"
-													},
-													"start_minute": {
-														"value": "@variables('start_minute')",
-														"type": "Expression"
-													},
-													"start_second": "00",
-													"end_year": {
-														"value": "@variables('end_year')",
-														"type": "Expression"
-													},
-													"end_month": {
-														"value": "@variables('end_month')",
-														"type": "Expression"
-													},
-													"end_day": {
-														"value": "@variables('end_day')",
-														"type": "Expression"
-													},
-													"end_hour": {
-														"value": "@variables('end_hour')",
-														"type": "Expression"
-													},
-													"end_minute": {
-														"value": "@variables('end_minute')",
-														"type": "Expression"
-													},
-													"end_second": "00",
-													"next_token": {
-														"value": "@activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token",
-														"type": "Expression"
-													}
-												}
-											}
-										],
-										"outputs": [
-											{
-												"referenceName": "json_Aithusa",
-												"type": "DatasetReference"
-											}
-										]
-									}
-								]
-							}
-						},
-						{
-							"name": "Set stopUntil after fail",
-							"type": "SetVariable",
-							"dependsOn": [
-								{
-									"activity": "If specific date with token",
-									"dependencyConditions": [
-										"Failed"
-									]
-								},
-								{
-									"activity": "Extract Next Token Aithusa",
-									"dependencyConditions": [
-										"Failed"
-									]
-								},
-								{
-									"activity": "If next_token null",
-									"dependencyConditions": [
-										"Failed"
-									]
-								}
-							],
-							"userProperties": [],
-							"typeProperties": {
-								"variableName": "stopUntil",
-								"value": "'true'"
 							}
 						}
 					],
