@@ -7,20 +7,20 @@
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {
-			"referenceName": "SparkPoolTest",
+			"referenceName": "SparkPoolSmall",
 			"type": "BigDataPoolReference"
 		},
 		"sessionProperties": {
-			"driverMemory": "112g",
-			"driverCores": 16,
-			"executorMemory": "112g",
-			"executorCores": 16,
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
 			"numExecutors": 2,
 			"conf": {
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "784db2db-ea71-44ce-aec9-7523da15421c"
+				"spark.autotune.trackingId": "6e248833-8640-4084-8a89-09b19a602db3"
 			}
 		},
 		"metadata": {
@@ -34,19 +34,19 @@
 				"name": "python"
 			},
 			"a365ComputeOptions": {
-				"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolTest",
-				"name": "SparkPoolTest",
+				"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+				"name": "SparkPoolSmall",
 				"type": "Spark",
-				"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolTest",
+				"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
 				"auth": {
 					"type": "AAD",
 					"authResource": "https://dev.azuresynapse.net"
 				},
 				"sparkVersion": "3.3",
 				"nodeCount": 3,
-				"cores": 16,
-				"memory": 112,
-				"automaticScaleJobs": true
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -79,7 +79,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 12
+				"execution_count": 1
 			},
 			{
 				"cell_type": "code",
@@ -98,7 +98,7 @@
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *"
 				],
-				"execution_count": 13
+				"execution_count": 2
 			},
 			{
 				"cell_type": "markdown",
@@ -138,7 +138,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 14
+				"execution_count": 3
 			},
 			{
 				"cell_type": "markdown",
@@ -208,7 +208,7 @@
 					"# Define a UDF to apply the clean_text function\r\n",
 					"clean_text_udf = udf(clean_text, StringType())"
 				],
-				"execution_count": 20
+				"execution_count": 4
 			},
 			{
 				"cell_type": "code",
@@ -226,10 +226,12 @@
 				},
 				"source": [
 					"# Apply the UDF to the 'text' column of the dataframe and store the result in a new column named 'cleanText'\r\n",
-					"df = df.withColumn('cleanText', clean_text_udf(df['text']))\r\n",
+					"import nltk\r\n",
+					"nltk.download('punkt')\r\n",
+					"df = df.withColumn('cleanText', clean_text_udf(df.text))\r\n",
 					"display(df)"
 				],
-				"execution_count": 19
+				"execution_count": 8
 			},
 			{
 				"cell_type": "markdown",
