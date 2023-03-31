@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "7893136e-58b0-4a30-87ff-30f391ef4c92"
+				"spark.autotune.trackingId": "a646d19e-d2ad-4615-ac28-cd6bc75fb69c"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 120
+				"execution_count": 18
 			},
 			{
 				"cell_type": "code",
@@ -98,7 +98,7 @@
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *"
 				],
-				"execution_count": 121
+				"execution_count": 19
 			},
 			{
 				"cell_type": "markdown",
@@ -138,7 +138,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 122
+				"execution_count": 20
 			},
 			{
 				"cell_type": "markdown",
@@ -219,51 +219,11 @@
 					"\r\n",
 					"clean_text_udf = udf(clean_text, StringType())\r\n",
 					"\r\n",
-					"df = df.withColumn(\"clean_text\", clean_text_udf(\"text\"))\r\n",
+					"df = df.withColumn(\"cleanText\", clean_text_udf(\"text\"))\r\n",
 					"\r\n",
-					"display(df)"
+					"#display(df)"
 				],
-				"execution_count": 123
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"from pyspark.ml.feature import RegexTokenizer\r\n",
-					"\r\n",
-					"tokenizer = RegexTokenizer(inputCol=\"cleanText\", outputCol=\"tokens\", pattern=\"\\\\s+\")\r\n",
-					"df_tokens = tokenizer.transform(df)\r\n",
-					"df_tokens"
-				],
-				"execution_count": 124
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"df_tokens.show()"
-				],
-				"execution_count": 126
+				"execution_count": 21
 			},
 			{
 				"cell_type": "markdown",
@@ -311,17 +271,17 @@
 					"num_topics = 5\r\n",
 					"max_iterations = 10\r\n",
 					"lda = LDA(k=num_topics, maxIter=max_iterations)\r\n",
-					"lda_model = lda.fit(df)\r\n",
+					"lda_model = lda.fit(df_features)\r\n",
 					"\r\n",
 					"# get topic distribution for each document\r\n",
-					"df_topics = lda_model.transform(df).select('id', 'topicDistribution')\r\n",
+					"df_topics = lda_model.transform(df_features).select('id', 'topicDistribution')\r\n",
 					"\r\n",
 					"# join with original DataFrame\r\n",
 					"df_result = df.join(df_topics, 'id')\r\n",
 					"\r\n",
-					"display(df_result)"
+					"#display(df_result)"
 				],
-				"execution_count": 128
+				"execution_count": 22
 			},
 			{
 				"cell_type": "markdown",
@@ -390,7 +350,7 @@
 					"#print(topic3confidence)\r\n",
 					"#print(topic4confidence)"
 				],
-				"execution_count": 63
+				"execution_count": 23
 			},
 			{
 				"cell_type": "markdown",
@@ -447,7 +407,7 @@
 					"    impression_count_values.append(row[\"impression_count\"])\r\n",
 					"    cleantext_values.append(row['cleanText'])"
 				],
-				"execution_count": 64
+				"execution_count": 24
 			},
 			{
 				"cell_type": "markdown",
@@ -484,7 +444,7 @@
 					"topic3confidence = [float(i) for i in topic3confidence]\r\n",
 					"topic4confidence = [float(i) for i in topic4confidence]"
 				],
-				"execution_count": 65
+				"execution_count": 25
 			},
 			{
 				"cell_type": "markdown",
@@ -559,7 +519,7 @@
 					"# show the DataFrame\r\n",
 					"display(final_topic_df)"
 				],
-				"execution_count": 66
+				"execution_count": 26
 			},
 			{
 				"cell_type": "markdown",
