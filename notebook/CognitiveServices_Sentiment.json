@@ -7,7 +7,7 @@
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {
-			"referenceName": "SparkPoolTest",
+			"referenceName": "SparkPoolSmall",
 			"type": "BigDataPoolReference"
 		},
 		"sessionProperties": {
@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "2aa1ead5-facb-477f-864e-41e15ea33d8b"
+				"spark.autotune.trackingId": "0e78e9a0-e215-496a-a8a6-6c2565a090b8"
 			}
 		},
 		"metadata": {
@@ -34,18 +34,18 @@
 				"name": "python"
 			},
 			"a365ComputeOptions": {
-				"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolTest",
-				"name": "SparkPoolTest",
+				"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+				"name": "SparkPoolSmall",
 				"type": "Spark",
-				"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolTest",
+				"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
 				"auth": {
 					"type": "AAD",
 					"authResource": "https://dev.azuresynapse.net"
 				},
 				"sparkVersion": "3.3",
 				"nodeCount": 3,
-				"cores": 16,
-				"memory": 112,
+				"cores": 4,
+				"memory": 28,
 				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
@@ -79,7 +79,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 21
+				"execution_count": 12
 			},
 			{
 				"cell_type": "markdown",
@@ -118,7 +118,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 22
+				"execution_count": 13
 			},
 			{
 				"cell_type": "markdown",
@@ -151,7 +151,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 24
+				"execution_count": 3
 			},
 			{
 				"cell_type": "markdown",
@@ -182,7 +182,26 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 25
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(df)"
+				],
+				"execution_count": 6
 			},
 			{
 				"cell_type": "markdown",
@@ -220,13 +239,15 @@
 					"import collections\r\n",
 					"\r\n",
 					"# Batch size\r\n",
-					"batch_size = 30\r\n",
+					"batch_size = 1000\r\n",
+					"print('Batch size: ', batch_size)\r\n",
 					"\r\n",
 					"# First, count the total number of rows in the DataFrame\r\n",
 					"num_rows = df.count()\r\n",
 					"\r\n",
 					"# Next, calculate the number of batches needed to split the DataFrame into batches of equal to the batch_size\r\n",
 					"num_batches = int(num_rows / batch_size) + (num_rows % batch_size > 0)\r\n",
+					"print('Number of batches: ', num_batches)\r\n",
 					"\r\n",
 					"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
 					"df_batches = df.randomSplit([1.0]*num_batches, seed=42)\r\n",
@@ -259,9 +280,12 @@
 					"# create a DataFrame\r\n",
 					"sentiment_output_df =  spark.createDataFrame([], schema)\r\n",
 					"\r\n",
+					"num = 1\r\n",
+					"\r\n",
 					"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
 					"for i in range(num_batches):\r\n",
 					"    batch = df_batches[i].limit(batch_size)\r\n",
+					"    print('Length of batch: ', batch.count())\r\n",
 					"    sent = (TextSentiment()\r\n",
 					"    .setLinkedService(linked_service_name)\r\n",
 					"    .setTextCol(\"cleantext\")\r\n",
@@ -327,8 +351,8 @@
 					"\r\n",
 					"    # Print the 'sentiment' field for each row\r\n",
 					"    for sentiment in sentiments:\r\n",
-					"        #print(sentiment)\r\n",
-					"        batch_sentiments.append(sentiment['document']['sentiment'])\r\n",
+					"        print(sentiment)\r\n",
+					"        batch_sentiments.append(sentiment['document'].get(\"sentiment\", None))\r\n",
 					"        batch_negative_scores.append(sentiment['document']['confidenceScores'].get(\"negative\", 0.0))\r\n",
 					"        batch_positive_scores.append(sentiment['document']['confidenceScores'].get(\"positive\", 0.0))\r\n",
 					"        batch_neutral_scores.append(sentiment['document']['confidenceScores'].get(\"neutral\", 0.0))\r\n",
@@ -363,10 +387,31 @@
 					"\r\n",
 					"    # Append the batch results dataframe to the main output dataframe\r\n",
 					"    sentiment_output_df = sentiment_output_df.union(batch_df)\r\n",
+					"    num = num + 1\r\n",
+					"    print('Batch', num, 'succeeded!')\r\n",
 					"\r\n",
 					"#display(sentiment_output_df)"
 				],
-				"execution_count": 27
+				"execution_count": 17
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(sentiment_output_df)"
+				],
+				"execution_count": 11
 			},
 			{
 				"cell_type": "markdown",
