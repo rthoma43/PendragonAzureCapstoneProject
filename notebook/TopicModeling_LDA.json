@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "5bacc9c7-dec1-4634-a56c-1bce3f45598e"
+				"spark.autotune.trackingId": "2b3d765c-fd2e-4648-9945-614802687b2c"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 25
+				"execution_count": 33
 			},
 			{
 				"cell_type": "code",
@@ -98,7 +98,7 @@
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *"
 				],
-				"execution_count": 26
+				"execution_count": 34
 			},
 			{
 				"cell_type": "markdown",
@@ -138,7 +138,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 27
+				"execution_count": 35
 			},
 			{
 				"cell_type": "markdown",
@@ -208,7 +208,7 @@
 					"# Define a UDF to apply the clean_text function\r\n",
 					"clean_text_udf = udf(clean_text, StringType())"
 				],
-				"execution_count": 31
+				"execution_count": 36
 			},
 			{
 				"cell_type": "code",
@@ -227,12 +227,13 @@
 				"source": [
 					"# Apply the UDF to the 'text' column of the dataframe and store the result in a new column named 'cleanText'\r\n",
 					"import nltk\r\n",
+					"from pyspark.sql.functions import col\r\n",
 					"nltk.download('punkt')\r\n",
 					"# Apply the clean_text function to the text column and add the cleaned text to a new column cleanText\r\n",
 					"df = df.withColumn('cleanText', clean_text_udf(df['text']))\r\n",
 					"display(df)"
 				],
-				"execution_count": 32
+				"execution_count": 38
 			},
 			{
 				"cell_type": "markdown",
