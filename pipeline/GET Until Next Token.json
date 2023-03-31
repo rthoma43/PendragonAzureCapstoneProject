@@ -199,7 +199,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@equals(activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token, '\\n')",
+									"value": "@empty(activity('Extract Next Token Aithusa').output.runStatus.output.sink1.value[0].next_token)",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
@@ -433,6 +433,12 @@
 								},
 								{
 									"activity": "Extract Next Token Aithusa",
+									"dependencyConditions": [
+										"Failed"
+									]
+								},
+								{
+									"activity": "If next_token null",
 									"dependencyConditions": [
 										"Failed"
 									]
