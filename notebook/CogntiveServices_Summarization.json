@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "65cce083-fbf0-4d16-af9a-5b0893dbed46"
+				"spark.autotune.trackingId": "707b2bb4-e896-4a7a-8fb8-c13ff8103eed"
 			}
 		},
 		"metadata": {
@@ -443,7 +443,7 @@
 					"    # Split the string into batches of 125000 characters maximum\r\n",
 					"    max_chars_per_batch = 125000\r\n",
 					"    result = split_into_batches(input_string, max_chars_per_batch)\r\n",
-					"    print(\"Extractive Summaries\")\r\n",
+					"    print(\"First Extractive Summaries\")\r\n",
 					"    print('Number of batches',len(result))\r\n",
 					"    for batch in result:\r\n",
 					"        print('Characters in batch', len(batch))\r\n",
@@ -455,16 +455,39 @@
 					"        #print('Batch', [each])\r\n",
 					"        ex_summary = sample_extractive_summarization(client,[each])\r\n",
 					"        ex_summaries.append([ex_summary])\r\n",
-					"\r\n",
-					"    print('All Extractive Summaries', ex_summaries) \r\n",
+					"    print(ex_summaries)\r\n",
 					"    print(\"-----------------------------------------------------------------------------------------------------------------------------------------------------------------\")\r\n",
 					"\r\n",
-					"    ab_summaries = []\r\n",
+					"    print(\"Second Extractive Summaries\")\r\n",
+					"\r\n",
+					"    # Second Extractive Extract Summaries\r\n",
+					"    result = [' '.join(sums) for sums in ex_summaries]\r\n",
+					"    document = [result]\r\n",
+					"    # Extract the string that contains all tweets\r\n",
+					"    input_string = document[0]\r\n",
+					"    result = split_into_batches(input_string, max_chars_per_batch)\r\n",
+					"    \r\n",
+					"    print('Number of batches',len(result))\r\n",
+					"    for batch in result:\r\n",
+					"        print('Characters in batch', len(batch))\r\n",
+					"\r\n",
+					"    # For each batch create an extractive summary of 10 sentences\r\n",
+					"    ex_summaries = []\r\n",
+					"\r\n",
+					"    for each in result:\r\n",
+					"        #print('Batch', [each])\r\n",
+					"        ex_summary = sample_extractive_summarization(client,[each])\r\n",
+					"        ex_summaries.append([ex_summary])\r\n",
+					"    print(ex_summaries) \r\n",
+					"    print(\"-----------------------------------------------------------------------------------------------------------------------------------------------------------------\")\r\n",
+					"\r\n",
 					"    print(\"First Abstractive Summaries:\")\r\n",
+					"    ab_summaries = []\r\n",
 					"\r\n",
 					"    retries = 3\r\n",
 					"    delay = 300\r\n",
 					"\r\n",
+					"    # Retry the code 3 times with 5 min delay if failure\r\n",
 					"    for i in range(retries):\r\n",
 					"        try:\r\n",
 					"            # Create a list of abstractive summaries for each extractive summary\r\n",
@@ -489,8 +512,6 @@
 					"                if len(ex_summaries) > 1:\r\n",
 					"                    time.sleep(10)\r\n",
 					"            #print(ab_summaries)\r\n",
-					"            print(\"First Abstractive Summaries Succeeded!\")\r\n",
-					"            print(\"-----------------------------------------------------------------------------------------------------------------------------------------------------------------\")\r\n",
 					"            break # Break out of the loop if code succeeds\r\n",
 					"        except:\r\n",
 					"            time.sleep(delay)\r\n",
@@ -501,8 +522,11 @@
 					"    else:\r\n",
 					"        raise Exception(f\"Failed after {retries} retries\")\r\n",
 					"\r\n",
+					"    print(\"-----------------------------------------------------------------------------------------------------------------------------------------------------------------\")\r\n",
 					"    # Wait 10 seconds\r\n",
 					"    time.sleep(10)\r\n",
+					"\r\n",
+					"    print(\"Final Abstractive Summary\")\r\n",
 					"\r\n",
 					"    ab_summaries_join = ''.join(ab_summaries)\r\n",
 					"    print('Length of prompt: ', len(ab_summaries_join))\r\n",
@@ -523,14 +547,55 @@
 					" \r\n",
 					"    final_ab_summarization = response['choices'][0]['text']\r\n",
 					"    #print(response['choices'][0]['text'])\r\n",
-					"    print('Abstractive Summary: ', final_ab_summarization)\r\n",
+					"    print(final_ab_summarization)\r\n",
 					"    print('Character Length:', len(final_ab_summarization))\r\n",
 					"\r\n",
 					"    # Put the meta abstractive summary into a data frame and return the data frame object \r\n",
 					"    return(spark.createDataFrame([(topic, final_ab_summarization)], schema))\r\n",
 					""
 				],
-				"execution_count": 56
+				"execution_count": 77
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df_all = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment\")\r\n",
+					"df_all.count()"
+				],
+				"execution_count": 78
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"import nltk\r\n",
+					"nltk.download('punkt')\r\n",
+					"topic_all_summary = Abstractive_Summarization(dataframe = df_all, topic=5)\r\n",
+					"display(topic_all_summary)"
+				],
+				"execution_count": 79
 			},
 			{
 				"cell_type": "markdown",
@@ -584,7 +649,7 @@
 					"topic0_summary = Abstractive_Summarization(dataframe = df_topic0, topic=0)\r\n",
 					"display(topic0_summary)"
 				],
-				"execution_count": 55
+				"execution_count": 76
 			},
 			{
 				"cell_type": "code",
@@ -860,47 +925,6 @@
 					"display(topic4_summary)"
 				],
 				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"df_all = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment\")\r\n",
-					"df_all.count()"
-				],
-				"execution_count": 63
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"import nltk\r\n",
-					"nltk.download('punkt')\r\n",
-					"topic_all_summary = Abstractive_Summarization(dataframe = df_all, topic=5)\r\n",
-					"display(topic_all_summary)"
-				],
-				"execution_count": 64
 			},
 			{
 				"cell_type": "markdown",
