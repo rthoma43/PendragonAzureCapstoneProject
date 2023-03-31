@@ -442,6 +442,23 @@
 									"enablePartitionDiscovery": false
 								}
 							}
+						},
+						{
+							"name": "Set variable4",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Extract Next Token Aithusa",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "stopUntil",
+								"value": "'true'"
+							}
 						}
 					],
 					"timeout": "0.12:00:00"
