@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "6fb02fd7-8d77-49ce-b7b2-7f7950bb2bf0"
+				"spark.autotune.trackingId": "23af1de9-f419-4108-bcc8-6acfaad09798"
 			}
 		},
 		"metadata": {
@@ -455,8 +455,8 @@
 					"def Abstractive_Summarization(dataframe, topic):\r\n",
 					"    df = dataframe.withColumn('cleanText', clean_text_udf(dataframe['text']))\r\n",
 					"    # Remove empty spaces before and after text.\r\n",
-					"    df = df.withColumn('trimmed_text', trim(df['cleanText']))\r\n",
-					"    text_col = df.select('trimmed_text')\r\n",
+					"    df = df.withColumn('cleanText', trim(df['cleanText']))\r\n",
+					"    text_col = df.select('cleanText')\r\n",
 					"    # Collect all tweets into a list\r\n",
 					"    text_list = text_col.rdd.map(lambda row: row[0]).collect()\r\n",
 					"    # Join all tweets into a single document\r\n",
