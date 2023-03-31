@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "b7a509fe-00e2-45bb-9c2c-740450ce22f9"
+				"spark.autotune.trackingId": "873cb68b-3ec3-4dd3-bf29-509c02da5b22"
 			}
 		},
 		"metadata": {
@@ -96,7 +96,7 @@
 				"source": [
 					"pip install azure-ai-textanalytics==5.3.0b1"
 				],
-				"execution_count": 1
+				"execution_count": 20
 			},
 			{
 				"cell_type": "code",
@@ -114,7 +114,7 @@
 				"source": [
 					"!pip install openai"
 				],
-				"execution_count": 2
+				"execution_count": 21
 			},
 			{
 				"cell_type": "code",
@@ -143,7 +143,7 @@
 					"import openai\r\n",
 					"import time"
 				],
-				"execution_count": 3
+				"execution_count": 22
 			},
 			{
 				"cell_type": "code",
@@ -182,7 +182,7 @@
 					"    )\r\n",
 					"    return(df)"
 				],
-				"execution_count": 4
+				"execution_count": 23
 			},
 			{
 				"cell_type": "code",
@@ -202,7 +202,7 @@
 					"key = \"a3028b5f7e7a462d8a3381e49b9c976d\"\r\n",
 					"endpoint = \"https://pendragon-language.cognitiveservices.azure.com/\""
 				],
-				"execution_count": 5
+				"execution_count": 24
 			},
 			{
 				"cell_type": "code",
@@ -224,7 +224,7 @@
 					"openai.api_version = \"2022-12-01\"\r\n",
 					"openai.api_key = \"7c4b192d51f64c09a2ca680590ccae3f\""
 				],
-				"execution_count": 6
+				"execution_count": 25
 			},
 			{
 				"cell_type": "code",
@@ -254,7 +254,7 @@
 					"        result.append(current_batch)\r\n",
 					"    return result"
 				],
-				"execution_count": 7
+				"execution_count": 26
 			},
 			{
 				"cell_type": "code",
@@ -280,7 +280,7 @@
 					"\r\n",
 					"client = authenticate_client()"
 				],
-				"execution_count": 8
+				"execution_count": 27
 			},
 			{
 				"cell_type": "code",
@@ -320,7 +320,46 @@
 					"            #)\r\n",
 					"    return(\" \".join([sentence.text for sentence in extract_summary_result.sentences]))"
 				],
-				"execution_count": 9
+				"execution_count": 28
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"def Extractive_Summary_Batches(input_string, max_chars_per_batch):\r\n",
+					"    # Split the string into batches\r\n",
+					"    result = split_into_batches(input_string, max_chars_per_batch)\r\n",
+					"    print(\"First Extractive Summaries\")\r\n",
+					"    print('Number of batches',len(result))\r\n",
+					"    for batch in result:\r\n",
+					"        print('Characters in batch', len(batch))\r\n",
+					"\r\n",
+					"    # For each batch create an extractive summary of 10 sentences\r\n",
+					"    ex_summaries = []\r\n",
+					"\r\n",
+					"    for each in result:\r\n",
+					"        #print('Batch', [each])\r\n",
+					"        ex_summary = sample_extractive_summarization(client,[each])\r\n",
+					"        ex_summaries.append([ex_summary])\r\n",
+					"    print(ex_summaries)\r\n",
+					"    # Second Extractive Extract Summaries\r\n",
+					"    result = [' '.join(sums) for sums in ex_summaries]\r\n",
+					"    document = [result]\r\n",
+					"    input_string = document[0]\r\n",
+					"    # Extract the string that contains all tweets\r\n",
+					"    return input_string"
+				],
+				"execution_count": 53
 			},
 			{
 				"cell_type": "code",
@@ -342,7 +381,7 @@
 					"    StructField(\"abstractive_summary\", StringType(), True)\r\n",
 					"    ])"
 				],
-				"execution_count": 10
+				"execution_count": 30
 			},
 			{
 				"cell_type": "markdown",
@@ -356,6 +395,82 @@
 				"source": [
 					"# Cognitive Services Extractive to OpenAI Abstractive Summarization"
 				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"def Abstractive_Summarization1(dataframe):\r\n",
+					"    if dataframe.count() > 1:\r\n",
+					"        text_col = dataframe.select('cleantext')\r\n",
+					"        # Collect all tweets into a list\r\n",
+					"        text_list = text_col.rdd.map(lambda row: row[0]).collect()\r\n",
+					"        # Join all tweets into a single document\r\n",
+					"        result = \" \".join([str(text) + \".\" for text in text_list])\r\n",
+					"        document = [result]\r\n",
+					"        # Extract the string that contains all tweets\r\n",
+					"        input_string = document[0]\r\n",
+					"\r\n",
+					"        # Run the loop\r\n",
+					"        while len(input_string) > 100:\r\n",
+					"            # Call the function and pass in the current input value\r\n",
+					"            output_value = Extractive_Summary_Batches(input_string, max_chars_per_batch = 125000)\r\n",
+					"            \r\n",
+					"            # Print the output summary\r\n",
+					"            print(output_value)\r\n",
+					"            \r\n",
+					"            # Update the input value to be the output value from the previous iteration\r\n",
+					"            input_string = output_value"
+				],
+				"execution_count": 56
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df_all = QueryDataSQLPool(\"select * from Topic.NATO_Topics\")\r\n",
+					"df_all.count()"
+				],
+				"execution_count": 42
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"topic_all_summary = Abstractive_Summarization(dataframe = df_all)\r\n",
+					"display(topic_all_summary)"
+				],
+				"execution_count": 57
 			},
 			{
 				"cell_type": "code",
