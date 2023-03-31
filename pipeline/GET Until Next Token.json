@@ -122,7 +122,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@(variables('stopUntil')",
+						"value": "@variables('stopUntil')",
 						"type": "Expression"
 					},
 					"activities": [
@@ -151,7 +151,7 @@
 										"userProperties": [],
 										"typeProperties": {
 											"variableName": "stopUntil",
-											"value": "'true'"
+											"value": true
 										}
 									}
 								]
@@ -280,7 +280,7 @@
 										"userProperties": [],
 										"typeProperties": {
 											"variableName": "stopUntil",
-											"value": "'true'"
+											"value": true
 										}
 									}
 								],
@@ -405,7 +405,7 @@
 										"userProperties": [],
 										"typeProperties": {
 											"variableName": "stopUntil",
-											"value": "'true'"
+											"value": true
 										}
 									}
 								]
@@ -457,7 +457,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"variableName": "stopUntil",
-								"value": "'true'"
+								"value": true
 							}
 						}
 					],
