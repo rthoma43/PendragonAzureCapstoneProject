@@ -70,15 +70,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('workspaceName'), '/SparkPoolSmall')]",
-			"type": "Microsoft.Synapse/workspaces/bigDataPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/GET Loop Next Token RT')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -6121,7 +6112,7 @@
 					"name": "Explore"
 				},
 				"content": {
-					"query": "SELECT count(*) FROM [dbo].[NATO_Tweets1];",
+					"query": "SELECT count(*) FROM [sent].[NATO_Sentiment];",
 					"metadata": {
 						"language": "sql"
 					},
@@ -6228,7 +6219,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "e3b85727-70b4-4147-ba9a-aeb52cd13c62"
+						"spark.autotune.trackingId": "3a8f0266-29b7-4163-b835-5556210c188c"
 					}
 				},
 				"metadata": {
@@ -6253,8 +6244,7 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 16,
-						"memory": 112,
-						"automaticScaleJobs": true
+						"memory": 112
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -6490,7 +6480,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Install bertopic\n",
 							"!pip install bertopic"
@@ -8441,7 +8430,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "e6e7c762-5b60-4635-8a12-d19766ff5dfa"
+						"spark.autotune.trackingId": "1d405d70-e901-48da-83c2-30036eb556c9"
 					}
 				},
 				"metadata": {
@@ -8466,13 +8455,15 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -8500,7 +8491,7 @@
 							")"
 						],
 						"outputs": [],
-						"execution_count": 12
+						"execution_count": 55
 					},
 					{
 						"cell_type": "markdown",
@@ -8540,7 +8531,71 @@
 							"#df = df.limit(100)"
 						],
 						"outputs": [],
-						"execution_count": 13
+						"execution_count": 56
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df.count()"
+						],
+						"outputs": [],
+						"execution_count": 57
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"from pyspark.sql.functions import col\r\n",
+							"filtered_df = df.filter(df['cleantext'].isNull() | (df['cleantext'] == ''))\r\n",
+							"filtered_df.count()"
+						],
+						"outputs": [],
+						"execution_count": 58
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from pyspark.sql.functions import col\r\n",
+							"\r\n",
+							"filtered1_df = df.filter(col('cleantext').isNotNull() & (col('cleantext') != ''))\r\n",
+							"filtered1_df.count()\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 59
 					},
 					{
 						"cell_type": "markdown",
@@ -8574,7 +8629,7 @@
 							"from pyspark.sql.functions import col"
 						],
 						"outputs": [],
-						"execution_count": 3
+						"execution_count": 60
 					},
 					{
 						"cell_type": "markdown",
@@ -8606,27 +8661,7 @@
 							"linked_service_name = \"CognitiveService1\""
 						],
 						"outputs": [],
-						"execution_count": 4
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							},
-							"collapsed": false
-						},
-						"source": [
-							"display(df)"
-						],
-						"outputs": [],
-						"execution_count": 6
+						"execution_count": 61
 					},
 					{
 						"cell_type": "markdown",
@@ -8718,7 +8753,8 @@
 							"    .setErrorCol(\"error\"))\r\n",
 							"\r\n",
 							"    sent_batch_output = sent.transform(batch)\r\n",
-							"    #display(sent_batch_output)\r\n",
+							"\r\n",
+							"    sent_batch_output = sent_batch_output.filter(col(\"error\").isNull())\r\n",
 							"\r\n",
 							"    # Create arrays for each original column values\r\n",
 							"    id_values = []\r\n",
@@ -8776,12 +8812,18 @@
 							"\r\n",
 							"    # Print the 'sentiment' field for each row\r\n",
 							"    for sentiment in sentiments:\r\n",
-							"        print(sentiment)\r\n",
-							"        batch_sentiments.append(sentiment['document'].get(\"sentiment\", None))\r\n",
-							"        batch_negative_scores.append(sentiment['document']['confidenceScores'].get(\"negative\", 0.0))\r\n",
-							"        batch_positive_scores.append(sentiment['document']['confidenceScores'].get(\"positive\", 0.0))\r\n",
-							"        batch_neutral_scores.append(sentiment['document']['confidenceScores'].get(\"neutral\", 0.0))\r\n",
-							"        batch_mixed_scores.append(sentiment['document']['confidenceScores'].get(\"mixed\", 0.0))\r\n",
+							"        if 'document' in sentiment:\r\n",
+							"            batch_sentiments.append(sentiment['document']['sentiment'])\r\n",
+							"            batch_negative_scores.append(sentiment['document']['confidenceScores'].get(\"negative\", 0.0))\r\n",
+							"            batch_positive_scores.append(sentiment['document']['confidenceScores'].get(\"positive\", 0.0))\r\n",
+							"            batch_neutral_scores.append(sentiment['document']['confidenceScores'].get(\"neutral\", 0.0))\r\n",
+							"            batch_mixed_scores.append(sentiment['document']['confidenceScores'].get(\"mixed\", 0.0))\r\n",
+							"        else:\r\n",
+							"            batch_sentiments.append(None)\r\n",
+							"            batch_negative_scores.append(0.0)\r\n",
+							"            batch_positive_scores.append(0.0)\r\n",
+							"            batch_neutral_scores.append(0.0)\r\n",
+							"            batch_mixed_scores.append(0.0)\r\n",
 							"    \r\n",
 							"    # create rows\r\n",
 							"    rows = [Row(id=id_values[i],\r\n",
@@ -8812,33 +8854,13 @@
 							"\r\n",
 							"    # Append the batch results dataframe to the main output dataframe\r\n",
 							"    sentiment_output_df = sentiment_output_df.union(batch_df)\r\n",
-							"    num = num + 1\r\n",
 							"    print('Batch', num, 'succeeded!')\r\n",
+							"    num = num + 1\r\n",
 							"\r\n",
 							"#display(sentiment_output_df)"
 						],
 						"outputs": [],
-						"execution_count": 17
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							},
-							"collapsed": false
-						},
-						"source": [
-							"display(sentiment_output_df)"
-						],
-						"outputs": [],
-						"execution_count": 11
+						"execution_count": 62
 					},
 					{
 						"cell_type": "markdown",
@@ -8916,7 +8938,7 @@
 							" .synapsesql(\"SQLPoolTest.Sent.NATO_Sentiment\"))"
 						],
 						"outputs": [],
-						"execution_count": 34
+						"execution_count": 63
 					}
 				]
 			},
@@ -10302,7 +10324,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "873cb68b-3ec3-4dd3-bf29-509c02da5b22"
+						"spark.autotune.trackingId": "a67920df-e9b5-446f-b94d-87da710eda29"
 					}
 				},
 				"metadata": {
@@ -10327,7 +10349,8 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -10378,7 +10401,7 @@
 							"pip install azure-ai-textanalytics==5.3.0b1"
 						],
 						"outputs": [],
-						"execution_count": 20
+						"execution_count": 49
 					},
 					{
 						"cell_type": "code",
@@ -10397,7 +10420,7 @@
 							"!pip install openai"
 						],
 						"outputs": [],
-						"execution_count": 21
+						"execution_count": 50
 					},
 					{
 						"cell_type": "code",
@@ -10427,7 +10450,7 @@
 							"import time"
 						],
 						"outputs": [],
-						"execution_count": 22
+						"execution_count": 51
 					},
 					{
 						"cell_type": "code",
@@ -10467,7 +10490,7 @@
 							"    return(df)"
 						],
 						"outputs": [],
-						"execution_count": 23
+						"execution_count": 52
 					},
 					{
 						"cell_type": "code",
@@ -10488,7 +10511,7 @@
 							"endpoint = \"https://pendragon-language.cognitiveservices.azure.com/\""
 						],
 						"outputs": [],
-						"execution_count": 24
+						"execution_count": 53
 					},
 					{
 						"cell_type": "code",
@@ -10511,7 +10534,7 @@
 							"openai.api_key = \"7c4b192d51f64c09a2ca680590ccae3f\""
 						],
 						"outputs": [],
-						"execution_count": 25
+						"execution_count": 54
 					},
 					{
 						"cell_type": "code",
@@ -10542,7 +10565,7 @@
 							"    return result"
 						],
 						"outputs": [],
-						"execution_count": 26
+						"execution_count": 55
 					},
 					{
 						"cell_type": "code",
@@ -10569,7 +10592,7 @@
 							"client = authenticate_client()"
 						],
 						"outputs": [],
-						"execution_count": 27
+						"execution_count": 56
 					},
 					{
 						"cell_type": "code",
@@ -10593,7 +10616,7 @@
 							"    poller = client.begin_analyze_actions(\r\n",
 							"        document,\r\n",
 							"        actions=[\r\n",
-							"            ExtractSummaryAction(max_sentence_count=10)\r\n",
+							"            ExtractSummaryAction(max_sentence_count=20)\r\n",
 							"        ],\r\n",
 							"    )\r\n",
 							"    document_results = poller.result()\r\n",
@@ -10610,7 +10633,7 @@
 							"    return(\" \".join([sentence.text for sentence in extract_summary_result.sentences]))"
 						],
 						"outputs": [],
-						"execution_count": 28
+						"execution_count": 57
 					},
 					{
 						"cell_type": "code",
@@ -10629,10 +10652,11 @@
 							"def Extractive_Summary_Batches(input_string, max_chars_per_batch):\r\n",
 							"    # Split the string into batches\r\n",
 							"    result = split_into_batches(input_string, max_chars_per_batch)\r\n",
-							"    print(\"First Extractive Summaries\")\r\n",
 							"    print('Number of batches',len(result))\r\n",
+							"    b = 1\r\n",
 							"    for batch in result:\r\n",
-							"        print('Characters in batch', len(batch))\r\n",
+							"        print('Characters in batch ',b, ':', len(batch))\r\n",
+							"        b = b + 1\r\n",
 							"\r\n",
 							"    # For each batch create an extractive summary of 10 sentences\r\n",
 							"    ex_summaries = []\r\n",
@@ -10641,16 +10665,17 @@
 							"        #print('Batch', [each])\r\n",
 							"        ex_summary = sample_extractive_summarization(client,[each])\r\n",
 							"        ex_summaries.append([ex_summary])\r\n",
-							"    print(ex_summaries)\r\n",
-							"    # Second Extractive Extract Summaries\r\n",
+							"\r\n",
+							"    # Prepare output for next batch\r\n",
 							"    result = [' '.join(sums) for sums in ex_summaries]\r\n",
 							"    document = [result]\r\n",
-							"    input_string = document[0]\r\n",
+							"    input_string = ' '.join([string for sublst in document for string in sublst])\r\n",
+							"\r\n",
 							"    # Extract the string that contains all tweets\r\n",
 							"    return input_string"
 						],
 						"outputs": [],
-						"execution_count": 53
+						"execution_count": 58
 					},
 					{
 						"cell_type": "code",
@@ -10673,7 +10698,7 @@
 							"    ])"
 						],
 						"outputs": [],
-						"execution_count": 30
+						"execution_count": 59
 					},
 					{
 						"cell_type": "markdown",
@@ -10702,7 +10727,7 @@
 							}
 						},
 						"source": [
-							"def Abstractive_Summarization1(dataframe):\r\n",
+							"def Abstractive_Summarization(dataframe, topic):\r\n",
 							"    if dataframe.count() > 1:\r\n",
 							"        text_col = dataframe.select('cleantext')\r\n",
 							"        # Collect all tweets into a list\r\n",
@@ -10713,178 +10738,32 @@
 							"        # Extract the string that contains all tweets\r\n",
 							"        input_string = document[0]\r\n",
 							"\r\n",
+							"        tokens = input_string.split()  # tokenize the text by splitting on whitespace\r\n",
+							"        num_tokens = len(tokens)  # count the number of tokens\r\n",
+							"        print(\"Number of input tokens: \", num_tokens) \r\n",
+							"\r\n",
+							"        loops = 1\r\n",
 							"        # Run the loop\r\n",
-							"        while len(input_string) > 100:\r\n",
+							"        while num_tokens > 1798:\r\n",
+							"            print(\"Extractive Summary\", loops)\r\n",
+							"            loops = loops + 1\r\n",
 							"            # Call the function and pass in the current input value\r\n",
 							"            output_value = Extractive_Summary_Batches(input_string, max_chars_per_batch = 125000)\r\n",
 							"            \r\n",
 							"            # Print the output summary\r\n",
-							"            print(output_value)\r\n",
+							"            #print(output_value)\r\n",
 							"            \r\n",
 							"            # Update the input value to be the output value from the previous iteration\r\n",
-							"            input_string = output_value"
-						],
-						"outputs": [],
-						"execution_count": 56
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"df_all = QueryDataSQLPool(\"select * from Topic.NATO_Topics\")\r\n",
-							"df_all.count()"
-						],
-						"outputs": [],
-						"execution_count": 42
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"topic_all_summary = Abstractive_Summarization(dataframe = df_all)\r\n",
-							"display(topic_all_summary)"
-						],
-						"outputs": [],
-						"execution_count": 57
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"def Abstractive_Summarization(dataframe, topic):\r\n",
-							"    if dataframe.count() > 1:\r\n",
-							"        text_col = dataframe.select('cleanText')\r\n",
-							"        # Collect all tweets into a list\r\n",
-							"        text_list = text_col.rdd.map(lambda row: row[0]).collect()\r\n",
-							"        # Join all tweets into a single document\r\n",
-							"        result = \" \".join([text + \".\" for text in text_list])\r\n",
-							"        document = [result]\r\n",
-							"        # Extract the string that contains all tweets\r\n",
-							"        input_string = document[0]\r\n",
+							"            input_string = output_value\r\n",
 							"\r\n",
-							"        # Split the string into batches of 125000 characters maximum\r\n",
-							"        max_chars_per_batch = 125000\r\n",
-							"        result = split_into_batches(input_string, max_chars_per_batch)\r\n",
-							"        print(\"First Extractive Summaries\")\r\n",
-							"        print('Number of batches',len(result))\r\n",
-							"        for batch in result:\r\n",
-							"            print('Characters in batch', len(batch))\r\n",
+							"            tokens = input_string.split()  # tokenize the text by splitting on whitespace\r\n",
+							"            num_tokens = len(tokens)  # count the number of tokens\r\n",
+							"            print(\"Number of Batch Output Tokens: \", num_tokens)\r\n",
 							"\r\n",
-							"        # For each batch create an extractive summary of 10 sentences\r\n",
-							"        ex_summaries = []\r\n",
-							"\r\n",
-							"        for each in result:\r\n",
-							"            #print('Batch', [each])\r\n",
-							"            ex_summary = sample_extractive_summarization(client,[each])\r\n",
-							"            ex_summaries.append([ex_summary])\r\n",
-							"        print(ex_summaries)\r\n",
-							"        print(\"-----------------------------------------------------------------------------------------------------------------------------------------------------------------\")\r\n",
-							"\r\n",
-							"        print(\"Second Extractive Summaries\")\r\n",
-							"\r\n",
-							"        # Second Extractive Extract Summaries\r\n",
-							"        result = [' '.join(sums) for sums in ex_summaries]\r\n",
-							"        document = [result]\r\n",
-							"        # Extract the string that contains all tweets\r\n",
-							"        input_string = document[0]\r\n",
-							"        result = split_into_batches(input_string, max_chars_per_batch)\r\n",
-							"        \r\n",
-							"        print('Number of batches',len(result))\r\n",
-							"        for batch in result:\r\n",
-							"            print('Characters in batch', len(batch))\r\n",
-							"\r\n",
-							"        # For each batch create an extractive summary of 10 sentences\r\n",
-							"        ex_summaries = []\r\n",
-							"\r\n",
-							"        for each in result:\r\n",
-							"            #print('Batch', [each])\r\n",
-							"            ex_summary = sample_extractive_summarization(client,[each])\r\n",
-							"            ex_summaries.append([ex_summary])\r\n",
-							"        print(ex_summaries) \r\n",
-							"        print(\"-----------------------------------------------------------------------------------------------------------------------------------------------------------------\")\r\n",
-							"\r\n",
-							"        print(\"First Abstractive Summaries:\")\r\n",
-							"        ab_summaries = []\r\n",
-							"\r\n",
-							"        retries = 3\r\n",
-							"        delay = 300\r\n",
-							"\r\n",
-							"        # Retry the code 3 times with 5 min delay if failure\r\n",
-							"        for i in range(retries):\r\n",
-							"            try:\r\n",
-							"                # Create a list of abstractive summaries for each extractive summary\r\n",
-							"                for each in ex_summaries:\r\n",
-							"                    p = 'Provide a summary of the text below that captures its main idea.\\n\\n' + each[0] \r\n",
-							"                    #print(\"Prompt\", p)\r\n",
-							"\r\n",
-							"                    response = openai.Completion.create(\r\n",
-							"                    engine=\"SummaryDivinci003\",\r\n",
-							"                    prompt = p,\r\n",
-							"                    temperature=0.3,\r\n",
-							"                    max_tokens=250,\r\n",
-							"                    top_p=1,\r\n",
-							"                    frequency_penalty=0,\r\n",
-							"                    presence_penalty=0,\r\n",
-							"                    best_of=1,\r\n",
-							"                    stop=None)\r\n",
-							"\r\n",
-							"                    print('Response', response['choices'][0]['text'])\r\n",
-							"\r\n",
-							"                    ab_summaries.append(response['choices'][0]['text'])\r\n",
-							"                    if len(ex_summaries) > 1:\r\n",
-							"                        time.sleep(10)\r\n",
-							"                #print(ab_summaries)\r\n",
-							"                break # Break out of the loop if code succeeds\r\n",
-							"            except:\r\n",
-							"                time.sleep(delay)\r\n",
-							"                print('Failed')\r\n",
-							"                #raise Exception(f\"Failed after {retries} retries\")\r\n",
-							"                ab_summaries = []\r\n",
-							"\r\n",
-							"        else:\r\n",
-							"            raise Exception(f\"Failed after {retries} retries\")\r\n",
-							"\r\n",
-							"        print(\"-----------------------------------------------------------------------------------------------------------------------------------------------------------------\")\r\n",
-							"        # Wait 10 seconds\r\n",
-							"        time.sleep(10)\r\n",
-							"\r\n",
-							"        print(\"Final Abstractive Summary\")\r\n",
-							"\r\n",
-							"        ab_summaries_join = ''.join(ab_summaries)\r\n",
-							"        print('Length of prompt: ', len(ab_summaries_join))\r\n",
+							"        print(\"Abstractive Summary\")\r\n",
 							"\r\n",
 							"        # Create one abstractive summary using the collection of abstractive summaries created above\r\n",
-							"        p = 'Provide a summary of the text below that captures the main idea. ' + ab_summaries_join\r\n",
+							"        p = 'Summarize the main idea of the following text. ' + input_string\r\n",
 							"\r\n",
 							"        response = openai.Completion.create(\r\n",
 							"        engine=\"SummaryDivinci003\",\r\n",
@@ -10906,10 +10785,10 @@
 							"        return(spark.createDataFrame([(topic, final_ab_summarization)], schema))\r\n",
 							"    \r\n",
 							"    else:\r\n",
-							"        return(spark.createDataFrame([topic, 'No Data'], schema))"
+							"        return(spark.createDataFrame([topic, 'No Data'], schema)) "
 						],
 						"outputs": [],
-						"execution_count": 17
+						"execution_count": 60
 					},
 					{
 						"cell_type": "markdown",
@@ -10938,11 +10817,11 @@
 							}
 						},
 						"source": [
-							"df_all = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment\")\r\n",
-							"df_all.count()"
+							"#df_all = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment\")\r\n",
+							"#df_all.count()"
 						],
 						"outputs": [],
-						"execution_count": 12
+						"execution_count": 61
 					},
 					{
 						"cell_type": "code",
@@ -10959,11 +10838,11 @@
 							"collapsed": false
 						},
 						"source": [
-							"topic_all_summary = Abstractive_Summarization(dataframe = df_all, topic=5)\r\n",
-							"display(topic_all_summary)"
+							"#topic_all_summary = Abstractive_Summarization(dataframe = df_all, topic=5)\r\n",
+							"#display(topic_all_summary)"
 						],
 						"outputs": [],
-						"execution_count": 18
+						"execution_count": 62
 					},
 					{
 						"cell_type": "markdown",
@@ -10996,7 +10875,7 @@
 							"df_topic0.count()"
 						],
 						"outputs": [],
-						"execution_count": 14
+						"execution_count": 63
 					},
 					{
 						"cell_type": "code",
@@ -11013,13 +10892,11 @@
 							"collapsed": false
 						},
 						"source": [
-							"import nltk\r\n",
-							"nltk.download('punkt')\r\n",
 							"topic0_summary = Abstractive_Summarization(dataframe = df_topic0, topic=0)\r\n",
 							"display(topic0_summary)"
 						],
 						"outputs": [],
-						"execution_count": 15
+						"execution_count": 64
 					},
 					{
 						"cell_type": "code",
@@ -11038,7 +10915,7 @@
 							"time.sleep(180)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 65
 					},
 					{
 						"cell_type": "markdown",
@@ -11071,7 +10948,7 @@
 							"df_topic1.count()"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 66
 					},
 					{
 						"cell_type": "code",
@@ -11088,13 +10965,11 @@
 							"collapsed": false
 						},
 						"source": [
-							"import nltk\r\n",
-							"nltk.download('punkt')\r\n",
 							"topic1_summary = Abstractive_Summarization(dataframe = df_topic1, topic=1)\r\n",
 							"display(topic1_summary)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 67
 					},
 					{
 						"cell_type": "code",
@@ -11113,7 +10988,7 @@
 							"time.sleep(180)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 68
 					},
 					{
 						"cell_type": "code",
@@ -11133,7 +11008,7 @@
 							"df_topic2.count()"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 69
 					},
 					{
 						"cell_type": "code",
@@ -11150,13 +11025,11 @@
 							"collapsed": false
 						},
 						"source": [
-							"import nltk\r\n",
-							"nltk.download('punkt')\r\n",
 							"topic2_summary = Abstractive_Summarization(dataframe = df_topic2, topic=2)\r\n",
 							"display(topic2_summary)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 70
 					},
 					{
 						"cell_type": "code",
@@ -11175,7 +11048,7 @@
 							"time.sleep(180)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 71
 					},
 					{
 						"cell_type": "markdown",
@@ -11208,7 +11081,7 @@
 							"df_topic3.count()"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 72
 					},
 					{
 						"cell_type": "code",
@@ -11225,13 +11098,11 @@
 							"collapsed": false
 						},
 						"source": [
-							"import nltk\r\n",
-							"nltk.download('punkt')\r\n",
 							"topic3_summary = Abstractive_Summarization(dataframe = df_topic3, topic=3)\r\n",
 							"display(topic3_summary)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 73
 					},
 					{
 						"cell_type": "code",
@@ -11250,7 +11121,7 @@
 							"time.sleep(180)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 74
 					},
 					{
 						"cell_type": "markdown",
@@ -11283,7 +11154,7 @@
 							"df_topic4.count()"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 75
 					},
 					{
 						"cell_type": "code",
@@ -11300,13 +11171,11 @@
 							"collapsed": false
 						},
 						"source": [
-							"import nltk\r\n",
-							"nltk.download('punkt')\r\n",
 							"topic4_summary = Abstractive_Summarization(dataframe = df_topic4, topic=4)\r\n",
 							"display(topic4_summary)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 76
 					},
 					{
 						"cell_type": "markdown",
@@ -11341,7 +11210,7 @@
 							"display(Topic_Summary_df)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 77
 					},
 					{
 						"cell_type": "markdown",
@@ -11400,7 +11269,7 @@
 							" .synapsesql(\"SQLPoolTest.sum.NATO_Abstractive_Sum\"))"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 78
 					}
 				]
 			},
