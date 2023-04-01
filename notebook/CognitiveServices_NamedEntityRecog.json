@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "0e390df9-22e1-411c-97b8-2b150f9f3d86"
+				"spark.autotune.trackingId": "a31ab7e1-77bd-429f-b794-21274f5b4bbf"
 			}
 		},
 		"metadata": {
@@ -59,7 +59,7 @@
 					"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 65
+				"execution_count": 1
 			},
 			{
 				"cell_type": "code",
@@ -97,33 +97,7 @@
 					"    )\r\n",
 					"    return(df)"
 				],
-				"execution_count": 74
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# Select sample size for testing\r\n",
-					"\r\n",
-					"# Sort ascending by 'created_at'\r\n",
-					"from pyspark.sql.functions import desc\r\n",
-					"\r\n",
-					"df = df.orderBy(desc(\"created_at\"))\r\n",
-					"\r\n",
-					"# select the first 100 records\r\n",
-					"#df = df.limit(100)"
-				],
-				"execution_count": 66
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -143,7 +117,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 67
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -161,7 +135,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 68
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -196,7 +170,69 @@
 					"import pyspark.sql.functions as F\r\n",
 					"from pyspark.sql.functions import lit"
 				],
-				"execution_count": 78
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Create function to split input to Cogntive Services Extractive Summarization into batches of 125000 characters max\r\n",
+					"def split_into_batches(input_string, max_chars_per_batch):\r\n",
+					"    current_batch = \"\"\r\n",
+					"    result = []\r\n",
+					"    for c in input_string:\r\n",
+					"        if len(current_batch) + 1 > max_chars_per_batch:\r\n",
+					"            result.append(current_batch)\r\n",
+					"            current_batch = c\r\n",
+					"        else:\r\n",
+					"            current_batch += c\r\n",
+					"    if current_batch:\r\n",
+					"        result.append(current_batch)\r\n",
+					"    return result"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"def NamedEntityRecognition(dataframe):\r\n",
+					"    if dataframe.count() > topic:\r\n",
+					"        text_col = dataframe.select('cleantext')\r\n",
+					"        # Collect all tweets into a list\r\n",
+					"        text_list = text_col.rdd.map(lambda row: row[0]).collect()\r\n",
+					"        # Join all tweets into a single document\r\n",
+					"        result = \" \".join([str(text) + \".\" for text in text_list])\r\n",
+					"        document = [result]\r\n",
+					"        # Extract the string that contains all tweets\r\n",
+					"        input_string = document[0]\r\n",
+					"\r\n",
+					"        tokens = input_string.split()  # tokenize the text by splitting on whitespace\r\n",
+					"        num_tokens = len(tokens)  # count the number of tokens\r\n",
+					"        print(\"Number of input tokens: \", num_tokens) \r\n",
+					"        "
+				],
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
