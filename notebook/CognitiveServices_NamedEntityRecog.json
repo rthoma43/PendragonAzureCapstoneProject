@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "eb9446e8-f9c1-458a-a2b2-7386946765a8"
+				"spark.autotune.trackingId": "d6e7b324-d22d-446c-8fcb-5bf2367f7fa8"
 			}
 		},
 		"metadata": {
@@ -61,7 +61,7 @@
 					"import synapse.ml\r\n",
 					"from synapse.ml.cognitive import *"
 				],
-				"execution_count": 4
+				"execution_count": 99
 			},
 			{
 				"cell_type": "code",
@@ -79,7 +79,7 @@
 				"source": [
 					"pip install azure-ai-textanalytics==5.2.0"
 				],
-				"execution_count": 17
+				"execution_count": 100
 			},
 			{
 				"cell_type": "code",
@@ -117,7 +117,7 @@
 					"    )\r\n",
 					"    return(df)"
 				],
-				"execution_count": 5
+				"execution_count": 101
 			},
 			{
 				"cell_type": "code",
@@ -150,7 +150,7 @@
 					"\r\n",
 					"client = authenticate_client()"
 				],
-				"execution_count": 18
+				"execution_count": 102
 			},
 			{
 				"cell_type": "code",
@@ -194,7 +194,7 @@
 					"    \r\n",
 					"    return(entities, categories, subcategories, confidencescores, entity_lengths, entity_offsets)"
 				],
-				"execution_count": 38
+				"execution_count": 103
 			},
 			{
 				"cell_type": "code",
@@ -212,7 +212,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 7
+				"execution_count": 104
 			},
 			{
 				"cell_type": "markdown",
@@ -247,7 +247,7 @@
 					"import pyspark.sql.functions as F\r\n",
 					"from pyspark.sql.functions import lit"
 				],
-				"execution_count": 8
+				"execution_count": 105
 			},
 			{
 				"cell_type": "code",
@@ -277,7 +277,7 @@
 					"        result.append(current_batch)\r\n",
 					"    return result"
 				],
-				"execution_count": 9
+				"execution_count": 106
 			},
 			{
 				"cell_type": "code",
@@ -297,7 +297,7 @@
 					"from pyspark.sql.functions import pandas_udf, col\r\n",
 					"from pyspark.sql.types import StructType, StructField, StringType, ArrayType"
 				],
-				"execution_count": 61
+				"execution_count": 107
 			},
 			{
 				"cell_type": "code",
@@ -354,7 +354,7 @@
 					"        return(spark.createDataFrame(['No Data','No Data','No Data', topic], schema)) \r\n",
 					""
 				],
-				"execution_count": 87
+				"execution_count": 108
 			},
 			{
 				"cell_type": "code",
@@ -373,7 +373,7 @@
 					"df_all = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment\")\r\n",
 					"df_all.count()"
 				],
-				"execution_count": 22
+				"execution_count": 109
 			},
 			{
 				"cell_type": "code",
@@ -392,7 +392,7 @@
 				"source": [
 					"df_all_ner = NamedEntityRecognition(df_all,5)"
 				],
-				"execution_count": 94
+				"execution_count": 110
 			},
 			{
 				"cell_type": "code",
@@ -408,153 +408,9 @@
 					}
 				},
 				"source": [
-					"df_all_ner.isEmpty()"
+					"display(df)"
 				],
-				"execution_count": 95
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"from pyspark.sql.functions import udf, levenshtein, collect_list\r\n",
-					"from pyspark.sql.types import StringType\r\n",
-					"\r\n",
-					"# Define a UDF to calculate the similarity between two strings using Levenshtein distance\r\n",
-					"similarity_udf = udf(lambda x, y: levenshtein(x, y), StringType())\r\n",
-					"\r\n",
-					"# Group the entities by their spelling similarity and collect them into a list\r\n",
-					"grouped_df = df_all_ner.groupBy(\"entity_category\", similarity_udf(\"entity\", \"entity\").alias(\"similarity\")).agg(collect_list(\"entity\").alias(\"entities\"))\r\n",
-					"\r\n",
-					"# Define a UDF to update the entity name for each group\r\n",
-					"def update_entity_name(entities):\r\n",
-					"    # TODO: Implement your logic to update the entity name for each group\r\n",
-					"    return \"updated_entity_name\"\r\n",
-					"\r\n",
-					"# Apply the UDF to update the entity name for each group\r\n",
-					"updated_df = grouped_df.withColumn(\"entity\", udf(update_entity_name, StringType())(\"entities\"))\r\n",
-					"\r\n",
-					"# Select only the required columns and drop the duplicates\r\n",
-					"output_df = updated_df.select(\"entity\", \"entity_category\").distinct()\r\n",
-					""
-				],
-				"execution_count": 96
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"output_df.show()"
-				],
-				"execution_count": 98
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"def NamedEntityRecognition(dataframe, batchsize, topic):\r\n",
-					"    if dataframe.count() > topic:\r\n",
-					"\r\n",
-					"        # Batch size\r\n",
-					"        batch_size = batchsize\r\n",
-					"\r\n",
-					"        # First, count the total number of rows in the DataFrame\r\n",
-					"        num_rows = dataframe.count()\r\n",
-					"\r\n",
-					"        # Next, calculate the number of batches needed to split the DataFrame into batches of 5\r\n",
-					"        num_batches = int(num_rows / batch_size) + (num_rows % batch_size > 0)\r\n",
-					"\r\n",
-					"        # Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
-					"        df_batches = dataframe.randomSplit([1.0]*num_batches, seed=42)\r\n",
-					"\r\n",
-					"        # define the schema for the output DataFrame\r\n",
-					"        schema = StructType([\r\n",
-					"            StructField(\"entity_text\", StringType(), True),\r\n",
-					"            StructField(\"entity_category\", StringType(), True),\r\n",
-					"            StructField(\"topic\", IntegerType(),True)\r\n",
-					"            ])\r\n",
-					"\r\n",
-					"        # create an empty DataFrame with the defined schema\r\n",
-					"        output_df = spark.createDataFrame([], schema)\r\n",
-					"\r\n",
-					"        entities = []\r\n",
-					"        categories = []\r\n",
-					"\r\n",
-					"        # Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
-					"        for i in range(num_batches):\r\n",
-					"            batch = df_batches[i].limit(batch_size)\r\n",
-					"            ner = (NER()\r\n",
-					"            .setLinkedService(linked_service_name)\r\n",
-					"            .setTextCol(\"cleantext\")\r\n",
-					"            .setLanguageCol(\"lang\")\r\n",
-					"            .setOutputCol(\"replies\")\r\n",
-					"            .setErrorCol(\"error\"))\r\n",
-					"\r\n",
-					"            ner_batch_output = ner.transform(batch)\r\n",
-					"            #display(ner_batch_output)\r\n",
-					"\r\n",
-					"            # Extract the 'replies' column and convert it to JSON\r\n",
-					"            json_output = ner_batch_output.select(\"replies\").toJSON().collect()\r\n",
-					"\r\n",
-					"            # Deserialize the JSON and extract the 'replies' field\r\n",
-					"            nes = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
-					"\r\n",
-					"            # Print the 'replies' field for each row\r\n",
-					"            for each in nes:\r\n",
-					"                #print(each)\r\n",
-					"                # convert the dictionary to a JSON string\r\n",
-					"                json_str = json.dumps(each)\r\n",
-					"\r\n",
-					"                # parse the JSON string\r\n",
-					"                json_data = json.loads(json_str)\r\n",
-					"\r\n",
-					"                # extract all the 'text' values from the JSON and put them into an array\r\n",
-					"                entities = entities + [entity['text'] for entity in json_data['document']['entities']]\r\n",
-					"                categories = categories + [entity['category'] for entity in json_data['document']['entities']]\r\n",
-					"\r\n",
-					"\r\n",
-					"        # create rows\r\n",
-					"        rows = [Row(entity_text=entities[i],\r\n",
-					"                    entity_category=categories[i],\r\n",
-					"                    topic = topic\r\n",
-					"                    )\r\n",
-					"                for i in range(len(entities))]\r\n",
-					"\r\n",
-					"        # create batch dataframe\r\n",
-					"        ner_df = spark.createDataFrame(rows, schema)\r\n",
-					"        return(ner_df)"
-				],
-				"execution_count": 90
+				"execution_count": 128
 			},
 			{
 				"cell_type": "markdown",
@@ -603,7 +459,7 @@
 					"collapsed": false
 				},
 				"source": [
-					"topic0_NER = NamedEntityRecognition(dataframe = df_topic0, batchsize = 5, topic = 0)"
+					"topic0_NER = NamedEntityRecognition(dataframe = df_topic0, topic = 0)"
 				],
 				"execution_count": 92
 			},
@@ -654,7 +510,7 @@
 					"collapsed": false
 				},
 				"source": [
-					"topic1_NER = NamedEntityRecognition(dataframe = df_topic1, batchsize = 5, topic = 1)"
+					"topic1_NER = NamedEntityRecognition(dataframe = df_topic1, topic = 1)"
 				],
 				"execution_count": 94
 			},
@@ -704,7 +560,7 @@
 					}
 				},
 				"source": [
-					"topic2_NER = NamedEntityRecognition(dataframe = df_topic2, batchsize = 5, topic = 2)"
+					"topic2_NER = NamedEntityRecognition(dataframe = df_topic2, topic = 2)"
 				],
 				"execution_count": 96
 			},
@@ -754,7 +610,7 @@
 					}
 				},
 				"source": [
-					"topic3_NER = NamedEntityRecognition(dataframe = df_topic3, batchsize = 5, topic = 3)"
+					"topic3_NER = NamedEntityRecognition(dataframe = df_topic3, topic = 3)"
 				],
 				"execution_count": 98
 			},
@@ -804,7 +660,7 @@
 					}
 				},
 				"source": [
-					"topic4_NER = NamedEntityRecognition(dataframe = df_topic4, batchsize = 5, topic = 4)"
+					"topic4_NER = NamedEntityRecognition(dataframe = df_topic4, topic = 4)"
 				],
 				"execution_count": null
 			},
