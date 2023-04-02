@@ -25,12 +25,8 @@
 					},
 					"method": "GET",
 					"authentication": {
-						"resource": "https://management.azure.com/",
-						"credential": {
-							"referenceName": "PendragonManagedIdentityCredential",
-							"type": "CredentialReference"
-						},
-						"type": "UserAssignedManagedIdentity"
+						"type": "MSI",
+						"resource": "https://management.azure.com/"
 					}
 				}
 			},
