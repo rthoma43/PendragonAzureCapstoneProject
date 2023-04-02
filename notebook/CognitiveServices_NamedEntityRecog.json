@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "a31ab7e1-77bd-429f-b794-21274f5b4bbf"
+				"spark.autotune.trackingId": "eb9446e8-f9c1-458a-a2b2-7386946765a8"
 			}
 		},
 		"metadata": {
@@ -57,9 +57,29 @@
 					"# Add required imports\r\n",
 					"import com.microsoft.spark.sqlanalytics\r\n",
 					"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
-					"from pyspark.sql.functions import col"
+					"from pyspark.sql.functions import col\r\n",
+					"import synapse.ml\r\n",
+					"from synapse.ml.cognitive import *"
 				],
-				"execution_count": 1
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"pip install azure-ai-textanalytics==5.2.0"
+				],
+				"execution_count": 17
 			},
 			{
 				"cell_type": "code",
@@ -97,7 +117,7 @@
 					"    )\r\n",
 					"    return(df)"
 				],
-				"execution_count": 2
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -113,11 +133,68 @@
 					}
 				},
 				"source": [
-					"import synapse.ml\r\n",
-					"from synapse.ml.cognitive import *\r\n",
-					"from pyspark.sql.functions import col"
+					"# Enter Cognitive Services credentials\r\n",
+					"key = \"a3028b5f7e7a462d8a3381e49b9c976d\"\r\n",
+					"endpoint = \"https://pendragon-language.cognitiveservices.azure.com/\"\r\n",
+					"\r\n",
+					"from azure.ai.textanalytics import TextAnalyticsClient\r\n",
+					"from azure.core.credentials import AzureKeyCredential\r\n",
+					"\r\n",
+					"# Authenticate the client using your key and endpoint \r\n",
+					"def authenticate_client():\r\n",
+					"    ta_credential = AzureKeyCredential(key)\r\n",
+					"    text_analytics_client = TextAnalyticsClient(\r\n",
+					"            endpoint=endpoint, \r\n",
+					"            credential=ta_credential)\r\n",
+					"    return text_analytics_client\r\n",
+					"\r\n",
+					"client = authenticate_client()"
 				],
-				"execution_count": null
+				"execution_count": 18
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Example function for recognizing entities from text\r\n",
+					"def entity_recognition(client,doc):\r\n",
+					"\r\n",
+					"    try:\r\n",
+					"        documents = doc\r\n",
+					"        result = client.recognize_entities(documents = documents)[0]\r\n",
+					"\r\n",
+					"        entities =[]\r\n",
+					"        categories = []\r\n",
+					"        subcategories = []\r\n",
+					"        confidencescores = []\r\n",
+					"        entity_lengths = []\r\n",
+					"        entity_offsets = []\r\n",
+					"\r\n",
+					"        #print(\"Named Entities:\\n\")\r\n",
+					"        for entity in result.entities:\r\n",
+					"            entities.append(entity.text)\r\n",
+					"            categories.append(entity.category)\r\n",
+					"            subcategories.append(entity.subcategory)\r\n",
+					"            confidencescores.append(entity.confidence_score)\r\n",
+					"            entity_lengths.append(entity.length)\r\n",
+					"            entity_offsets.append(entity.offset)\r\n",
+					"\r\n",
+					"    except Exception as err:\r\n",
+					"        print(\"Encountered exception. {}\".format(err))\r\n",
+					"    \r\n",
+					"    return(entities, categories, subcategories, confidencescores, entity_lengths, entity_offsets)"
+				],
+				"execution_count": 38
 			},
 			{
 				"cell_type": "code",
@@ -135,7 +212,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": null
+				"execution_count": 7
 			},
 			{
 				"cell_type": "markdown",
@@ -170,7 +247,7 @@
 					"import pyspark.sql.functions as F\r\n",
 					"from pyspark.sql.functions import lit"
 				],
-				"execution_count": null
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
@@ -200,7 +277,7 @@
 					"        result.append(current_batch)\r\n",
 					"    return result"
 				],
-				"execution_count": null
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -216,8 +293,28 @@
 					}
 				},
 				"source": [
-					"def NamedEntityRecognition(dataframe):\r\n",
-					"    if dataframe.count() > topic:\r\n",
+					"import pandas as pd\r\n",
+					"from pyspark.sql.functions import pandas_udf, col\r\n",
+					"from pyspark.sql.types import StructType, StructField, StringType, ArrayType"
+				],
+				"execution_count": 61
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"def NamedEntityRecognition(dataframe, topic):\r\n",
+					"    if dataframe.count() > 1:\r\n",
 					"        text_col = dataframe.select('cleantext')\r\n",
 					"        # Collect all tweets into a list\r\n",
 					"        text_list = text_col.rdd.map(lambda row: row[0]).collect()\r\n",
@@ -227,12 +324,148 @@
 					"        # Extract the string that contains all tweets\r\n",
 					"        input_string = document[0]\r\n",
 					"\r\n",
-					"        tokens = input_string.split()  # tokenize the text by splitting on whitespace\r\n",
-					"        num_tokens = len(tokens)  # count the number of tokens\r\n",
-					"        print(\"Number of input tokens: \", num_tokens) \r\n",
-					"        "
+					"        batches = split_into_batches(input_string, 5120)\r\n",
+					"        num_batches = len(batches)\r\n",
+					"        print(num_batches)\r\n",
+					"\r\n",
+					"        schema = StructType([\r\n",
+					"            StructField(\"entity\",  StringType(), True),\r\n",
+					"            StructField(\"entity_category\", StringType(), True),\r\n",
+					"            StructField(\"entity_subcategory\", StringType(), True),\r\n",
+					"            StructField(\"topic\", ShortType(), True)\r\n",
+					"        ])\r\n",
+					"\r\n",
+					"        # create a DataFrame\r\n",
+					"        ner_output_df =  spark.createDataFrame([], schema)\r\n",
+					"\r\n",
+					"        # Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
+					"        for each in batches:\r\n",
+					"            doc = [each]\r\n",
+					"            entities, categories, subcategories, confidencescores, entity_lengths, entity_offsets = entity_recognition(client, doc)\r\n",
+					"            # combine data into a list of rows\r\n",
+					"            data = [(a1, a2, a3, topic) for a1, a2, a3 in zip(entities, categories, subcategories)]\r\n",
+					"            batch_output_df = spark.createDataFrame([Row(*i) for i in data], schema)\r\n",
+					"            #print(batch_output_df.count())\r\n",
+					"\r\n",
+					"            ner_output_df = ner_output_df.union(batch_output_df)\r\n",
+					"        return ner_output_df\r\n",
+					"\r\n",
+					"    else:\r\n",
+					"        return(spark.createDataFrame(['No Data','No Data','No Data', topic], schema)) \r\n",
+					""
 				],
-				"execution_count": null
+				"execution_count": 87
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df_all = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment\")\r\n",
+					"df_all.count()"
+				],
+				"execution_count": 22
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"df_all_ner = NamedEntityRecognition(df_all,5)"
+				],
+				"execution_count": 94
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df_all_ner.isEmpty()"
+				],
+				"execution_count": 95
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.sql.functions import udf, levenshtein, collect_list\r\n",
+					"from pyspark.sql.types import StringType\r\n",
+					"\r\n",
+					"# Define a UDF to calculate the similarity between two strings using Levenshtein distance\r\n",
+					"similarity_udf = udf(lambda x, y: levenshtein(x, y), StringType())\r\n",
+					"\r\n",
+					"# Group the entities by their spelling similarity and collect them into a list\r\n",
+					"grouped_df = df_all_ner.groupBy(\"entity_category\", similarity_udf(\"entity\", \"entity\").alias(\"similarity\")).agg(collect_list(\"entity\").alias(\"entities\"))\r\n",
+					"\r\n",
+					"# Define a UDF to update the entity name for each group\r\n",
+					"def update_entity_name(entities):\r\n",
+					"    # TODO: Implement your logic to update the entity name for each group\r\n",
+					"    return \"updated_entity_name\"\r\n",
+					"\r\n",
+					"# Apply the UDF to update the entity name for each group\r\n",
+					"updated_df = grouped_df.withColumn(\"entity\", udf(update_entity_name, StringType())(\"entities\"))\r\n",
+					"\r\n",
+					"# Select only the required columns and drop the duplicates\r\n",
+					"output_df = updated_df.select(\"entity\", \"entity_category\").distinct()\r\n",
+					""
+				],
+				"execution_count": 96
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"output_df.show()"
+				],
+				"execution_count": 98
 			},
 			{
 				"cell_type": "code",
@@ -353,7 +586,7 @@
 					"df_topic0 = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment where topic = 0\")\r\n",
 					"df_topic0.count()"
 				],
-				"execution_count": 91
+				"execution_count": 11
 			},
 			{
 				"cell_type": "code",
