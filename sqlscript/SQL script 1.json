@@ -5,7 +5,7 @@
 			"name": "Explore"
 		},
 		"content": {
-			"query": "SELECT count(*) FROM [sent].[NATO_Sentiment];",
+			"query": "SELECT COUNT(*) FROM [NER].[NATO_NER];",
 			"metadata": {
 				"language": "sql"
 			},
