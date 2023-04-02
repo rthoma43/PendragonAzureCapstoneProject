@@ -1,5 +1,5 @@
 {
-	"name": "NLP_manual",
+	"name": "NLP_manual_post_sent",
 	"properties": {
 		"folder": {
 			"name": "NLP_manual"
@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "2e927c5e-40c2-451e-9467-6253f20a3a70"
+				"spark.autotune.trackingId": "badca07a-3f42-47c7-bbfd-4cc483276296"
 			}
 		},
 		"metadata": {
@@ -91,7 +91,7 @@
 					"                     .option(Constants.QUERY, \"select * from Sent.NATO_Sentiment\")\n",
 					"                     .synapsesql())"
 				],
-				"execution_count": 29
+				"execution_count": 45
 			},
 			{
 				"cell_type": "code",
@@ -127,7 +127,7 @@
 				"source": [
 					"df.groupBy(\"topic\").count().show()"
 				],
-				"execution_count": 32
+				"execution_count": 46
 			},
 			{
 				"cell_type": "code",
@@ -147,7 +147,7 @@
 					"\n",
 					"df2 = df.groupBy('topic').agg(F.collect_list('cleantext').alias('cleantext'))"
 				],
-				"execution_count": 34
+				"execution_count": 47
 			},
 			{
 				"cell_type": "code",
@@ -183,7 +183,7 @@
 				"source": [
 					"df2.sort(df2.topic.asc()).show()"
 				],
-				"execution_count": 42
+				"execution_count": 48
 			},
 			{
 				"cell_type": "code",
@@ -201,7 +201,7 @@
 				"source": [
 					"!pip install transformers"
 				],
-				"execution_count": 36
+				"execution_count": 49
 			},
 			{
 				"cell_type": "code",
@@ -219,7 +219,7 @@
 				"source": [
 					"!pip install wordcloud"
 				],
-				"execution_count": 38
+				"execution_count": 50
 			},
 			{
 				"cell_type": "code",
@@ -243,7 +243,7 @@
 					"from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator\n",
 					""
 				],
-				"execution_count": 39
+				"execution_count": 51
 			},
 			{
 				"cell_type": "code",
@@ -262,7 +262,7 @@
 					"import matplotlib.pyplot as plt\n",
 					"%matplotlib inline"
 				],
-				"execution_count": 41
+				"execution_count": 52
 			},
 			{
 				"cell_type": "code",
@@ -284,7 +284,7 @@
 					"df3.printSchema()\n",
 					"df3.show(truncate=False)"
 				],
-				"execution_count": 47
+				"execution_count": 53
 			},
 			{
 				"cell_type": "code",
@@ -357,12 +357,43 @@
 					}
 				},
 				"source": [
-					"# Start with one review:\n",
-					"topic0text = df3_sorted.cleantext[0]\n",
+					"# Each topic\n",
+					"topic0text = df3_sorted.collect()[0]['cleantext']\n",
+					"topic1text = df3_sorted.collect()[1]['cleantext']\n",
+					"topic2text = df3_sorted.collect()[2]['cleantext']\n",
+					"topic3text = df3_sorted.collect()[3]['cleantext']\n",
+					"topic4text = df3_sorted.collect()[4]['cleantext']\n",
+					""
+				],
+				"execution_count": 55
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"stopwords = set(STOPWORDS)\n",
+					"# Create and generate a word cloud image:\n",
+					"wordcloud_topic0 = WordCloud(max_font_size=80, max_words=1000, background_color='white', stopwords=stopwords,\n",
+					"               min_font_size=10, colormap='Dark2').generate(str(topic0text))\n",
+					"\n",
+					"# Display the generated image:\n",
+					"plt.imshow(wordcloud_topic0, interpolation='bilinear')\n",
+					"plt.axis(\"off\")\n",
+					"plt.show()\n",
 					"\n",
 					""
 				],
-				"execution_count": 57
+				"execution_count": 72
 			},
 			{
 				"cell_type": "code",
@@ -379,14 +410,108 @@
 				},
 				"source": [
 					"# Create and generate a word cloud image:\n",
-					"wordcloud_topic0 = WordCloud().generate(topic0text)\n",
+					"wordcloud_topic1 = WordCloud(max_font_size=80, max_words=1000, background_color='white', stopwords=stopwords,\n",
+					"               min_font_size=10, colormap='Dark2').generate(topic1text)\n",
 					"\n",
 					"# Display the generated image:\n",
-					"plt.imshow(wordcloud, interpolation='bilinear')\n",
+					"plt.imshow(wordcloud_topic1, interpolation='bilinear')\n",
 					"plt.axis(\"off\")\n",
 					"plt.show()"
 				],
-				"execution_count": 84
+				"execution_count": 73
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Create and generate a word cloud image:\n",
+					"wordcloud_topic2 = WordCloud(max_font_size=80, max_words=1000, background_color='white', stopwords=stopwords,\n",
+					"               min_font_size=10, colormap='Dark2').generate(topic2text)\n",
+					"\n",
+					"# Display the generated image:\n",
+					"plt.imshow(wordcloud_topic2, interpolation='bilinear')\n",
+					"plt.axis(\"off\")\n",
+					"plt.show()"
+				],
+				"execution_count": 74
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Create and generate a word cloud image:\n",
+					"wordcloud_topic3 = WordCloud(max_font_size=80, max_words=1000, background_color='white', stopwords=stopwords,\n",
+					"               min_font_size=10, colormap='Dark2').generate(topic3text)\n",
+					"\n",
+					"# Display the generated image:\n",
+					"plt.imshow(wordcloud_topic3, interpolation='bilinear')\n",
+					"plt.axis(\"off\")\n",
+					"plt.show()"
+				],
+				"execution_count": 75
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Create and generate a word cloud image:\n",
+					"wordcloud_topic4 = WordCloud(max_font_size=80, max_words=1000, background_color='white', stopwords=stopwords,\n",
+					"               min_font_size=10, colormap='Dark2').generate(topic4text)\n",
+					"\n",
+					"# Display the generated image:\n",
+					"plt.imshow(wordcloud_topic4, interpolation='bilinear')\n",
+					"plt.axis(\"off\")\n",
+					"plt.show()"
+				],
+				"execution_count": 76
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					""
+				],
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -403,9 +528,9 @@
 				},
 				"source": [
 					"from transformers import pipeline\n",
-					"import os"
+					""
 				],
-				"execution_count": 58
+				"execution_count": 77
 			},
 			{
 				"cell_type": "code",
@@ -423,7 +548,7 @@
 				"source": [
 					"summarizer = pipeline(\"summarization\")"
 				],
-				"execution_count": 59
+				"execution_count": 83
 			},
 			{
 				"cell_type": "code",
@@ -439,10 +564,25 @@
 					}
 				},
 				"source": [
-					"topic0text = df3_sorted.first()['cleantext']\n",
-					"print(topic0text)"
+					"#def my_string(value):\n",
+					"#    firstString = ''\n",
+					"#    secondString = ''\n",
+					"#    thirdString = ''\n",
+					"#    fourthString = ''\n",
+					"#    for i in range(0,len(value)):\n",
+					"#        if i <= len(value)//4-1:\n",
+					"#            firstString = firstString + value[i]\n",
+					"#        if i <= len(value)//3-1:\n",
+					"#            secondString = secondString + value[i]\n",
+					"#        if i <= len(value)//2-1:\n",
+					"#            thirdString = thirdString + value[i]\n",
+					"#        else:\n",
+					"#            fourthString = fourthString + value[i]\n",
+					"#    return firstString, secondString, thirdString, fourthString\n",
+					"\n",
+					"#split_string = my_string(topic0text)"
 				],
-				"execution_count": 65
+				"execution_count": 84
 			},
 			{
 				"cell_type": "code",
@@ -458,9 +598,15 @@
 					}
 				},
 				"source": [
+					"#print(split_string)\n",
+					"\n",
+					"#fourth1 = split_string[0]\n",
+					"#fourth2 = split_string[1]\n",
+					"#fourth3 = split_string[2]\n",
+					"#fourth4 = split_string[3]\n",
 					""
 				],
-				"execution_count": null
+				"execution_count": 88
 			},
 			{
 				"cell_type": "code",
@@ -476,9 +622,13 @@
 					}
 				},
 				"source": [
-					""
+					"summary_text1 = summarizer(third1, max_length=100, min_length=5, do_sample=False)[0]['summary_text']\n",
+					"summary_text2 = summarizer(third2, max_length=100, min_length=5, do_sample=False)[0]['summary_text']\n",
+					"summary_text3 = summarizer(third3, max_length=100, min_length=5, do_sample=False)[0]['summary_text']\n",
+					"\n",
+					"abstractive_topic0 = summary_text1 + summary_text2 + summary_text3"
 				],
-				"execution_count": null
+				"execution_count": 86
 			},
 			{
 				"cell_type": "code",
