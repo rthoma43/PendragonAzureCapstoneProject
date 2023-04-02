@@ -1350,7 +1350,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "end_day",
-							"value": "26"
+							"value": "28"
 						}
 					},
 					{
@@ -1428,7 +1428,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "start_day",
-							"value": "25"
+							"value": "27"
 						}
 					},
 					{
@@ -1688,7 +1688,156 @@
 						}
 					},
 					{
-						"name": "GET List",
+						"name": "Copy data to Dedicated SQL Pool",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Merge JSONs and Convert to CSV",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlPoolSink",
+								"allowCopyCommand": true,
+								"copyCommandSettings": {}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "id",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"name": "created_at",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "created_at",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "text",
+											"type": "String"
+										},
+										"sink": {
+											"name": "text",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "lang",
+											"type": "String"
+										},
+										"sink": {
+											"name": "lang",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "retweet_count",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "retweet_count",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "reply_count",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "reply_count",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "like_count",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "like_count",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "quote_count",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "quote_count",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "impression_count",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "impression_count",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Merged_output_csv_Aithusa",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DedicatedSqlPoolTable1_Aithusa",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Check SQL on",
 						"type": "WebActivity",
 						"dependsOn": [],
 						"policy": {
@@ -1701,7 +1850,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"url": {
-								"value": "@concat('https://management.azure.com/subscriptions/',pipeline().parameters.SubscriptionID,'/resourceGroups/',pipeline().parameters.ResourceGroup,'/providers/Microsoft.Synapse/workspaces/',pipeline().parameters.WorkspaceName,'/sqlPools?api-version=2020-12-01')",
+								"value": "@concat('https://management.azure.com/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/sqlPools/SQLPoolTest?api-version=2019-06-01-preview')",
 								"type": "Expression"
 							},
 							"connectVia": {
@@ -1712,7 +1861,7 @@
 							"headers": {},
 							"authentication": {
 								"type": "MSI",
-								"resource": "https://management.azure.com/"
+								"resource": "https://management.azure.com"
 							}
 						}
 					}
@@ -1800,6 +1949,8 @@
 				"[concat(variables('workspaceId'), '/datasets/json_Aithusa')]",
 				"[concat(variables('workspaceId'), '/dataflows/Merge JSONs and Convert to CSV for Aithusa')]",
 				"[concat(variables('workspaceId'), '/integrationRuntimes/WarmIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/datasets/Merged_output_csv_Aithusa')]",
+				"[concat(variables('workspaceId'), '/datasets/DedicatedSqlPoolTable1_Aithusa')]",
 				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token for Aithusa')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_7days')]",
@@ -3265,6 +3416,71 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/DedicatedSqlPoolTable1_Aithusa')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "created_at",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "text",
+						"type": "nvarchar"
+					},
+					{
+						"name": "lang",
+						"type": "nvarchar"
+					},
+					{
+						"name": "retweet_count",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "reply_count",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "like_count",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "quote_count",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "impression_count",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "NATO_Tweets1_Aithusa"
+				},
+				"sqlPool": {
+					"referenceName": "SQLPoolTest",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Find_minid_input')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -3835,6 +4051,72 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"folderPath": "Raw_Twitter_JSONs/Merged_Output",
+						"fileSystem": "pendragon"
+					},
+					"columnDelimiter": ",",
+					"rowDelimiter": "\n",
+					"escapeChar": "\"",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "id",
+						"type": "String"
+					},
+					{
+						"name": "created_at",
+						"type": "String"
+					},
+					{
+						"name": "text",
+						"type": "String"
+					},
+					{
+						"name": "lang",
+						"type": "String"
+					},
+					{
+						"name": "retweet_count",
+						"type": "String"
+					},
+					{
+						"name": "reply_count",
+						"type": "String"
+					},
+					{
+						"name": "like_count",
+						"type": "String"
+					},
+					{
+						"name": "quote_count",
+						"type": "String"
+					},
+					{
+						"name": "impression_count",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Merged_output_csv_Aithusa')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "Twitter_Aithusa/Merged_Output",
 						"fileSystem": "pendragon"
 					},
 					"columnDelimiter": ",",
@@ -6038,6 +6320,29 @@
 				},
 				"content": {
 					"query": "CREATE TABLE [Topic].[NATO_Topics]\n( \n\t[id] bigint  NULL,\n\t[created_at] DATETIME2(7)  NULL,\n\t[text] NVARCHAR(4000)  NULL,\n\t[cleantext] NVARCHAR(4000)  NULL,\n\t[lang] nvarchar(10)  NULL,\n\t[retweet_count] INT  NULL,\n\t[reply_count] INT  NULL,\n\t[like_count] INT  NULL,\n\t[quote_count] INT  NULL,\n\t[impression_count] INT  NULL,\n    [topic] SMALLINT NULL,\n    [topic_0_confidence] REAL NULL,\n    [topic_1_confidence] REAL NULL,\n    [topic_2_confidence] REAL NULL,\n    [topic_3_confidence] REAL NULL,\n    [topic_4_confidence] REAL NULL\n)\n\nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPoolTest",
+						"poolName": "SQLPoolTest"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Create_NATO_Tweets1_Aithusa_Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "Create_Tables"
+				},
+				"content": {
+					"query": "SET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO\n\nCREATE TABLE [dbo].[NATO_Tweets1_Aithusa]\n( \n\t[id] bigint  NOT NULL,\n\t[created_at] DATETIME2(7)  NULL,\n\t[text] NVARCHAR(4000)  NULL,\n\t[lang] nvarchar(10)  NULL,\n\t[retweet_count] INT  NULL,\n\t[reply_count] INT  NULL,\n\t[like_count] INT  NULL,\n\t[quote_count] INT  NULL,\n\t[impression_count] INT  NULL\n)\nWITH\n(\n\tDISTRIBUTION = HASH ( [id] ),\n\tCLUSTERED COLUMNSTORE INDEX\n)\nGO",
 					"metadata": {
 						"language": "sql"
 					},
@@ -11023,7 +11328,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/NLP_manual')]",
+			"name": "[concat(parameters('workspaceName'), '/NLP_manual_post_sent')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -11046,7 +11351,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "fddd5de9-0d58-4480-955c-3cca18c72e6a"
+						"spark.autotune.trackingId": "2c3725dd-739e-4337-8ff7-60996cc0233b"
 					}
 				},
 				"metadata": {
@@ -11118,7 +11423,7 @@
 							"                     .synapsesql())"
 						],
 						"outputs": [],
-						"execution_count": 29
+						"execution_count": 45
 					},
 					{
 						"cell_type": "code",
@@ -11156,7 +11461,7 @@
 							"df.groupBy(\"topic\").count().show()"
 						],
 						"outputs": [],
-						"execution_count": 32
+						"execution_count": 46
 					},
 					{
 						"cell_type": "code",
@@ -11177,7 +11482,7 @@
 							"df2 = df.groupBy('topic').agg(F.collect_list('cleantext').alias('cleantext'))"
 						],
 						"outputs": [],
-						"execution_count": 34
+						"execution_count": 47
 					},
 					{
 						"cell_type": "code",
@@ -11215,7 +11520,7 @@
 							"df2.sort(df2.topic.asc()).show()"
 						],
 						"outputs": [],
-						"execution_count": 42
+						"execution_count": 48
 					},
 					{
 						"cell_type": "code",
@@ -11234,7 +11539,7 @@
 							"!pip install transformers"
 						],
 						"outputs": [],
-						"execution_count": 36
+						"execution_count": 49
 					},
 					{
 						"cell_type": "code",
@@ -11253,7 +11558,7 @@
 							"!pip install wordcloud"
 						],
 						"outputs": [],
-						"execution_count": 38
+						"execution_count": 50
 					},
 					{
 						"cell_type": "code",
@@ -11278,7 +11583,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 39
+						"execution_count": 51
 					},
 					{
 						"cell_type": "code",
@@ -11298,7 +11603,7 @@
 							"%matplotlib inline"
 						],
 						"outputs": [],
-						"execution_count": 41
+						"execution_count": 52
 					},
 					{
 						"cell_type": "code",
@@ -11321,7 +11626,7 @@
 							"df3.show(truncate=False)"
 						],
 						"outputs": [],
-						"execution_count": 47
+						"execution_count": 53
 					},
 					{
 						"cell_type": "code",
@@ -11397,13 +11702,45 @@
 							}
 						},
 						"source": [
-							"# Start with one review:\n",
-							"topic0text = df3_sorted.cleantext[0]\n",
+							"# Each topic\n",
+							"topic0text = df3_sorted.collect()[0]['cleantext']\n",
+							"topic1text = df3_sorted.collect()[1]['cleantext']\n",
+							"topic2text = df3_sorted.collect()[2]['cleantext']\n",
+							"topic3text = df3_sorted.collect()[3]['cleantext']\n",
+							"topic4text = df3_sorted.collect()[4]['cleantext']\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 55
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"stopwords = set(STOPWORDS)\n",
+							"# Create and generate a word cloud image:\n",
+							"wordcloud_topic0 = WordCloud(max_font_size=80, max_words=1000, background_color='white', stopwords=stopwords,\n",
+							"               min_font_size=10, colormap='Dark2').generate(str(topic0text))\n",
+							"\n",
+							"# Display the generated image:\n",
+							"plt.imshow(wordcloud_topic0, interpolation='bilinear')\n",
+							"plt.axis(\"off\")\n",
+							"plt.show()\n",
 							"\n",
 							""
 						],
 						"outputs": [],
-						"execution_count": 57
+						"execution_count": 72
 					},
 					{
 						"cell_type": "code",
@@ -11420,15 +11757,113 @@
 						},
 						"source": [
 							"# Create and generate a word cloud image:\n",
-							"wordcloud_topic0 = WordCloud().generate(topic0text)\n",
+							"wordcloud_topic1 = WordCloud(max_font_size=80, max_words=1000, background_color='white', stopwords=stopwords,\n",
+							"               min_font_size=10, colormap='Dark2').generate(topic1text)\n",
 							"\n",
 							"# Display the generated image:\n",
-							"plt.imshow(wordcloud, interpolation='bilinear')\n",
+							"plt.imshow(wordcloud_topic1, interpolation='bilinear')\n",
 							"plt.axis(\"off\")\n",
 							"plt.show()"
 						],
 						"outputs": [],
-						"execution_count": 84
+						"execution_count": 73
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Create and generate a word cloud image:\n",
+							"wordcloud_topic2 = WordCloud(max_font_size=80, max_words=1000, background_color='white', stopwords=stopwords,\n",
+							"               min_font_size=10, colormap='Dark2').generate(topic2text)\n",
+							"\n",
+							"# Display the generated image:\n",
+							"plt.imshow(wordcloud_topic2, interpolation='bilinear')\n",
+							"plt.axis(\"off\")\n",
+							"plt.show()"
+						],
+						"outputs": [],
+						"execution_count": 74
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Create and generate a word cloud image:\n",
+							"wordcloud_topic3 = WordCloud(max_font_size=80, max_words=1000, background_color='white', stopwords=stopwords,\n",
+							"               min_font_size=10, colormap='Dark2').generate(topic3text)\n",
+							"\n",
+							"# Display the generated image:\n",
+							"plt.imshow(wordcloud_topic3, interpolation='bilinear')\n",
+							"plt.axis(\"off\")\n",
+							"plt.show()"
+						],
+						"outputs": [],
+						"execution_count": 75
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Create and generate a word cloud image:\n",
+							"wordcloud_topic4 = WordCloud(max_font_size=80, max_words=1000, background_color='white', stopwords=stopwords,\n",
+							"               min_font_size=10, colormap='Dark2').generate(topic4text)\n",
+							"\n",
+							"# Display the generated image:\n",
+							"plt.imshow(wordcloud_topic4, interpolation='bilinear')\n",
+							"plt.axis(\"off\")\n",
+							"plt.show()"
+						],
+						"outputs": [],
+						"execution_count": 76
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							""
+						],
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -11445,10 +11880,10 @@
 						},
 						"source": [
 							"from transformers import pipeline\n",
-							"import os"
+							""
 						],
 						"outputs": [],
-						"execution_count": 58
+						"execution_count": 77
 					},
 					{
 						"cell_type": "code",
@@ -11467,7 +11902,7 @@
 							"summarizer = pipeline(\"summarization\")"
 						],
 						"outputs": [],
-						"execution_count": 59
+						"execution_count": 83
 					},
 					{
 						"cell_type": "code",
@@ -11483,11 +11918,26 @@
 							}
 						},
 						"source": [
-							"topic0text = df3_sorted.first()['cleantext']\n",
-							"print(topic0text)"
+							"#def my_string(value):\n",
+							"#    firstString = ''\n",
+							"#    secondString = ''\n",
+							"#    thirdString = ''\n",
+							"#    fourthString = ''\n",
+							"#    for i in range(0,len(value)):\n",
+							"#        if i <= len(value)//4-1:\n",
+							"#            firstString = firstString + value[i]\n",
+							"#        if i <= len(value)//3-1:\n",
+							"#            secondString = secondString + value[i]\n",
+							"#        if i <= len(value)//2-1:\n",
+							"#            thirdString = thirdString + value[i]\n",
+							"#        else:\n",
+							"#            fourthString = fourthString + value[i]\n",
+							"#    return firstString, secondString, thirdString, fourthString\n",
+							"\n",
+							"#split_string = my_string(topic0text)"
 						],
 						"outputs": [],
-						"execution_count": 65
+						"execution_count": 84
 					},
 					{
 						"cell_type": "code",
@@ -11503,10 +11953,16 @@
 							}
 						},
 						"source": [
+							"#print(split_string)\n",
+							"\n",
+							"#fourth1 = split_string[0]\n",
+							"#fourth2 = split_string[1]\n",
+							"#fourth3 = split_string[2]\n",
+							"#fourth4 = split_string[3]\n",
 							""
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 88
 					},
 					{
 						"cell_type": "code",
@@ -11522,10 +11978,14 @@
 							}
 						},
 						"source": [
-							""
+							"summary_text1 = summarizer(third1, max_length=100, min_length=5, do_sample=False)[0]['summary_text']\n",
+							"summary_text2 = summarizer(third2, max_length=100, min_length=5, do_sample=False)[0]['summary_text']\n",
+							"summary_text3 = summarizer(third3, max_length=100, min_length=5, do_sample=False)[0]['summary_text']\n",
+							"\n",
+							"abstractive_topic0 = summary_text1 + summary_text2 + summary_text3"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 86
 					},
 					{
 						"cell_type": "code",
@@ -13345,6 +13805,18 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "eastus2"
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SparkPoolSmall')]",
 			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
@@ -13364,18 +13836,6 @@
 				"sparkVersion": "3.3",
 				"isComputeIsolationEnabled": false,
 				"sessionLevelPackagesEnabled": true,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "eastus2"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
 				"annotations": []
 			},
 			"dependsOn": [],
