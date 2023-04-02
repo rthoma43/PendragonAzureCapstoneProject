@@ -1,0 +1,60 @@
+{
+	"name": "DedicatedSqlPoolTable1_Aithusa",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "created_at",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "text",
+				"type": "nvarchar"
+			},
+			{
+				"name": "lang",
+				"type": "nvarchar"
+			},
+			{
+				"name": "retweet_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "reply_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "like_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "quote_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "impression_count",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "NATO_Tweets1_Aithusa"
+		},
+		"sqlPool": {
+			"referenceName": "SQLPoolTest",
+			"type": "SqlPoolReference"
+		}
+	}
+}
