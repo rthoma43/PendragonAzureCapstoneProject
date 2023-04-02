@@ -1503,6 +1503,12 @@
 								"dependencyConditions": [
 									"Succeeded"
 								]
+							},
+							{
+								"activity": "Use date range",
+								"dependencyConditions": [
+									"Succeeded"
+								]
 							}
 						],
 						"userProperties": [],
@@ -1680,11 +1686,58 @@
 								}
 							]
 						}
+					},
+					{
+						"name": "GET List",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": {
+								"value": "@concat('https://management.azure.com/subscriptions/',pipeline().parameters.SubscriptionID,'/resourceGroups/',pipeline().parameters.ResourceGroup,'/providers/Microsoft.Synapse/workspaces/',pipeline().parameters.WorkspaceName,'/sqlPools?api-version=2020-12-01')",
+								"type": "Expression"
+							},
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"method": "GET",
+							"headers": {},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://management.azure.com/"
+							}
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"parameters": {
+					"ResourceGroup": {
+						"type": "string",
+						"defaultValue": "Spring2023-TeamPendragon"
+					},
+					"SubscriptionID": {
+						"type": "string",
+						"defaultValue": "57cd2ff8-9306-41d0-9cad-c2052a0a8381"
+					},
+					"WorkspaceName": {
+						"type": "string",
+						"defaultValue": "pendragon-synapse"
+					},
+					"SQLPoolName": {
+						"type": "string",
+						"defaultValue": "SQLPoolTest"
+					}
 				},
 				"variables": {
 					"Query": {
@@ -1747,6 +1800,7 @@
 				"[concat(variables('workspaceId'), '/datasets/json_Aithusa')]",
 				"[concat(variables('workspaceId'), '/dataflows/Merge JSONs and Convert to CSV for Aithusa')]",
 				"[concat(variables('workspaceId'), '/integrationRuntimes/WarmIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token for Aithusa')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa_7days')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Aithusa')]",
@@ -2205,10 +2259,6 @@
 								"type": "NotebookReference"
 							},
 							"snapshot": true,
-							"sparkPool": {
-								"referenceName": "SparkPoolTest",
-								"type": "BigDataPoolReference"
-							},
 							"executorSize": "Small",
 							"conf": {
 								"spark.dynamicAllocation.enabled": null,
@@ -2272,10 +2322,6 @@
 								"type": "NotebookReference"
 							},
 							"snapshot": true,
-							"sparkPool": {
-								"referenceName": "SparkPoolTest",
-								"type": "BigDataPoolReference"
-							},
 							"executorSize": "Small",
 							"conf": {
 								"spark.dynamicAllocation.enabled": null,
@@ -2338,8 +2384,70 @@
 								"type": "NotebookReference"
 							},
 							"snapshot": true,
+							"executorSize": "Small",
+							"conf": {
+								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.minExecutors": null,
+								"spark.dynamicAllocation.maxExecutors": null
+							},
+							"driverSize": "Small",
+							"numExecutors": null
+						}
+					},
+					{
+						"name": "Delete all from NATO NER Table",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Perform Sentiment Analysis",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "SQLPoolTest",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[dbo].[DeleteAllNatoNer]"
+						}
+					},
+					{
+						"name": "Perform Named Entity Recognition",
+						"type": "SynapseNotebook",
+						"dependsOn": [
+							{
+								"activity": "Delete all from NATO NER Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebook": {
+								"referenceName": "CognitiveServices_NamedEntityRecog",
+								"type": "NotebookReference"
+							},
+							"snapshot": true,
 							"sparkPool": {
-								"referenceName": "SparkPoolTest",
+								"referenceName": "SparkPoolSmall",
 								"type": "BigDataPoolReference"
 							},
 							"executorSize": "Small",
@@ -2362,9 +2470,10 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]",
 				"[concat(variables('workspaceId'), '/notebooks/TopicModeling_LDA')]",
-				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolTest')]",
 				"[concat(variables('workspaceId'), '/notebooks/CognitiveServices_Sentiment')]",
-				"[concat(variables('workspaceId'), '/notebooks/CogntiveServices_Summarization1')]"
+				"[concat(variables('workspaceId'), '/notebooks/CogntiveServices_Summarization1')]",
+				"[concat(variables('workspaceId'), '/notebooks/CognitiveServices_NamedEntityRecog')]",
+				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolSmall')]"
 			]
 		},
 		{
@@ -5882,7 +5991,7 @@
 					"name": "Create_Tables"
 				},
 				"content": {
-					"query": "CREATE TABLE [NER].[NATO_NER]\n(\n    [entity_text] NVARCHAR(100) NULL,\n    [entity_category] NVARCHAR(100) NULL,\n    [topic] INT NULL\n)\n\nGO",
+					"query": "CREATE TABLE [NER].[NATO_NER]\n(\n    [entity] NVARCHAR(100) NULL,\n    [entity_category] NVARCHAR(100) NULL,\n    [entity_subcategory] NVARCHAR(100) NULL,\n    [topic] SMALLINT NULL\n)\n\nGO",
 					"metadata": {
 						"language": "sql"
 					},
@@ -6112,7 +6221,7 @@
 					"name": "Explore"
 				},
 				"content": {
-					"query": "SELECT count(*) FROM [sent].[NATO_Sentiment];",
+					"query": "SELECT COUNT(*) FROM [NER].[NATO_NER];",
 					"metadata": {
 						"language": "sql"
 					},
@@ -6219,7 +6328,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "3e6a5feb-cb6a-445e-8283-083b17d42e3b"
+						"spark.autotune.trackingId": "c4a57718-6c34-44e4-b13e-e0c950e800cd"
 					}
 				},
 				"metadata": {
@@ -6244,8 +6353,7 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -6481,7 +6589,6 @@
 					},
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Install bertopic\n",
 							"!pip install bertopic"
@@ -6674,7 +6781,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "3acb5ea5-53e1-4d82-87a0-6ef3c54f5483"
+						"spark.autotune.trackingId": "1a48c861-d298-446b-aa05-d8340e6d6d91"
 					}
 				},
 				"metadata": {
@@ -6699,15 +6806,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"!pip install azure-storage-file-datalake"
 						],
@@ -6916,7 +7021,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "ea5611c1-0e06-4b1f-a647-c6cedc97c71c"
+						"spark.autotune.trackingId": "df68cc03-e221-4aa6-ade5-c677ff7894d9"
 					}
 				},
 				"metadata": {
@@ -6941,15 +7046,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -7740,7 +7843,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "b0bb822a-479e-4124-b2ad-f69c95c86812"
+						"spark.autotune.trackingId": "a1ec9332-4bb6-4c53-92c6-aa2856860ba1"
 					}
 				},
 				"metadata": {
@@ -7765,23 +7868,42 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
 							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
-							"from pyspark.sql.functions import col"
+							"from pyspark.sql.functions import col\r\n",
+							"import synapse.ml\r\n",
+							"from synapse.ml.cognitive import *"
 						],
 						"outputs": [],
-						"execution_count": 65
+						"execution_count": 150
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"pip install azure-ai-textanalytics==5.2.0"
+						],
+						"outputs": [],
+						"execution_count": 151
 					},
 					{
 						"cell_type": "code",
@@ -7820,7 +7942,7 @@
 							"    return(df)"
 						],
 						"outputs": [],
-						"execution_count": 74
+						"execution_count": 152
 					},
 					{
 						"cell_type": "code",
@@ -7836,18 +7958,25 @@
 							}
 						},
 						"source": [
-							"# Select sample size for testing\r\n",
+							"# Enter Cognitive Services credentials\r\n",
+							"key = \"a3028b5f7e7a462d8a3381e49b9c976d\"\r\n",
+							"endpoint = \"https://pendragon-language.cognitiveservices.azure.com/\"\r\n",
 							"\r\n",
-							"# Sort ascending by 'created_at'\r\n",
-							"from pyspark.sql.functions import desc\r\n",
+							"from azure.ai.textanalytics import TextAnalyticsClient\r\n",
+							"from azure.core.credentials import AzureKeyCredential\r\n",
 							"\r\n",
-							"df = df.orderBy(desc(\"created_at\"))\r\n",
+							"# Authenticate the client using your key and endpoint \r\n",
+							"def authenticate_client():\r\n",
+							"    ta_credential = AzureKeyCredential(key)\r\n",
+							"    text_analytics_client = TextAnalyticsClient(\r\n",
+							"            endpoint=endpoint, \r\n",
+							"            credential=ta_credential)\r\n",
+							"    return text_analytics_client\r\n",
 							"\r\n",
-							"# select the first 100 records\r\n",
-							"#df = df.limit(100)"
+							"client = authenticate_client()"
 						],
 						"outputs": [],
-						"execution_count": 66
+						"execution_count": 153
 					},
 					{
 						"cell_type": "code",
@@ -7863,12 +7992,36 @@
 							}
 						},
 						"source": [
-							"import synapse.ml\r\n",
-							"from synapse.ml.cognitive import *\r\n",
-							"from pyspark.sql.functions import col"
+							"# Example function for recognizing entities from text\r\n",
+							"def entity_recognition(client,doc):\r\n",
+							"\r\n",
+							"    try:\r\n",
+							"        documents = doc\r\n",
+							"        result = client.recognize_entities(documents = documents)[0]\r\n",
+							"\r\n",
+							"        entities =[]\r\n",
+							"        categories = []\r\n",
+							"        subcategories = []\r\n",
+							"        confidencescores = []\r\n",
+							"        entity_lengths = []\r\n",
+							"        entity_offsets = []\r\n",
+							"\r\n",
+							"        #print(\"Named Entities:\\n\")\r\n",
+							"        for entity in result.entities:\r\n",
+							"            entities.append(entity.text)\r\n",
+							"            categories.append(entity.category)\r\n",
+							"            subcategories.append(entity.subcategory)\r\n",
+							"            confidencescores.append(entity.confidence_score)\r\n",
+							"            entity_lengths.append(entity.length)\r\n",
+							"            entity_offsets.append(entity.offset)\r\n",
+							"\r\n",
+							"    except Exception as err:\r\n",
+							"        print(\"Encountered exception. {}\".format(err))\r\n",
+							"    \r\n",
+							"    return(entities, categories, subcategories, confidencescores, entity_lengths, entity_offsets)"
 						],
 						"outputs": [],
-						"execution_count": 67
+						"execution_count": 154
 					},
 					{
 						"cell_type": "code",
@@ -7887,7 +8040,7 @@
 							"linked_service_name = \"CognitiveService1\""
 						],
 						"outputs": [],
-						"execution_count": 68
+						"execution_count": 155
 					},
 					{
 						"cell_type": "markdown",
@@ -7923,7 +8076,137 @@
 							"from pyspark.sql.functions import lit"
 						],
 						"outputs": [],
-						"execution_count": 78
+						"execution_count": 156
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Create function to split input to Cogntive Services Extractive Summarization into batches of 125000 characters max\r\n",
+							"def split_into_batches(input_string, max_chars_per_batch):\r\n",
+							"    current_batch = \"\"\r\n",
+							"    result = []\r\n",
+							"    for c in input_string:\r\n",
+							"        if len(current_batch) + 1 > max_chars_per_batch:\r\n",
+							"            result.append(current_batch)\r\n",
+							"            current_batch = c\r\n",
+							"        else:\r\n",
+							"            current_batch += c\r\n",
+							"    if current_batch:\r\n",
+							"        result.append(current_batch)\r\n",
+							"    return result"
+						],
+						"outputs": [],
+						"execution_count": 157
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"import pandas as pd\r\n",
+							"from pyspark.sql.functions import pandas_udf, col\r\n",
+							"from pyspark.sql.types import StructType, StructField, StringType, ArrayType"
+						],
+						"outputs": [],
+						"execution_count": 158
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"def NamedEntityRecognition(dataframe, topic):\r\n",
+							"    if dataframe.count() > 1:\r\n",
+							"        text_col = dataframe.select('cleantext')\r\n",
+							"        # Collect all tweets into a list\r\n",
+							"        text_list = text_col.rdd.map(lambda row: row[0]).collect()\r\n",
+							"        # Join all tweets into a single document\r\n",
+							"        result = \" \".join([str(text) + \".\" for text in text_list])\r\n",
+							"        document = [result]\r\n",
+							"        # Extract the string that contains all tweets\r\n",
+							"        input_string = document[0]\r\n",
+							"\r\n",
+							"        batches = split_into_batches(input_string, 5120)\r\n",
+							"        num_batches = len(batches)\r\n",
+							"        print(num_batches)\r\n",
+							"\r\n",
+							"        schema = StructType([\r\n",
+							"            StructField(\"entity\",  StringType(), True),\r\n",
+							"            StructField(\"entity_category\", StringType(), True),\r\n",
+							"            StructField(\"entity_subcategory\", StringType(), True),\r\n",
+							"            StructField(\"topic\", ShortType(), True)\r\n",
+							"        ])\r\n",
+							"\r\n",
+							"        # create a DataFrame\r\n",
+							"        ner_output_df =  spark.createDataFrame([], schema)\r\n",
+							"\r\n",
+							"        # Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
+							"        for each in batches:\r\n",
+							"            doc = [each]\r\n",
+							"            entities, categories, subcategories, confidencescores, entity_lengths, entity_offsets = entity_recognition(client, doc)\r\n",
+							"            # combine data into a list of rows\r\n",
+							"            data = [(a1, a2, a3, topic) for a1, a2, a3 in zip(entities, categories, subcategories)]\r\n",
+							"            batch_output_df = spark.createDataFrame([Row(*i) for i in data], schema)\r\n",
+							"            #print(batch_output_df.count())\r\n",
+							"\r\n",
+							"            ner_output_df = ner_output_df.union(batch_output_df)\r\n",
+							"        return ner_output_df\r\n",
+							"\r\n",
+							"    else:\r\n",
+							"        return(spark.createDataFrame(['No Data','No Data','No Data', topic], schema)) \r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 159
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_all = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment\")\r\n",
+							"df_all.count()"
+						],
+						"outputs": [],
+						"execution_count": 160
 					},
 					{
 						"cell_type": "code",
@@ -7940,80 +8223,10 @@
 							"collapsed": false
 						},
 						"source": [
-							"def NamedEntityRecognition(dataframe, batchsize, topic):\r\n",
-							"    if dataframe.count() > topic:\r\n",
-							"\r\n",
-							"        # Batch size\r\n",
-							"        batch_size = batchsize\r\n",
-							"\r\n",
-							"        # First, count the total number of rows in the DataFrame\r\n",
-							"        num_rows = dataframe.count()\r\n",
-							"\r\n",
-							"        # Next, calculate the number of batches needed to split the DataFrame into batches of 5\r\n",
-							"        num_batches = int(num_rows / batch_size) + (num_rows % batch_size > 0)\r\n",
-							"\r\n",
-							"        # Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
-							"        df_batches = dataframe.randomSplit([1.0]*num_batches, seed=42)\r\n",
-							"\r\n",
-							"        # define the schema for the output DataFrame\r\n",
-							"        schema = StructType([\r\n",
-							"            StructField(\"entity_text\", StringType(), True),\r\n",
-							"            StructField(\"entity_category\", StringType(), True),\r\n",
-							"            StructField(\"topic\", IntegerType(),True)\r\n",
-							"            ])\r\n",
-							"\r\n",
-							"        # create an empty DataFrame with the defined schema\r\n",
-							"        output_df = spark.createDataFrame([], schema)\r\n",
-							"\r\n",
-							"        entities = []\r\n",
-							"        categories = []\r\n",
-							"\r\n",
-							"        # Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
-							"        for i in range(num_batches):\r\n",
-							"            batch = df_batches[i].limit(batch_size)\r\n",
-							"            ner = (NER()\r\n",
-							"            .setLinkedService(linked_service_name)\r\n",
-							"            .setTextCol(\"cleantext\")\r\n",
-							"            .setLanguageCol(\"lang\")\r\n",
-							"            .setOutputCol(\"replies\")\r\n",
-							"            .setErrorCol(\"error\"))\r\n",
-							"\r\n",
-							"            ner_batch_output = ner.transform(batch)\r\n",
-							"            #display(ner_batch_output)\r\n",
-							"\r\n",
-							"            # Extract the 'replies' column and convert it to JSON\r\n",
-							"            json_output = ner_batch_output.select(\"replies\").toJSON().collect()\r\n",
-							"\r\n",
-							"            # Deserialize the JSON and extract the 'replies' field\r\n",
-							"            nes = [json.loads(x)[\"replies\"] for x in json_output]\r\n",
-							"\r\n",
-							"            # Print the 'replies' field for each row\r\n",
-							"            for each in nes:\r\n",
-							"                #print(each)\r\n",
-							"                # convert the dictionary to a JSON string\r\n",
-							"                json_str = json.dumps(each)\r\n",
-							"\r\n",
-							"                # parse the JSON string\r\n",
-							"                json_data = json.loads(json_str)\r\n",
-							"\r\n",
-							"                # extract all the 'text' values from the JSON and put them into an array\r\n",
-							"                entities = entities + [entity['text'] for entity in json_data['document']['entities']]\r\n",
-							"                categories = categories + [entity['category'] for entity in json_data['document']['entities']]\r\n",
-							"\r\n",
-							"\r\n",
-							"        # create rows\r\n",
-							"        rows = [Row(entity_text=entities[i],\r\n",
-							"                    entity_category=categories[i],\r\n",
-							"                    topic = topic\r\n",
-							"                    )\r\n",
-							"                for i in range(len(entities))]\r\n",
-							"\r\n",
-							"        # create batch dataframe\r\n",
-							"        ner_df = spark.createDataFrame(rows, schema)\r\n",
-							"        return(ner_df)"
+							"df_all_ner = NamedEntityRecognition(df_all,5)"
 						],
 						"outputs": [],
-						"execution_count": 90
+						"execution_count": 161
 					},
 					{
 						"cell_type": "markdown",
@@ -8046,7 +8259,7 @@
 							"df_topic0.count()"
 						],
 						"outputs": [],
-						"execution_count": 91
+						"execution_count": 162
 					},
 					{
 						"cell_type": "code",
@@ -8063,10 +8276,10 @@
 							"collapsed": false
 						},
 						"source": [
-							"topic0_NER = NamedEntityRecognition(dataframe = df_topic0, batchsize = 5, topic = 0)"
+							"topic0_NER = NamedEntityRecognition(dataframe = df_topic0, topic = 0)"
 						],
 						"outputs": [],
-						"execution_count": 92
+						"execution_count": 163
 					},
 					{
 						"cell_type": "markdown",
@@ -8099,7 +8312,7 @@
 							"df_topic1.count()"
 						],
 						"outputs": [],
-						"execution_count": 93
+						"execution_count": 164
 					},
 					{
 						"cell_type": "code",
@@ -8116,10 +8329,10 @@
 							"collapsed": false
 						},
 						"source": [
-							"topic1_NER = NamedEntityRecognition(dataframe = df_topic1, batchsize = 5, topic = 1)"
+							"topic1_NER = NamedEntityRecognition(dataframe = df_topic1, topic = 1)"
 						],
 						"outputs": [],
-						"execution_count": 94
+						"execution_count": 165
 					},
 					{
 						"cell_type": "markdown",
@@ -8152,7 +8365,7 @@
 							"df_topic2.count()"
 						],
 						"outputs": [],
-						"execution_count": 95
+						"execution_count": 166
 					},
 					{
 						"cell_type": "code",
@@ -8168,10 +8381,10 @@
 							}
 						},
 						"source": [
-							"topic2_NER = NamedEntityRecognition(dataframe = df_topic2, batchsize = 5, topic = 2)"
+							"topic2_NER = NamedEntityRecognition(dataframe = df_topic2, topic = 2)"
 						],
 						"outputs": [],
-						"execution_count": 96
+						"execution_count": 167
 					},
 					{
 						"cell_type": "markdown",
@@ -8204,7 +8417,7 @@
 							"df_topic3.count()"
 						],
 						"outputs": [],
-						"execution_count": 97
+						"execution_count": 168
 					},
 					{
 						"cell_type": "code",
@@ -8220,10 +8433,10 @@
 							}
 						},
 						"source": [
-							"topic3_NER = NamedEntityRecognition(dataframe = df_topic3, batchsize = 5, topic = 3)"
+							"topic3_NER = NamedEntityRecognition(dataframe = df_topic3, topic = 3)"
 						],
 						"outputs": [],
-						"execution_count": 98
+						"execution_count": 169
 					},
 					{
 						"cell_type": "markdown",
@@ -8256,7 +8469,7 @@
 							"df_topic4.count()"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 170
 					},
 					{
 						"cell_type": "code",
@@ -8272,10 +8485,10 @@
 							}
 						},
 						"source": [
-							"topic4_NER = NamedEntityRecognition(dataframe = df_topic4, batchsize = 5, topic = 4)"
+							"topic4_NER = NamedEntityRecognition(dataframe = df_topic4, topic = 4)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 171
 					},
 					{
 						"cell_type": "markdown",
@@ -8301,7 +8514,8 @@
 								"transient": {
 									"deleting": false
 								}
-							}
+							},
+							"collapsed": false
 						},
 						"source": [
 							"# union the dataframes\r\n",
@@ -8309,26 +8523,7 @@
 							"display(NameEntity_df)"
 						],
 						"outputs": [],
-						"execution_count": null
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"NameEntity_df = topic0_NER.union(topic1_NER).union(topic2_NER)"
-						],
-						"outputs": [],
-						"execution_count": 100
+						"execution_count": 172
 					},
 					{
 						"cell_type": "code",
@@ -8348,7 +8543,7 @@
 							"display(NameEntity_df)"
 						],
 						"outputs": [],
-						"execution_count": 101
+						"execution_count": 173
 					},
 					{
 						"cell_type": "markdown",
@@ -8408,7 +8603,7 @@
 							" .synapsesql(\"SQLPoolTest.NER.NATO_NER\"))"
 						],
 						"outputs": [],
-						"execution_count": 102
+						"execution_count": 176
 					}
 				]
 			},
@@ -8438,7 +8633,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "924a5980-2f07-496d-8260-29d72705e791"
+						"spark.autotune.trackingId": "2139c891-d26e-49df-b04a-789321d06fad"
 					}
 				},
 				"metadata": {
@@ -8463,15 +8658,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -8976,7 +9169,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "647250f0-0765-4956-9ed2-a6bd63c42d8b"
+						"spark.autotune.trackingId": "f50a3a9f-54c4-4ddb-af80-892ddef0b3c5"
 					}
 				},
 				"metadata": {
@@ -9001,15 +9194,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -9263,7 +9454,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "6eca9128-b0c4-422f-aaea-6ed69da7221d"
+						"spark.autotune.trackingId": "f4517c40-0730-4335-b386-7d6df19e0c3f"
 					}
 				},
 				"metadata": {
@@ -9288,8 +9479,7 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -10335,7 +10525,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "f8ea1b63-e009-4d2a-bb0f-730478817213"
+						"spark.autotune.trackingId": "10f5276a-ec62-4795-89f4-3dcc6efc2d4c"
 					}
 				},
 				"metadata": {
@@ -10360,8 +10550,7 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -11310,7 +11499,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "6730d8b5-3140-4231-90b2-ef0e7a10d26f"
+						"spark.autotune.trackingId": "d3b6bdd8-d976-46ee-8196-36d7bdeb1643"
 					}
 				},
 				"metadata": {
@@ -11335,15 +11524,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -11795,7 +11982,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "30dbc6e1-c9b9-421e-bdca-f06f1c1cc505"
+						"spark.autotune.trackingId": "edb745b2-f362-423c-b40e-3a7b156d10bf"
 					}
 				},
 				"metadata": {
@@ -11820,8 +12007,7 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -12129,7 +12315,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "001f3a17-3e7f-44dd-84e0-88499f7d9663"
+						"spark.autotune.trackingId": "a646d19e-d2ad-4615-ac28-cd6bc75fb69c"
 					}
 				},
 				"metadata": {
@@ -12154,15 +12340,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -12718,25 +12902,12 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/SparkPoolTest')]",
-			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
-				"autoPause": {
-					"enabled": true,
-					"delayInMinutes": 15
-				},
-				"autoScale": {
-					"enabled": true,
-					"maxNodeCount": 10,
-					"minNodeCount": 3
-				},
-				"nodeCount": 0,
-				"nodeSize": "Large",
-				"nodeSizeFamily": "MemoryOptimized",
-				"sparkVersion": "3.3",
-				"isComputeIsolationEnabled": false,
-				"sessionLevelPackagesEnabled": true,
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
 				"annotations": []
 			},
 			"dependsOn": [],
@@ -12762,18 +12933,6 @@
 				"sparkVersion": "3.3",
 				"isComputeIsolationEnabled": false,
 				"sessionLevelPackagesEnabled": true,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "eastus2"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
 				"annotations": []
 			},
 			"dependsOn": [],
