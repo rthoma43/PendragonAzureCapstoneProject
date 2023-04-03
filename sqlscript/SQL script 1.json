@@ -5,7 +5,7 @@
 			"name": "Explore"
 		},
 		"content": {
-			"query": "SELECT * FROM [sum].[NATO_Abstractive_Sum];",
+			"query": "SELECT * FROM [sent].[NATO_Sentiment]\norder by topic_0_confidence DESC;",
 			"metadata": {
 				"language": "sql"
 			},
