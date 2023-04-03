@@ -1485,7 +1485,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "specific_date",
-							"value": true
+							"value": false
 						}
 					},
 					{
@@ -2657,12 +2657,8 @@
 							"method": "GET",
 							"headers": {},
 							"authentication": {
-								"resource": "https://management.azure.com/",
-								"credential": {
-									"referenceName": "PendragonManagedIdentityCredential",
-									"type": "CredentialReference"
-								},
-								"type": "UserAssignedManagedIdentity"
+								"type": "MSI",
+								"resource": "https://management.azure.com/"
 							}
 						}
 					},
@@ -2860,8 +2856,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
-				"[concat(variables('workspaceId'), '/credentials/PendragonManagedIdentityCredential')]"
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
 			]
 		},
 		{
@@ -6527,7 +6522,7 @@
 					"name": "Explore"
 				},
 				"content": {
-					"query": "SELECT COUNT(*) FROM [NER].[NATO_NER];",
+					"query": "SELECT * FROM [sum].[NATO_Abstractive_Sum];",
 					"metadata": {
 						"language": "sql"
 					},
