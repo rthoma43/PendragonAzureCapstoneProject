@@ -9,7 +9,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "Query",
-					"value": "\"NATO\" lang:en -is:retweet -is:reply"
+					"value": "\"NATO\"OR%23NATO lang:en -is:retweet -is:reply"
 				}
 			},
 			{
@@ -720,7 +720,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "specific_date",
-					"value": true
+					"value": false
 				}
 			},
 			{
