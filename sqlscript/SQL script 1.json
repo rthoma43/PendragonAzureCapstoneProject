@@ -5,7 +5,7 @@
 			"name": "Explore"
 		},
 		"content": {
-			"query": "SELECT * FROM [sent].[NATO_Sentiment]\norder by topic_0_confidence DESC;",
+			"query": "select * FROM [test].[NATO_test];",
 			"metadata": {
 				"language": "sql"
 			},

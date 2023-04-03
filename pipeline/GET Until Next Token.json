@@ -547,7 +547,14 @@
 			{
 				"name": "End year",
 				"type": "SetVariable",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Turn on SQL Pool",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "end_year",
@@ -625,7 +632,14 @@
 			{
 				"name": "Start year",
 				"type": "SetVariable",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Turn on SQL Pool",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "start_year",
@@ -1093,6 +1107,38 @@
 						"resource": "https://management.azure.com"
 					}
 				}
+			},
+			{
+				"name": "Turn on SQL Pool",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PauseResumeSQLPool",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"PauseorResume": "resume"
+					}
+				}
+			},
+			{
+				"name": "Turn off SQL Pool",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PauseResumeSQLPool",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"PauseorResume": "pause"
+					}
+				}
 			}
 		],
 		"parameters": {
@@ -1163,6 +1209,9 @@
 				"type": "String"
 			},
 			"start_minute": {
+				"type": "String"
+			},
+			"table": {
 				"type": "String"
 			}
 		},

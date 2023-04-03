@@ -23,7 +23,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"notebook": {
-						"referenceName": "TopicModeling_LDA_Copy1",
+						"referenceName": "TopicModeling_LDA_ParameterTest",
 						"type": "NotebookReference"
 					},
 					"parameters": {
@@ -51,7 +51,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "table",
-					"value": "test.NATO_test"
+					"value": ""
 				}
 			}
 		],
