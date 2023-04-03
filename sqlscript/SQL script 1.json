@@ -5,7 +5,7 @@
 			"name": "Explore"
 		},
 		"content": {
-			"query": "SELECT COUNT(*) FROM [NER].[NATO_NER];",
+			"query": "SELECT * FROM [sum].[NATO_Abstractive_Sum];",
 			"metadata": {
 				"language": "sql"
 			},
