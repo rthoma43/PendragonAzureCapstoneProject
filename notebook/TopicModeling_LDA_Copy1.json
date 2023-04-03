@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "86a7c036-6ff6-42ba-8486-4ca55501846a"
+				"spark.autotune.trackingId": "3f7a7e4c-f40e-48a1-ab03-b2413124c305"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 18
+				"execution_count": 1
 			},
 			{
 				"cell_type": "code",
@@ -98,7 +98,7 @@
 					]
 				},
 				"source": [
-					"table = \"Topic.NATO_Topics\""
+					"table = \"test.NATO_test\""
 				],
 				"execution_count": null
 			},
@@ -119,7 +119,7 @@
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *"
 				],
-				"execution_count": 19
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -159,7 +159,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 20
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -244,7 +244,7 @@
 					"\r\n",
 					"#display(df)"
 				],
-				"execution_count": 21
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -302,7 +302,7 @@
 					"\r\n",
 					"#display(df_result)"
 				],
-				"execution_count": 22
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -371,7 +371,7 @@
 					"#print(topic3confidence)\r\n",
 					"#print(topic4confidence)"
 				],
-				"execution_count": 23
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -428,7 +428,7 @@
 					"    impression_count_values.append(row[\"impression_count\"])\r\n",
 					"    cleantext_values.append(row['cleanText'])"
 				],
-				"execution_count": 24
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -465,7 +465,7 @@
 					"topic3confidence = [float(i) for i in topic3confidence]\r\n",
 					"topic4confidence = [float(i) for i in topic4confidence]"
 				],
-				"execution_count": 25
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -540,7 +540,7 @@
 					"# show the DataFrame\r\n",
 					"display(final_topic_df)"
 				],
-				"execution_count": 26
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -611,6 +611,24 @@
 					" .mode(\"overwrite\")\r\n",
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(\"SQLPoolTest.\" + table)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					""
 				],
 				"execution_count": null
 			}
