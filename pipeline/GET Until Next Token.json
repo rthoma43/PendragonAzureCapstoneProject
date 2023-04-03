@@ -720,7 +720,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "specific_date",
-					"value": false
+					"value": true
 				}
 			},
 			{
