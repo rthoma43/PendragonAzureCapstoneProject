@@ -1,0 +1,95 @@
+{
+	"name": "PauseResumeTest",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set Variable to Resume",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "activity",
+					"value": "resume"
+				}
+			},
+			{
+				"name": "Turn on SQL Pool",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Set Variable to Resume",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PauseResumeSQLPool",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"PauseorResume": {
+							"value": "@variables('activity')",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Set Variable to Pause",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Turn on SQL Pool",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "activity",
+					"value": "pause"
+				}
+			},
+			{
+				"name": "Turn off SQL Pool",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Set Variable to Pause",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PauseResumeSQLPool",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"PauseorResume": {
+							"value": "@variables('activity')",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"variables": {
+			"activity": {
+				"type": "String"
+			},
+			"table": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
