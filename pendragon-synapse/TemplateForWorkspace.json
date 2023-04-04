@@ -2481,7 +2481,16 @@
 							"type": "SqlPoolReference"
 						},
 						"typeProperties": {
-							"storedProcedureName": "[dbo].[DeleteAllNATOTopics]"
+							"storedProcedureName": "[dbo].[delete_all_rows]",
+							"storedProcedureParameters": {
+								"table_name": {
+									"value": {
+										"value": "@pipeline().parameters.TopicModelingTableSQL",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
 						}
 					},
 					{
@@ -2570,7 +2579,16 @@
 							"type": "SqlPoolReference"
 						},
 						"typeProperties": {
-							"storedProcedureName": "[dbo].[DeleteAllNatoSentiment]"
+							"storedProcedureName": "[dbo].[delete_all_rows]",
+							"storedProcedureParameters": {
+								"table_name": {
+									"value": {
+										"value": "@pipeline().parameters.SentimentTableSQL",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
 						}
 					},
 					{
@@ -2642,7 +2660,16 @@
 							"type": "SqlPoolReference"
 						},
 						"typeProperties": {
-							"storedProcedureName": "[dbo].[DeleteAllNatoAbsSum]"
+							"storedProcedureName": "[dbo].[delete_all_rows]",
+							"storedProcedureParameters": {
+								"table_name": {
+									"value": {
+										"value": "@pipeline().parameters.SummarizationTableSQL",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
 						}
 					},
 					{
@@ -2713,7 +2740,16 @@
 							"type": "SqlPoolReference"
 						},
 						"typeProperties": {
-							"storedProcedureName": "[dbo].[DeleteAllNatoNer]"
+							"storedProcedureName": "[dbo].[delete_all_rows]",
+							"storedProcedureParameters": {
+								"table_name": {
+									"value": {
+										"value": "@pipeline().parameters.NERTableSQL",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
 						}
 					},
 					{
@@ -2781,7 +2817,16 @@
 							"type": "SqlPoolReference"
 						},
 						"typeProperties": {
-							"storedProcedureName": "[dbo].[DeleteAllNATOTopicWords]"
+							"storedProcedureName": "[dbo].[delete_all_rows]",
+							"storedProcedureParameters": {
+								"table_name": {
+									"value": {
+										"value": "@pipeline().parameters.TopicModelingWordsTableSQL",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
 						}
 					}
 				],
@@ -2809,6 +2854,26 @@
 					"TopicModelingWordsOutputTable": {
 						"type": "string",
 						"defaultValue": "Words.NATO_Topic_Words"
+					},
+					"TopicModelingTableSQL": {
+						"type": "string",
+						"defaultValue": "[Topic].[NATO_Topics]"
+					},
+					"TopicModelingWordsTableSQL": {
+						"type": "string",
+						"defaultValue": "[Words].[NATO_Topic_Words]"
+					},
+					"SentimentTableSQL": {
+						"type": "string",
+						"defaultValue": "[Sent].[NATO_Sentiment]"
+					},
+					"SummarizationTableSQL": {
+						"type": "string",
+						"defaultValue": "[sum].[NATO_Abstractive_Sum]"
+					},
+					"NERTableSQL": {
+						"type": "string",
+						"defaultValue": "[NER].[NATO_NER]"
 					}
 				},
 				"variables": {
@@ -6716,7 +6781,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/DeleteAllFromNATONER_Procedure')]",
+			"name": "[concat(parameters('workspaceName'), '/DeleteAllRows')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -6724,122 +6789,7 @@
 					"name": "SQL_Procedures"
 				},
 				"content": {
-					"query": "CREATE PROCEDURE DeleteAllNatoNer\nAS\nBEGIN\n    DELETE FROM [NER].[NATO_NER];\nEND;",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "SQLPoolTest",
-						"poolName": "SQLPoolTest"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/DeleteAllFromNATOSentiment_Procedure')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"folder": {
-					"name": "SQL_Procedures"
-				},
-				"content": {
-					"query": "CREATE PROCEDURE DeleteAllNatoSentiment\nAS\nBEGIN\n    DELETE FROM [Sent].[NATO_Sentiment];\nEND;",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "SQLPoolTest",
-						"poolName": "SQLPoolTest"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/DeleteAllFromNATOSummary_Procedure')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"folder": {
-					"name": "SQL_Procedures"
-				},
-				"content": {
-					"query": "CREATE PROCEDURE DeleteAllNatoAbsSum\nAS\nBEGIN\n    DELETE FROM [sum].[NATO_Abstractive_Sum];\nEND;",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "SQLPoolTest",
-						"poolName": "SQLPoolTest"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/DeleteAllFromNATOTopicWords_Procedure')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"folder": {
-					"name": "SQL_Procedures"
-				},
-				"content": {
-					"query": "CREATE PROCEDURE DeleteAllNATOTopicWords\nAS\nBEGIN\n    DELETE FROM [Words].[NATO_Topic_Words];\nEND;",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "SQLPoolTest",
-						"poolName": "SQLPoolTest"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/DeleteAllFromNATOTopics_Procedure')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"folder": {
-					"name": "SQL_Procedures"
-				},
-				"content": {
-					"query": "CREATE PROCEDURE DeleteAllNATOTopics\nAS\nBEGIN\n    DELETE FROM [Topic].[NATO_Topics];\nEND;",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "SQLPoolTest",
-						"poolName": "SQLPoolTest"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/DeleteAllProcedure')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"folder": {
-					"name": "SQL_Procedures"
-				},
-				"content": {
-					"query": "CREATE PROCEDURE DeleteAllRowsFromNatoTweets1\nAS\nBEGIN\n    DELETE FROM [dbo].[NATO_Tweets1];\nEND;",
+					"query": "CREATE PROCEDURE delete_all_rows (@table_name NVARCHAR(MAX))\nAS\nBEGIN\n    DECLARE @sql NVARCHAR(MAX)\n    SET @sql = 'DELETE FROM ' + @table_name\n    EXEC sp_executesql @sql\nEND",
 					"metadata": {
 						"language": "sql"
 					},
@@ -6923,26 +6873,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/SQL script 5')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"content": {
-					"query": "select * from [sum].[NATO_Abstractive_Sum];",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "SQLPoolTest",
-						"poolName": "SQLPoolTest"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/ArchiveTweets')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
@@ -6963,7 +6893,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "2165f0ed-2fc1-4ee7-9e6c-7200e2773c83"
+						"spark.autotune.trackingId": "8ad45b92-c099-4327-bc8e-71f2b9b54112"
 					}
 				},
 				"metadata": {
@@ -6988,7 +6918,8 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -9103,7 +9034,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "e78ac90f-71e0-448f-8ff5-462c8764e191"
+						"spark.autotune.trackingId": "2e2ce839-527f-4472-9c9c-c86a34e080d3"
 					}
 				},
 				"metadata": {
@@ -9128,13 +9059,15 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -13602,7 +13535,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "205bc343-d2e0-43de-bcfd-5229f59873f4"
+						"spark.autotune.trackingId": "35f20203-c6b9-40c1-98fb-a26aaec436fb"
 					}
 				},
 				"metadata": {
