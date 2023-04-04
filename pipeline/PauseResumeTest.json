@@ -13,27 +13,15 @@
 						"referenceName": "PauseResumeSQLPool",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"PauseorResume": "Resume"
+					}
 				}
 			}
 		],
 		"variables": {
 			"activity": {
-				"type": "String"
-			},
-			"table": {
-				"type": "String"
-			},
-			"TopicModelingOutputTable": {
-				"type": "String"
-			},
-			"SentimentOutputTable": {
-				"type": "String"
-			},
-			"SummarizationOutputTable": {
-				"type": "String"
-			},
-			"NEROutputTable": {
 				"type": "String"
 			}
 		},
