@@ -211,7 +211,7 @@
 			},
 			"PauseorResume": {
 				"type": "string",
-				"defaultValue": "Pause"
+				"defaultValue": "Resume"
 			}
 		},
 		"annotations": []
