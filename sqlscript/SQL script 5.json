@@ -1,11 +1,11 @@
 {
-	"name": "SQL script 1",
+	"name": "SQL script 5",
 	"properties": {
 		"folder": {
 			"name": "Explore"
 		},
 		"content": {
-			"query": "DELETE FROM [archive].[NATO_Archive_Tweets];",
+			"query": "select * FROM [archive].[NATO_Archive_Tweets];",
 			"metadata": {
 				"language": "sql"
 			},

@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "5ba25f9c-21ce-4e79-8689-068eb865d3f4"
+				"spark.autotune.trackingId": "be52c08f-542b-480b-ac0e-075ba2153003"
 			}
 		},
 		"metadata": {
@@ -52,7 +52,32 @@
 		},
 		"cells": [
 			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Perform Topic Modeling using Spark Machine Learning Clustering LDA Model\r\n",
+					"https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.clustering.LDA.html"
+				]
+			},
+			{
 				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
 				"source": [
 					"# Add required imports\r\n",
 					"import com.microsoft.spark.sqlanalytics\r\n",
@@ -79,7 +104,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 18
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
