@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "c21ab5e3-ee4f-458f-8fbd-8235ba343ffc"
+				"spark.autotune.trackingId": "802a35c7-b1b7-4583-89fa-c046a259344f"
 			}
 		},
 		"metadata": {
@@ -82,6 +82,20 @@
 				"execution_count": 2
 			},
 			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Create a variable for the output SQL Pool table name\r\n",
+					"Enter a default place holder name which will be changed by the pipeline"
+				]
+			},
+			{
 				"cell_type": "code",
 				"metadata": {
 					"jupyter": {
@@ -98,7 +112,7 @@
 					]
 				},
 				"source": [
-					"table = \"test.NATO_test1\""
+					"table = \"placeholder\""
 				],
 				"execution_count": 3
 			},
