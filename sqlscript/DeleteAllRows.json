@@ -1,11 +1,11 @@
 {
-	"name": "DeleteAllFromNATOTopics_Procedure",
+	"name": "DeleteAllRows",
 	"properties": {
 		"folder": {
 			"name": "SQL_Procedures"
 		},
 		"content": {
-			"query": "CREATE PROCEDURE DeleteAllNATOTopics\nAS\nBEGIN\n    DELETE FROM [Topic].[NATO_Topics];\nEND;",
+			"query": "CREATE PROCEDURE delete_all_rows (@table_name NVARCHAR(MAX))\nAS\nBEGIN\n    DECLARE @sql NVARCHAR(MAX)\n    SET @sql = 'DELETE FROM ' + @table_name\n    EXEC sp_executesql @sql\nEND",
 			"metadata": {
 				"language": "sql"
 			},
