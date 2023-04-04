@@ -510,7 +510,13 @@
 					"type": "SqlPoolReference"
 				},
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[DeleteAllRowsFromNatoTweets1]"
+					"storedProcedureName": "[dbo].[delete_all_rows]",
+					"storedProcedureParameters": {
+						"table_name": {
+							"value": "[dbo].[NATO_Tweets1]",
+							"type": "String"
+						}
+					}
 				}
 			},
 			{
