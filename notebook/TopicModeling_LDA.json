@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "2d8b266e-8642-4fed-9a4e-c225f5c92baa"
+				"spark.autotune.trackingId": "5ba25f9c-21ce-4e79-8689-068eb865d3f4"
 			}
 		},
 		"metadata": {
@@ -602,7 +602,7 @@
 					}
 				},
 				"source": [
-					"Create the three-part table name to which data will be written"
+					"## Create the three-part table name to which data will be written"
 				]
 			},
 			{
