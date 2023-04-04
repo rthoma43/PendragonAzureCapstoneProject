@@ -575,7 +575,7 @@
 					},
 					"waitOnCompletion": true,
 					"parameters": {
-						"PauseorResume": "pause"
+						"PauseorResume": "Pause"
 					}
 				}
 			},
