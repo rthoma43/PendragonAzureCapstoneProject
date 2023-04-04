@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "af01367a-d87f-478b-9d1a-f4b93379efb1"
+				"spark.autotune.trackingId": "29d23ccb-5404-49ed-ad8b-07a4e7a1ff94"
 			}
 		},
 		"metadata": {
@@ -368,7 +368,7 @@
 					"pipeline_model = pipeline.fit(df_removed)\r\n",
 					"df_transformed = pipeline_model.transform(df_removed)"
 				],
-				"execution_count": 8
+				"execution_count": 15
 			},
 			{
 				"cell_type": "code",
@@ -392,7 +392,7 @@
 					"# train the model on the preprocessed data\r\n",
 					"lda_model = lda.fit(df_transformed)"
 				],
-				"execution_count": 10
+				"execution_count": 16
 			},
 			{
 				"cell_type": "code",
