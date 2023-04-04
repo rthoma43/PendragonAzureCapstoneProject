@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "31487c4e-4ad7-4f92-8b67-ae6e664c77ed"
+				"spark.autotune.trackingId": "c93b081c-13a2-4776-a602-15f1b51e0370"
 			}
 		},
 		"metadata": {
@@ -118,33 +118,15 @@
 							"deleting": false
 						}
 					},
-					"tags": []
-				},
-				"source": [
-					"topictable = \"Topic.NATO_Topics\""
-				],
-				"execution_count": 84
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
 					"tags": [
 						"parameters"
 					]
 				},
 				"source": [
+					"topictable = \"Topic.NATO_Topics\"\r\n",
 					"wordtable = \"Words.NATO_Topic_Words\""
 				],
-				"execution_count": 102
+				"execution_count": 84
 			},
 			{
 				"cell_type": "code",

@@ -50,19 +50,30 @@
 				"userProperties": [],
 				"typeProperties": {
 					"notebook": {
-						"referenceName": "TopicModeling_LDA",
+						"referenceName": "TopicModeling_LDA_Sklearn",
 						"type": "NotebookReference"
 					},
 					"parameters": {
-						"table": {
+						"topictable": {
 							"value": {
 								"value": "@pipeline().parameters.TopicModelingOutputTable",
+								"type": "Expression"
+							},
+							"type": "string"
+						},
+						"wordtable": {
+							"value": {
+								"value": "@pipeline().parameters.TopicModelingWordsOutputTable",
 								"type": "Expression"
 							},
 							"type": "string"
 						}
 					},
 					"snapshot": true,
+					"sparkPool": {
+						"referenceName": "SparkPoolSmall",
+						"type": "BigDataPoolReference"
+					},
 					"executorSize": "Small",
 					"conf": {
 						"spark.dynamicAllocation.enabled": null,
