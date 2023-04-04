@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "2139c891-d26e-49df-b04a-789321d06fad"
+				"spark.autotune.trackingId": "48a70e84-4ec0-4995-b327-7e83ee0130d6"
 			}
 		},
 		"metadata": {
@@ -80,6 +80,41 @@
 					")"
 				],
 				"execution_count": 55
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Create a variable for the output SQL Pool table name\r\n",
+					"Enter a default place holder name which will be changed by the pipeline"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"tags": [
+						"parameters"
+					]
+				},
+				"source": [
+					"table = \"placeholder\""
+				],
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -483,6 +518,37 @@
 					"\r\n",
 					"GO"
 				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Create the three-part table name to which data will be written"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"outputtable = \"SQLPoolTest.\" + table"
+				],
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
