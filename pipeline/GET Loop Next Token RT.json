@@ -515,6 +515,7 @@
 			},
 			{
 				"name": "Resume SQL Pool",
+				"description": "Must be \"Resume\" or \"Pause\"",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
@@ -558,6 +559,7 @@
 			},
 			{
 				"name": "Pause SQL Pool",
+				"description": "Must be \"Resume\" or \"Pause\"",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{

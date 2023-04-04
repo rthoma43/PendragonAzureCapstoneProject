@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "d9c74a1b-7d9c-40c7-aebd-53c574d9831e"
+				"spark.autotune.trackingId": "31487c4e-4ad7-4f92-8b67-ae6e664c77ed"
 			}
 		},
 		"metadata": {
@@ -104,7 +104,47 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 4
+				"execution_count": 83
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"tags": []
+				},
+				"source": [
+					"topictable = \"Topic.NATO_Topics\""
+				],
+				"execution_count": 84
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"tags": [
+						"parameters"
+					]
+				},
+				"source": [
+					"wordtable = \"Words.NATO_Topic_Words\""
+				],
+				"execution_count": 102
 			},
 			{
 				"cell_type": "code",
@@ -123,7 +163,7 @@
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *"
 				],
-				"execution_count": 5
+				"execution_count": 86
 			},
 			{
 				"cell_type": "markdown",
@@ -151,14 +191,12 @@
 							"deleting": false
 						}
 					},
-					"tags": [
-						"parameters"
-					]
+					"tags": []
 				},
 				"source": [
 					"table = \"placeholder\""
 				],
-				"execution_count": 3
+				"execution_count": 87
 			},
 			{
 				"cell_type": "markdown",
@@ -198,7 +236,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 6
+				"execution_count": 88
 			},
 			{
 				"cell_type": "markdown",
@@ -248,6 +286,8 @@
 					"    text = re.sub(mentions_hashtag_regex, '', text)\r\n",
 					"    # Remove special characters\r\n",
 					"    text = re.sub(special_chars_regex, '', text)\r\n",
+					"    # Remove 'amp'\r\n",
+					"    text = re.sub(\"amp\", '', text)\r\n",
 					"    # Remove emojis\r\n",
 					"    text = re.sub(emoji_regex, '', text)\r\n",
 					"    # Remove empty spaces equal to or bigger than 2 spaces\r\n",
@@ -264,7 +304,7 @@
 					"\r\n",
 					"#display(df)"
 				],
-				"execution_count": 7
+				"execution_count": 89
 			},
 			{
 				"cell_type": "code",
@@ -300,7 +340,22 @@
 					"\r\n",
 					"display(df_removed)"
 				],
-				"execution_count": 8
+				"execution_count": 90
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Perform Topic Modeling\r\n",
+					"## Sklearn LDA (Latent Dirichlet Allocation)\r\n",
+					"## 5 Topics"
+				]
 			},
 			{
 				"cell_type": "code",
@@ -323,7 +378,7 @@
 					"# Convert Spark DataFrame to Pandas DataFrame\r\n",
 					"pandas_df = df_removed.toPandas()"
 				],
-				"execution_count": 23
+				"execution_count": 91
 			},
 			{
 				"cell_type": "code",
@@ -340,10 +395,6 @@
 					"collapsed": false
 				},
 				"source": [
-					"from sklearn.decomposition import LatentDirichletAllocation\r\n",
-					"from sklearn.feature_extraction.text import CountVectorizer\r\n",
-					"import pandas as pd\r\n",
-					"\r\n",
 					"# Tokenize and vectorize the text data\r\n",
 					"count_vectorizer = CountVectorizer()\r\n",
 					"count_data = count_vectorizer.fit_transform(pandas_df[\"cleanText\"])\r\n",
@@ -362,10 +413,13 @@
 					"# Convert Pandas DataFrame back to Spark DataFrame\r\n",
 					"spark_df = spark.createDataFrame(pandas_df)\r\n",
 					"\r\n",
+					"# Renaming the \"cleanText\" column to \"cleantext\"\r\n",
+					"spark_df = spark_df.withColumnRenamed(\"cleanText\", \"cleantext\")\r\n",
+					"\r\n",
 					"# Display Spark DataFrame\r\n",
 					"display(spark_df)"
 				],
-				"execution_count": 24
+				"execution_count": 92
 			},
 			{
 				"cell_type": "markdown",
@@ -406,7 +460,7 @@
 					"\r\n",
 					"print(top_N_words)"
 				],
-				"execution_count": 36
+				"execution_count": 93
 			},
 			{
 				"cell_type": "code",
@@ -437,23 +491,7 @@
 					"# display the spark dataframe\r\n",
 					"display(df_words)"
 				],
-				"execution_count": 40
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"## Perform Topic Modeling\r\n",
-					"## Pyspark ML Clustering LDA (Latent Dirichlet Allocation)\r\n",
-					"https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.clustering.LDA.html\r\n",
-					"## 5 Topics"
-				]
+				"execution_count": 94
 			},
 			{
 				"cell_type": "code",
@@ -469,392 +507,9 @@
 					}
 				},
 				"source": [
-					"from pyspark.ml.feature import Tokenizer, StopWordsRemover, CountVectorizer\r\n",
-					"from pyspark.ml import Pipeline\r\n",
-					"\r\n",
-					"# create a tokenizer to split the text into words\r\n",
-					"tokenizer = Tokenizer(inputCol=\"cleanText\", outputCol=\"words\")\r\n",
-					"\r\n",
-					"# create a stop word remover to remove common words\r\n",
-					"stopword_remover = StopWordsRemover(inputCol=\"words\", outputCol=\"filtered_words\")\r\n",
-					"\r\n",
-					"# create a count vectorizer to convert the text into a numerical format\r\n",
-					"vectorizer = CountVectorizer(inputCol=\"filtered_words\", outputCol=\"features\")\r\n",
-					"\r\n",
-					"# create a pipeline to combine the preprocessing steps\r\n",
-					"pipeline = Pipeline(stages=[tokenizer, stopword_remover, vectorizer])\r\n",
-					""
+					"spark_df.printSchema"
 				],
-				"execution_count": 7
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# fit the pipeline to the DataFrame\r\n",
-					"pipeline_model = pipeline.fit(df_removed)\r\n",
-					"df_transformed = pipeline_model.transform(df_removed)"
-				],
-				"execution_count": 8
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"display(df_transformed)"
-				],
-				"execution_count": 10
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"from pyspark.ml.clustering import LDA\r\n",
-					"\r\n",
-					"# create an LDA model with k topics\r\n",
-					"lda = LDA(k=5, maxIter=20)\r\n",
-					"\r\n",
-					"# train the model on the preprocessed data\r\n",
-					"lda_model = lda.fit(df_transformed)"
-				],
-				"execution_count": 9
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# extract the topics from the text data\r\n",
-					"topics = lda_model.describeTopics().collect()\r\n",
-					"\r\n",
-					"# print the top words for each topic\r\n",
-					"for topic in topics:\r\n",
-					"    print(\"Topic {}: \".format(topic[0]))\r\n",
-					"    words = topic[1]\r\n",
-					"    for i in range(len(words)):\r\n",
-					"        print(\"    - {}\".format(pipeline_model.stages[-1].vocabulary[words[i]]))"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"from pyspark.ml.clustering import LDA\r\n",
-					"from pyspark.ml.feature import Tokenizer, CountVectorizer\r\n",
-					"\r\n",
-					"tokenizer = Tokenizer(inputCol=\"cleanText\", outputCol=\"tokens\")\r\n",
-					"df_tokens = tokenizer.transform(df)\r\n",
-					"\r\n",
-					"# create document-term matrix\r\n",
-					"vectorizer = CountVectorizer(inputCol='tokens', outputCol='features')\r\n",
-					"model = vectorizer.fit(df_tokens)\r\n",
-					"df_features = model.transform(df_tokens)\r\n",
-					"\r\n",
-					"# fit LDA model\r\n",
-					"num_topics = 5\r\n",
-					"max_iterations = 10\r\n",
-					"lda = LDA(k=num_topics, maxIter=max_iterations)\r\n",
-					"lda_model = lda.fit(df_features)\r\n",
-					"\r\n",
-					"# get topic distribution for each document\r\n",
-					"df_topics = lda_model.transform(df_features).select('id', 'topicDistribution')\r\n",
-					"\r\n",
-					"# join with original DataFrame\r\n",
-					"df_result = df.join(df_topics, 'id')\r\n",
-					"\r\n",
-					"#display(df_result)"
-				],
-				"execution_count": 9
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"## Parse topicDistribution output column for the topic group and confidence values"
-				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"import json\r\n",
-					"import numpy as np\r\n",
-					"\r\n",
-					"# Extract the 'replies' column and convert it to JSON\r\n",
-					"json_output = df_result.select(\"topicDistribution\").toJSON().collect()\r\n",
-					"\r\n",
-					"# Deserialize the JSON and extract the 'replies' field\r\n",
-					"topics = [json.loads(x)[\"topicDistribution\"] for x in json_output]\r\n",
-					"\r\n",
-					"topicgroup = []\r\n",
-					"topic0confidence = []\r\n",
-					"topic1confidence = []\r\n",
-					"topic2confidence = []\r\n",
-					"topic3confidence = []\r\n",
-					"topic4confidence = []\r\n",
-					"\r\n",
-					"# Print the 'replies' field for each row\r\n",
-					"for topic in topics:\r\n",
-					"    #print(topic)\r\n",
-					"    \r\n",
-					"    # convert JSON array to numpy array\r\n",
-					"    arr = np.array(topic['values'])\r\n",
-					"    topic0confidence.append(arr[0])\r\n",
-					"    topic1confidence.append(arr[1])\r\n",
-					"    topic2confidence.append(arr[2])\r\n",
-					"    topic3confidence.append(arr[3])\r\n",
-					"    topic4confidence.append(arr[4])\r\n",
-					"\r\n",
-					"    # find index of maximum value\r\n",
-					"    idx = np.argmax(arr)\r\n",
-					"    #print(idx)\r\n",
-					"    topicgroup.append(idx)\r\n",
-					"\r\n",
-					"#print(topicgroup)\r\n",
-					"#print(topic0confidence)\r\n",
-					"#print(topic1confidence)\r\n",
-					"#print(topic2confidence)\r\n",
-					"#print(topic3confidence)\r\n",
-					"#print(topic4confidence)"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"## Collect the original dataframe column values"
-				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# assume df is the DataFrame to extract values from\r\n",
-					"id_values = []\r\n",
-					"created_at_values = []\r\n",
-					"text_values = []\r\n",
-					"cleantext_values = []\r\n",
-					"lang_values = []\r\n",
-					"retweet_count_values = []\r\n",
-					"reply_count_values = []\r\n",
-					"like_count_values = []\r\n",
-					"quote_count_values = []\r\n",
-					"impression_count_values = []\r\n",
-					"\r\n",
-					"# collect all rows of the DataFrame\r\n",
-					"rows = df.collect()\r\n",
-					"\r\n",
-					"# iterate over rows and extract values from each column\r\n",
-					"for row in rows:\r\n",
-					"    id_values.append(row[\"id\"])\r\n",
-					"    created_at_values.append(row[\"created_at\"])\r\n",
-					"    text_values.append(row[\"text\"])\r\n",
-					"    lang_values.append(row[\"lang\"])\r\n",
-					"    retweet_count_values.append(row[\"retweet_count\"])\r\n",
-					"    reply_count_values.append(row[\"reply_count\"])\r\n",
-					"    like_count_values.append(row[\"like_count\"])\r\n",
-					"    quote_count_values.append(row[\"quote_count\"])\r\n",
-					"    impression_count_values.append(row[\"impression_count\"])\r\n",
-					"    cleantext_values.append(row['cleanText'])"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"## Convert new values to proper int of float data types"
-				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# Convert nump.int64 to int and numpy.float64 to float\r\n",
-					"topicgroup = [int(i) for i in topicgroup]\r\n",
-					"topic0confidence = [float(i) for i in topic0confidence]\r\n",
-					"topic1confidence = [float(i) for i in topic1confidence]\r\n",
-					"topic2confidence = [float(i) for i in topic2confidence]\r\n",
-					"topic3confidence = [float(i) for i in topic3confidence]\r\n",
-					"topic4confidence = [float(i) for i in topic4confidence]"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"## Create a final output dataframe by mapping the values to their proper schema "
-				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"from pyspark.sql.types import *\r\n",
-					"schema = StructType([\r\n",
-					"    StructField(\"id\",  LongType(), True),\r\n",
-					"    StructField(\"created_at\", TimestampType(), True),\r\n",
-					"    StructField(\"text\", StringType(), True),\r\n",
-					"    StructField(\"cleantext\", StringType(), True),\r\n",
-					"    StructField(\"lang\", StringType(), True),\r\n",
-					"    StructField(\"retweet_count\", IntegerType(), True),\r\n",
-					"    StructField(\"reply_count\", IntegerType(), True),\r\n",
-					"    StructField(\"like_count\", IntegerType(), True),\r\n",
-					"    StructField(\"quote_count\", IntegerType(), True),\r\n",
-					"    StructField(\"impression_count\", IntegerType(), True),\r\n",
-					"    StructField(\"topic\", ShortType(), True),\r\n",
-					"    StructField(\"topic_0_confidence\", FloatType(), True),\r\n",
-					"    StructField(\"topic_1_confidence\", FloatType(), True),\r\n",
-					"    StructField(\"topic_2_confidence\", FloatType(), True),\r\n",
-					"    StructField(\"topic_3_confidence\", FloatType(), True),\r\n",
-					"    StructField(\"topic_4_confidence\", FloatType(), True)\r\n",
-					"])\r\n",
-					"\r\n",
-					"# create rows\r\n",
-					"rows = [Row(id=id_values[i],\r\n",
-					"            created_at=created_at_values[i],\r\n",
-					"            text=text_values[i],\r\n",
-					"            cleanText = cleantext_values[i],\r\n",
-					"            lang=lang_values[i],\r\n",
-					"            retweet_count = retweet_count_values[i],\r\n",
-					"            reply_count=reply_count_values[i],\r\n",
-					"            like_count=like_count_values[i],\r\n",
-					"            quote_count=quote_count_values[i],\r\n",
-					"            impression_count = impression_count_values[i],\r\n",
-					"            topic = topicgroup[i],\r\n",
-					"            topic_0_confidence = topic0confidence[i],\r\n",
-					"            topic_1_confidence = topic1confidence[i],\r\n",
-					"            topic_2_confidence = topic2confidence[i],\r\n",
-					"            topic_3_confidence = topic3confidence[i],\r\n",
-					"            topic_4_confidence = topic4confidence[i])\r\n",
-					"        for i in range(len(id_values))]\r\n",
-					"\r\n",
-					"# create a DataFrame\r\n",
-					"final_topic_df = spark.createDataFrame(rows, schema)\r\n",
-					"\r\n",
-					"# show the DataFrame\r\n",
-					"display(final_topic_df)"
-				],
-				"execution_count": null
+				"execution_count": 95
 			},
 			{
 				"cell_type": "markdown",
@@ -874,19 +529,36 @@
 					"\t[id] bigint  NULL,\r\n",
 					"\t[created_at] DATETIME2(7)  NULL,\r\n",
 					"\t[text] NVARCHAR(4000)  NULL,\r\n",
-					"\t[cleantext] NVARCHAR(4000)  NULL,\r\n",
 					"\t[lang] nvarchar(10)  NULL,\r\n",
 					"\t[retweet_count] INT  NULL,\r\n",
 					"\t[reply_count] INT  NULL,\r\n",
 					"\t[like_count] INT  NULL,\r\n",
 					"\t[quote_count] INT  NULL,\r\n",
 					"\t[impression_count] INT  NULL,\r\n",
-					"    [topic] SMALLINT NULL,\r\n",
-					"    [topic_0_confidence] REAL NULL,\r\n",
-					"    [topic_1_confidence] REAL NULL,\r\n",
-					"    [topic_2_confidence] REAL NULL,\r\n",
-					"    [topic_3_confidence] REAL NULL,\r\n",
-					"    [topic_4_confidence] REAL NULL\r\n",
+					"\t[cleantext] NVARCHAR(4000)  NULL,\r\n",
+					"    [topic_0_confidence] FLOAT NULL,\r\n",
+					"    [topic_1_confidence] FLOAT NULL,\r\n",
+					"    [topic_2_confidence] FLOAT NULL,\r\n",
+					"    [topic_3_confidence] FLOAT NULL,\r\n",
+					"    [topic_4_confidence] FLOAT NULL,\r\n",
+					"\t[topic] BIGINT NULL\r\n",
+					")\r\n",
+					"\r\n",
+					"GO\r\n",
+					"\r\n",
+					"CREATE TABLE [Words].[NATO_Topic_Words]\r\n",
+					"( \r\n",
+					"\t[topic] bigint  NULL,\r\n",
+					"\t[word_1] NVARCHAR(20)  NULL,\r\n",
+					"\t[word_2] NVARCHAR(20)  NULL,\r\n",
+					"    [word_3] NVARCHAR(20)  NULL,\r\n",
+					"    [word_4] NVARCHAR(20)  NULL,\r\n",
+					"    [word_5] NVARCHAR(20)  NULL,\r\n",
+					"    [word_6] NVARCHAR(20)  NULL,\r\n",
+					"    [word_7] NVARCHAR(20)  NULL,\r\n",
+					"    [word_8] NVARCHAR(20)  NULL,\r\n",
+					"    [word_9] NVARCHAR(20)  NULL,\r\n",
+					"    [word_10] NVARCHAR(20)  NULL\r\n",
 					")\r\n",
 					"\r\n",
 					"GO"
@@ -919,9 +591,10 @@
 					}
 				},
 				"source": [
-					"outputtable = \"SQLPoolTest.\" + table"
+					"outputtopictable = \"SQLPoolTest.\" + topictable\r\n",
+					"outputwordtable = \"SQLPoolTest.\" + wordtable"
 				],
-				"execution_count": null
+				"execution_count": 103
 			},
 			{
 				"cell_type": "code",
@@ -944,7 +617,7 @@
 					"\r\n",
 					"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
 					"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
-					"(final_topic_df.write\r\n",
+					"(spark_df.write\r\n",
 					" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
 					" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
 					" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
@@ -955,9 +628,63 @@
 					" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
 					" .mode(\"overwrite\")\r\n",
 					" # Required parameter - Three-part table name to which data will be written\r\n",
-					" .synapsesql(outputtable))"
+					" .synapsesql(outputtopictable))"
 				],
-				"execution_count": null
+				"execution_count": 98
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df_words.printSchema"
+				],
+				"execution_count": 99
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Write using AAD Auth to internal table\r\n",
+					"# Add required imports\r\n",
+					"import com.microsoft.spark.sqlanalytics\r\n",
+					"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+					"\r\n",
+					"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
+					"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
+					"(df_words.write\r\n",
+					" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+					" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+					" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+					" # Like-wise, if `Constants.TEMP_FOLDER` is not provided, the connector will use the runtime staging directory config (see section on Configuration Options for details).\r\n",
+					" .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+					" # Choose a save mode that is apt for your use case.\r\n",
+					" # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
+					" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
+					" .mode(\"overwrite\")\r\n",
+					" # Required parameter - Three-part table name to which data will be written\r\n",
+					" .synapsesql(outputwordtable))"
+				],
+				"execution_count": 104
 			}
 		]
 	}
