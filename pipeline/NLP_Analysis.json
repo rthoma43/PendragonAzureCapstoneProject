@@ -32,12 +32,6 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
-					},
-					{
-						"activity": "Set Topic Modeling Output Table",
-						"dependencyConditions": [
-							"Succeeded"
-						]
 					}
 				],
 				"policy": {
@@ -56,7 +50,7 @@
 					"parameters": {
 						"table": {
 							"value": {
-								"value": "@variables('TopicModelingOutputTable')",
+								"value": "@pipeline().parameters.TopicModelingOutputTable",
 								"type": "Expression"
 							},
 							"type": "string"
@@ -110,12 +104,6 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
-					},
-					{
-						"activity": "Set Sentiment Output Table",
-						"dependencyConditions": [
-							"Succeeded"
-						]
 					}
 				],
 				"policy": {
@@ -134,7 +122,7 @@
 					"parameters": {
 						"table": {
 							"value": {
-								"value": "@variables('SentimentOutputTable')",
+								"value": "@pipeline().parameters.SentimentOutputTable",
 								"type": "Expression"
 							},
 							"type": "string"
@@ -187,12 +175,6 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
-					},
-					{
-						"activity": "Set Summarization Output Table",
-						"dependencyConditions": [
-							"Succeeded"
-						]
 					}
 				],
 				"policy": {
@@ -211,7 +193,7 @@
 					"parameters": {
 						"table": {
 							"value": {
-								"value": "@variables('SummarizationOutputTable')",
+								"value": "@pipeline().parameters.SummarizationOutputTable",
 								"type": "Expression"
 							},
 							"type": "string"
@@ -264,12 +246,6 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
-					},
-					{
-						"activity": "Set NER Output Table",
-						"dependencyConditions": [
-							"Succeeded"
-						]
 					}
 				],
 				"policy": {
@@ -288,7 +264,7 @@
 					"parameters": {
 						"table": {
 							"value": {
-								"value": "@variables('NEROutputTable')",
+								"value": "@pipeline().parameters.NEROutputTable",
 								"type": "Expression"
 							},
 							"type": "string"
@@ -308,48 +284,26 @@
 					"driverSize": "Small",
 					"numExecutors": null
 				}
-			},
-			{
-				"name": "Set Topic Modeling Output Table",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "TopicModelingOutputTable",
-					"value": "Topic.NATO_Topics"
-				}
-			},
-			{
-				"name": "Set Sentiment Output Table",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "SentimentOutputTable",
-					"value": "Sent.NATO_Sentiment"
-				}
-			},
-			{
-				"name": "Set Summarization Output Table",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "SummarizationOutputTable",
-					"value": "sum.NATO_Abstractive_Sum"
-				}
-			},
-			{
-				"name": "Set NER Output Table",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "NEROutputTable",
-					"value": "NER.NATO_NER"
-				}
 			}
 		],
+		"parameters": {
+			"TopicModelingOutputTable": {
+				"type": "string",
+				"defaultValue": "Topic.NATO_Topics"
+			},
+			"SentimentOutputTable": {
+				"type": "string",
+				"defaultValue": "Sent.NATO_Sentiment"
+			},
+			"SummarizationOutputTable": {
+				"type": "string",
+				"defaultValue": "sum.NATO_Abstractive_Sum"
+			},
+			"NEROutputTable": {
+				"type": "string",
+				"defaultValue": "NER.NATO_NER"
+			}
+		},
 		"variables": {
 			"TopicModelingOutputTable": {
 				"type": "String"
