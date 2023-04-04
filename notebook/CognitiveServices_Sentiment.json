@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "48a70e84-4ec0-4995-b327-7e83ee0130d6"
+				"spark.autotune.trackingId": "59045804-91a6-4f30-85dd-0a6468f0f997"
 			}
 		},
 		"metadata": {
@@ -582,7 +582,7 @@
 					" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
 					" .mode(\"overwrite\")\r\n",
 					" # Required parameter - Three-part table name to which data will be written\r\n",
-					" .synapsesql(\"SQLPoolTest.Sent.NATO_Sentiment\"))"
+					" .synapsesql(outputtable))"
 				],
 				"execution_count": 63
 			}
