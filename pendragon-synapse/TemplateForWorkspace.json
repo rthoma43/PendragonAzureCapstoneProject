@@ -6899,7 +6899,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "703e375d-803e-4ff6-a199-63bb0e327005"
+						"spark.autotune.trackingId": "e1d399f4-7241-478d-911f-478434d7242e"
 					}
 				},
 				"metadata": {
@@ -6924,8 +6924,7 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -9040,7 +9039,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "aaf460b6-dec0-4db3-a837-e041a419476f"
+						"spark.autotune.trackingId": "e78ac90f-71e0-448f-8ff5-462c8764e191"
 					}
 				},
 				"metadata": {
@@ -9065,15 +9064,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -13541,7 +13538,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "24ee3687-f1fe-48fc-9979-c5e1d4b78bf4"
+						"spark.autotune.trackingId": "f0444243-1fbc-4583-ae65-5efbcea802d3"
 					}
 				},
 				"metadata": {
@@ -13566,8 +13563,7 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -14225,6 +14221,26 @@
 			},
 			"dependsOn": [],
 			"location": "eastus2"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 5')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT * FROM [Sent].[NATO_Sentiment]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPoolTest",
+						"poolName": "SQLPoolTest"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
 		}
 	]
 }
