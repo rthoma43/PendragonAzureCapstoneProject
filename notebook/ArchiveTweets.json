@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "3578a03b-92da-42b3-be15-44181564f236"
+				"spark.autotune.trackingId": "2165f0ed-2fc1-4ee7-9e6c-7200e2773c83"
 			}
 		},
 		"metadata": {
@@ -100,7 +100,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 1
+				"execution_count": 17
 			},
 			{
 				"cell_type": "code",
@@ -119,9 +119,9 @@
 					]
 				},
 				"source": [
-					"query = \"placeholder\""
+					"query = \"NATO\""
 				],
-				"execution_count": 2
+				"execution_count": 18
 			},
 			{
 				"cell_type": "code",
@@ -149,7 +149,7 @@
 					"# show the new DataFrame\r\n",
 					"display(new_df)"
 				],
-				"execution_count": 10
+				"execution_count": 19
 			},
 			{
 				"cell_type": "code",
@@ -167,7 +167,7 @@
 				"source": [
 					"new_df.printSchema"
 				],
-				"execution_count": 11
+				"execution_count": 20
 			},
 			{
 				"cell_type": "code",
@@ -203,7 +203,7 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(\"SQLPoolTest.archive.NATO_Archive_Tweets\"))"
 				],
-				"execution_count": 16
+				"execution_count": 21
 			}
 		]
 	}
