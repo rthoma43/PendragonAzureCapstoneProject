@@ -19,7 +19,16 @@
 					"type": "SqlPoolReference"
 				},
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[DeleteAllNATOTopics]"
+					"storedProcedureName": "[dbo].[delete_all_rows]",
+					"storedProcedureParameters": {
+						"table_name": {
+							"value": {
+								"value": "@pipeline().parameters.TopicModelingTableSQL",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
 				}
 			},
 			{
@@ -108,7 +117,16 @@
 					"type": "SqlPoolReference"
 				},
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[DeleteAllNatoSentiment]"
+					"storedProcedureName": "[dbo].[delete_all_rows]",
+					"storedProcedureParameters": {
+						"table_name": {
+							"value": {
+								"value": "@pipeline().parameters.SentimentTableSQL",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
 				}
 			},
 			{
@@ -180,7 +198,16 @@
 					"type": "SqlPoolReference"
 				},
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[DeleteAllNatoAbsSum]"
+					"storedProcedureName": "[dbo].[delete_all_rows]",
+					"storedProcedureParameters": {
+						"table_name": {
+							"value": {
+								"value": "@pipeline().parameters.SummarizationTableSQL",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
 				}
 			},
 			{
@@ -251,7 +278,16 @@
 					"type": "SqlPoolReference"
 				},
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[DeleteAllNatoNer]"
+					"storedProcedureName": "[dbo].[delete_all_rows]",
+					"storedProcedureParameters": {
+						"table_name": {
+							"value": {
+								"value": "@pipeline().parameters.NERTableSQL",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
 				}
 			},
 			{
@@ -319,7 +355,16 @@
 					"type": "SqlPoolReference"
 				},
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[DeleteAllNATOTopicWords]"
+					"storedProcedureName": "[dbo].[delete_all_rows]",
+					"storedProcedureParameters": {
+						"table_name": {
+							"value": {
+								"value": "@pipeline().parameters.TopicModelingWordsTableSQL",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
 				}
 			}
 		],
@@ -343,6 +388,26 @@
 			"TopicModelingWordsOutputTable": {
 				"type": "string",
 				"defaultValue": "Words.NATO_Topic_Words"
+			},
+			"TopicModelingTableSQL": {
+				"type": "string",
+				"defaultValue": "[Topic].[NATO_Topics]"
+			},
+			"TopicModelingWordsTableSQL": {
+				"type": "string",
+				"defaultValue": "[Words].[NATO_Topic_Words]"
+			},
+			"SentimentTableSQL": {
+				"type": "string",
+				"defaultValue": "[Sent].[NATO_Sentiment]"
+			},
+			"SummarizationTableSQL": {
+				"type": "string",
+				"defaultValue": "[sum].[NATO_Abstractive_Sum]"
+			},
+			"NERTableSQL": {
+				"type": "string",
+				"defaultValue": "[NER].[NATO_NER]"
 			}
 		},
 		"variables": {
