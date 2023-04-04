@@ -328,6 +328,10 @@
 			"NEROutputTable": {
 				"type": "string",
 				"defaultValue": "NER.NATO_NER"
+			},
+			"TopicModelingWordsOutputTable": {
+				"type": "string",
+				"defaultValue": "Words.NATO_Topic_Words"
 			}
 		},
 		"variables": {
