@@ -2,7 +2,7 @@
 	"name": "SQL script 5",
 	"properties": {
 		"content": {
-			"query": "select * from [Sent].[NATO_Sentiment]",
+			"query": "select * from [sum].[NATO_Abstractive_Sum];",
 			"metadata": {
 				"language": "sql"
 			},
