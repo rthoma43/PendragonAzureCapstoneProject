@@ -1,5 +1,5 @@
 {
-	"name": "CogntiveServices_Summarization1",
+	"name": "CogntiveServices_Summarization",
 	"properties": {
 		"folder": {
 			"name": "NLP"
@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "10f5276a-ec62-4795-89f4-3dcc6efc2d4c"
+				"spark.autotune.trackingId": "c2f6c1d9-d761-441d-b49d-12d299518eab"
 			}
 		},
 		"metadata": {
@@ -115,6 +115,41 @@
 					"!pip install openai"
 				],
 				"execution_count": 50
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Create a variable for the output SQL Pool table name\r\n",
+					"Enter a default place holder name which will be changed by the pipeline"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"tags": [
+						"parameters"
+					]
+				},
+				"source": [
+					"table = \"placeholder\""
+				],
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -902,6 +937,37 @@
 				]
 			},
 			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Create the three-part table name to which data will be written"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"outputtable = \"SQLPoolTest.\" + table"
+				],
+				"execution_count": null
+			},
+			{
 				"cell_type": "code",
 				"metadata": {
 					"jupyter": {
@@ -933,7 +999,7 @@
 					" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
 					" .mode(\"overwrite\")\r\n",
 					" # Required parameter - Three-part table name to which data will be written\r\n",
-					" .synapsesql(\"SQLPoolTest.sum.NATO_Abstractive_Sum\"))"
+					" .synapsesql(outputtable))"
 				],
 				"execution_count": 78
 			}
