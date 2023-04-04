@@ -586,8 +586,315 @@
 				}
 			},
 			{
-				"name": "Execute NLP_Analysis Pipeline",
-				"type": "ExecutePipeline",
+				"name": "Delete all from NATO Topics Table",
+				"type": "SqlPoolStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"sqlPool": {
+					"referenceName": "SQLPoolTest",
+					"type": "SqlPoolReference"
+				},
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[DeleteAllNATOTopics]"
+				}
+			},
+			{
+				"name": "Perform Topic Modeling LDA",
+				"description": "Outputs to [Topic].[NATO_Topics]",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "Delete all from NATO Topics Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set Topic Modeling Output Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "TopicModeling_LDA",
+						"type": "NotebookReference"
+					},
+					"parameters": {
+						"table": {
+							"value": {
+								"value": "@variables('TopicModelingOutputTable')",
+								"type": "Expression"
+							},
+							"type": "string"
+						}
+					},
+					"snapshot": true,
+					"executorSize": "Small",
+					"conf": {
+						"spark.dynamicAllocation.enabled": null,
+						"spark.dynamicAllocation.minExecutors": null,
+						"spark.dynamicAllocation.maxExecutors": null
+					},
+					"driverSize": "Small",
+					"numExecutors": null
+				}
+			},
+			{
+				"name": "Delete all from NATO Sentiment Table",
+				"type": "SqlPoolStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Perform Topic Modeling LDA",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"sqlPool": {
+					"referenceName": "SQLPoolTest",
+					"type": "SqlPoolReference"
+				},
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[DeleteAllNatoSentiment]"
+				}
+			},
+			{
+				"name": "Perform Sentiment Analysis",
+				"description": "Outputs to [Sent].[NATO_Sent]",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "Delete all from NATO Sentiment Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set Sentiment Output Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "CognitiveServices_Sentiment",
+						"type": "NotebookReference"
+					},
+					"parameters": {
+						"table": {
+							"value": {
+								"value": "@variables('SentimentOutputTable')",
+								"type": "Expression"
+							},
+							"type": "string"
+						}
+					},
+					"snapshot": true,
+					"executorSize": "Small",
+					"conf": {
+						"spark.dynamicAllocation.enabled": null,
+						"spark.dynamicAllocation.minExecutors": null,
+						"spark.dynamicAllocation.maxExecutors": null
+					},
+					"driverSize": "Small",
+					"numExecutors": null
+				}
+			},
+			{
+				"name": "Delete all from NATO Summary Table",
+				"type": "SqlPoolStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Perform Sentiment Analysis",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"sqlPool": {
+					"referenceName": "SQLPoolTest",
+					"type": "SqlPoolReference"
+				},
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[DeleteAllNatoAbsSum]"
+				}
+			},
+			{
+				"name": "Perform Summarization",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "Delete all from NATO Summary Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set Summarization Output Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "CogntiveServices_Summarization",
+						"type": "NotebookReference"
+					},
+					"parameters": {
+						"table": {
+							"value": {
+								"value": "@variables('SummarizationOutputTable')",
+								"type": "Expression"
+							},
+							"type": "string"
+						}
+					},
+					"snapshot": true,
+					"executorSize": "Small",
+					"conf": {
+						"spark.dynamicAllocation.enabled": null,
+						"spark.dynamicAllocation.minExecutors": null,
+						"spark.dynamicAllocation.maxExecutors": null
+					},
+					"driverSize": "Small",
+					"numExecutors": null
+				}
+			},
+			{
+				"name": "Delete all from NATO NER Table",
+				"type": "SqlPoolStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Perform Sentiment Analysis",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"sqlPool": {
+					"referenceName": "SQLPoolTest",
+					"type": "SqlPoolReference"
+				},
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[DeleteAllNatoNer]"
+				}
+			},
+			{
+				"name": "Perform Named Entity Recognition",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "Delete all from NATO NER Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set NER Output Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "CognitiveServices_NamedEntityRecog",
+						"type": "NotebookReference"
+					},
+					"parameters": {
+						"table": {
+							"value": {
+								"value": "@variables('NEROutputTable')",
+								"type": "Expression"
+							},
+							"type": "string"
+						}
+					},
+					"snapshot": true,
+					"sparkPool": {
+						"referenceName": "SparkPoolSmall",
+						"type": "BigDataPoolReference"
+					},
+					"executorSize": "Small",
+					"conf": {
+						"spark.dynamicAllocation.enabled": null,
+						"spark.dynamicAllocation.minExecutors": null,
+						"spark.dynamicAllocation.maxExecutors": null
+					},
+					"driverSize": "Small",
+					"numExecutors": null
+				}
+			},
+			{
+				"name": "Set Topic Modeling Output Table",
+				"type": "SetVariable",
 				"dependsOn": [
 					{
 						"activity": "Copy data to Dedicated SQL Pool",
@@ -598,11 +905,38 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"pipeline": {
-						"referenceName": "NLP_Analysis",
-						"type": "PipelineReference"
-					},
-					"waitOnCompletion": true
+					"variableName": "TopicModelingOutputTable",
+					"value": "Topic.NATO_Topics"
+				}
+			},
+			{
+				"name": "Set Sentiment Output Table",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SentimentOutputTable",
+					"value": "Sent.NATO_Sentiment"
+				}
+			},
+			{
+				"name": "Set Summarization Output Table",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SummarizationOutputTable",
+					"value": "sum.NATO_Abstractive_Sum"
+				}
+			},
+			{
+				"name": "Set NER Output Table",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "NEROutputTable",
+					"value": "NER.NATO_NER"
 				}
 			}
 		],
@@ -620,6 +954,18 @@
 				"type": "String"
 			},
 			"loops": {
+				"type": "String"
+			},
+			"TopicModelingOutputTable": {
+				"type": "String"
+			},
+			"SentimentOutputTable": {
+				"type": "String"
+			},
+			"SummarizationOutputTable": {
+				"type": "String"
+			},
+			"NEROutputTable": {
 				"type": "String"
 			}
 		},
