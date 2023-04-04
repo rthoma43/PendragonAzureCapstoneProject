@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "59045804-91a6-4f30-85dd-0a6468f0f997"
+				"spark.autotune.trackingId": "0fa68c75-35e1-4b8b-8e91-d94af9fea9c9"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 55
+				"execution_count": 1
 			},
 			{
 				"cell_type": "markdown",
@@ -112,7 +112,7 @@
 					]
 				},
 				"source": [
-					"table = \"placeholder\""
+					"table = \"Sent.NATO_Sentiment\""
 				],
 				"execution_count": null
 			},
@@ -153,7 +153,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 56
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -171,7 +171,7 @@
 				"source": [
 					"df.count()"
 				],
-				"execution_count": 57
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -192,7 +192,7 @@
 					"filtered_df = df.filter(df['cleantext'].isNull() | (df['cleantext'] == ''))\r\n",
 					"filtered_df.count()"
 				],
-				"execution_count": 58
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -214,7 +214,7 @@
 					"filtered1_df.count()\r\n",
 					""
 				],
-				"execution_count": 59
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -247,7 +247,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 60
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -278,7 +278,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 61
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -476,7 +476,7 @@
 					"\r\n",
 					"#display(sentiment_output_df)"
 				],
-				"execution_count": 62
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -584,7 +584,7 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(outputtable))"
 				],
-				"execution_count": 63
+				"execution_count": null
 			}
 		]
 	}
