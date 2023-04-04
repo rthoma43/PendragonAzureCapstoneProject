@@ -54,15 +54,15 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"query": {
-								"value": "@variables('Query')",
+								"value": "@pipeline().parameters.Query",
 								"type": "Expression"
 							},
 							"tweet_fields": {
-								"value": "@variables('Tweet Fields')",
+								"value": "@pipeline().parameters.TweetFields",
 								"type": "Expression"
 							},
 							"max_results": {
-								"value": "@variables('max_results')",
+								"value": "@pipeline().parameters.MaxResults",
 								"type": "Expression"
 							}
 						}
@@ -84,18 +84,12 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
-					},
-					{
-						"activity": "Number of Loops",
-						"dependencyConditions": [
-							"Succeeded"
-						]
 					}
 				],
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@range(0,int(variables('loops')))",
+						"value": "@range(0,pipeline().parameters.Loops)",
 						"type": "Expression"
 					},
 					"isSequential": true,
@@ -173,15 +167,15 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"query": {
-											"value": "@variables('Query')",
+											"value": "@pipeline().parameters.Query",
 											"type": "Expression"
 										},
 										"tweet_fields": {
-											"value": "@variables('Tweet Fields')",
+											"value": "@pipeline().parameters.TweetFields",
 											"type": "Expression"
 										},
 										"max_results": {
-											"value": "@variables('max_results')",
+											"value": "@pipeline().parameters.MaxResults",
 											"type": "Expression"
 										},
 										"next_token": {
@@ -234,58 +228,9 @@
 				}
 			},
 			{
-				"name": "Query",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "Query",
-					"value": "\"NATO\" lang:en -is:retweet -is:reply"
-				}
-			},
-			{
-				"name": "Max Results",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "max_results",
-					"value": "100"
-				}
-			},
-			{
-				"name": "Tweet Fields",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "Tweet Fields",
-					"value": "id,text,created_at,lang,public_metrics"
-				}
-			},
-			{
 				"name": "Delete Previous Output Files",
 				"type": "Delete",
-				"dependsOn": [
-					{
-						"activity": "Query",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					},
-					{
-						"activity": "Max Results",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					},
-					{
-						"activity": "Tweet Fields",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -305,16 +250,6 @@
 						"recursive": true,
 						"enablePartitionDiscovery": false
 					}
-				}
-			},
-			{
-				"name": "Number of Loops",
-				"type": "SetVariable",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "loops",
-					"value": "30"
 				}
 			},
 			{
@@ -383,14 +318,7 @@
 			{
 				"name": "Delete Previous Merged Output files",
 				"type": "Delete",
-				"dependsOn": [
-					{
-						"activity": "Query",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -699,6 +627,22 @@
 			"QueryName": {
 				"type": "string",
 				"defaultValue": "NATO"
+			},
+			"Query": {
+				"type": "string",
+				"defaultValue": "\"NATO\" lang:en -is:retweet -is:reply"
+			},
+			"TweetFields": {
+				"type": "string",
+				"defaultValue": "id,text,created_at,lang,public_metrics"
+			},
+			"MaxResults": {
+				"type": "string",
+				"defaultValue": "100"
+			},
+			"Loops": {
+				"type": "int",
+				"defaultValue": 30
 			}
 		},
 		"variables": {
