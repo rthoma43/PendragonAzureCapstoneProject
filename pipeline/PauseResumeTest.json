@@ -4,7 +4,7 @@
 		"activities": [
 			{
 				"name": "Pause or Resume SQL Pool",
-				"description": "Enter \"pause\" or \"resume\" for the \"PauseorResume\" parameter",
+				"description": "Enter \"Pause\" or \"Resume\" for the \"PauseorResume\" parameter",
 				"type": "ExecutePipeline",
 				"dependsOn": [],
 				"userProperties": [],
