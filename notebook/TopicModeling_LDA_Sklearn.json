@@ -1,5 +1,5 @@
 {
-	"name": "TopicModeling_LDA_Copy1",
+	"name": "TopicModeling_LDA_Sklearn",
 	"properties": {
 		"folder": {
 			"name": "NLP"
@@ -7,20 +7,20 @@
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {
-			"referenceName": "SparkPoolLarge",
+			"referenceName": "SparkPoolSmall",
 			"type": "BigDataPoolReference"
 		},
 		"sessionProperties": {
-			"driverMemory": "112g",
-			"driverCores": 16,
-			"executorMemory": "112g",
-			"executorCores": 16,
-			"numExecutors": 1,
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
 			"conf": {
-				"spark.dynamicAllocation.enabled": "true",
-				"spark.dynamicAllocation.minExecutors": "1",
-				"spark.dynamicAllocation.maxExecutors": "24",
-				"spark.autotune.trackingId": "f4ca0d5f-3107-4f97-b5ab-8eb39cf8317f"
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "d9c74a1b-7d9c-40c7-aebd-53c574d9831e"
 			}
 		},
 		"metadata": {
@@ -34,19 +34,19 @@
 				"name": "python"
 			},
 			"a365ComputeOptions": {
-				"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolLarge",
-				"name": "SparkPoolLarge",
+				"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+				"name": "SparkPoolSmall",
 				"type": "Spark",
-				"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolLarge",
+				"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
 				"auth": {
 					"type": "AAD",
 					"authResource": "https://dev.azuresynapse.net"
 				},
 				"sparkVersion": "3.3",
-				"nodeCount": 10,
-				"cores": 16,
-				"memory": 112,
-				"automaticScaleJobs": true
+				"nodeCount": 3,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -104,7 +104,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 1
+				"execution_count": 4
 			},
 			{
 				"cell_type": "code",
@@ -123,7 +123,7 @@
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *"
 				],
-				"execution_count": 2
+				"execution_count": 5
 			},
 			{
 				"cell_type": "markdown",
@@ -198,7 +198,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 4
+				"execution_count": 6
 			},
 			{
 				"cell_type": "markdown",
@@ -264,7 +264,7 @@
 					"\r\n",
 					"#display(df)"
 				],
-				"execution_count": 5
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
@@ -300,7 +300,144 @@
 					"\r\n",
 					"display(df_removed)"
 				],
-				"execution_count": 6
+				"execution_count": 8
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from sklearn.decomposition import LatentDirichletAllocation\r\n",
+					"from sklearn.feature_extraction.text import CountVectorizer\r\n",
+					"import pandas as pd\r\n",
+					"\r\n",
+					"# Convert Spark DataFrame to Pandas DataFrame\r\n",
+					"pandas_df = df_removed.toPandas()"
+				],
+				"execution_count": 23
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"from sklearn.decomposition import LatentDirichletAllocation\r\n",
+					"from sklearn.feature_extraction.text import CountVectorizer\r\n",
+					"import pandas as pd\r\n",
+					"\r\n",
+					"# Tokenize and vectorize the text data\r\n",
+					"count_vectorizer = CountVectorizer()\r\n",
+					"count_data = count_vectorizer.fit_transform(pandas_df[\"cleanText\"])\r\n",
+					"\r\n",
+					"# Use LatentDirichletAllocation on Pandas DataFrame\r\n",
+					"lda = LatentDirichletAllocation(n_components=5, random_state=42)\r\n",
+					"lda.fit(count_data)\r\n",
+					"lda_output = lda.transform(count_data)\r\n",
+					"\r\n",
+					"# Convert output to Pandas DataFrame and merge with original data\r\n",
+					"lda_output_df = pd.DataFrame(lda_output, columns=[\"topic_0_confidence\", \"topic_1_confidence\",\"topic_2_confidence\",\"topic_3_confidence\",\"topic_4_confidence\"])\r\n",
+					"pandas_df = pd.concat([pandas_df, lda_output_df], axis=1)\r\n",
+					"\r\n",
+					"pandas_df['topic'] = lda_output.argmax(axis=1)\r\n",
+					"\r\n",
+					"# Convert Pandas DataFrame back to Spark DataFrame\r\n",
+					"spark_df = spark.createDataFrame(pandas_df)\r\n",
+					"\r\n",
+					"# Display Spark DataFrame\r\n",
+					"display(spark_df)"
+				],
+				"execution_count": 24
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Top 10 Word for each Topic"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# View the highest probability words for topics\r\n",
+					"feature_names = count_vectorizer.get_feature_names_out()\r\n",
+					"\r\n",
+					"# Get the list of topic-term distributions from the LatentDirichletAllocation object\r\n",
+					"topic_term_distributions = lda.components_\r\n",
+					"\r\n",
+					"# Get the top N most common words for each topic\r\n",
+					"N = 10\r\n",
+					"top_N_words = [[feature_names[i] for i in topic.argsort()[:-N - 1:-1]] for topic in topic_term_distributions]\r\n",
+					"\r\n",
+					"print(top_N_words)"
+				],
+				"execution_count": 36
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"# Create Pandas Dataframe for the top 10 words for each topic\r\n",
+					"df = pd.DataFrame(top_N_words, columns=['word_'+str(i+1) for i in range(len(top_N_words[0]))])\r\n",
+					"df.index.name = 'topic'\r\n",
+					"\r\n",
+					"# reset index and move Topic Number to a column\r\n",
+					"df.reset_index(inplace=True)\r\n",
+					"df.rename(columns={'index':'topic'}, inplace=True)\r\n",
+					"\r\n",
+					"# convert pandas dataframe to spark dataframe\r\n",
+					"df_words = spark.createDataFrame(df)\r\n",
+					"\r\n",
+					"# display the spark dataframe\r\n",
+					"display(df_words)"
+				],
+				"execution_count": 40
 			},
 			{
 				"cell_type": "markdown",
