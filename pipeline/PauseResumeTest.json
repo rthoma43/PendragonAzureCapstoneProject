@@ -3,7 +3,8 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Turn on SQL Pool",
+				"name": "Pause or Resume SQL Pool",
+				"description": "Enter \"pause\" or \"resume\" for the \"PauseorResume\" parameter",
 				"type": "ExecutePipeline",
 				"dependsOn": [],
 				"userProperties": [],
@@ -12,13 +13,7 @@
 						"referenceName": "PauseResumeSQLPool",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true,
-					"parameters": {
-						"PauseorResume": {
-							"value": "@variables('activity')",
-							"type": "Expression"
-						}
-					}
+					"waitOnCompletion": true
 				}
 			}
 		],
@@ -27,6 +22,18 @@
 				"type": "String"
 			},
 			"table": {
+				"type": "String"
+			},
+			"TopicModelingOutputTable": {
+				"type": "String"
+			},
+			"SentimentOutputTable": {
+				"type": "String"
+			},
+			"SummarizationOutputTable": {
+				"type": "String"
+			},
+			"NEROutputTable": {
 				"type": "String"
 			}
 		},

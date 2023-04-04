@@ -32,6 +32,12 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
+					},
+					{
+						"activity": "Set Topic Modeling Output Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
 				"policy": {
@@ -46,6 +52,15 @@
 					"notebook": {
 						"referenceName": "TopicModeling_LDA",
 						"type": "NotebookReference"
+					},
+					"parameters": {
+						"table": {
+							"value": {
+								"value": "@variables('TopicModelingOutputTable')",
+								"type": "Expression"
+							},
+							"type": "string"
+						}
 					},
 					"snapshot": true,
 					"executorSize": "Small",
@@ -95,6 +110,12 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
+					},
+					{
+						"activity": "Set Sentiment Output Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
 				"policy": {
@@ -109,6 +130,15 @@
 					"notebook": {
 						"referenceName": "CognitiveServices_Sentiment",
 						"type": "NotebookReference"
+					},
+					"parameters": {
+						"table": {
+							"value": {
+								"value": "@variables('SentimentOutputTable')",
+								"type": "Expression"
+							},
+							"type": "string"
+						}
 					},
 					"snapshot": true,
 					"executorSize": "Small",
@@ -157,6 +187,12 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
+					},
+					{
+						"activity": "Set Summarization Output Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
 				"policy": {
@@ -169,8 +205,17 @@
 				"userProperties": [],
 				"typeProperties": {
 					"notebook": {
-						"referenceName": "CogntiveServices_Summarization1",
+						"referenceName": "CogntiveServices_Summarization",
 						"type": "NotebookReference"
+					},
+					"parameters": {
+						"table": {
+							"value": {
+								"value": "@variables('SummarizationOutputTable')",
+								"type": "Expression"
+							},
+							"type": "string"
+						}
 					},
 					"snapshot": true,
 					"executorSize": "Small",
@@ -219,6 +264,12 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
+					},
+					{
+						"activity": "Set NER Output Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
 				"policy": {
@@ -234,16 +285,85 @@
 						"referenceName": "CognitiveServices_NamedEntityRecog",
 						"type": "NotebookReference"
 					},
+					"parameters": {
+						"table": {
+							"value": {
+								"value": "@variables('NEROutputTable')",
+								"type": "Expression"
+							},
+							"type": "string"
+						}
+					},
 					"snapshot": true,
 					"sparkPool": {
 						"referenceName": "SparkPoolSmall",
 						"type": "BigDataPoolReference"
 					},
 					"executorSize": "Small",
-					"driverSize": "Small"
+					"conf": {
+						"spark.dynamicAllocation.enabled": null,
+						"spark.dynamicAllocation.minExecutors": null,
+						"spark.dynamicAllocation.maxExecutors": null
+					},
+					"driverSize": "Small",
+					"numExecutors": null
+				}
+			},
+			{
+				"name": "Set Topic Modeling Output Table",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "TopicModelingOutputTable",
+					"value": "Topic.NATO_Topics"
+				}
+			},
+			{
+				"name": "Set Sentiment Output Table",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SentimentOutputTable",
+					"value": "Sent.NATO_Sentiment"
+				}
+			},
+			{
+				"name": "Set Summarization Output Table",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SummarizationOutputTable",
+					"value": "sum.NATO_Abstractive_Sum"
+				}
+			},
+			{
+				"name": "Set NER Output Table",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "NEROutputTable",
+					"value": "NER.NATO_NER"
 				}
 			}
 		],
+		"variables": {
+			"TopicModelingOutputTable": {
+				"type": "String"
+			},
+			"SentimentOutputTable": {
+				"type": "String"
+			},
+			"SummarizationOutputTable": {
+				"type": "String"
+			},
+			"NEROutputTable": {
+				"type": "String"
+			}
+		},
 		"annotations": []
 	}
 }
