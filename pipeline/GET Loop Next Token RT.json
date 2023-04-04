@@ -532,7 +532,7 @@
 					},
 					"waitOnCompletion": true,
 					"parameters": {
-						"PauseorResume": "resume"
+						"PauseorResume": "Resume"
 					}
 				}
 			},
