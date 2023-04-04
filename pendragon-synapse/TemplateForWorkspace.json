@@ -718,8 +718,13 @@
 								"type": "BigDataPoolReference"
 							},
 							"executorSize": "Small",
-							"conf": {},
-							"driverSize": "Small"
+							"conf": {
+								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.minExecutors": null,
+								"spark.dynamicAllocation.maxExecutors": null
+							},
+							"driverSize": "Small",
+							"numExecutors": null
 						}
 					}
 				],
@@ -6481,6 +6486,29 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Create_Archive_Tweets_Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "Create_Tables"
+				},
+				"content": {
+					"query": "CREATE TABLE [archive].[NATO_Archive_Tweets]\n( \n\t[id] bigint  NOT NULL,\n\t[created_at] DATETIME2(7)  NULL,\n\t[text] NVARCHAR(4000)  NULL,\n\t[lang] nvarchar(10)  NULL,\n\t[retweet_count] INT  NULL,\n\t[reply_count] INT  NULL,\n\t[like_count] INT  NULL,\n\t[quote_count] INT  NULL,\n\t[impression_count] INT  NULL,\n    [query] NVARCHAR(20) NULL,\n    [pull_datetime] DATETIME2(7) NULL\n)\n\nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPoolTest",
+						"poolName": "SQLPoolTest"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Create_NATO_Abstract_Table')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
@@ -6536,6 +6564,29 @@
 				},
 				"content": {
 					"query": "CREATE TABLE [Sent].[NATO_Sentiment]\n(\n    [id] bigint  NULL,\n\t[created_at] DATETIME2(7)  NULL,\n\t[text] NVARCHAR(4000)  NULL,\n\t[cleantext] NVARCHAR(4000)  NULL,\n\t[lang] nvarchar(10)  NULL,\n\t[retweet_count] INT  NULL,\n\t[reply_count] INT  NULL,\n\t[like_count] INT  NULL,\n\t[quote_count] INT  NULL,\n\t[impression_count] INT  NULL,\n    [topic] SMALLINT NULL,\n    [topic_0_confidence] REAL NULL,\n    [topic_1_confidence] REAL NULL,\n    [topic_2_confidence] REAL NULL,\n    [topic_3_confidence] REAL NULL,\n    [topic_4_confidence] REAL NULL,\n    [sentiment] NVARCHAR(20) NULL,\n    [negative_score] REAL NULL,\n    [positive_score] REAL NULL,\n    [neutral_score] REAL NULL,\n    [mixed_score] REAL NULL\n)\n\nGO\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPoolTest",
+						"poolName": "SQLPoolTest"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Create_NATO_TopicWords_Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "Create_Tables"
+				},
+				"content": {
+					"query": "CREATE TABLE [Words].[NATO_Topic_Words]\n( \n\t[topic] bigint  NULL,\n\t[word_1] NVARCHAR(20)  NULL,\n\t[word_2] NVARCHAR(20)  NULL,\n    [word_3] NVARCHAR(20)  NULL,\n    [word_4] NVARCHAR(20)  NULL,\n    [word_5] NVARCHAR(20)  NULL,\n    [word_6] NVARCHAR(20)  NULL,\n    [word_7] NVARCHAR(20)  NULL,\n    [word_8] NVARCHAR(20)  NULL,\n    [word_9] NVARCHAR(20)  NULL,\n    [word_10] NVARCHAR(20)  NULL\n)\n\nGO",
 					"metadata": {
 						"language": "sql"
 					},
@@ -6734,6 +6785,29 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/DeleteAllFromNATOTopicWords_Procedure')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "SQL_Procedures"
+				},
+				"content": {
+					"query": "CREATE PROCEDURE DeleteAllNATOTopicWords\nAS\nBEGIN\n    DELETE FROM [Words].[NATO_Topic_Words];\nEND;",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPoolTest",
+						"poolName": "SQLPoolTest"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/DeleteAllFromNATOTopics_Procedure')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
@@ -6845,6 +6919,243 @@
 					"resultLimit": 5000
 				},
 				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 5')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "select * from [sum].[NATO_Abstractive_Sum];",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPoolTest",
+						"poolName": "SQLPoolTest"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ArchiveTweets')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPoolSmall",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "2165f0ed-2fc1-4ee7-9e6c-7200e2773c83"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+						"name": "SparkPoolSmall",
+						"type": "Spark",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.3",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Archive Tweets"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Add required imports\r\n",
+							"import com.microsoft.spark.sqlanalytics\r\n",
+							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+							"from pyspark.sql.functions import col\r\n",
+							"\r\n",
+							"# Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
+							"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\r\n",
+							"\r\n",
+							"# Read from a query\r\n",
+							"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\r\n",
+							"df = (spark.read\r\n",
+							"                     # Name of the SQL Dedicated Pool or database where to run the query\r\n",
+							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
+							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
+							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							"                     # Defaults to storage path defined in the runtime configurations\r\n",
+							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							"                     # query from which data will be read\r\n",
+							"                     .option(Constants.QUERY, \"select * from dbo.NATO_Tweets1\")\r\n",
+							"                     .synapsesql()\r\n",
+							")"
+						],
+						"outputs": [],
+						"execution_count": 17
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"tags": [
+								"parameters"
+							]
+						},
+						"source": [
+							"query = \"NATO\""
+						],
+						"outputs": [],
+						"execution_count": 18
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"from pyspark.sql.functions import lit, current_timestamp\r\n",
+							"\r\n",
+							"# create a new DataFrame with two new columns\r\n",
+							"new_df = df.withColumn('query', lit(query)).withColumn('pull_datetime', current_timestamp())\r\n",
+							"\r\n",
+							"# drop the \"cleanText\" column\r\n",
+							"new_df = new_df.drop(\"cleanText\")\r\n",
+							"\r\n",
+							"# show the new DataFrame\r\n",
+							"display(new_df)"
+						],
+						"outputs": [],
+						"execution_count": 19
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"new_df.printSchema"
+						],
+						"outputs": [],
+						"execution_count": 20
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Write using AAD Auth to internal table\r\n",
+							"# Add required imports\r\n",
+							"import com.microsoft.spark.sqlanalytics\r\n",
+							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+							"\r\n",
+							"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
+							"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
+							"(new_df.write\r\n",
+							" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+							" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+							" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+							" # Like-wise, if `Constants.TEMP_FOLDER` is not provided, the connector will use the runtime staging directory config (see section on Configuration Options for details).\r\n",
+							" .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+							" # Choose a save mode that is apt for your use case.\r\n",
+							" # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
+							" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
+							" .mode(\"overwrite\")\r\n",
+							" # Required parameter - Three-part table name to which data will be written\r\n",
+							" .synapsesql(\"SQLPoolTest.archive.NATO_Archive_Tweets\"))"
+						],
+						"outputs": [],
+						"execution_count": 21
+					}
+				]
 			},
 			"dependsOn": []
 		},
@@ -7934,7 +8245,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "d11c39f9-90f4-446c-974a-62485124ab9c"
+						"spark.autotune.trackingId": "f33d9032-09fe-4ce8-9357-14c3120c9ed7"
 					}
 				},
 				"metadata": {
@@ -7959,15 +8270,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -8794,7 +9103,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "f49bea7f-bb75-4da0-8496-e8f47c1daac8"
+						"spark.autotune.trackingId": "e78ac90f-71e0-448f-8ff5-462c8764e191"
 					}
 				},
 				"metadata": {
@@ -8819,15 +9128,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -9685,7 +9992,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "a1896d24-af02-44b5-8a13-57a635f9a072"
+						"spark.autotune.trackingId": "427f252a-4c70-420f-b574-167a8ef03b25"
 					}
 				},
 				"metadata": {
@@ -9710,8 +10017,7 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -12593,7 +12899,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "f4d7f665-5694-4201-b260-81461ebcc145"
+						"spark.autotune.trackingId": "be52c08f-542b-480b-ac0e-075ba2153003"
 					}
 				},
 				"metadata": {
@@ -12618,8 +12924,7 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -13274,284 +13579,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/SparkPoolSmall')]",
-			"type": "Microsoft.Synapse/workspaces/bigDataPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"autoPause": {
-					"enabled": true,
-					"delayInMinutes": 15
-				},
-				"autoScale": {
-					"enabled": true,
-					"maxNodeCount": 10,
-					"minNodeCount": 3
-				},
-				"nodeCount": 0,
-				"nodeSize": "Small",
-				"nodeSizeFamily": "MemoryOptimized",
-				"sparkVersion": "3.3",
-				"isComputeIsolationEnabled": false,
-				"sessionLevelPackagesEnabled": true,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "eastus2"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "eastus2"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/Create_Archive_Tweets_Table')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"folder": {
-					"name": "Create_Tables"
-				},
-				"content": {
-					"query": "CREATE TABLE [archive].[NATO_Archive_Tweets]\n( \n\t[id] bigint  NOT NULL,\n\t[created_at] DATETIME2(7)  NULL,\n\t[text] NVARCHAR(4000)  NULL,\n\t[lang] nvarchar(10)  NULL,\n\t[retweet_count] INT  NULL,\n\t[reply_count] INT  NULL,\n\t[like_count] INT  NULL,\n\t[quote_count] INT  NULL,\n\t[impression_count] INT  NULL,\n    [query] NVARCHAR(20) NULL,\n    [pull_datetime] DATETIME2(7) NULL\n)\n\nGO",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "SQLPoolTest",
-						"poolName": "SQLPoolTest"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/ArchiveTweets')]",
-			"type": "Microsoft.Synapse/workspaces/notebooks",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"nbformat": 4,
-				"nbformat_minor": 2,
-				"bigDataPool": {
-					"referenceName": "SparkPoolSmall",
-					"type": "BigDataPoolReference"
-				},
-				"sessionProperties": {
-					"driverMemory": "28g",
-					"driverCores": 4,
-					"executorMemory": "28g",
-					"executorCores": 4,
-					"numExecutors": 2,
-					"conf": {
-						"spark.dynamicAllocation.enabled": "false",
-						"spark.dynamicAllocation.minExecutors": "2",
-						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "8dd155c2-0d67-4fbb-a35a-e2e06b8fa0cf"
-					}
-				},
-				"metadata": {
-					"saveOutput": true,
-					"enableDebugMode": false,
-					"kernelspec": {
-						"name": "synapse_pyspark",
-						"display_name": "Synapse PySpark"
-					},
-					"language_info": {
-						"name": "python"
-					},
-					"a365ComputeOptions": {
-						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
-						"name": "SparkPoolSmall",
-						"type": "Spark",
-						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
-						"auth": {
-							"type": "AAD",
-							"authResource": "https://dev.azuresynapse.net"
-						},
-						"sparkVersion": "3.3",
-						"nodeCount": 3,
-						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
-					},
-					"sessionKeepAliveTimeout": 30
-				},
-				"cells": [
-					{
-						"cell_type": "markdown",
-						"metadata": {
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"# Archive Tweets"
-						]
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"# Add required imports\r\n",
-							"import com.microsoft.spark.sqlanalytics\r\n",
-							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
-							"from pyspark.sql.functions import col\r\n",
-							"\r\n",
-							"# Name of the SQL Dedicated Pool or database where to run the query\r\n",
-							"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
-							"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\r\n",
-							"\r\n",
-							"# Read from a query\r\n",
-							"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\r\n",
-							"df = (spark.read\r\n",
-							"                     # Name of the SQL Dedicated Pool or database where to run the query\r\n",
-							"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
-							"                     .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
-							"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
-							"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
-							"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
-							"                     # Defaults to storage path defined in the runtime configurations\r\n",
-							"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
-							"                     # query from which data will be read\r\n",
-							"                     .option(Constants.QUERY, \"select * from dbo.NATO_Tweets1\")\r\n",
-							"                     .synapsesql()\r\n",
-							")"
-						],
-						"outputs": [],
-						"execution_count": 17
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							},
-							"tags": [
-								"parameters"
-							]
-						},
-						"source": [
-							"query = \"NATO\""
-						],
-						"outputs": [],
-						"execution_count": 18
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							},
-							"collapsed": false
-						},
-						"source": [
-							"from pyspark.sql.functions import lit, current_timestamp\r\n",
-							"\r\n",
-							"# create a new DataFrame with two new columns\r\n",
-							"new_df = df.withColumn('query', lit(query)).withColumn('pull_datetime', current_timestamp())\r\n",
-							"\r\n",
-							"# drop the \"cleanText\" column\r\n",
-							"new_df = new_df.drop(\"cleanText\")\r\n",
-							"\r\n",
-							"# show the new DataFrame\r\n",
-							"display(new_df)"
-						],
-						"outputs": [],
-						"execution_count": 19
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"new_df.printSchema"
-						],
-						"outputs": [],
-						"execution_count": 20
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"# Write using AAD Auth to internal table\r\n",
-							"# Add required imports\r\n",
-							"import com.microsoft.spark.sqlanalytics\r\n",
-							"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
-							"\r\n",
-							"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
-							"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
-							"(new_df.write\r\n",
-							" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
-							" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
-							" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
-							" # Like-wise, if `Constants.TEMP_FOLDER` is not provided, the connector will use the runtime staging directory config (see section on Configuration Options for details).\r\n",
-							" .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
-							" # Choose a save mode that is apt for your use case.\r\n",
-							" # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
-							" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
-							" .mode(\"overwrite\")\r\n",
-							" # Required parameter - Three-part table name to which data will be written\r\n",
-							" .synapsesql(\"SQLPoolTest.archive.NATO_Archive_Tweets\"))"
-						],
-						"outputs": [],
-						"execution_count": 21
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/TopicModeling_LDA_Sklearn')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
@@ -13575,7 +13602,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "e5ff8593-59dc-44ab-80d6-72a331241043"
+						"spark.autotune.trackingId": "205bc343-d2e0-43de-bcfd-5229f59873f4"
 					}
 				},
 				"metadata": {
@@ -13663,6 +13690,20 @@
 						"execution_count": 83
 					},
 					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Create a variable for the output SQL Pool table name\r\n",
+							"Enter a default place holder name which will be changed by the pipeline"
+						]
+					},
+					{
 						"cell_type": "code",
 						"metadata": {
 							"jupyter": {
@@ -13704,40 +13745,6 @@
 						],
 						"outputs": [],
 						"execution_count": 86
-					},
-					{
-						"cell_type": "markdown",
-						"metadata": {
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"# Create a variable for the output SQL Pool table name\r\n",
-							"Enter a default place holder name which will be changed by the pipeline"
-						]
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							},
-							"tags": []
-						},
-						"source": [
-							"table = \"placeholder\""
-						],
-						"outputs": [],
-						"execution_count": 87
 					},
 					{
 						"cell_type": "markdown",
@@ -14244,70 +14251,41 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/Create_NATO_TopicWords_Table')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"name": "[concat(parameters('workspaceName'), '/SparkPoolSmall')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
-				"folder": {
-					"name": "Create_Tables"
+				"autoPause": {
+					"enabled": true,
+					"delayInMinutes": 15
 				},
-				"content": {
-					"query": "CREATE TABLE [Words].[NATO_Topic_Words]\n( \n\t[topic] bigint  NULL,\n\t[word_1] NVARCHAR(20)  NULL,\n\t[word_2] NVARCHAR(20)  NULL,\n    [word_3] NVARCHAR(20)  NULL,\n    [word_4] NVARCHAR(20)  NULL,\n    [word_5] NVARCHAR(20)  NULL,\n    [word_6] NVARCHAR(20)  NULL,\n    [word_7] NVARCHAR(20)  NULL,\n    [word_8] NVARCHAR(20)  NULL,\n    [word_9] NVARCHAR(20)  NULL,\n    [word_10] NVARCHAR(20)  NULL\n)\n\nGO",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "SQLPoolTest",
-						"poolName": "SQLPoolTest"
-					},
-					"resultLimit": 5000
+				"autoScale": {
+					"enabled": true,
+					"maxNodeCount": 10,
+					"minNodeCount": 3
 				},
-				"type": "SqlQuery"
+				"nodeCount": 0,
+				"nodeSize": "Small",
+				"nodeSizeFamily": "MemoryOptimized",
+				"sparkVersion": "3.3",
+				"isComputeIsolationEnabled": false,
+				"sessionLevelPackagesEnabled": true,
+				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [],
+			"location": "eastus2"
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/SQL script 5')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
-				"content": {
-					"query": "select * from [sum].[NATO_Abstractive_Sum];",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "SQLPoolTest",
-						"poolName": "SQLPoolTest"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
 			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/DeleteAllFromNATOTopicWords_Procedure')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"folder": {
-					"name": "SQL_Procedures"
-				},
-				"content": {
-					"query": "CREATE PROCEDURE DeleteAllNATOTopicWords\nAS\nBEGIN\n    DELETE FROM [Words].[NATO_Topic_Words];\nEND;",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "SQLPoolTest",
-						"poolName": "SQLPoolTest"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
+			"dependsOn": [],
+			"location": "eastus2"
 		}
 	]
 }
