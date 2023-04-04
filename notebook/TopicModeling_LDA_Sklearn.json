@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "c93b081c-13a2-4776-a602-15f1b51e0370"
+				"spark.autotune.trackingId": "f0444243-1fbc-4583-ae65-5efbcea802d3"
 			}
 		},
 		"metadata": {
@@ -107,6 +107,20 @@
 				"execution_count": 83
 			},
 			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Create a variable for the output SQL Pool table name\r\n",
+					"Enter a default place holder name which will be changed by the pipeline"
+				]
+			},
+			{
 				"cell_type": "code",
 				"metadata": {
 					"jupyter": {
@@ -146,39 +160,6 @@
 					"from pyspark.sql.types import *"
 				],
 				"execution_count": 86
-			},
-			{
-				"cell_type": "markdown",
-				"metadata": {
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"# Create a variable for the output SQL Pool table name\r\n",
-					"Enter a default place holder name which will be changed by the pipeline"
-				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"tags": []
-				},
-				"source": [
-					"table = \"placeholder\""
-				],
-				"execution_count": 87
 			},
 			{
 				"cell_type": "markdown",
