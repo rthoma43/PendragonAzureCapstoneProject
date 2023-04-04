@@ -606,7 +606,13 @@
 							"type": "SqlPoolReference"
 						},
 						"typeProperties": {
-							"storedProcedureName": "[dbo].[DeleteAllRowsFromNatoTweets1]"
+							"storedProcedureName": "[dbo].[delete_all_rows]",
+							"storedProcedureParameters": {
+								"table_name": {
+									"value": "[dbo].[NATO_Tweets1]",
+									"type": "String"
+								}
+							}
 						}
 					},
 					{
@@ -6893,7 +6899,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "8ad45b92-c099-4327-bc8e-71f2b9b54112"
+						"spark.autotune.trackingId": "703e375d-803e-4ff6-a199-63bb0e327005"
 					}
 				},
 				"metadata": {
@@ -9034,7 +9040,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "2e2ce839-527f-4472-9c9c-c86a34e080d3"
+						"spark.autotune.trackingId": "aaf460b6-dec0-4db3-a837-e041a419476f"
 					}
 				},
 				"metadata": {
@@ -13535,7 +13541,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "35f20203-c6b9-40c1-98fb-a26aaec436fb"
+						"spark.autotune.trackingId": "24ee3687-f1fe-48fc-9979-c5e1d4b78bf4"
 					}
 				},
 				"metadata": {
