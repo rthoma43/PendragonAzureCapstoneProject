@@ -662,8 +662,8 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "",
-					"value": ""
+					"variableName": "start_day",
+					"value": "07"
 				}
 			},
 			{
