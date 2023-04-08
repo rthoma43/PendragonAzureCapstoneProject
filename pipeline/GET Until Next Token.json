@@ -585,7 +585,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "end_day",
-					"value": "08"
+					"value": "07"
 				}
 			},
 			{
@@ -602,7 +602,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "end_hour",
-					"value": "00"
+					"value": "12"
 				}
 			},
 			{
