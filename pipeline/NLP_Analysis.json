@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Delete all from NATO Topics Table",
+				"name": "Delete all from Topics Table",
 				"type": "SqlPoolStoredProcedure",
 				"dependsOn": [],
 				"policy": {
@@ -33,17 +33,17 @@
 			},
 			{
 				"name": "Perform Topic Modeling LDA",
-				"description": "Outputs to [Topic].[NATO_Topics]",
+				"description": "Outputs to [Topic].[_Topics]",
 				"type": "SynapseNotebook",
 				"dependsOn": [
 					{
-						"activity": "Delete all from NATO Topics Table",
+						"activity": "Delete all from Topics Table",
 						"dependencyConditions": [
 							"Succeeded"
 						]
 					},
 					{
-						"activity": "Delete all from NATO Topic Words Table",
+						"activity": "Delete all from Topic Words Table",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -59,7 +59,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"notebook": {
-						"referenceName": "TopicModeling_LDA_Sklearn",
+						"referenceName": "TopicModeling_LDA_Sklearn_UsingParms",
 						"type": "NotebookReference"
 					},
 					"parameters": {
@@ -339,7 +339,7 @@
 				}
 			},
 			{
-				"name": "Delete all from NATO Topic Words Table",
+				"name": "Delete all from Topic Words Table",
 				"type": "SqlPoolStoredProcedure",
 				"dependsOn": [],
 				"policy": {
@@ -408,6 +408,10 @@
 			"NERTableSQL": {
 				"type": "string",
 				"defaultValue": "[NER].[NATO_NER]"
+			},
+			"TableName": {
+				"type": "string",
+				"defaultValue": "dbo.NATO_Tweets1"
 			}
 		},
 		"variables": {
