@@ -1094,7 +1094,13 @@
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "Copy data to Dedicated SQL Pool",
+						"activity": "NLP Analysis",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "ArchiveTweets",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -1143,6 +1149,88 @@
 							"type": "String"
 						}
 					}
+				}
+			},
+			{
+				"name": "NLP Analysis",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Copy data to Dedicated SQL Pool",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NLP_Analysis",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"TopicModelingOutputTable": "Topic.Aithusa_Topics",
+						"SentimentOutputTable": "Sent.Aithusa_Sentiment",
+						"SummarizationOutputTable": "sum.Aithusa_Abstractive_Sum",
+						"NEROutputTable": "NER.Aithusa_NER",
+						"TopicModelingWordsOutputTable": "Words.Aithusa_Topic_Words",
+						"TopicModelingTableSQL": "[Topic].[Aithusa_Topics]",
+						"TopicModelingWordsTableSQL": "[Words].[Aithusa_Topic_Words]",
+						"SentimentTableSQL": "[Sent].[Aithusa_Sentiment]",
+						"SummarizationTableSQL": "[sum].[Aithusa_Abstractive_Sum]",
+						"NERTableSQL": "[NER].[Aithusa_NER]",
+						"TableName": "dbo.NATO_Tweets1_Aithusa"
+					}
+				}
+			},
+			{
+				"name": "ArchiveTweets",
+				"description": "Adds \"query\" and \"pull_datetime\" columns. query value is defined by the pipeline parameter. Pull_datetime is the current timestamp.",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "Copy data to Dedicated SQL Pool",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "ArchiveTweets",
+						"type": "NotebookReference"
+					},
+					"parameters": {
+						"query": {
+							"value": {
+								"value": "@pipeline().parameters.QueryName",
+								"type": "Expression"
+							},
+							"type": "string"
+						}
+					},
+					"snapshot": true,
+					"sparkPool": {
+						"referenceName": "SparkPoolSmall",
+						"type": "BigDataPoolReference"
+					},
+					"executorSize": "Small",
+					"conf": {
+						"spark.dynamicAllocation.enabled": null,
+						"spark.dynamicAllocation.minExecutors": null,
+						"spark.dynamicAllocation.maxExecutors": null
+					},
+					"driverSize": "Small",
+					"numExecutors": null
 				}
 			}
 		],
