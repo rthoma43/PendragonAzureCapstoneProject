@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "NATO_merged.csv",
+				"fileName": "Merged_Output.csv",
 				"folderPath": "Raw_Twitter_JSONs/Merged_Output",
 				"fileSystem": "pendragon"
 			},
