@@ -5,7 +5,7 @@
 			"name": "Create_Tables"
 		},
 		"content": {
-			"query": "CREATE TABLE [sum].[Aithusa_Abstractive_Sum]\n(\n    [abstractive_summary] NVARCHAR(4000) NULL,\n    [topic] SMALLINT NULL\n)\n\nGO",
+			"query": "CREATE TABLE [sum].[Aithusa_Abstractive_Sum]\n(\n    [topic] SMALLINT NULL,\n    [abstractive_summary] NVARCHAR(4000) NULL\n)\n\nGO",
 			"metadata": {
 				"language": "sql"
 			},
