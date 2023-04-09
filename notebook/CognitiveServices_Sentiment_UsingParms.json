@@ -1,0 +1,608 @@
+{
+	"name": "CognitiveServices_Sentiment_UsingParms",
+	"properties": {
+		"folder": {
+			"name": "NLP"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "SparkPoolSmall",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "73f5e03d-eeb6-4fed-9e6f-5082ed3f13f8"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+				"name": "SparkPoolSmall",
+				"type": "Spark",
+				"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.3",
+				"nodeCount": 3,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"# Add required imports\r\n",
+					"import com.microsoft.spark.sqlanalytics\r\n",
+					"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+					"from pyspark.sql.functions import col\r\n",
+					"\r\n",
+					"# Name of the SQL Dedicated Pool or database where to run the query\r\n",
+					"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
+					"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")"
+				],
+				"execution_count": 1
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Create a variable for the output SQL Pool table name\r\n",
+					"Enter a default place holder name which will be changed by the pipeline"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"tags": [
+						"parameters"
+					]
+				},
+				"source": [
+					"table = \"Sent.NATO_Sentiment\"\n",
+					"topictable = \"Topic.NATO_Topics\""
+				],
+				"execution_count": 2
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Read from a query\n",
+					"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\n",
+					"df = (spark.read\n",
+					"                     # Name of the SQL Dedicated Pool or database where to run the query\n",
+					"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\n",
+					"                     .option(Constants.DATABASE, \"SQLPoolTest\")\n",
+					"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\n",
+					"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\n",
+					"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\n",
+					"                     # Defaults to storage path defined in the runtime configurations\n",
+					"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\n",
+					"                     # query from which data will be read\n",
+					"                     .option(Constants.QUERY, \"select * from \"+topictable)\n",
+					"                     .synapsesql()\n",
+					")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Sort by created_at and sample if needed for testing"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Select sample size for testing\r\n",
+					"\r\n",
+					"# Sort ascending by 'created_at'\r\n",
+					"from pyspark.sql.functions import desc\r\n",
+					"\r\n",
+					"df = df.orderBy(desc(\"created_at\"))\r\n",
+					"\r\n",
+					"# select the first 100 records\r\n",
+					"#df = df.limit(100)"
+				],
+				"execution_count": 3
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df.count()"
+				],
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"from pyspark.sql.functions import col\r\n",
+					"filtered_df = df.filter(df['cleantext'].isNull() | (df['cleantext'] == ''))\r\n",
+					"filtered_df.count()"
+				],
+				"execution_count": 5
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from pyspark.sql.functions import col\r\n",
+					"\r\n",
+					"filtered1_df = df.filter(col('cleantext').isNotNull() & (col('cleantext') != ''))\r\n",
+					"filtered1_df.count()\r\n",
+					""
+				],
+				"execution_count": 6
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Import libraries"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"import synapse.ml\r\n",
+					"from synapse.ml.cognitive import *\r\n",
+					"from pyspark.sql.functions import col"
+				],
+				"execution_count": 7
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Assign Linked Cognitive Service"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"linked_service_name = \"CognitiveService1\""
+				],
+				"execution_count": 8
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Perform Sentiment Analysis in Batches"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"# import required libraries\r\n",
+					"import json\r\n",
+					"from pyspark.sql.types import *\r\n",
+					"from pyspark.sql.functions import col\r\n",
+					"import pyspark.sql.functions as F\r\n",
+					"import collections\r\n",
+					"\r\n",
+					"# Batch size\r\n",
+					"batch_size = 1000\r\n",
+					"print('Batch size: ', batch_size)\r\n",
+					"\r\n",
+					"# First, count the total number of rows in the DataFrame\r\n",
+					"num_rows = df.count()\r\n",
+					"\r\n",
+					"# Next, calculate the number of batches needed to split the DataFrame into batches of equal to the batch_size\r\n",
+					"num_batches = int(num_rows / batch_size) + (num_rows % batch_size > 0)\r\n",
+					"print('Number of batches: ', num_batches)\r\n",
+					"\r\n",
+					"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
+					"df_batches = df.randomSplit([1.0]*num_batches, seed=42)\r\n",
+					"\r\n",
+					"from pyspark.sql.types import *\r\n",
+					"schema = StructType([\r\n",
+					"    StructField(\"id\",  LongType(), True),\r\n",
+					"    StructField(\"created_at\", TimestampType(), True),\r\n",
+					"    StructField(\"text\", StringType(), True),\r\n",
+					"    StructField(\"cleantext\", StringType(), True),\r\n",
+					"    StructField(\"lang\", StringType(), True),\r\n",
+					"    StructField(\"retweet_count\", IntegerType(), True),\r\n",
+					"    StructField(\"reply_count\", IntegerType(), True),\r\n",
+					"    StructField(\"like_count\", IntegerType(), True),\r\n",
+					"    StructField(\"quote_count\", IntegerType(), True),\r\n",
+					"    StructField(\"impression_count\", IntegerType(), True),\r\n",
+					"    StructField(\"topic\", ShortType(), True),\r\n",
+					"    StructField(\"topic_0_confidence\", FloatType(), True),\r\n",
+					"    StructField(\"topic_1_confidence\", FloatType(), True),\r\n",
+					"    StructField(\"topic_2_confidence\", FloatType(), True),\r\n",
+					"    StructField(\"topic_3_confidence\", FloatType(), True),\r\n",
+					"    StructField(\"topic_4_confidence\", FloatType(), True),\r\n",
+					"    StructField(\"sentiment\", StringType(), True),\r\n",
+					"    StructField(\"negative_score\", FloatType(), True),\r\n",
+					"    StructField(\"positive_score\", FloatType(), True),\r\n",
+					"    StructField(\"neutral_score\", FloatType(), True),\r\n",
+					"    StructField(\"mixed_score\", FloatType(), True)\r\n",
+					"])\r\n",
+					"\r\n",
+					"# create a DataFrame\r\n",
+					"sentiment_output_df =  spark.createDataFrame([], schema)\r\n",
+					"\r\n",
+					"num = 1\r\n",
+					"\r\n",
+					"# Finally, use limit to limit the number of rows in each DataFrame to 5\r\n",
+					"for i in range(num_batches):\r\n",
+					"    batch = df_batches[i].limit(batch_size)\r\n",
+					"    print('Length of batch: ', batch.count())\r\n",
+					"    sent = (TextSentiment()\r\n",
+					"    .setLinkedService(linked_service_name)\r\n",
+					"    .setTextCol(\"cleantext\")\r\n",
+					"    .setOutputCol(\"sentiment\")\r\n",
+					"    .setErrorCol(\"error\"))\r\n",
+					"\r\n",
+					"    sent_batch_output = sent.transform(batch)\r\n",
+					"\r\n",
+					"    sent_batch_output = sent_batch_output.filter(col(\"error\").isNull())\r\n",
+					"\r\n",
+					"    # Create arrays for each original column values\r\n",
+					"    id_values = []\r\n",
+					"    created_at_values = []\r\n",
+					"    text_values = []\r\n",
+					"    cleantext_values = []\r\n",
+					"    lang_values = []\r\n",
+					"    retweet_count_values = []\r\n",
+					"    reply_count_values = []\r\n",
+					"    like_count_values = []\r\n",
+					"    quote_count_values = []\r\n",
+					"    impression_count_values = []\r\n",
+					"    topicgroup_values = []\r\n",
+					"    topic0confidence_values = []\r\n",
+					"    topic1confidence_values = []\r\n",
+					"    topic2confidence_values = []\r\n",
+					"    topic3confidence_values = []\r\n",
+					"    topic4confidence_values = []\r\n",
+					"\r\n",
+					"\r\n",
+					"    # collect all rows of the batch DataFrame\r\n",
+					"    rows = batch.collect()\r\n",
+					"\r\n",
+					"    # iterate over rows and extract values from each column\r\n",
+					"    for row in rows:\r\n",
+					"        id_values.append(row[\"id\"])\r\n",
+					"        created_at_values.append(row[\"created_at\"])\r\n",
+					"        text_values.append(row[\"text\"])\r\n",
+					"        cleantext_values.append(row['cleantext'])\r\n",
+					"        lang_values.append(row[\"lang\"])\r\n",
+					"        retweet_count_values.append(row[\"retweet_count\"])\r\n",
+					"        reply_count_values.append(row[\"reply_count\"])\r\n",
+					"        like_count_values.append(row[\"like_count\"])\r\n",
+					"        quote_count_values.append(row[\"quote_count\"])\r\n",
+					"        impression_count_values.append(row[\"impression_count\"])\r\n",
+					"        topicgroup_values.append(row['topic'])\r\n",
+					"        topic0confidence_values.append(row['topic_0_confidence'])\r\n",
+					"        topic1confidence_values.append(row['topic_1_confidence'])\r\n",
+					"        topic2confidence_values.append(row['topic_2_confidence'])\r\n",
+					"        topic3confidence_values.append(row['topic_3_confidence'])\r\n",
+					"        topic4confidence_values.append(row['topic_4_confidence'])\r\n",
+					"\r\n",
+					"    # Create arrays for new column values\r\n",
+					"    batch_sentiments = []\r\n",
+					"    batch_negative_scores = []\r\n",
+					"    batch_positive_scores = []\r\n",
+					"    batch_neutral_scores = []\r\n",
+					"    batch_mixed_scores = []\r\n",
+					"\r\n",
+					"    # Extract the 'sentiment' column and convert it to JSON\r\n",
+					"    json_output = sent_batch_output.select(\"sentiment\").toJSON().collect()\r\n",
+					"\r\n",
+					"    # Deserialize the JSON and extract the 'sentiment' field\r\n",
+					"    sentiments = [json.loads(x)[\"sentiment\"] for x in json_output]\r\n",
+					"\r\n",
+					"    # Print the 'sentiment' field for each row\r\n",
+					"    for sentiment in sentiments:\r\n",
+					"        if 'document' in sentiment:\r\n",
+					"            batch_sentiments.append(sentiment['document']['sentiment'])\r\n",
+					"            batch_negative_scores.append(sentiment['document']['confidenceScores'].get(\"negative\", 0.0))\r\n",
+					"            batch_positive_scores.append(sentiment['document']['confidenceScores'].get(\"positive\", 0.0))\r\n",
+					"            batch_neutral_scores.append(sentiment['document']['confidenceScores'].get(\"neutral\", 0.0))\r\n",
+					"            batch_mixed_scores.append(sentiment['document']['confidenceScores'].get(\"mixed\", 0.0))\r\n",
+					"        else:\r\n",
+					"            batch_sentiments.append(None)\r\n",
+					"            batch_negative_scores.append(0.0)\r\n",
+					"            batch_positive_scores.append(0.0)\r\n",
+					"            batch_neutral_scores.append(0.0)\r\n",
+					"            batch_mixed_scores.append(0.0)\r\n",
+					"    \r\n",
+					"    # create rows\r\n",
+					"    rows = [Row(id=id_values[i],\r\n",
+					"                created_at=created_at_values[i],\r\n",
+					"                text=text_values[i],\r\n",
+					"                cleanText = cleantext_values[i],\r\n",
+					"                lang=lang_values[i],\r\n",
+					"                retweet_count = retweet_count_values[i],\r\n",
+					"                reply_count=reply_count_values[i],\r\n",
+					"                like_count=like_count_values[i],\r\n",
+					"                quote_count=quote_count_values[i],\r\n",
+					"                impression_count = impression_count_values[i],\r\n",
+					"                topic = topicgroup_values[i],\r\n",
+					"                topic_0_confidence = topic0confidence_values[i],\r\n",
+					"                topic_1_confidence = topic1confidence_values[i],\r\n",
+					"                topic_2_confidence = topic2confidence_values[i],\r\n",
+					"                topic_3_confidence = topic3confidence_values[i],\r\n",
+					"                topic_4_confidence = topic4confidence_values[i],\r\n",
+					"                sentiment = batch_sentiments[i],\r\n",
+					"                negative_score = batch_negative_scores[i],\r\n",
+					"                positive_score = batch_positive_scores[i],\r\n",
+					"                neutral_score = batch_neutral_scores[i],\r\n",
+					"                mixed_score = batch_mixed_scores[i] )\r\n",
+					"            for i in range(len(id_values))]\r\n",
+					"\r\n",
+					"    # create batch dataframe\r\n",
+					"    batch_df = spark.createDataFrame(rows, schema)\r\n",
+					"\r\n",
+					"    # Append the batch results dataframe to the main output dataframe\r\n",
+					"    sentiment_output_df = sentiment_output_df.union(batch_df)\r\n",
+					"    print('Batch', num, 'succeeded!')\r\n",
+					"    num = num + 1\r\n",
+					"\r\n",
+					"#display(sentiment_output_df)"
+				],
+				"execution_count": 9
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Write Spark Dataframe to Dedicated SQL Pool Table [Sent].[NATO_Sentiment]\r\n",
+					"# First, create the table in the Dedicated SQL Pool 'SQLPoolTest' using the code below\r\n",
+					"~~~\r\n",
+					"CREATE TABLE [Sent].[NATO_Sentiment]\r\n",
+					"(\r\n",
+					"    [id] bigint  NULL,\r\n",
+					"\t[created_at] DATETIME2(7)  NULL,\r\n",
+					"\t[text] NVARCHAR(4000)  NULL,\r\n",
+					"\t[cleantext] NVARCHAR(4000)  NULL,\r\n",
+					"\t[lang] nvarchar(10)  NULL,\r\n",
+					"\t[retweet_count] INT  NULL,\r\n",
+					"\t[reply_count] INT  NULL,\r\n",
+					"\t[like_count] INT  NULL,\r\n",
+					"\t[quote_count] INT  NULL,\r\n",
+					"\t[impression_count] INT  NULL,\r\n",
+					"    [topic] SMALLINT NULL,\r\n",
+					"    [topic_0_confidence] REAL NULL,\r\n",
+					"    [topic_1_confidence] REAL NULL,\r\n",
+					"    [topic_2_confidence] REAL NULL,\r\n",
+					"    [topic_3_confidence] REAL NULL,\r\n",
+					"    [topic_4_confidence] REAL NULL,\r\n",
+					"    [sentiment] NVARCHAR(20) NULL,\r\n",
+					"    [negative_score] REAL NULL,\r\n",
+					"    [positive_score] REAL NULL,\r\n",
+					"    [neutral_score] REAL NULL,\r\n",
+					"    [mixed_score] REAL NULL\r\n",
+					")\r\n",
+					"\r\n",
+					"GO"
+				]
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"## Create the three-part table name to which data will be written"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"outputtable = \"SQLPoolTest.\" + table"
+				],
+				"execution_count": 10
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Write using AAD Auth to internal table\r\n",
+					"# Add required imports\r\n",
+					"import com.microsoft.spark.sqlanalytics\r\n",
+					"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+					"\r\n",
+					"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
+					"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
+					"(sentiment_output_df.write\r\n",
+					" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+					" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+					" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+					" # Like-wise, if `Constants.TEMP_FOLDER` is not provided, the connector will use the runtime staging directory config (see section on Configuration Options for details).\r\n",
+					" .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+					" # Choose a save mode that is apt for your use case.\r\n",
+					" # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
+					" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
+					" .mode(\"overwrite\")\r\n",
+					" # Required parameter - Three-part table name to which data will be written\r\n",
+					" .synapsesql(outputtable))"
+				],
+				"execution_count": 11
+			}
+		]
+	}
+}
