@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "3ee58dd0-905b-492b-bdfe-8435fe33cbb1"
+				"spark.autotune.trackingId": "3bb10a33-c0d9-423a-bd5a-0da7634197d2"
 			}
 		},
 		"metadata": {
@@ -105,7 +105,8 @@
 				},
 				"source": [
 					"query = \"NATO\"\n",
-					"maintable = \"dbo.NATO_Tweets1\""
+					"maintable = \"dbo.NATO_Tweets1\"\n",
+					"archivetable = \"NATO_Archive_Tweets\""
 				],
 				"execution_count": 18
 			},
@@ -219,7 +220,7 @@
 					" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
 					" .mode(\"overwrite\")\r\n",
 					" # Required parameter - Three-part table name to which data will be written\r\n",
-					" .synapsesql(\"SQLPoolTest.archive.NATO_Archive_Tweets\"))"
+					" .synapsesql(\"SQLPoolTest.archive.\"+archivetable))"
 				],
 				"execution_count": 21
 			}
