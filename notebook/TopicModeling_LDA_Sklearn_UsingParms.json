@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "e5c08f69-e6ae-4fb5-84d8-45ef046412b8"
+				"spark.autotune.trackingId": "851f3b76-a84b-4645-a483-032ddd8bd931"
 			}
 		},
 		"metadata": {
@@ -90,7 +90,7 @@
 					"\r\n",
 					""
 				],
-				"execution_count": 83
+				"execution_count": 1
 			},
 			{
 				"cell_type": "markdown",
@@ -125,9 +125,13 @@
 				"source": [
 					"topictable = \"Topic.NATO_Topics\"\r\n",
 					"wordtable = \"Words.NATO_Topic_Words\"\r\n",
-					"maintable = \"dbo.NATO_Tweets1\""
+					"maintable = \"dbo.NATO_Tweets1\"\r\n",
+					"\r\n",
+					"#topictable = \"Topic.Aithusa_Topics\"\r\n",
+					"#wordtable = \"Words.Aithusa_Topic_Words\"\r\n",
+					"#maintable = \"dbo.NATO_Tweets1_Aithusa\""
 				],
-				"execution_count": 84
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -146,7 +150,7 @@
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *"
 				],
-				"execution_count": 86
+				"execution_count": 3
 			},
 			{
 				"cell_type": "code",
@@ -179,7 +183,25 @@
 					"                     .synapsesql()\n",
 					")"
 				],
-				"execution_count": null
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df.head(10)"
+				],
+				"execution_count": 9
 			},
 			{
 				"cell_type": "markdown",
@@ -219,7 +241,25 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 88
+				"execution_count": 5
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df.tail(2)"
+				],
+				"execution_count": 10
 			},
 			{
 				"cell_type": "markdown",
@@ -287,7 +327,25 @@
 					"\r\n",
 					"#display(df)"
 				],
-				"execution_count": 89
+				"execution_count": 11
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"df.tail(2)"
+				],
+				"execution_count": 13
 			},
 			{
 				"cell_type": "code",
@@ -323,7 +381,7 @@
 					"\r\n",
 					"display(df_removed)"
 				],
-				"execution_count": 90
+				"execution_count": 12
 			},
 			{
 				"cell_type": "markdown",
@@ -361,7 +419,7 @@
 					"# Convert Spark DataFrame to Pandas DataFrame\r\n",
 					"pandas_df = df_removed.toPandas()"
 				],
-				"execution_count": 91
+				"execution_count": 14
 			},
 			{
 				"cell_type": "code",
@@ -402,7 +460,7 @@
 					"# Display Spark DataFrame\r\n",
 					"display(spark_df)"
 				],
-				"execution_count": 92
+				"execution_count": 15
 			},
 			{
 				"cell_type": "markdown",
@@ -443,7 +501,7 @@
 					"\r\n",
 					"print(top_N_words)"
 				],
-				"execution_count": 93
+				"execution_count": 16
 			},
 			{
 				"cell_type": "code",
@@ -474,7 +532,7 @@
 					"# display the spark dataframe\r\n",
 					"display(df_words)"
 				],
-				"execution_count": 94
+				"execution_count": 17
 			},
 			{
 				"cell_type": "code",
@@ -492,7 +550,7 @@
 				"source": [
 					"spark_df.printSchema"
 				],
-				"execution_count": 95
+				"execution_count": 18
 			},
 			{
 				"cell_type": "markdown",
@@ -577,7 +635,7 @@
 					"outputtopictable = \"SQLPoolTest.\" + topictable\r\n",
 					"outputwordtable = \"SQLPoolTest.\" + wordtable"
 				],
-				"execution_count": 103
+				"execution_count": 19
 			},
 			{
 				"cell_type": "code",
@@ -613,7 +671,7 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(outputtopictable))"
 				],
-				"execution_count": 98
+				"execution_count": 20
 			},
 			{
 				"cell_type": "code",
@@ -631,7 +689,7 @@
 				"source": [
 					"df_words.printSchema"
 				],
-				"execution_count": 99
+				"execution_count": 21
 			},
 			{
 				"cell_type": "code",
@@ -667,7 +725,25 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(outputwordtable))"
 				],
-				"execution_count": 104
+				"execution_count": 22
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"maintable"
+				],
+				"execution_count": 24
 			}
 		]
 	}
