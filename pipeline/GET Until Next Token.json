@@ -1216,6 +1216,17 @@
 								"type": "Expression"
 							},
 							"type": "string"
+						},
+						"maintable": {
+							"value": "dbo.NATO_Tweets1_Aithusa",
+							"type": "string"
+						},
+						"archivetable": {
+							"value": {
+								"value": "@pipeline().parameters.TweetArchive",
+								"type": "Expression"
+							},
+							"type": "string"
 						}
 					},
 					"snapshot": true,
@@ -1234,6 +1245,16 @@
 				}
 			}
 		],
+		"parameters": {
+			"QueryName": {
+				"type": "string",
+				"defaultValue": "Aithusa"
+			},
+			"TweetArchive": {
+				"type": "string",
+				"defaultValue": "Aithusa_Archive_Tweets"
+			}
+		},
 		"variables": {
 			"Query": {
 				"type": "String"
