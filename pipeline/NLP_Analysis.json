@@ -76,6 +76,13 @@
 								"type": "Expression"
 							},
 							"type": "string"
+						},
+						"maintable": {
+							"value": {
+								"value": "@pipeline().parameters.TableName",
+								"type": "Expression"
+							},
+							"type": "string"
 						}
 					},
 					"snapshot": true,
@@ -151,13 +158,20 @@
 				"userProperties": [],
 				"typeProperties": {
 					"notebook": {
-						"referenceName": "CognitiveServices_Sentiment",
+						"referenceName": "CognitiveServices_Sentiment_UsingParms",
 						"type": "NotebookReference"
 					},
 					"parameters": {
 						"table": {
 							"value": {
 								"value": "@pipeline().parameters.SentimentOutputTable",
+								"type": "Expression"
+							},
+							"type": "string"
+						},
+						"topictable": {
+							"value": {
+								"value": "@pipeline().parameters.TopicModelingOutputTable",
 								"type": "Expression"
 							},
 							"type": "string"
@@ -231,13 +245,20 @@
 				"userProperties": [],
 				"typeProperties": {
 					"notebook": {
-						"referenceName": "CogntiveServices_Summarization",
+						"referenceName": "CogntiveServices_Summarization_UsingParms",
 						"type": "NotebookReference"
 					},
 					"parameters": {
 						"table": {
 							"value": {
 								"value": "@pipeline().parameters.SummarizationOutputTable",
+								"type": "Expression"
+							},
+							"type": "string"
+						},
+						"senttable": {
+							"value": {
+								"value": "@pipeline().parameters.SentimentOutputTable",
 								"type": "Expression"
 							},
 							"type": "string"
@@ -311,13 +332,20 @@
 				"userProperties": [],
 				"typeProperties": {
 					"notebook": {
-						"referenceName": "CognitiveServices_NamedEntityRecog",
+						"referenceName": "CognitiveServices_NamedEntityRecog_UsingParms",
 						"type": "NotebookReference"
 					},
 					"parameters": {
 						"table": {
 							"value": {
 								"value": "@pipeline().parameters.NEROutputTable",
+								"type": "Expression"
+							},
+							"type": "string"
+						},
+						"senttable": {
+							"value": {
+								"value": "@pipeline().parameters.SentimentOutputTable",
 								"type": "Expression"
 							},
 							"type": "string"
