@@ -5,52 +5,26 @@
 		"type": "SqlPoolTable",
 		"schema": [
 			{
-				"name": "id",
-				"type": "bigint",
-				"precision": 19
-			},
-			{
-				"name": "created_at",
-				"type": "datetime2",
-				"scale": 7
-			},
-			{
-				"name": "text",
+				"name": "entity",
 				"type": "nvarchar"
 			},
 			{
-				"name": "lang",
+				"name": "entity_category",
 				"type": "nvarchar"
 			},
 			{
-				"name": "retweet_count",
-				"type": "int",
-				"precision": 10
+				"name": "entity_subcategory",
+				"type": "nvarchar"
 			},
 			{
-				"name": "reply_count",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "like_count",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "quote_count",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "impression_count",
-				"type": "int",
-				"precision": 10
+				"name": "topic",
+				"type": "smallint",
+				"precision": 5
 			}
 		],
 		"typeProperties": {
-			"schema": "dbo",
-			"table": "NATO_Tweets1"
+			"schema": "NER",
+			"table": "NATO_NER"
 		},
 		"sqlPool": {
 			"referenceName": "SQLPoolTest",
