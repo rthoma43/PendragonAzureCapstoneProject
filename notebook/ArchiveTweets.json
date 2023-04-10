@@ -1,6 +1,9 @@
 {
 	"name": "ArchiveTweets",
 	"properties": {
+		"folder": {
+			"name": "Archiving"
+		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {
@@ -17,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "55166d41-c07e-452a-ac8f-b0b048c4504a"
+				"spark.autotune.trackingId": "bf1fc20c-bcd9-47b4-91a3-66b7f7d146dd"
 			}
 		},
 		"metadata": {
