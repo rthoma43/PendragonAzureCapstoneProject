@@ -757,7 +757,7 @@
 					},
 					"Loops": {
 						"type": "int",
-						"defaultValue": 30
+						"defaultValue": 5
 					}
 				},
 				"variables": {
@@ -1996,17 +1996,50 @@
 							},
 							"waitOnCompletion": true,
 							"parameters": {
-								"TopicModelingOutputTable": "Topic.Aithusa_Topics",
-								"SentimentOutputTable": "Sent.Aithusa_Sentiment",
-								"SummarizationOutputTable": "sum.Aithusa_Abstractive_Sum",
-								"NEROutputTable": "NER.Aithusa_NER",
-								"TopicModelingWordsOutputTable": "Words.Aithusa_Topic_Words",
-								"TopicModelingTableSQL": "[Topic].[Aithusa_Topics]",
-								"TopicModelingWordsTableSQL": "[Words].[Aithusa_Topic_Words]",
-								"SentimentTableSQL": "[Sent].[Aithusa_Sentiment]",
-								"SummarizationTableSQL": "[sum].[Aithusa_Abstractive_Sum]",
-								"NERTableSQL": "[NER].[Aithusa_NER]",
-								"TableName": "dbo.NATO_Tweets1_Aithusa"
+								"TopicModelingOutputTable": {
+									"value": "@concat('Topic.',pipeline().parameters.QueryName,'_Topics')",
+									"type": "Expression"
+								},
+								"SentimentOutputTable": {
+									"value": "@concat('Sent.',pipeline().parameters.QueryName,'_Sentiment')",
+									"type": "Expression"
+								},
+								"SummarizationOutputTable": {
+									"value": "@concat('sum.',pipeline().parameters.QueryName,'_Abstractive_Sum')",
+									"type": "Expression"
+								},
+								"NEROutputTable": {
+									"value": "@concat('NER.',pipeline().parameters.QueryName,'_NER')",
+									"type": "Expression"
+								},
+								"TopicModelingWordsOutputTable": {
+									"value": "@concat('Words.',pipeline().parameters.QueryName,'_Topic_Words')",
+									"type": "Expression"
+								},
+								"TopicModelingTableSQL": {
+									"value": "@concat('[Topic].[',pipeline().parameters.QueryName,'_Topics]')",
+									"type": "Expression"
+								},
+								"TopicModelingWordsTableSQL": {
+									"value": "@concat('[Words].[',pipeline().parameters.QueryName,'_Topic_Words]')",
+									"type": "Expression"
+								},
+								"SentimentTableSQL": {
+									"value": "@concat('[Sent].[',pipeline().parameters.QueryName,'_Sentiment]')",
+									"type": "Expression"
+								},
+								"SummarizationTableSQL": {
+									"value": "@concat('[sum].[',pipeline().parameters.QueryName,'_Abstractive_Sum]')",
+									"type": "Expression"
+								},
+								"NERTableSQL": {
+									"value": "@concat('[NER].[',pipeline().parameters.QueryName,'_NER]')",
+									"type": "Expression"
+								},
+								"TableName": {
+									"value": "@concat('dbo.NATO_Tweets1_',pipeline().parameters.QueryName)",
+									"type": "Expression"
+								}
 							}
 						}
 					},
@@ -2564,6 +2597,481 @@
 		},
 		{
 			"name": "[concat(parameters('workspaceName'), '/NLP_Analysis')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Delete all from Topics Table",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "SQLPoolTest",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[dbo].[delete_all_rows]",
+							"storedProcedureParameters": {
+								"table_name": {
+									"value": {
+										"value": "@pipeline().parameters.TopicModelingTableSQL",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						}
+					},
+					{
+						"name": "Perform Topic Modeling LDA",
+						"description": "Outputs to [Topic].[_Topics]",
+						"type": "SynapseNotebook",
+						"dependsOn": [
+							{
+								"activity": "Delete all from Topics Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Delete all from Topic Words Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebook": {
+								"referenceName": "TopicModeling_LDA_Sklearn_UsingParms",
+								"type": "NotebookReference"
+							},
+							"parameters": {
+								"topictable": {
+									"value": {
+										"value": "@pipeline().parameters.TopicModelingOutputTable",
+										"type": "Expression"
+									},
+									"type": "string"
+								},
+								"wordtable": {
+									"value": {
+										"value": "@pipeline().parameters.TopicModelingWordsOutputTable",
+										"type": "Expression"
+									},
+									"type": "string"
+								},
+								"maintable": {
+									"value": {
+										"value": "@pipeline().parameters.TableName",
+										"type": "Expression"
+									},
+									"type": "string"
+								}
+							},
+							"snapshot": true,
+							"sparkPool": {
+								"referenceName": "SparkPoolSmall",
+								"type": "BigDataPoolReference"
+							},
+							"executorSize": "Small",
+							"conf": {
+								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.minExecutors": null,
+								"spark.dynamicAllocation.maxExecutors": null
+							},
+							"driverSize": "Small",
+							"numExecutors": null
+						}
+					},
+					{
+						"name": "Delete all from NATO Sentiment Table",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Perform Topic Modeling LDA",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "SQLPoolTest",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[dbo].[delete_all_rows]",
+							"storedProcedureParameters": {
+								"table_name": {
+									"value": {
+										"value": "@pipeline().parameters.SentimentTableSQL",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						}
+					},
+					{
+						"name": "Perform Sentiment Analysis",
+						"description": "Outputs to [Sent].[NATO_Sent]",
+						"type": "SynapseNotebook",
+						"dependsOn": [
+							{
+								"activity": "Delete all from NATO Sentiment Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebook": {
+								"referenceName": "CognitiveServices_Sentiment_UsingParms",
+								"type": "NotebookReference"
+							},
+							"parameters": {
+								"table": {
+									"value": {
+										"value": "@pipeline().parameters.SentimentOutputTable",
+										"type": "Expression"
+									},
+									"type": "string"
+								},
+								"topictable": {
+									"value": {
+										"value": "@pipeline().parameters.TopicModelingOutputTable",
+										"type": "Expression"
+									},
+									"type": "string"
+								}
+							},
+							"snapshot": true,
+							"executorSize": "Small",
+							"conf": {
+								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.minExecutors": null,
+								"spark.dynamicAllocation.maxExecutors": null
+							},
+							"driverSize": "Small",
+							"numExecutors": null
+						}
+					},
+					{
+						"name": "Delete all from NATO Summary Table",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Perform Sentiment Analysis",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "SQLPoolTest",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[dbo].[delete_all_rows]",
+							"storedProcedureParameters": {
+								"table_name": {
+									"value": {
+										"value": "@pipeline().parameters.SummarizationTableSQL",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						}
+					},
+					{
+						"name": "Perform Summarization",
+						"type": "SynapseNotebook",
+						"dependsOn": [
+							{
+								"activity": "Delete all from NATO Summary Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebook": {
+								"referenceName": "CogntiveServices_Summarization_UsingParms",
+								"type": "NotebookReference"
+							},
+							"parameters": {
+								"table": {
+									"value": {
+										"value": "@pipeline().parameters.SummarizationOutputTable",
+										"type": "Expression"
+									},
+									"type": "string"
+								},
+								"senttable": {
+									"value": {
+										"value": "@pipeline().parameters.SentimentOutputTable",
+										"type": "Expression"
+									},
+									"type": "string"
+								}
+							},
+							"snapshot": true,
+							"executorSize": "Small",
+							"conf": {
+								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.minExecutors": null,
+								"spark.dynamicAllocation.maxExecutors": null
+							},
+							"driverSize": "Small",
+							"numExecutors": null
+						}
+					},
+					{
+						"name": "Delete all from NATO NER Table",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Perform Sentiment Analysis",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "SQLPoolTest",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[dbo].[delete_all_rows]",
+							"storedProcedureParameters": {
+								"table_name": {
+									"value": {
+										"value": "@pipeline().parameters.NERTableSQL",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						}
+					},
+					{
+						"name": "Perform Named Entity Recognition",
+						"type": "SynapseNotebook",
+						"dependsOn": [
+							{
+								"activity": "Delete all from NATO NER Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebook": {
+								"referenceName": "CognitiveServices_NamedEntityRecog_UsingParms",
+								"type": "NotebookReference"
+							},
+							"parameters": {
+								"table": {
+									"value": {
+										"value": "@pipeline().parameters.NEROutputTable",
+										"type": "Expression"
+									},
+									"type": "string"
+								},
+								"senttable": {
+									"value": {
+										"value": "@pipeline().parameters.SentimentOutputTable",
+										"type": "Expression"
+									},
+									"type": "string"
+								}
+							},
+							"snapshot": true,
+							"sparkPool": {
+								"referenceName": "SparkPoolSmall",
+								"type": "BigDataPoolReference"
+							},
+							"executorSize": "Small",
+							"conf": {
+								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.minExecutors": null,
+								"spark.dynamicAllocation.maxExecutors": null
+							},
+							"driverSize": "Small",
+							"numExecutors": null
+						}
+					},
+					{
+						"name": "Delete all from Topic Words Table",
+						"type": "SqlPoolStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"sqlPool": {
+							"referenceName": "SQLPoolTest",
+							"type": "SqlPoolReference"
+						},
+						"typeProperties": {
+							"storedProcedureName": "[dbo].[delete_all_rows]",
+							"storedProcedureParameters": {
+								"table_name": {
+									"value": {
+										"value": "@pipeline().parameters.TopicModelingWordsTableSQL",
+										"type": "Expression"
+									},
+									"type": "String"
+								}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"TopicModelingOutputTable": {
+						"type": "string",
+						"defaultValue": "Topic.NATO_Topics"
+					},
+					"SentimentOutputTable": {
+						"type": "string",
+						"defaultValue": "Sent.NATO_Sentiment"
+					},
+					"SummarizationOutputTable": {
+						"type": "string",
+						"defaultValue": "sum.NATO_Abstractive_Sum"
+					},
+					"NEROutputTable": {
+						"type": "string",
+						"defaultValue": "NER.NATO_NER"
+					},
+					"TopicModelingWordsOutputTable": {
+						"type": "string",
+						"defaultValue": "Words.NATO_Topic_Words"
+					},
+					"TopicModelingTableSQL": {
+						"type": "string",
+						"defaultValue": "[Topic].[NATO_Topics]"
+					},
+					"TopicModelingWordsTableSQL": {
+						"type": "string",
+						"defaultValue": "[Words].[NATO_Topic_Words]"
+					},
+					"SentimentTableSQL": {
+						"type": "string",
+						"defaultValue": "[Sent].[NATO_Sentiment]"
+					},
+					"SummarizationTableSQL": {
+						"type": "string",
+						"defaultValue": "[sum].[NATO_Abstractive_Sum]"
+					},
+					"NERTableSQL": {
+						"type": "string",
+						"defaultValue": "[NER].[NATO_NER]"
+					},
+					"TableName": {
+						"type": "string",
+						"defaultValue": "dbo.NATO_Tweets1"
+					}
+				},
+				"variables": {
+					"TopicModelingOutputTable": {
+						"type": "String"
+					},
+					"SentimentOutputTable": {
+						"type": "String"
+					},
+					"SummarizationOutputTable": {
+						"type": "String"
+					},
+					"NEROutputTable": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]",
+				"[concat(variables('workspaceId'), '/notebooks/TopicModeling_LDA_Sklearn_UsingParms')]",
+				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolSmall')]",
+				"[concat(variables('workspaceId'), '/notebooks/CognitiveServices_Sentiment_UsingParms')]",
+				"[concat(variables('workspaceId'), '/notebooks/CogntiveServices_Summarization_UsingParms')]",
+				"[concat(variables('workspaceId'), '/notebooks/CognitiveServices_NamedEntityRecog_UsingParms')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/NLP_Analysis_copy1')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -3803,52 +4311,26 @@
 				"type": "SqlPoolTable",
 				"schema": [
 					{
-						"name": "id",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "created_at",
-						"type": "datetime2",
-						"scale": 7
-					},
-					{
-						"name": "text",
+						"name": "entity",
 						"type": "nvarchar"
 					},
 					{
-						"name": "lang",
+						"name": "entity_category",
 						"type": "nvarchar"
 					},
 					{
-						"name": "retweet_count",
-						"type": "int",
-						"precision": 10
+						"name": "entity_subcategory",
+						"type": "nvarchar"
 					},
 					{
-						"name": "reply_count",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "like_count",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "quote_count",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "impression_count",
-						"type": "int",
-						"precision": 10
+						"name": "topic",
+						"type": "smallint",
+						"precision": 5
 					}
 				],
 				"typeProperties": {
-					"schema": "dbo",
-					"table": "NATO_Tweets1"
+					"schema": "NER",
+					"table": "NATO_NER"
 				},
 				"sqlPool": {
 					"referenceName": "SQLPoolTest",
@@ -5262,6 +5744,234 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/Twitter_RestService_AS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SqlPoolTable1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [
+					{
+						"name": "entity",
+						"type": "nvarchar"
+					},
+					{
+						"name": "entity_category",
+						"type": "nvarchar"
+					},
+					{
+						"name": "entity_subcategory",
+						"type": "nvarchar"
+					},
+					{
+						"name": "topic",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "query",
+						"type": "varchar"
+					},
+					{
+						"name": "pull_date_time",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "archive",
+					"table": "NER"
+				},
+				"sqlPool": {
+					"referenceName": "SQLPoolTest",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SqlPoolTable2')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [
+					{
+						"name": "entity",
+						"type": "nvarchar"
+					},
+					{
+						"name": "entity_category",
+						"type": "nvarchar"
+					},
+					{
+						"name": "entity_subcategory",
+						"type": "nvarchar"
+					},
+					{
+						"name": "topic",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "query",
+						"type": "varchar"
+					},
+					{
+						"name": "pull_date_time",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "archive",
+					"table": "NER"
+				},
+				"sqlPool": {
+					"referenceName": "SQLPoolTest",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SqlPoolTable_Archive_Sent')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "created_at",
+						"type": "datetime2",
+						"scale": 7
+					},
+					{
+						"name": "text",
+						"type": "nvarchar"
+					},
+					{
+						"name": "cleantext",
+						"type": "nvarchar"
+					},
+					{
+						"name": "lang",
+						"type": "nvarchar"
+					},
+					{
+						"name": "retweet_count",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "reply_count",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "like_count",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "quote_count",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "impression_count",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "topic",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "topic_0_confidence",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "topic_1_confidence",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "topic_2_confidence",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "topic_3_confidence",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "topic_4_confidence",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "sentiment",
+						"type": "nvarchar"
+					},
+					{
+						"name": "negative_score",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "positive_score",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "neutral_score",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "mixed_score",
+						"type": "real",
+						"precision": 7
+					},
+					{
+						"name": "query",
+						"type": "nvarchar"
+					},
+					{
+						"name": "pull_datetime",
+						"type": "datetime2",
+						"scale": 7
+					}
+				],
+				"typeProperties": {
+					"schema": "archive",
+					"table": "Sentiment"
+				},
+				"sqlPool": {
+					"referenceName": "SQLPoolTest",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]"
 			]
 		},
 		{
@@ -7032,6 +7742,29 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Create_Sentiment_ArchiveTable')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "Create_Tables"
+				},
+				"content": {
+					"query": "CREATE TABLE [Archive].[Sentiment]\n(\n    [id] bigint  NULL,\n\t[created_at] DATETIME2(7)  NULL,\n\t[text] NVARCHAR(4000)  NULL,\n\t[cleantext] NVARCHAR(4000)  NULL,\n\t[lang] nvarchar(10)  NULL,\n\t[retweet_count] INT  NULL,\n\t[reply_count] INT  NULL,\n\t[like_count] INT  NULL,\n\t[quote_count] INT  NULL,\n\t[impression_count] INT  NULL,\n    [topic] SMALLINT NULL,\n    [topic_0_confidence] REAL NULL,\n    [topic_1_confidence] REAL NULL,\n    [topic_2_confidence] REAL NULL,\n    [topic_3_confidence] REAL NULL,\n    [topic_4_confidence] REAL NULL,\n    [sentiment] NVARCHAR(20) NULL,\n    [negative_score] REAL NULL,\n    [positive_score] REAL NULL,\n    [neutral_score] REAL NULL,\n    [mixed_score] REAL NULL,\n    [query] NVARCHAR(20) NULL,\n    [pull_datetime] DATETIME2(7) NULL\n)\n\nGO\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPoolTest",
+						"poolName": "SQLPoolTest"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/Create_Timeline')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
@@ -7167,10 +7900,33 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 6')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE SCHEMA [Schema]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPoolTest",
+						"poolName": "SQLPoolTest"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/ArchiveTweets')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
+				"folder": {
+					"name": "Archiving"
+				},
 				"nbformat": 4,
 				"nbformat_minor": 2,
 				"bigDataPool": {
@@ -7187,7 +7943,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "55166d41-c07e-452a-ac8f-b0b048c4504a"
+						"spark.autotune.trackingId": "bf1fc20c-bcd9-47b4-91a3-66b7f7d146dd"
 					}
 				},
 				"metadata": {
