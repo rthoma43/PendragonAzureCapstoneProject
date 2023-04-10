@@ -1170,17 +1170,50 @@
 					},
 					"waitOnCompletion": true,
 					"parameters": {
-						"TopicModelingOutputTable": "Topic.Aithusa_Topics",
-						"SentimentOutputTable": "Sent.Aithusa_Sentiment",
-						"SummarizationOutputTable": "sum.Aithusa_Abstractive_Sum",
-						"NEROutputTable": "NER.Aithusa_NER",
-						"TopicModelingWordsOutputTable": "Words.Aithusa_Topic_Words",
-						"TopicModelingTableSQL": "[Topic].[Aithusa_Topics]",
-						"TopicModelingWordsTableSQL": "[Words].[Aithusa_Topic_Words]",
-						"SentimentTableSQL": "[Sent].[Aithusa_Sentiment]",
-						"SummarizationTableSQL": "[sum].[Aithusa_Abstractive_Sum]",
-						"NERTableSQL": "[NER].[Aithusa_NER]",
-						"TableName": "dbo.NATO_Tweets1_Aithusa"
+						"TopicModelingOutputTable": {
+							"value": "@concat('Topic.',pipeline().parameters.QueryName,'_Topics')",
+							"type": "Expression"
+						},
+						"SentimentOutputTable": {
+							"value": "@concat('Sent.',pipeline().parameters.QueryName,'_Sentiment')",
+							"type": "Expression"
+						},
+						"SummarizationOutputTable": {
+							"value": "@concat('sum.',pipeline().parameters.QueryName,'_Abstractive_Sum')",
+							"type": "Expression"
+						},
+						"NEROutputTable": {
+							"value": "@concat('NER.',pipeline().parameters.QueryName,'_NER')",
+							"type": "Expression"
+						},
+						"TopicModelingWordsOutputTable": {
+							"value": "@concat('Words.',pipeline().parameters.QueryName,'_Topic_Words')",
+							"type": "Expression"
+						},
+						"TopicModelingTableSQL": {
+							"value": "@concat('[Topic].[',pipeline().parameters.QueryName,'_Topics]')",
+							"type": "Expression"
+						},
+						"TopicModelingWordsTableSQL": {
+							"value": "@concat('[Words].[',pipeline().parameters.QueryName,'_Topic_Words]')",
+							"type": "Expression"
+						},
+						"SentimentTableSQL": {
+							"value": "@concat('[Sent].[',pipeline().parameters.QueryName,'_Sentiment]')",
+							"type": "Expression"
+						},
+						"SummarizationTableSQL": {
+							"value": "@concat('[sum].[',pipeline().parameters.QueryName,'_Abstractive_Sum]')",
+							"type": "Expression"
+						},
+						"NERTableSQL": {
+							"value": "@concat('[NER].[',pipeline().parameters.QueryName,'_NER]')",
+							"type": "Expression"
+						},
+						"TableName": {
+							"value": "@concat('dbo.NATO_Tweets1_',pipeline().parameters.QueryName)",
+							"type": "Expression"
+						}
 					}
 				}
 			},
