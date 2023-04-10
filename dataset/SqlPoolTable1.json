@@ -1,0 +1,43 @@
+{
+	"name": "SqlPoolTable1",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [
+			{
+				"name": "entity",
+				"type": "nvarchar"
+			},
+			{
+				"name": "entity_category",
+				"type": "nvarchar"
+			},
+			{
+				"name": "entity_subcategory",
+				"type": "nvarchar"
+			},
+			{
+				"name": "topic",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "query",
+				"type": "varchar"
+			},
+			{
+				"name": "pull_date_time",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "archive",
+			"table": "NER"
+		},
+		"sqlPool": {
+			"referenceName": "SQLPoolTest",
+			"type": "SqlPoolReference"
+		}
+	}
+}

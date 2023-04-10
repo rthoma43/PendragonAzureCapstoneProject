@@ -394,6 +394,115 @@
 						}
 					}
 				}
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlPoolSource",
+						"additionalColumns": [
+							{
+								"name": "query",
+								"value": ""
+							},
+							{
+								"name": "pull_date_time",
+								"value": ""
+							}
+						],
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "SqlPoolSink",
+						"allowCopyCommand": true
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "entity",
+									"type": "String"
+								},
+								"sink": {
+									"name": "entity",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "entity_category",
+									"type": "String"
+								},
+								"sink": {
+									"name": "entity_category",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "entity_subcategory",
+									"type": "String"
+								},
+								"sink": {
+									"name": "entity_subcategory",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "topic",
+									"type": "Int16"
+								},
+								"sink": {
+									"name": "topic",
+									"type": "Int16"
+								}
+							},
+							{
+								"source": {
+									"name": "query"
+								},
+								"sink": {
+									"name": "query",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "pull_date_time"
+								},
+								"sink": {
+									"name": "pull_date_time",
+									"type": "DateTime"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DedicatedSqlPoolTable1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SqlPoolTable2",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"parameters": {
