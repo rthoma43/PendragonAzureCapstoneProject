@@ -23,8 +23,8 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "NER",
-			"table": "NATO_NER"
+			"schema": "dbo",
+			"table": "NATO_Tweets1"
 		},
 		"sqlPool": {
 			"referenceName": "SQLPoolTest",
