@@ -10213,7 +10213,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "4981a098-16d9-4c4f-a20a-e3afbbe5fb53"
+						"spark.autotune.trackingId": "4cf3898d-e067-4fa9-8521-bde9ab6e7de7"
 					}
 				},
 				"metadata": {
@@ -10238,13 +10238,15 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -14809,7 +14811,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "51c269be-6b08-4a0d-8d9a-d2db59ac1c40"
+						"spark.autotune.trackingId": "6ecb98e1-a118-433f-b836-399a6cfb249a"
 					}
 				},
 				"metadata": {
@@ -14834,7 +14836,8 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -14884,7 +14887,7 @@
 							"pip install azure-ai-textanalytics==5.3.0b1"
 						],
 						"outputs": [],
-						"execution_count": 33
+						"execution_count": 32
 					},
 					{
 						"cell_type": "code",
@@ -14903,7 +14906,7 @@
 							"!pip install openai"
 						],
 						"outputs": [],
-						"execution_count": 34
+						"execution_count": 33
 					},
 					{
 						"cell_type": "markdown",
@@ -14943,7 +14946,7 @@
 							"#senttable = \"Sent.Aithusa_Sentiment\""
 						],
 						"outputs": [],
-						"execution_count": 35
+						"execution_count": 34
 					},
 					{
 						"cell_type": "code",
@@ -14973,7 +14976,7 @@
 							"import time"
 						],
 						"outputs": [],
-						"execution_count": 36
+						"execution_count": 35
 					},
 					{
 						"cell_type": "code",
@@ -15013,7 +15016,7 @@
 							"    return(df)"
 						],
 						"outputs": [],
-						"execution_count": 37
+						"execution_count": 36
 					},
 					{
 						"cell_type": "code",
@@ -15034,7 +15037,7 @@
 							"endpoint = \"https://pendragon-language.cognitiveservices.azure.com/\""
 						],
 						"outputs": [],
-						"execution_count": 38
+						"execution_count": 37
 					},
 					{
 						"cell_type": "code",
@@ -15057,7 +15060,7 @@
 							"openai.api_key = \"7c4b192d51f64c09a2ca680590ccae3f\""
 						],
 						"outputs": [],
-						"execution_count": 39
+						"execution_count": 38
 					},
 					{
 						"cell_type": "code",
@@ -15088,7 +15091,7 @@
 							"    return result"
 						],
 						"outputs": [],
-						"execution_count": 40
+						"execution_count": 39
 					},
 					{
 						"cell_type": "code",
@@ -15115,7 +15118,7 @@
 							"client = authenticate_client()"
 						],
 						"outputs": [],
-						"execution_count": 41
+						"execution_count": 40
 					},
 					{
 						"cell_type": "code",
@@ -15156,7 +15159,7 @@
 							"    return(\" \".join([sentence.text for sentence in extract_summary_result.sentences]))"
 						],
 						"outputs": [],
-						"execution_count": 42
+						"execution_count": 41
 					},
 					{
 						"cell_type": "code",
@@ -15198,7 +15201,7 @@
 							"    return input_string"
 						],
 						"outputs": [],
-						"execution_count": 43
+						"execution_count": 42
 					},
 					{
 						"cell_type": "code",
@@ -15221,7 +15224,7 @@
 							"    ])"
 						],
 						"outputs": [],
-						"execution_count": 44
+						"execution_count": 43
 					},
 					{
 						"cell_type": "markdown",
@@ -15287,6 +15290,7 @@
 							"\r\n",
 							"        # Create one abstractive summary using the collection of abstractive summaries created above\r\n",
 							"        p = 'Summarize the main idea of the following text. ' + input_string\r\n",
+							"        #print(p)\r\n",
 							"\r\n",
 							"        response = openai.Completion.create(\r\n",
 							"        engine=\"SummaryDivinci003\",\r\n",
@@ -15298,7 +15302,7 @@
 							"        presence_penalty=0,\r\n",
 							"        best_of=1,\r\n",
 							"        stop=None)\r\n",
-							"    \r\n",
+							"        print(response)\r\n",
 							"        final_ab_summarization = response['choices'][0]['text']\r\n",
 							"        #print(response['choices'][0]['text'])\r\n",
 							"        print(final_ab_summarization)\r\n",
@@ -15311,7 +15315,7 @@
 							"        return(spark.createDataFrame([topic, 'No Data'], schema)) "
 						],
 						"outputs": [],
-						"execution_count": 45
+						"execution_count": 44
 					},
 					{
 						"cell_type": "markdown",
@@ -15340,11 +15344,11 @@
 							}
 						},
 						"source": [
-							"#df_all = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment\")\r\n",
-							"#df_all.count()"
+							"df_all = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment\")\r\n",
+							"df_all.count()"
 						],
 						"outputs": [],
-						"execution_count": 46
+						"execution_count": 45
 					},
 					{
 						"cell_type": "code",
@@ -15361,11 +15365,30 @@
 							"collapsed": false
 						},
 						"source": [
+							"import time\r\n",
+							"\r\n",
+							"max_retries = 3\r\n",
+							"retry_count = 0\r\n",
+							"\r\n",
+							"while retry_count < max_retries:\r\n",
+							"    try:\r\n",
+							"        # Perform the task here\r\n",
+							"        topic_all_summary = Abstractive_Summarization(dataframe = df_all, topic=5)\r\n",
+							"        print(\"Task successfully completed\")\r\n",
+							"        break  # Exit the loop if the task was completed successfully\r\n",
+							"    except Exception as e:\r\n",
+							"        print(f\"Error occurred: {str(e)}\")\r\n",
+							"        retry_count += 1\r\n",
+							"        if retry_count < max_retries:\r\n",
+							"            print(f\"Retrying in 1 minute... (attempt {retry_count+1}/{max_retries})\")\r\n",
+							"            time.sleep(60)  # Wait for 1 minute before trying again\r\n",
+							"        else:\r\n",
+							"            print(f\"Max retries ({max_retries}) reached. Exiting...\")\r\n",
 							"#topic_all_summary = Abstractive_Summarization(dataframe = df_all, topic=5)\r\n",
-							"#display(topic_all_summary)"
+							"display(topic_all_summary)"
 						],
 						"outputs": [],
-						"execution_count": 47
+						"execution_count": 46
 					},
 					{
 						"cell_type": "markdown",
@@ -15398,7 +15421,7 @@
 							"df_topic0.count()"
 						],
 						"outputs": [],
-						"execution_count": 48
+						"execution_count": 47
 					},
 					{
 						"cell_type": "code",
@@ -15415,30 +15438,31 @@
 							"collapsed": false
 						},
 						"source": [
-							"topic0_summary = Abstractive_Summarization(dataframe = df_topic0, topic=0)\r\n",
+							"import time\r\n",
+							"\r\n",
+							"max_retries = 3\r\n",
+							"retry_count = 0\r\n",
+							"\r\n",
+							"while retry_count < max_retries:\r\n",
+							"    try:\r\n",
+							"        # Perform the task here\r\n",
+							"        topic0_summary = Abstractive_Summarization(dataframe = df_topic0, topic=0)\r\n",
+							"        print(\"Task successfully completed\")\r\n",
+							"        break  # Exit the loop if the task was completed successfully\r\n",
+							"    except Exception as e:\r\n",
+							"        print(f\"Error occurred: {str(e)}\")\r\n",
+							"        retry_count += 1\r\n",
+							"        if retry_count < max_retries:\r\n",
+							"            print(f\"Retrying in 1 minute... (attempt {retry_count+1}/{max_retries})\")\r\n",
+							"            time.sleep(60)  # Wait for 1 minute before trying again\r\n",
+							"        else:\r\n",
+							"            print(f\"Max retries ({max_retries}) reached. Exiting...\")\r\n",
+							"\r\n",
+							"#topic0_summary = Abstractive_Summarization(dataframe = df_topic0, topic=0)\r\n",
 							"display(topic0_summary)"
 						],
 						"outputs": [],
-						"execution_count": 49
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"time.sleep(180)"
-						],
-						"outputs": [],
-						"execution_count": 50
+						"execution_count": 48
 					},
 					{
 						"cell_type": "markdown",
@@ -15471,7 +15495,7 @@
 							"df_topic1.count()"
 						],
 						"outputs": [],
-						"execution_count": 51
+						"execution_count": 49
 					},
 					{
 						"cell_type": "code",
@@ -15488,30 +15512,30 @@
 							"collapsed": false
 						},
 						"source": [
-							"topic1_summary = Abstractive_Summarization(dataframe = df_topic1, topic=1)\r\n",
+							"import time\r\n",
+							"\r\n",
+							"max_retries = 3\r\n",
+							"retry_count = 0\r\n",
+							"\r\n",
+							"while retry_count < max_retries:\r\n",
+							"    try:\r\n",
+							"        # Perform the task here\r\n",
+							"        topic1_summary = Abstractive_Summarization(dataframe = df_topic1, topic=1)\r\n",
+							"        print(\"Task successfully completed\")\r\n",
+							"        break  # Exit the loop if the task was completed successfully\r\n",
+							"    except Exception as e:\r\n",
+							"        print(f\"Error occurred: {str(e)}\")\r\n",
+							"        retry_count += 1\r\n",
+							"        if retry_count < max_retries:\r\n",
+							"            print(f\"Retrying in 1 minute... (attempt {retry_count+1}/{max_retries})\")\r\n",
+							"            time.sleep(60)  # Wait for 1 minute before trying again\r\n",
+							"        else:\r\n",
+							"            print(f\"Max retries ({max_retries}) reached. Exiting...\")\r\n",
+							"#topic1_summary = Abstractive_Summarization(dataframe = df_topic1, topic=1)\r\n",
 							"display(topic1_summary)"
 						],
 						"outputs": [],
-						"execution_count": 52
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"time.sleep(180)"
-						],
-						"outputs": [],
-						"execution_count": 53
+						"execution_count": 50
 					},
 					{
 						"cell_type": "code",
@@ -15531,7 +15555,7 @@
 							"df_topic2.count()"
 						],
 						"outputs": [],
-						"execution_count": 54
+						"execution_count": 51
 					},
 					{
 						"cell_type": "code",
@@ -15548,30 +15572,30 @@
 							"collapsed": false
 						},
 						"source": [
-							"topic2_summary = Abstractive_Summarization(dataframe = df_topic2, topic=2)\r\n",
+							"import time\r\n",
+							"\r\n",
+							"max_retries = 3\r\n",
+							"retry_count = 0\r\n",
+							"\r\n",
+							"while retry_count < max_retries:\r\n",
+							"    try:\r\n",
+							"        # Perform the task here\r\n",
+							"        topic2_summary = Abstractive_Summarization(dataframe = df_topic2, topic=2)\r\n",
+							"        print(\"Task successfully completed\")\r\n",
+							"        break  # Exit the loop if the task was completed successfully\r\n",
+							"    except Exception as e:\r\n",
+							"        print(f\"Error occurred: {str(e)}\")\r\n",
+							"        retry_count += 1\r\n",
+							"        if retry_count < max_retries:\r\n",
+							"            print(f\"Retrying in 1 minute... (attempt {retry_count+1}/{max_retries})\")\r\n",
+							"            time.sleep(60)  # Wait for 1 minute before trying again\r\n",
+							"        else:\r\n",
+							"            print(f\"Max retries ({max_retries}) reached. Exiting...\")\r\n",
+							"#topic2_summary = Abstractive_Summarization(dataframe = df_topic2, topic=2)\r\n",
 							"display(topic2_summary)"
 						],
 						"outputs": [],
-						"execution_count": 55
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"time.sleep(180)"
-						],
-						"outputs": [],
-						"execution_count": 56
+						"execution_count": 52
 					},
 					{
 						"cell_type": "markdown",
@@ -15604,7 +15628,7 @@
 							"df_topic3.count()"
 						],
 						"outputs": [],
-						"execution_count": 57
+						"execution_count": 53
 					},
 					{
 						"cell_type": "code",
@@ -15621,30 +15645,30 @@
 							"collapsed": false
 						},
 						"source": [
-							"topic3_summary = Abstractive_Summarization(dataframe = df_topic3, topic=3)\r\n",
+							"import time\r\n",
+							"\r\n",
+							"max_retries = 3\r\n",
+							"retry_count = 0\r\n",
+							"\r\n",
+							"while retry_count < max_retries:\r\n",
+							"    try:\r\n",
+							"        # Perform the task here\r\n",
+							"        topic3_summary = Abstractive_Summarization(dataframe = df_topic3, topic=3)\r\n",
+							"        print(\"Task successfully completed\")\r\n",
+							"        break  # Exit the loop if the task was completed successfully\r\n",
+							"    except Exception as e:\r\n",
+							"        print(f\"Error occurred: {str(e)}\")\r\n",
+							"        retry_count += 1\r\n",
+							"        if retry_count < max_retries:\r\n",
+							"            print(f\"Retrying in 1 minute... (attempt {retry_count+1}/{max_retries})\")\r\n",
+							"            time.sleep(60)  # Wait for 1 minute before trying again\r\n",
+							"        else:\r\n",
+							"            print(f\"Max retries ({max_retries}) reached. Exiting...\")\r\n",
+							"#topic3_summary = Abstractive_Summarization(dataframe = df_topic3, topic=3)\r\n",
 							"display(topic3_summary)"
 						],
 						"outputs": [],
-						"execution_count": 58
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"time.sleep(180)"
-						],
-						"outputs": [],
-						"execution_count": 59
+						"execution_count": 54
 					},
 					{
 						"cell_type": "markdown",
@@ -15677,7 +15701,7 @@
 							"df_topic4.count()"
 						],
 						"outputs": [],
-						"execution_count": 60
+						"execution_count": 55
 					},
 					{
 						"cell_type": "code",
@@ -15694,11 +15718,30 @@
 							"collapsed": false
 						},
 						"source": [
-							"topic4_summary = Abstractive_Summarization(dataframe = df_topic4, topic=4)\r\n",
+							"import time\r\n",
+							"\r\n",
+							"max_retries = 3\r\n",
+							"retry_count = 0\r\n",
+							"\r\n",
+							"while retry_count < max_retries:\r\n",
+							"    try:\r\n",
+							"        # Perform the task here\r\n",
+							"        topic4_summary = Abstractive_Summarization(dataframe = df_topic4, topic=4)\r\n",
+							"        print(\"Task successfully completed\")\r\n",
+							"        break  # Exit the loop if the task was completed successfully\r\n",
+							"    except Exception as e:\r\n",
+							"        print(f\"Error occurred: {str(e)}\")\r\n",
+							"        retry_count += 1\r\n",
+							"        if retry_count < max_retries:\r\n",
+							"            print(f\"Retrying in 1 minute... (attempt {retry_count+1}/{max_retries})\")\r\n",
+							"            time.sleep(60)  # Wait for 1 minute before trying again\r\n",
+							"        else:\r\n",
+							"            print(f\"Max retries ({max_retries}) reached. Exiting...\")\r\n",
+							"#topic4_summary = Abstractive_Summarization(dataframe = df_topic4, topic=4)\r\n",
 							"display(topic4_summary)"
 						],
 						"outputs": [],
-						"execution_count": 61
+						"execution_count": 56
 					},
 					{
 						"cell_type": "markdown",
@@ -15729,11 +15772,11 @@
 						},
 						"source": [
 							"# union the dataframes\r\n",
-							"Topic_Summary_df = topic0_summary.union(topic1_summary).union(topic2_summary).union(topic3_summary).union(topic4_summary)\r\n",
+							"Topic_Summary_df = topic0_summary.union(topic1_summary).union(topic2_summary).union(topic3_summary).union(topic4_summary).union(topic_all_summary)\r\n",
 							"display(Topic_Summary_df)"
 						],
 						"outputs": [],
-						"execution_count": 62
+						"execution_count": 57
 					},
 					{
 						"cell_type": "markdown",
@@ -15787,7 +15830,7 @@
 							"outputtable = \"SQLPoolTest.\" + table"
 						],
 						"outputs": [],
-						"execution_count": 63
+						"execution_count": 58
 					},
 					{
 						"cell_type": "code",
@@ -15824,26 +15867,7 @@
 							" .synapsesql(outputtable))"
 						],
 						"outputs": [],
-						"execution_count": 69
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							""
-						],
-						"outputs": [],
-						"execution_count": null
+						"execution_count": 59
 					}
 				]
 			},
@@ -19941,7 +19965,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "d9e51d91-aede-4ea5-a1e6-de341aaa0bb0"
+						"spark.autotune.trackingId": "9ab5b4d0-6018-433b-babb-a35de4db8861"
 					}
 				},
 				"metadata": {
@@ -19966,7 +19990,8 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
