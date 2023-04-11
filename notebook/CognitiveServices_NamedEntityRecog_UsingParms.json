@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "9b12a156-fa31-49e5-ac2a-169311f10dd0"
+				"spark.autotune.trackingId": "4981a098-16d9-4c4f-a20a-e3afbbe5fb53"
 			}
 		},
 		"metadata": {
@@ -118,7 +118,7 @@
 					"#table = \"NER.Aithusa_NER\"\n",
 					"#senttable = \"Sent.Aithusa_Sentiment\""
 				],
-				"execution_count": 3
+				"execution_count": 41
 			},
 			{
 				"cell_type": "code",
@@ -997,7 +997,25 @@
 				"source": [
 					"outputtable = \"SQLPoolTest.\" + table"
 				],
-				"execution_count": 36
+				"execution_count": 42
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"print(outputtable)"
+				],
+				"execution_count": 43
 			},
 			{
 				"cell_type": "code",
@@ -1033,7 +1051,7 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(outputtable))"
 				],
-				"execution_count": 37
+				"execution_count": 44
 			}
 		]
 	}
