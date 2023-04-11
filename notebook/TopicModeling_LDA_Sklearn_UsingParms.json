@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "851f3b76-a84b-4645-a483-032ddd8bd931"
+				"spark.autotune.trackingId": "d9e51d91-aede-4ea5-a1e6-de341aaa0bb0"
 			}
 		},
 		"metadata": {
@@ -304,15 +304,15 @@
 					"    # Convert text to lowercase\r\n",
 					"    text = text.lower()\r\n",
 					"    # Remove URLs\r\n",
-					"    text = re.sub(url_regex, '', text)\r\n",
+					"    text = re.sub(url_regex, ' ', text)\r\n",
 					"    # Remove mentions and hashtags\r\n",
-					"    text = re.sub(mentions_hashtag_regex, '', text)\r\n",
+					"    text = re.sub(mentions_hashtag_regex, ' ', text)\r\n",
 					"    # Remove special characters\r\n",
-					"    text = re.sub(special_chars_regex, '', text)\r\n",
+					"    text = re.sub(special_chars_regex, ' ', text)\r\n",
 					"    # Remove 'amp'\r\n",
-					"    text = re.sub(\"amp\", '', text)\r\n",
+					"    text = re.sub(\"amp\", ' ', text)\r\n",
 					"    # Remove emojis\r\n",
-					"    text = re.sub(emoji_regex, '', text)\r\n",
+					"    text = re.sub(emoji_regex, ' ', text)\r\n",
 					"    # Remove empty spaces equal to or bigger than 2 spaces\r\n",
 					"    text = re.sub(extra_spaces_regex, ' ', text)\r\n",
 					"    # Remove empty spaces\r\n",
