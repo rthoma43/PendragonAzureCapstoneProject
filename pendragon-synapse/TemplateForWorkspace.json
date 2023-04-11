@@ -7931,7 +7931,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "SELECT * FROM [dbo].[NATO_Tweets1]",
+					"query": "SELECT count(*) FROM [Sent].[NATO_Sentiment]",
 					"metadata": {
 						"language": "sql"
 					},
@@ -9336,7 +9336,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "70240a1d-ba26-4e69-a6c4-f1dd6ef041ec"
+						"spark.autotune.trackingId": "c0737c3b-fb93-4dd0-a5ed-0a7511053738"
 					}
 				},
 				"metadata": {
@@ -9361,13 +9361,15 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -9377,7 +9379,7 @@
 							"from synapse.ml.cognitive import *"
 						],
 						"outputs": [],
-						"execution_count": 1
+						"execution_count": 8
 					},
 					{
 						"cell_type": "code",
@@ -9396,7 +9398,7 @@
 							"pip install azure-ai-textanalytics==5.2.0"
 						],
 						"outputs": [],
-						"execution_count": 2
+						"execution_count": 9
 					},
 					{
 						"cell_type": "markdown",
@@ -9432,7 +9434,7 @@
 							"table = \"placeholder\""
 						],
 						"outputs": [],
-						"execution_count": 3
+						"execution_count": 10
 					},
 					{
 						"cell_type": "code",
@@ -9471,7 +9473,7 @@
 							"    return(df)"
 						],
 						"outputs": [],
-						"execution_count": 4
+						"execution_count": 12
 					},
 					{
 						"cell_type": "code",
@@ -9505,7 +9507,7 @@
 							"client = authenticate_client()"
 						],
 						"outputs": [],
-						"execution_count": 5
+						"execution_count": 11
 					},
 					{
 						"cell_type": "code",
@@ -9550,7 +9552,7 @@
 							"    return(entities, categories, subcategories, confidencescores, entity_lengths, entity_offsets)"
 						],
 						"outputs": [],
-						"execution_count": 6
+						"execution_count": 13
 					},
 					{
 						"cell_type": "code",
@@ -9569,7 +9571,7 @@
 							"linked_service_name = \"CognitiveService1\""
 						],
 						"outputs": [],
-						"execution_count": 7
+						"execution_count": 14
 					},
 					{
 						"cell_type": "markdown",
@@ -9605,7 +9607,7 @@
 							"from pyspark.sql.functions import lit"
 						],
 						"outputs": [],
-						"execution_count": 156
+						"execution_count": 15
 					},
 					{
 						"cell_type": "code",
@@ -9735,7 +9737,26 @@
 							"df_all.count()"
 						],
 						"outputs": [],
-						"execution_count": 160
+						"execution_count": 16
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							""
+						],
+						"outputs": [],
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -11056,7 +11077,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "2888d788-3952-428f-ac21-d93d123b6fa2"
+						"spark.autotune.trackingId": "8f1de664-5a0f-4205-854f-d401921ab505"
 					}
 				},
 				"metadata": {
@@ -11081,13 +11102,15 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -11961,7 +11984,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "e78ac90f-71e0-448f-8ff5-462c8764e191"
+						"spark.autotune.trackingId": "e7289396-77bf-4cd4-bfad-a41e44e9333c"
 					}
 				},
 				"metadata": {
@@ -11986,13 +12009,15 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -18187,7 +18212,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "fdf40cff-7970-4185-b1b6-8d281999ef82"
+						"spark.autotune.trackingId": "05842078-5c1b-4442-b234-c6f131b1d721"
 					}
 				},
 				"metadata": {
@@ -18212,7 +18237,8 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -18271,7 +18297,7 @@
 							")"
 						],
 						"outputs": [],
-						"execution_count": 1
+						"execution_count": 6
 					},
 					{
 						"cell_type": "markdown",
@@ -18308,7 +18334,7 @@
 							"wordtable = \"Words.NATO_Topic_Words\""
 						],
 						"outputs": [],
-						"execution_count": 84
+						"execution_count": 7
 					},
 					{
 						"cell_type": "code",
@@ -18328,7 +18354,26 @@
 							"from pyspark.sql.types import *"
 						],
 						"outputs": [],
-						"execution_count": 86
+						"execution_count": 8
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df.show()"
+						],
+						"outputs": [],
+						"execution_count": 9
 					},
 					{
 						"cell_type": "markdown",
@@ -18369,7 +18414,7 @@
 							"#df = df.limit(100)"
 						],
 						"outputs": [],
-						"execution_count": 88
+						"execution_count": 10
 					},
 					{
 						"cell_type": "markdown",
@@ -18438,7 +18483,7 @@
 							"#display(df)"
 						],
 						"outputs": [],
-						"execution_count": 89
+						"execution_count": 11
 					},
 					{
 						"cell_type": "code",
@@ -18475,7 +18520,7 @@
 							"display(df_removed)"
 						],
 						"outputs": [],
-						"execution_count": 90
+						"execution_count": 12
 					},
 					{
 						"cell_type": "markdown",
@@ -18514,7 +18559,7 @@
 							"pandas_df = df_removed.toPandas()"
 						],
 						"outputs": [],
-						"execution_count": 91
+						"execution_count": 13
 					},
 					{
 						"cell_type": "code",
@@ -18556,7 +18601,7 @@
 							"display(spark_df)"
 						],
 						"outputs": [],
-						"execution_count": 92
+						"execution_count": 14
 					},
 					{
 						"cell_type": "markdown",
@@ -18598,7 +18643,7 @@
 							"print(top_N_words)"
 						],
 						"outputs": [],
-						"execution_count": 93
+						"execution_count": 15
 					},
 					{
 						"cell_type": "code",
@@ -18630,7 +18675,7 @@
 							"display(df_words)"
 						],
 						"outputs": [],
-						"execution_count": 94
+						"execution_count": 16
 					},
 					{
 						"cell_type": "code",
@@ -18649,7 +18694,7 @@
 							"spark_df.printSchema"
 						],
 						"outputs": [],
-						"execution_count": 95
+						"execution_count": 17
 					},
 					{
 						"cell_type": "markdown",
@@ -18735,7 +18780,7 @@
 							"outputwordtable = \"SQLPoolTest.\" + wordtable"
 						],
 						"outputs": [],
-						"execution_count": 103
+						"execution_count": 18
 					},
 					{
 						"cell_type": "code",
@@ -18772,7 +18817,7 @@
 							" .synapsesql(outputtopictable))"
 						],
 						"outputs": [],
-						"execution_count": 98
+						"execution_count": 19
 					},
 					{
 						"cell_type": "code",
@@ -18791,7 +18836,7 @@
 							"df_words.printSchema"
 						],
 						"outputs": [],
-						"execution_count": 99
+						"execution_count": 20
 					},
 					{
 						"cell_type": "code",
@@ -18828,7 +18873,7 @@
 							" .synapsesql(outputwordtable))"
 						],
 						"outputs": [],
-						"execution_count": 104
+						"execution_count": 21
 					}
 				]
 			},
