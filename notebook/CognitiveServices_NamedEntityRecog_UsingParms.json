@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "9effc5d3-daa5-4481-9a67-b0565aeb5c39"
+				"spark.autotune.trackingId": "8d4e878f-ae55-4833-84c0-5bebedd6369c"
 			}
 		},
 		"metadata": {
@@ -354,7 +354,7 @@
 				"source": [
 					"def NamedEntityRecognition(dataframe, topic):\r\n",
 					"    if dataframe.count() > 1:\r\n",
-					"        text_col = dataframe.select('cleantext_tokenized')\r\n",
+					"        text_col = dataframe.select('cleantext_lemmatized')\r\n",
 					"        # Collect all tweets into a list\r\n",
 					"        text_list = text_col.rdd.map(lambda row: row[0]).collect()\r\n",
 					"        # Join all tweets into a single document\r\n",
@@ -393,7 +393,7 @@
 					"        return(spark.createDataFrame(['No Data','No Data','No Data', topic], schema)) \r\n",
 					""
 				],
-				"execution_count": 27
+				"execution_count": 35
 			},
 			{
 				"cell_type": "code",
@@ -542,9 +542,9 @@
 					}
 				},
 				"source": [
-					"pandas_df[['cleantext','cleantext_tokenized']]"
+					"pandas_df[['cleantext','cleantext_lemmatized']]"
 				],
-				"execution_count": 25
+				"execution_count": 33
 			},
 			{
 				"cell_type": "code",
@@ -563,7 +563,7 @@
 					"# change back to spark df_all\r\n",
 					"df_all=spark.createDataFrame(pandas_df)"
 				],
-				"execution_count": 26
+				"execution_count": 34
 			},
 			{
 				"cell_type": "code",
@@ -582,7 +582,26 @@
 				"source": [
 					"df_all_ner = NamedEntityRecognition(df_all,5)"
 				],
-				"execution_count": 13
+				"execution_count": 36
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(df_all_ner)"
+				],
+				"execution_count": 37
 			},
 			{
 				"cell_type": "markdown",
