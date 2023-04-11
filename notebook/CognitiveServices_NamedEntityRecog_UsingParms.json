@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "8d4e878f-ae55-4833-84c0-5bebedd6369c"
+				"spark.autotune.trackingId": "7c415416-5a25-4ce3-8308-486be7b6f2cb"
 			}
 		},
 		"metadata": {
@@ -461,9 +461,12 @@
 					}
 				},
 				"source": [
-					"pandas_df = df_all.toPandas()"
+					"from nltk.stem import WordNetLemmatizer\r\n",
+					"def word_lemmatizer(text):\r\n",
+					"    lem_text = [WordNetLemmatizer().lemmatize(i) for i in text]\r\n",
+					"    return lem_text"
 				],
-				"execution_count": 16
+				"execution_count": 38
 			},
 			{
 				"cell_type": "code",
@@ -479,10 +482,17 @@
 					}
 				},
 				"source": [
-					"pandas_df['cleantext_lemmatized'] = pandas_df['cleantext'].apply(lambda x: word_tokenize(x))\r\n",
-					"#pandas_df.head()"
+					"def lemmatize (sparkdf):\r\n",
+					"    pandas_df = sparkdf.toPandas()\r\n",
+					"    pandas_df['cleantext_lemmatized'] = pandas_df['cleantext'].apply(lambda x: word_tokenize(x))\r\n",
+					"    nltk.download('wordnet')\r\n",
+					"    pandas_df['cleantext_lemmatized'] = pandas_df['cleantext_lemmatized'].apply(lambda x: word_lemmatizer(x))\r\n",
+					"    pandas_df['cleantext_lemmatized']= pandas_df['cleantext_lemmatized'].str.join(\" \")\r\n",
+					"    # change back to spark df_all\r\n",
+					"    spark_df = spark.createDataFrame(pandas_df)\r\n",
+					"    return(spark_df)"
 				],
-				"execution_count": 30
+				"execution_count": 39
 			},
 			{
 				"cell_type": "code",
