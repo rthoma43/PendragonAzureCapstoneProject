@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "f33d9032-09fe-4ce8-9357-14c3120c9ed7"
+				"spark.autotune.trackingId": "70240a1d-ba26-4e69-a6c4-f1dd6ef041ec"
 			}
 		},
 		"metadata": {
@@ -61,7 +61,7 @@
 					"import synapse.ml\r\n",
 					"from synapse.ml.cognitive import *"
 				],
-				"execution_count": 150
+				"execution_count": 1
 			},
 			{
 				"cell_type": "code",
@@ -79,7 +79,7 @@
 				"source": [
 					"pip install azure-ai-textanalytics==5.2.0"
 				],
-				"execution_count": 151
+				"execution_count": 2
 			},
 			{
 				"cell_type": "markdown",
@@ -114,7 +114,7 @@
 				"source": [
 					"table = \"placeholder\""
 				],
-				"execution_count": null
+				"execution_count": 3
 			},
 			{
 				"cell_type": "code",
@@ -152,7 +152,7 @@
 					"    )\r\n",
 					"    return(df)"
 				],
-				"execution_count": 152
+				"execution_count": 4
 			},
 			{
 				"cell_type": "code",
@@ -185,7 +185,7 @@
 					"\r\n",
 					"client = authenticate_client()"
 				],
-				"execution_count": 153
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -229,7 +229,7 @@
 					"    \r\n",
 					"    return(entities, categories, subcategories, confidencescores, entity_lengths, entity_offsets)"
 				],
-				"execution_count": 154
+				"execution_count": 6
 			},
 			{
 				"cell_type": "code",
@@ -247,7 +247,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 155
+				"execution_count": 7
 			},
 			{
 				"cell_type": "markdown",

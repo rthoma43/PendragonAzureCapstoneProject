@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "f0444243-1fbc-4583-ae65-5efbcea802d3"
+				"spark.autotune.trackingId": "fdf40cff-7970-4185-b1b6-8d281999ef82"
 			}
 		},
 		"metadata": {
@@ -104,7 +104,7 @@
 					"                     .synapsesql()\r\n",
 					")"
 				],
-				"execution_count": 83
+				"execution_count": 1
 			},
 			{
 				"cell_type": "markdown",
@@ -244,15 +244,15 @@
 					"    # Convert text to lowercase\r\n",
 					"    text = text.lower()\r\n",
 					"    # Remove URLs\r\n",
-					"    text = re.sub(url_regex, '', text)\r\n",
+					"    text = re.sub(url_regex, ' ', text)\r\n",
 					"    # Remove mentions and hashtags\r\n",
-					"    text = re.sub(mentions_hashtag_regex, '', text)\r\n",
+					"    text = re.sub(mentions_hashtag_regex, ' ', text)\r\n",
 					"    # Remove special characters\r\n",
-					"    text = re.sub(special_chars_regex, '', text)\r\n",
+					"    text = re.sub(special_chars_regex, ' ', text)\r\n",
 					"    # Remove 'amp'\r\n",
-					"    text = re.sub(\"amp\", '', text)\r\n",
+					"    text = re.sub(\"amp\", ' ', text)\r\n",
 					"    # Remove emojis\r\n",
-					"    text = re.sub(emoji_regex, '', text)\r\n",
+					"    text = re.sub(emoji_regex, ' ', text)\r\n",
 					"    # Remove empty spaces equal to or bigger than 2 spaces\r\n",
 					"    text = re.sub(extra_spaces_regex, ' ', text)\r\n",
 					"    # Remove empty spaces\r\n",
