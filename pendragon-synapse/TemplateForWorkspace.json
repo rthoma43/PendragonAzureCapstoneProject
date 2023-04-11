@@ -7931,7 +7931,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "SELECT count(*) FROM [Sent].[NATO_Sentiment]",
+					"query": "SELECT * FROM [NER].[NATO_NER]",
 					"metadata": {
 						"language": "sql"
 					},
@@ -9336,7 +9336,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "c0737c3b-fb93-4dd0-a5ed-0a7511053738"
+						"spark.autotune.trackingId": "98df85a2-3e3d-45f9-b123-6ac95b9d4d5e"
 					}
 				},
 				"metadata": {
@@ -9361,15 +9361,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -10215,7 +10213,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "529a69e6-2a10-4ead-8d45-c3e8839e7675"
+						"spark.autotune.trackingId": "4981a098-16d9-4c4f-a20a-e3afbbe5fb53"
 					}
 				},
 				"metadata": {
@@ -10308,14 +10306,14 @@
 							]
 						},
 						"source": [
-							"table = \"placeholder\"\n",
+							"table = \"NER.NATO_NER\"\n",
 							"senttable = \"Sent.NATO_Sentiment\"\n",
 							"\n",
 							"#table = \"NER.Aithusa_NER\"\n",
 							"#senttable = \"Sent.Aithusa_Sentiment\""
 						],
 						"outputs": [],
-						"execution_count": 3
+						"execution_count": 41
 					},
 					{
 						"cell_type": "code",
@@ -10558,7 +10556,7 @@
 						"source": [
 							"def NamedEntityRecognition(dataframe, topic):\r\n",
 							"    if dataframe.count() > 1:\r\n",
-							"        text_col = dataframe.select('cleantext')\r\n",
+							"        text_col = dataframe.select('cleantext_lemmatized')\r\n",
 							"        # Collect all tweets into a list\r\n",
 							"        text_list = text_col.rdd.map(lambda row: row[0]).collect()\r\n",
 							"        # Join all tweets into a single document\r\n",
@@ -10614,11 +10612,113 @@
 							}
 						},
 						"source": [
+							"import nltk \r\n",
+							"nltk.download('punkt')\r\n",
+							"from nltk.tokenize import sent_tokenize, word_tokenize"
+						],
+						"outputs": [],
+						"execution_count": 12
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
 							"df_all = QueryDataSQLPool(\"select * from \"+ senttable)\r\n",
 							"df_all.count()"
 						],
 						"outputs": [],
-						"execution_count": 12
+						"execution_count": 13
+					},
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"## Lemmatization of remaing words"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from nltk.stem import WordNetLemmatizer\r\n",
+							"def word_lemmatizer(text):\r\n",
+							"    lem_text = [WordNetLemmatizer().lemmatize(i) for i in text]\r\n",
+							"    return lem_text"
+						],
+						"outputs": [],
+						"execution_count": 14
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"def lemmatize (sparkdf):\r\n",
+							"    pandas_df = sparkdf.toPandas()\r\n",
+							"    pandas_df['cleantext_lemmatized'] = pandas_df['cleantext'].apply(lambda x: word_tokenize(x))\r\n",
+							"    nltk.download('wordnet')\r\n",
+							"    pandas_df['cleantext_lemmatized'] = pandas_df['cleantext_lemmatized'].apply(lambda x: word_lemmatizer(x))\r\n",
+							"    pandas_df['cleantext_lemmatized']= pandas_df['cleantext_lemmatized'].str.join(\" \")\r\n",
+							"    # change back to spark df_all\r\n",
+							"    spark_df = spark.createDataFrame(pandas_df)\r\n",
+							"    return(spark_df)"
+						],
+						"outputs": [],
+						"execution_count": 15
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_all = lemmatize(df_all)"
+						],
+						"outputs": [],
+						"execution_count": 16
 					},
 					{
 						"cell_type": "code",
@@ -10638,7 +10738,27 @@
 							"df_all_ner = NamedEntityRecognition(df_all,5)"
 						],
 						"outputs": [],
-						"execution_count": 13
+						"execution_count": 17
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"display(df_all_ner)"
+						],
+						"outputs": [],
+						"execution_count": 18
 					},
 					{
 						"cell_type": "markdown",
@@ -10671,7 +10791,26 @@
 							"df_topic0.count()"
 						],
 						"outputs": [],
-						"execution_count": 14
+						"execution_count": 19
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic0 = lemmatize(df_topic0)"
+						],
+						"outputs": [],
+						"execution_count": 20
 					},
 					{
 						"cell_type": "code",
@@ -10691,7 +10830,7 @@
 							"topic0_NER = NamedEntityRecognition(dataframe = df_topic0, topic = 0)"
 						],
 						"outputs": [],
-						"execution_count": 15
+						"execution_count": 21
 					},
 					{
 						"cell_type": "markdown",
@@ -10724,7 +10863,26 @@
 							"df_topic1.count()"
 						],
 						"outputs": [],
-						"execution_count": 16
+						"execution_count": 22
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic1 = lemmatize(df_topic1)"
+						],
+						"outputs": [],
+						"execution_count": 23
 					},
 					{
 						"cell_type": "code",
@@ -10744,7 +10902,7 @@
 							"topic1_NER = NamedEntityRecognition(dataframe = df_topic1, topic = 1)"
 						],
 						"outputs": [],
-						"execution_count": 17
+						"execution_count": 24
 					},
 					{
 						"cell_type": "markdown",
@@ -10777,7 +10935,26 @@
 							"df_topic2.count()"
 						],
 						"outputs": [],
-						"execution_count": 18
+						"execution_count": 25
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic2 = lemmatize(df_topic2)"
+						],
+						"outputs": [],
+						"execution_count": 26
 					},
 					{
 						"cell_type": "code",
@@ -10796,7 +10973,7 @@
 							"topic2_NER = NamedEntityRecognition(dataframe = df_topic2, topic = 2)"
 						],
 						"outputs": [],
-						"execution_count": 19
+						"execution_count": 27
 					},
 					{
 						"cell_type": "markdown",
@@ -10829,7 +11006,26 @@
 							"df_topic3.count()"
 						],
 						"outputs": [],
-						"execution_count": 20
+						"execution_count": 28
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic3 = lemmatize(df_topic3)"
+						],
+						"outputs": [],
+						"execution_count": 29
 					},
 					{
 						"cell_type": "code",
@@ -10848,7 +11044,7 @@
 							"topic3_NER = NamedEntityRecognition(dataframe = df_topic3, topic = 3)"
 						],
 						"outputs": [],
-						"execution_count": 21
+						"execution_count": 30
 					},
 					{
 						"cell_type": "markdown",
@@ -10881,7 +11077,26 @@
 							"df_topic4.count()"
 						],
 						"outputs": [],
-						"execution_count": 22
+						"execution_count": 31
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_topic4 = lemmatize(df_topic4)"
+						],
+						"outputs": [],
+						"execution_count": 32
 					},
 					{
 						"cell_type": "code",
@@ -10900,7 +11115,7 @@
 							"topic4_NER = NamedEntityRecognition(dataframe = df_topic4, topic = 4)"
 						],
 						"outputs": [],
-						"execution_count": 23
+						"execution_count": 33
 					},
 					{
 						"cell_type": "markdown",
@@ -10935,7 +11150,7 @@
 							"display(NameEntity_df)"
 						],
 						"outputs": [],
-						"execution_count": 24
+						"execution_count": 34
 					},
 					{
 						"cell_type": "code",
@@ -10955,7 +11170,7 @@
 							"display(NameEntity_df)"
 						],
 						"outputs": [],
-						"execution_count": 25
+						"execution_count": 35
 					},
 					{
 						"cell_type": "markdown",
@@ -11010,7 +11225,26 @@
 							"outputtable = \"SQLPoolTest.\" + table"
 						],
 						"outputs": [],
-						"execution_count": 26
+						"execution_count": 42
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"print(outputtable)"
+						],
+						"outputs": [],
+						"execution_count": 43
 					},
 					{
 						"cell_type": "code",
@@ -11047,7 +11281,7 @@
 							" .synapsesql(outputtable))"
 						],
 						"outputs": [],
-						"execution_count": 27
+						"execution_count": 44
 					}
 				]
 			},
@@ -11077,7 +11311,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "8f1de664-5a0f-4205-854f-d401921ab505"
+						"spark.autotune.trackingId": "2888d788-3952-428f-ac21-d93d123b6fa2"
 					}
 				},
 				"metadata": {
@@ -11102,15 +11336,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -11984,7 +12216,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "e7289396-77bf-4cd4-bfad-a41e44e9333c"
+						"spark.autotune.trackingId": "20f10e51-3e98-437f-86ca-64d964d10396"
 					}
 				},
 				"metadata": {
@@ -12009,15 +12241,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -18212,7 +18442,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "05842078-5c1b-4442-b234-c6f131b1d721"
+						"spark.autotune.trackingId": "a89582bc-1263-4640-ba93-d17ee8960c25"
 					}
 				},
 				"metadata": {
@@ -18237,8 +18467,7 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -19712,7 +19941,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "851f3b76-a84b-4645-a483-032ddd8bd931"
+						"spark.autotune.trackingId": "d9e51d91-aede-4ea5-a1e6-de341aaa0bb0"
 					}
 				},
 				"metadata": {
@@ -20002,15 +20231,15 @@
 							"    # Convert text to lowercase\r\n",
 							"    text = text.lower()\r\n",
 							"    # Remove URLs\r\n",
-							"    text = re.sub(url_regex, '', text)\r\n",
+							"    text = re.sub(url_regex, ' ', text)\r\n",
 							"    # Remove mentions and hashtags\r\n",
-							"    text = re.sub(mentions_hashtag_regex, '', text)\r\n",
+							"    text = re.sub(mentions_hashtag_regex, ' ', text)\r\n",
 							"    # Remove special characters\r\n",
-							"    text = re.sub(special_chars_regex, '', text)\r\n",
+							"    text = re.sub(special_chars_regex, ' ', text)\r\n",
 							"    # Remove 'amp'\r\n",
-							"    text = re.sub(\"amp\", '', text)\r\n",
+							"    text = re.sub(\"amp\", ' ', text)\r\n",
 							"    # Remove emojis\r\n",
-							"    text = re.sub(emoji_regex, '', text)\r\n",
+							"    text = re.sub(emoji_regex, ' ', text)\r\n",
 							"    # Remove empty spaces equal to or bigger than 2 spaces\r\n",
 							"    text = re.sub(extra_spaces_regex, ' ', text)\r\n",
 							"    # Remove empty spaces\r\n",
