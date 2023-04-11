@@ -2,7 +2,7 @@
 	"name": "SQL script 5",
 	"properties": {
 		"content": {
-			"query": "SELECT count(*) FROM [Sent].[NATO_Sentiment]",
+			"query": "SELECT * FROM [Sent].[NATO_Sentiment]",
 			"metadata": {
 				"language": "sql"
 			},
