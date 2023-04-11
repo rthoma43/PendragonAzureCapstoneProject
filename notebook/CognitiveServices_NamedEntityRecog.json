@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "70240a1d-ba26-4e69-a6c4-f1dd6ef041ec"
+				"spark.autotune.trackingId": "98df85a2-3e3d-45f9-b123-6ac95b9d4d5e"
 			}
 		},
 		"metadata": {
@@ -61,7 +61,7 @@
 					"import synapse.ml\r\n",
 					"from synapse.ml.cognitive import *"
 				],
-				"execution_count": 1
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
@@ -79,7 +79,7 @@
 				"source": [
 					"pip install azure-ai-textanalytics==5.2.0"
 				],
-				"execution_count": 2
+				"execution_count": 9
 			},
 			{
 				"cell_type": "markdown",
@@ -114,7 +114,7 @@
 				"source": [
 					"table = \"placeholder\""
 				],
-				"execution_count": 3
+				"execution_count": 10
 			},
 			{
 				"cell_type": "code",
@@ -152,7 +152,7 @@
 					"    )\r\n",
 					"    return(df)"
 				],
-				"execution_count": 4
+				"execution_count": 12
 			},
 			{
 				"cell_type": "code",
@@ -185,7 +185,7 @@
 					"\r\n",
 					"client = authenticate_client()"
 				],
-				"execution_count": 5
+				"execution_count": 11
 			},
 			{
 				"cell_type": "code",
@@ -229,7 +229,7 @@
 					"    \r\n",
 					"    return(entities, categories, subcategories, confidencescores, entity_lengths, entity_offsets)"
 				],
-				"execution_count": 6
+				"execution_count": 13
 			},
 			{
 				"cell_type": "code",
@@ -247,7 +247,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 7
+				"execution_count": 14
 			},
 			{
 				"cell_type": "markdown",
@@ -282,7 +282,7 @@
 					"import pyspark.sql.functions as F\r\n",
 					"from pyspark.sql.functions import lit"
 				],
-				"execution_count": 156
+				"execution_count": 15
 			},
 			{
 				"cell_type": "code",
@@ -408,7 +408,25 @@
 					"df_all = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment\")\r\n",
 					"df_all.count()"
 				],
-				"execution_count": 160
+				"execution_count": 16
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					""
+				],
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
