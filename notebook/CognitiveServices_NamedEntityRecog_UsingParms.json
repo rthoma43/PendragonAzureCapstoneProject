@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "4a2c4b27-06dc-45d3-b532-812a39cbf4d0"
+				"spark.autotune.trackingId": "9b12a156-fa31-49e5-ac2a-169311f10dd0"
 			}
 		},
 		"metadata": {
@@ -79,7 +79,7 @@
 				"source": [
 					"pip install azure-ai-textanalytics==5.2.0"
 				],
-				"execution_count": 5
+				"execution_count": 2
 			},
 			{
 				"cell_type": "markdown",
@@ -112,13 +112,13 @@
 					]
 				},
 				"source": [
-					"table = \"placeholder\"\n",
+					"table = \"NER.NATO_NER\"\n",
 					"senttable = \"Sent.NATO_Sentiment\"\n",
 					"\n",
 					"#table = \"NER.Aithusa_NER\"\n",
 					"#senttable = \"Sent.Aithusa_Sentiment\""
 				],
-				"execution_count": 2
+				"execution_count": 3
 			},
 			{
 				"cell_type": "code",
@@ -156,7 +156,7 @@
 					"    )\r\n",
 					"    return(df)"
 				],
-				"execution_count": 3
+				"execution_count": 4
 			},
 			{
 				"cell_type": "code",
@@ -189,7 +189,7 @@
 					"\r\n",
 					"client = authenticate_client()"
 				],
-				"execution_count": 6
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -233,7 +233,7 @@
 					"    \r\n",
 					"    return(entities, categories, subcategories, confidencescores, entity_lengths, entity_offsets)"
 				],
-				"execution_count": 7
+				"execution_count": 6
 			},
 			{
 				"cell_type": "code",
@@ -251,7 +251,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 8
+				"execution_count": 7
 			},
 			{
 				"cell_type": "markdown",
@@ -286,7 +286,7 @@
 					"import pyspark.sql.functions as F\r\n",
 					"from pyspark.sql.functions import lit"
 				],
-				"execution_count": 9
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
@@ -316,7 +316,7 @@
 					"        result.append(current_batch)\r\n",
 					"    return result"
 				],
-				"execution_count": 10
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -336,7 +336,7 @@
 					"from pyspark.sql.functions import pandas_udf, col\r\n",
 					"from pyspark.sql.types import StructType, StructField, StringType, ArrayType"
 				],
-				"execution_count": 11
+				"execution_count": 10
 			},
 			{
 				"cell_type": "code",
@@ -393,7 +393,7 @@
 					"        return(spark.createDataFrame(['No Data','No Data','No Data', topic], schema)) \r\n",
 					""
 				],
-				"execution_count": 35
+				"execution_count": 11
 			},
 			{
 				"cell_type": "code",
@@ -413,7 +413,7 @@
 					"nltk.download('punkt')\r\n",
 					"from nltk.tokenize import sent_tokenize, word_tokenize"
 				],
-				"execution_count": 13
+				"execution_count": 12
 			},
 			{
 				"cell_type": "code",
@@ -432,7 +432,7 @@
 					"df_all = QueryDataSQLPool(\"select * from \"+ senttable)\r\n",
 					"df_all.count()"
 				],
-				"execution_count": 28
+				"execution_count": 13
 			},
 			{
 				"cell_type": "markdown",
@@ -466,7 +466,7 @@
 					"    lem_text = [WordNetLemmatizer().lemmatize(i) for i in text]\r\n",
 					"    return lem_text"
 				],
-				"execution_count": 38
+				"execution_count": 14
 			},
 			{
 				"cell_type": "code",
@@ -492,7 +492,7 @@
 					"    spark_df = spark.createDataFrame(pandas_df)\r\n",
 					"    return(spark_df)"
 				],
-				"execution_count": 39
+				"execution_count": 15
 			},
 			{
 				"cell_type": "code",
@@ -510,7 +510,7 @@
 				"source": [
 					"df_all = lemmatize(df_all)"
 				],
-				"execution_count": 40
+				"execution_count": 16
 			},
 			{
 				"cell_type": "code",
@@ -529,7 +529,7 @@
 				"source": [
 					"df_all_ner = NamedEntityRecognition(df_all,5)"
 				],
-				"execution_count": 41
+				"execution_count": 17
 			},
 			{
 				"cell_type": "code",
@@ -548,7 +548,7 @@
 				"source": [
 					"display(df_all_ner)"
 				],
-				"execution_count": 42
+				"execution_count": 18
 			},
 			{
 				"cell_type": "markdown",
@@ -580,7 +580,7 @@
 					"df_topic0 = QueryDataSQLPool(\"select * from \" + senttable + \" where topic = 0\")\r\n",
 					"df_topic0.count()"
 				],
-				"execution_count": 14
+				"execution_count": 19
 			},
 			{
 				"cell_type": "code",
@@ -598,7 +598,7 @@
 				"source": [
 					"df_topic0 = lemmatize(df_topic0)"
 				],
-				"execution_count": null
+				"execution_count": 20
 			},
 			{
 				"cell_type": "code",
@@ -617,7 +617,7 @@
 				"source": [
 					"topic0_NER = NamedEntityRecognition(dataframe = df_topic0, topic = 0)"
 				],
-				"execution_count": 15
+				"execution_count": 21
 			},
 			{
 				"cell_type": "markdown",
@@ -649,7 +649,7 @@
 					"df_topic1 = QueryDataSQLPool(\"select * from \" + senttable + \" where topic = 1\")\r\n",
 					"df_topic1.count()"
 				],
-				"execution_count": 16
+				"execution_count": 22
 			},
 			{
 				"cell_type": "code",
@@ -667,7 +667,7 @@
 				"source": [
 					"df_topic1 = lemmatize(df_topic1)"
 				],
-				"execution_count": null
+				"execution_count": 23
 			},
 			{
 				"cell_type": "code",
@@ -686,7 +686,7 @@
 				"source": [
 					"topic1_NER = NamedEntityRecognition(dataframe = df_topic1, topic = 1)"
 				],
-				"execution_count": 17
+				"execution_count": 24
 			},
 			{
 				"cell_type": "markdown",
@@ -718,7 +718,7 @@
 					"df_topic2 = QueryDataSQLPool(\"select * from \" + senttable + \" where topic = 2\")\r\n",
 					"df_topic2.count()"
 				],
-				"execution_count": 18
+				"execution_count": 25
 			},
 			{
 				"cell_type": "code",
@@ -736,7 +736,7 @@
 				"source": [
 					"df_topic2 = lemmatize(df_topic2)"
 				],
-				"execution_count": null
+				"execution_count": 26
 			},
 			{
 				"cell_type": "code",
@@ -754,7 +754,7 @@
 				"source": [
 					"topic2_NER = NamedEntityRecognition(dataframe = df_topic2, topic = 2)"
 				],
-				"execution_count": 19
+				"execution_count": 27
 			},
 			{
 				"cell_type": "markdown",
@@ -786,7 +786,7 @@
 					"df_topic3 = QueryDataSQLPool(\"select * from \" + senttable + \" where topic = 3\")\r\n",
 					"df_topic3.count()"
 				],
-				"execution_count": 20
+				"execution_count": 28
 			},
 			{
 				"cell_type": "code",
@@ -804,7 +804,7 @@
 				"source": [
 					"df_topic3 = lemmatize(df_topic3)"
 				],
-				"execution_count": null
+				"execution_count": 29
 			},
 			{
 				"cell_type": "code",
@@ -822,7 +822,7 @@
 				"source": [
 					"topic3_NER = NamedEntityRecognition(dataframe = df_topic3, topic = 3)"
 				],
-				"execution_count": 21
+				"execution_count": 30
 			},
 			{
 				"cell_type": "markdown",
@@ -854,7 +854,7 @@
 					"df_topic4 = QueryDataSQLPool(\"select * from \" + senttable + \" where topic = 4\")\r\n",
 					"df_topic4.count()"
 				],
-				"execution_count": 22
+				"execution_count": 31
 			},
 			{
 				"cell_type": "code",
@@ -872,7 +872,7 @@
 				"source": [
 					"df_topic4 = lemmatize(df_topic4)"
 				],
-				"execution_count": null
+				"execution_count": 32
 			},
 			{
 				"cell_type": "code",
@@ -890,7 +890,7 @@
 				"source": [
 					"topic4_NER = NamedEntityRecognition(dataframe = df_topic4, topic = 4)"
 				],
-				"execution_count": 23
+				"execution_count": 33
 			},
 			{
 				"cell_type": "markdown",
@@ -924,7 +924,7 @@
 					"NameEntity_df = topic0_NER.union(topic1_NER).union(topic2_NER).union(topic3_NER).union(topic4_NER)\r\n",
 					"display(NameEntity_df)"
 				],
-				"execution_count": 24
+				"execution_count": 34
 			},
 			{
 				"cell_type": "code",
@@ -943,7 +943,7 @@
 				"source": [
 					"display(NameEntity_df)"
 				],
-				"execution_count": 25
+				"execution_count": 35
 			},
 			{
 				"cell_type": "markdown",
@@ -997,7 +997,7 @@
 				"source": [
 					"outputtable = \"SQLPoolTest.\" + table"
 				],
-				"execution_count": 26
+				"execution_count": 36
 			},
 			{
 				"cell_type": "code",
@@ -1033,7 +1033,7 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(outputtable))"
 				],
-				"execution_count": 27
+				"execution_count": 37
 			}
 		]
 	}
