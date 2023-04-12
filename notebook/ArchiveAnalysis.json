@@ -1,0 +1,381 @@
+{
+	"name": "ArchiveAnalysis",
+	"properties": {
+		"folder": {
+			"name": "Archiving"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "SparkPoolSmall",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "a9b4a4e4-df39-496a-b7fc-7a8f4a22facb"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+				"name": "SparkPoolSmall",
+				"type": "Spark",
+				"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.3",
+				"nodeCount": 3,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Archive Tweets"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Add required imports\r\n",
+					"import com.microsoft.spark.sqlanalytics\r\n",
+					"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+					"from pyspark.sql.functions import col\r\n",
+					"\r\n",
+					"# Name of the SQL Dedicated Pool or database where to run the query\r\n",
+					"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
+					"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")\r\n",
+					""
+				],
+				"execution_count": 2
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"tags": [
+						"parameters"
+					]
+				},
+				"source": [
+					"query = \"NATO\"\n",
+					"\n",
+					"Sent_maintable = \"Sent.NATO_Sentiment\"\n",
+					"TopicWords_maintable = \"Words.NATO_Topic_Words\"\n",
+					"NamedEntity_maintable = \"NER.NATO_NER\"\n",
+					"Abstract_maintable = \"sum.NATO_Abstractive_Sum\"\n",
+					"\n",
+					"Sent_archivetable = \"Archive.Sentiment\"\n",
+					"TopicWords_archivetable = \"Archive.Topic_Words\"\n",
+					"NamedEntity_archivetable = \"Archive.NER\"\n",
+					"Abstract_archivetable = \"Archive.Abstractive_Sum\"\n",
+					"\n",
+					"#query = \"Aithusa\"\n",
+					"#maintable = \"dbo.NATO_Tweets1_Aithusa\"\n",
+					"#archivetable = \"Aithusa_Archive_Tweets\""
+				],
+				"execution_count": 3
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"tables = [[Sent_maintable,Sent_archivetable],\r\n",
+					"            [TopicWords_maintable,TopicWords_archivetable],\r\n",
+					"            [NamedEntity_maintable,NamedEntity_archivetable],\r\n",
+					"            [Abstract_maintable,Abstract_archivetable]]"
+				],
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"import com.microsoft.spark.sqlanalytics\r\n",
+					"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+					"\r\n",
+					"for each in tables:\r\n",
+					"    print(each[0])\r\n",
+					"    print(each[1])\r\n",
+					"\r\n",
+					"    # Read from a query\r\n",
+					"    # Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\r\n",
+					"    df = (spark.read\r\n",
+					"                        # Name of the SQL Dedicated Pool or database where to run the query\r\n",
+					"                        # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\r\n",
+					"                        .option(Constants.DATABASE, \"SQLPoolTest\")\r\n",
+					"                        # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+					"                        # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+					"                        .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+					"                        # Defaults to storage path defined in the runtime configurations\r\n",
+					"                        .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+					"                        # query from which data will be read\r\n",
+					"                        .option(Constants.QUERY, \"select * from \" + each[0])\r\n",
+					"                        .synapsesql()\r\n",
+					"    )\r\n",
+					"\r\n",
+					"    from pyspark.sql.functions import lit, current_timestamp\r\n",
+					"\r\n",
+					"    # create a new DataFrame with two new columns\r\n",
+					"    new_df = df.withColumn('query', lit(query)).withColumn('pull_datetime', current_timestamp())\r\n",
+					"\r\n",
+					"    new_df.schema['query'].nullable = True\r\n",
+					"    new_df.schema['pull_datetime'].nullable = True\r\n",
+					"\r\n",
+					"    # show the new DataFrame\r\n",
+					"    #display(new_df)\r\n",
+					"    print(\"Main table schema:\")\r\n",
+					"    print(new_df.printSchema())\r\n",
+					"\r\n",
+					"    outputtable = \"SQLPoolTest.\" + each[1]\r\n",
+					"    print(\"Target table schema:\")\r\n",
+					"    print(outputtable)\r\n",
+					"    print(spark.read.synapsesql(outputtable).limit(0).printSchema())\r\n",
+					"    print(outputtable)\r\n",
+					"\r\n",
+					"\r\n",
+					"    # Write using AAD Auth to internal table\r\n",
+					"    # Add required imports\r\n",
+					"\r\n",
+					"    # Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
+					"    # Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
+					"    (new_df.write\r\n",
+					"    # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+					"    # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+					"    .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+					"    # Like-wise, if `Constants.TEMP_FOLDER` is not provided, the connector will use the runtime staging directory config (see section on Configuration Options for details).\r\n",
+					"    .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+					"    # Choose a save mode that is apt for your use case.\r\n",
+					"    # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
+					"    # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
+					"    .mode(\"overwrite\")\r\n",
+					"    # Required parameter - Three-part table name to which data will be written\r\n",
+					"    .synapsesql(outputtable))\r\n",
+					"\r\n",
+					"    print(each[1],\" Archived\")"
+				],
+				"execution_count": 15
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Read from a query\n",
+					"# Query can be provided either as an argument to synapsesql or as a Constant - Constants.QUERY\n",
+					"df = (spark.read\n",
+					"                     # Name of the SQL Dedicated Pool or database where to run the query\n",
+					"                     # Database can be specified as a Spark Config - spark.sqlanalyticsconnector.dw.database or as a Constant - Constants.DATABASE\n",
+					"                     .option(Constants.DATABASE, \"SQLPoolTest\")\n",
+					"                     # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\n",
+					"                     # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\n",
+					"                     .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\n",
+					"                     # Defaults to storage path defined in the runtime configurations\n",
+					"                     .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\n",
+					"                     # query from which data will be read\n",
+					"                     .option(Constants.QUERY, \"select * from \" + maintable)\n",
+					"                     .synapsesql()\n",
+					")"
+				],
+				"execution_count": 38
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"from pyspark.sql.functions import lit, current_timestamp\r\n",
+					"\r\n",
+					"# create a new DataFrame with two new columns\r\n",
+					"new_df = df.withColumn('query', lit(query)).withColumn('pull_datetime', current_timestamp())\r\n",
+					"\r\n",
+					"new_df.schema['query'].nullable = True\r\n",
+					"new_df.schema['pull_datetime'].nullable = True\r\n",
+					"\r\n",
+					"# show the new DataFrame\r\n",
+					"display(new_df)"
+				],
+				"execution_count": 39
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"outputtable = \"SQLPoolTest.archive.\"+archivetable"
+				],
+				"execution_count": 40
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"new_df.printSchema()"
+				],
+				"execution_count": 41
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"spark.read.synapsesql(outputtable).limit(0).printSchema()"
+				],
+				"execution_count": 42
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Write using AAD Auth to internal table\r\n",
+					"# Add required imports\r\n",
+					"import com.microsoft.spark.sqlanalytics\r\n",
+					"from com.microsoft.spark.sqlanalytics.Constants import Constants\r\n",
+					"\r\n",
+					"# Configure and submit the request to write to Synapse Dedicated SQL Pool\r\n",
+					"# Sample below is using AAD-based authentication approach; See further examples to leverage SQL Basic auth.\r\n",
+					"(new_df.write\r\n",
+					" # If `Constants.SERVER` is not provided, the `<database_name>` from the three-part table name argument\r\n",
+					" # to `synapsesql` method is used to infer the Synapse Dedicated SQL End Point.\r\n",
+					" .option(Constants.SERVER, \"pendragon-synapse.sql.azuresynapse.net\")\r\n",
+					" # Like-wise, if `Constants.TEMP_FOLDER` is not provided, the connector will use the runtime staging directory config (see section on Configuration Options for details).\r\n",
+					" .option(Constants.TEMP_FOLDER, \"abfss://pendragon@pendragon.dfs.core.windows.net/NotebookStaging\")\r\n",
+					" # Choose a save mode that is apt for your use case.\r\n",
+					" # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
+					" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
+					" .mode(\"overwrite\")\r\n",
+					" # Required parameter - Three-part table name to which data will be written\r\n",
+					" .synapsesql(outputtable))"
+				],
+				"execution_count": 43
+			}
+		]
+	}
+}
