@@ -1,0 +1,127 @@
+{
+	"name": "SqlPoolTable_Sentiment",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "created_at",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "text",
+				"type": "nvarchar"
+			},
+			{
+				"name": "cleantext",
+				"type": "nvarchar"
+			},
+			{
+				"name": "lang",
+				"type": "nvarchar"
+			},
+			{
+				"name": "retweet_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "reply_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "like_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "quote_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "impression_count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "topic",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "topic_0_confidence",
+				"type": "real",
+				"precision": 7
+			},
+			{
+				"name": "topic_1_confidence",
+				"type": "real",
+				"precision": 7
+			},
+			{
+				"name": "topic_2_confidence",
+				"type": "real",
+				"precision": 7
+			},
+			{
+				"name": "topic_3_confidence",
+				"type": "real",
+				"precision": 7
+			},
+			{
+				"name": "topic_4_confidence",
+				"type": "real",
+				"precision": 7
+			},
+			{
+				"name": "sentiment",
+				"type": "nvarchar"
+			},
+			{
+				"name": "negative_score",
+				"type": "real",
+				"precision": 7
+			},
+			{
+				"name": "positive_score",
+				"type": "real",
+				"precision": 7
+			},
+			{
+				"name": "neutral_score",
+				"type": "real",
+				"precision": 7
+			},
+			{
+				"name": "mixed_score",
+				"type": "real",
+				"precision": 7
+			},
+			{
+				"name": "query",
+				"type": "nvarchar"
+			},
+			{
+				"name": "pull_datetime",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "archive",
+			"table": "Sentiment"
+		},
+		"sqlPool": {
+			"referenceName": "SQLPoolTest",
+			"type": "SqlPoolReference"
+		}
+	}
+}

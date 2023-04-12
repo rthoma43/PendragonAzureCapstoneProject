@@ -2,7 +2,7 @@
 	"name": "Create_Aithusa_NER_Table",
 	"properties": {
 		"folder": {
-			"name": "Create_Tables"
+			"name": "Create_Tables/Aithusa"
 		},
 		"content": {
 			"query": "CREATE TABLE [NER].[Aithusa_NER]\n(\n    [entity] NVARCHAR(100) NULL,\n    [entity_category] NVARCHAR(100) NULL,\n    [entity_subcategory] NVARCHAR(100) NULL,\n    [topic] SMALLINT NULL\n)\n\nGO",

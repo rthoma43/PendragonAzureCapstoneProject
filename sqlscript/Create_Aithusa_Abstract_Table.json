@@ -2,7 +2,7 @@
 	"name": "Create_Aithusa_Abstract_Table",
 	"properties": {
 		"folder": {
-			"name": "Create_Tables"
+			"name": "Create_Tables/Aithusa"
 		},
 		"content": {
 			"query": "CREATE TABLE [sum].[Aithusa_Abstractive_Sum]\n(\n    [topic] SMALLINT NULL,\n    [abstractive_summary] NVARCHAR(4000) NULL\n)\n\nGO",

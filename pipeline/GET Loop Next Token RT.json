@@ -560,7 +560,29 @@
 						"referenceName": "NLP_Analysis",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"TopicModelingOutputTable": {
+							"value": "@pipeline().parameters.TopicOutputTable",
+							"type": "Expression"
+						},
+						"SentimentOutputTable": {
+							"value": "@pipeline().parameters.SentimentOutputTable",
+							"type": "Expression"
+						},
+						"SummarizationOutputTable": {
+							"value": "@pipeline().parameters.SummarizationOutputTable",
+							"type": "Expression"
+						},
+						"NEROutputTable": {
+							"value": "@pipeline().parameters.NEROutputTable",
+							"type": "Expression"
+						},
+						"TopicModelingWordsOutputTable": {
+							"value": "@pipeline().parameters.TopicWordsOutputTable",
+							"type": "Expression"
+						}
+					}
 				}
 			},
 			{
@@ -569,7 +591,7 @@
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "NLP Analysis",
+						"activity": "Execute Archive Analysis Pipeline",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -635,6 +657,48 @@
 					"driverSize": "Small",
 					"numExecutors": null
 				}
+			},
+			{
+				"name": "Execute Archive Analysis Pipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "NLP Analysis",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Archive_Analysis_Tables",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"queryname": {
+							"value": "@pipeline().parameters.QueryName",
+							"type": "Expression"
+						},
+						"TopicWordsOutputTable": {
+							"value": "@pipeline().parameters.TopicWordsOutputTable",
+							"type": "Expression"
+						},
+						"SentimentOutputTable": {
+							"value": "@pipeline().parameters.SentimentOutputTable",
+							"type": "Expression"
+						},
+						"NEROutputTable": {
+							"value": "@pipeline().parameters.NEROutputTable",
+							"type": "Expression"
+						},
+						"SummarizationOutputTable": {
+							"value": "@pipeline().parameters.SummarizationOutputTable",
+							"type": "Expression"
+						}
+					}
+				}
 			}
 		],
 		"parameters": {
@@ -657,6 +721,22 @@
 			"Loops": {
 				"type": "int",
 				"defaultValue": 5
+			},
+			"TopicWordsOutputTable": {
+				"type": "string",
+				"defaultValue": "Words.NATO_Topic_Words"
+			},
+			"SentimentOutputTable": {
+				"type": "string",
+				"defaultValue": "Sent.NATO_Sentiment"
+			},
+			"NEROutputTable": {
+				"type": "string",
+				"defaultValue": "NER.NATO_NER"
+			},
+			"SummarizationOutputTable": {
+				"type": "string",
+				"defaultValue": "sum.NATO_Abstractive_Sum"
 			}
 		},
 		"variables": {

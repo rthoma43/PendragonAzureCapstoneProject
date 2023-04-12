@@ -1,0 +1,87 @@
+{
+	"name": "Archive_Analysis_Tables",
+	"properties": {
+		"activities": [
+			{
+				"name": "Archive Analysis",
+				"type": "SynapseNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "ArchiveAnalysis",
+						"type": "NotebookReference"
+					},
+					"parameters": {
+						"Sent_maintable": {
+							"value": {
+								"value": "@pipeline().parameters.SentimentOutputTable",
+								"type": "Expression"
+							},
+							"type": "string"
+						},
+						"TopicWords_maintable": {
+							"value": {
+								"value": "@pipeline().parameters.TopicWordsOutputTable",
+								"type": "Expression"
+							},
+							"type": "string"
+						},
+						"NamedEntity_maintable": {
+							"value": {
+								"value": "@pipeline().parameters.NEROutputTable",
+								"type": "Expression"
+							},
+							"type": "string"
+						},
+						"Abstract_maintable": {
+							"value": {
+								"value": "@pipeline().parameters.SummarizationOutputTable",
+								"type": "Expression"
+							},
+							"type": "string"
+						},
+						"query": {
+							"value": {
+								"value": "@pipeline().parameters.queryname",
+								"type": "Expression"
+							},
+							"type": "string"
+						}
+					},
+					"snapshot": true
+				}
+			}
+		],
+		"parameters": {
+			"queryname": {
+				"type": "string",
+				"defaultValue": "Test001"
+			},
+			"TopicWordsOutputTable": {
+				"type": "string",
+				"defaultValue": "Words.NATO_Topic_Words"
+			},
+			"SentimentOutputTable": {
+				"type": "string",
+				"defaultValue": "Sent.NATO_Sentiment"
+			},
+			"NEROutputTable": {
+				"type": "string",
+				"defaultValue": "NER.NATO_NER"
+			},
+			"SummarizationOutputTable": {
+				"type": "string",
+				"defaultValue": "sum.NATO_Abstractive_Sum"
+			}
+		},
+		"annotations": []
+	}
+}
