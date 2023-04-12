@@ -2,7 +2,7 @@
 	"name": "Create_Sentiment_ArchiveTable",
 	"properties": {
 		"folder": {
-			"name": "Create_Tables"
+			"name": "Create_Tables/Archive"
 		},
 		"content": {
 			"query": "CREATE TABLE [Archive].[Sentiment]\n(\n    [id] bigint  NULL,\n\t[created_at] DATETIME2(7)  NULL,\n\t[text] NVARCHAR(4000)  NULL,\n\t[cleantext] NVARCHAR(4000)  NULL,\n\t[lang] nvarchar(10)  NULL,\n\t[retweet_count] INT  NULL,\n\t[reply_count] INT  NULL,\n\t[like_count] INT  NULL,\n\t[quote_count] INT  NULL,\n\t[impression_count] INT  NULL,\n    [topic] SMALLINT NULL,\n    [topic_0_confidence] REAL NULL,\n    [topic_1_confidence] REAL NULL,\n    [topic_2_confidence] REAL NULL,\n    [topic_3_confidence] REAL NULL,\n    [topic_4_confidence] REAL NULL,\n    [sentiment] NVARCHAR(20) NULL,\n    [negative_score] REAL NULL,\n    [positive_score] REAL NULL,\n    [neutral_score] REAL NULL,\n    [mixed_score] REAL NULL,\n    [query] NVARCHAR(20) NULL,\n    [pull_datetime] DATETIME2(7) NULL\n)\n\nGO\n",
