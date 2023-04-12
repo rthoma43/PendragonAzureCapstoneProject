@@ -737,6 +737,10 @@
 			"SummarizationOutputTable": {
 				"type": "string",
 				"defaultValue": "sum.NATO_Abstractive_Sum"
+			},
+			"TopicOutputTable": {
+				"type": "string",
+				"defaultValue": "Topic.NATO_Topics"
 			}
 		},
 		"variables": {
