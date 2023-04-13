@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Initial GET Past 7 Days",
+				"name": "Initial GET Past 7 Days into Temp Folder",
 				"type": "Copy",
 				"dependsOn": [
 					{
@@ -80,7 +80,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Initial GET Past 7 Days",
+						"activity": "Put Initial Temp File in Output Folder",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -126,7 +126,7 @@
 							"type": "Copy",
 							"dependsOn": [
 								{
-									"activity": "Delete Temp File",
+									"activity": "Extract Next Token",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -191,38 +191,6 @@
 									"type": "DatasetReference"
 								}
 							]
-						},
-						{
-							"name": "Delete Temp File",
-							"type": "Delete",
-							"dependsOn": [
-								{
-									"activity": "Extract Next Token",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"dataset": {
-									"referenceName": "Twitter_RawJSON_Temp",
-									"type": "DatasetReference"
-								},
-								"enableLogging": false,
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								}
-							}
 						}
 					]
 				}
@@ -699,6 +667,61 @@
 						}
 					}
 				}
+			},
+			{
+				"name": "Put Initial Temp File in Output Folder",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Initial GET Past 7 Days into Temp Folder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Twitter_RawJSON_Temp",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Raw_Twitter_Outputs",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"parameters": {
