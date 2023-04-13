@@ -1,5 +1,5 @@
 {
-	"name": "GET Loop Next Token RT",
+	"name": "GET Loop Next Token RT_copy1",
 	"properties": {
 		"activities": [
 			{
@@ -76,126 +76,6 @@
 				]
 			},
 			{
-				"name": "GET using Next Token",
-				"type": "ForEach",
-				"dependsOn": [
-					{
-						"activity": "Initial GET Past 7 Days into Temp Folder",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"items": {
-						"value": "@range(0,pipeline().parameters.Loops)",
-						"type": "Expression"
-					},
-					"isSequential": true,
-					"activities": [
-						{
-							"name": "Extract Next Token",
-							"type": "ExecuteDataFlow",
-							"dependsOn": [],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"dataflow": {
-									"referenceName": "Get Next Token",
-									"type": "DataFlowReference"
-								},
-								"integrationRuntime": {
-									"referenceName": "WarmIntegrationRuntime",
-									"type": "IntegrationRuntimeReference"
-								},
-								"traceLevel": "None",
-								"cacheSinks": {
-									"firstRowOnly": true
-								}
-							}
-						},
-						{
-							"name": "GET to Temp",
-							"type": "Copy",
-							"dependsOn": [
-								{
-									"activity": "Extract Next Token",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"source": {
-									"type": "RestSource",
-									"httpRequestTimeout": "00:01:40",
-									"requestInterval": "00.00:00:00.010",
-									"requestMethod": "GET",
-									"paginationRules": {
-										"supportRFC5988": "true"
-									}
-								},
-								"sink": {
-									"type": "JsonSink",
-									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings"
-									},
-									"formatSettings": {
-										"type": "JsonWriteSettings"
-									}
-								},
-								"enableStaging": false
-							},
-							"inputs": [
-								{
-									"referenceName": "RestResource_Next_Token",
-									"type": "DatasetReference",
-									"parameters": {
-										"query": {
-											"value": "@pipeline().parameters.Query",
-											"type": "Expression"
-										},
-										"tweet_fields": {
-											"value": "@pipeline().parameters.TweetFields",
-											"type": "Expression"
-										},
-										"max_results": {
-											"value": "@pipeline().parameters.MaxResults",
-											"type": "Expression"
-										},
-										"next_token": {
-											"value": "@activity('Extract Next Token').output.runStatus.output.sink1.value[0].next_token",
-											"type": "Expression"
-										}
-									}
-								}
-							],
-							"outputs": [
-								{
-									"referenceName": "Twitter_RawJSON_Temp",
-									"type": "DatasetReference"
-								}
-							]
-						}
-					]
-				}
-			},
-			{
 				"name": "Delete Previous Output Files",
 				"type": "Delete",
 				"dependsOn": [],
@@ -225,7 +105,7 @@
 				"type": "Delete",
 				"dependsOn": [
 					{
-						"activity": "GET using Next Token",
+						"activity": "Until1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -666,6 +546,163 @@
 							"type": "Expression"
 						}
 					}
+				}
+			},
+			{
+				"name": "Set variable until",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Initial GET Past 7 Days into Temp Folder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "until",
+					"value": "1"
+				}
+			},
+			{
+				"name": "Until1",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "Set variable until",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(variables('until'),'')",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Extract Next Token_copy1",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "Get Next Token",
+									"type": "DataFlowReference"
+								},
+								"integrationRuntime": {
+									"referenceName": "WarmIntegrationRuntime",
+									"type": "IntegrationRuntimeReference"
+								},
+								"traceLevel": "None",
+								"cacheSinks": {
+									"firstRowOnly": true
+								}
+							}
+						},
+						{
+							"name": "GET to Temp_copy1",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Extract Next Token_copy1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "RestSource",
+									"httpRequestTimeout": "00:01:40",
+									"requestInterval": "00.00:00:00.010",
+									"requestMethod": "GET",
+									"paginationRules": {
+										"supportRFC5988": "true"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "RestResource_Next_Token",
+									"type": "DatasetReference",
+									"parameters": {
+										"query": {
+											"value": "@pipeline().parameters.Query",
+											"type": "Expression"
+										},
+										"tweet_fields": {
+											"value": "@pipeline().parameters.TweetFields",
+											"type": "Expression"
+										},
+										"max_results": {
+											"value": "@pipeline().parameters.MaxResults",
+											"type": "Expression"
+										},
+										"next_token": {
+											"value": "@activity('Extract Next Token_copy1').output.runStatus.output.sink1.value[0].next_token",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Twitter_RawJSON_Temp",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Set variable1",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Extract Next Token_copy1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "until",
+								"value": {
+									"value": "@activity('Extract Next Token_copy1').output.runStatus.output.sink1.value[0].next_token",
+									"type": "Expression"
+								}
+							}
+						}
+					],
+					"timeout": "0.12:00:00"
 				}
 			}
 		],
