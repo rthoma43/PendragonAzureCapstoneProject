@@ -52,6 +52,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
+				"     purgeFiles: true,",
 				"     documentForm: 'documentPerLine') ~> source2",
 				"source1 derive(next_token = meta.next_token) ~> derivedColumn1",
 				"derivedColumn1 sink(validateSchema: false,",
