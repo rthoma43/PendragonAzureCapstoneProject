@@ -704,11 +704,11 @@
 		"parameters": {
 			"QueryName": {
 				"type": "string",
-				"defaultValue": "NATO"
+				"defaultValue": "NATO001"
 			},
 			"Query": {
 				"type": "string",
-				"defaultValue": "\"NATO\" lang:en -is:retweet -is:reply"
+				"defaultValue": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en -is:retweet -is:reply"
 			},
 			"TweetFields": {
 				"type": "string",
@@ -720,7 +720,7 @@
 			},
 			"Loops": {
 				"type": "int",
-				"defaultValue": 5
+				"defaultValue": 1000
 			},
 			"TopicWordsOutputTable": {
 				"type": "string",
