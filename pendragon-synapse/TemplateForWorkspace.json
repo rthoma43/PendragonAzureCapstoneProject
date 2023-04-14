@@ -2986,7 +2986,7 @@
 									"userProperties": [],
 									"typeProperties": {
 										"expression": {
-											"value": "@not(equals(activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token, '000'))",
+											"value": "@not(equals(activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token, null))",
 											"type": "Expression"
 										},
 										"ifFalseActivities": [
