@@ -579,7 +579,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@not(equals(variables('until'), '100'))",
+						"value": "@not(equals(variables('until'), '000'))",
 						"type": "Expression"
 					},
 					"activities": [
@@ -588,7 +588,7 @@
 							"type": "ExecuteDataFlow",
 							"dependsOn": [
 								{
-									"activity": "Set result_count variable",
+									"activity": "Set Until Value",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -689,11 +689,11 @@
 							]
 						},
 						{
-							"name": "Set result_count variable",
+							"name": "Set Until Value",
 							"type": "SetVariable",
 							"dependsOn": [
 								{
-									"activity": "Extract result_count",
+									"activity": "Check if next_token exists",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -703,13 +703,13 @@
 							"typeProperties": {
 								"variableName": "until",
 								"value": {
-									"value": "@string(activity('Extract result_count').output.runStatus.output.sink1.value[0].result_count)",
+									"value": "@string(activity('Check if next_token exists').output.runStatus.output.sink1.value[0].next_token)",
 									"type": "Expression"
 								}
 							}
 						},
 						{
-							"name": "Extract result_count",
+							"name": "Check if next_token exists",
 							"type": "ExecuteDataFlow",
 							"dependsOn": [],
 							"policy": {
