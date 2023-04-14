@@ -2930,12 +2930,6 @@
 								"dependencyConditions": [
 									"Succeeded"
 								]
-							},
-							{
-								"activity": "Move Temp file to Output folder_1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
 							}
 						],
 						"userProperties": [],
@@ -3173,46 +3167,6 @@
 							"variableName": "loopCount",
 							"value": "0"
 						}
-					},
-					{
-						"name": "Move Temp file to Output folder_1",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "Initial GET Past 7 Days into Temp Folder",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "MoveTemptoOutput",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"integrationRuntime": {
-								"referenceName": "WarmIntegrationRuntime",
-								"type": "IntegrationRuntimeReference"
-							},
-							"traceLevel": "None",
-							"cacheSinks": {
-								"firstRowOnly": true
-							}
-						}
 					}
 				],
 				"policy": {
@@ -3293,8 +3247,8 @@
 				"[concat(variables('workspaceId'), '/notebooks/ArchiveTweets')]",
 				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolSmall')]",
 				"[concat(variables('workspaceId'), '/pipelines/Archive_Analysis_Tables')]",
-				"[concat(variables('workspaceId'), '/dataflows/MoveTemptoOutput')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token')]",
+				"[concat(variables('workspaceId'), '/dataflows/MoveTemptoOutput')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]"
 			]
 		},
