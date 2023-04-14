@@ -31,7 +31,7 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> source1",
-				"source1 derive(next_token = iif(hasPath(meta.next_token),meta.next_token,'000')) ~> derivedColumn1",
+				"source1 derive(next_token = iif(hasPath('meta.next_token'),meta.next_token,'000')) ~> derivedColumn1",
 				"derivedColumn1 sink(validateSchema: false,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
