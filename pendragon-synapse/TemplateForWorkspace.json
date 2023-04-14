@@ -289,9 +289,7 @@
 											"parameters": {},
 											"datasetParameters": {
 												"source1": {},
-												"source2": {},
-												"sink1": {},
-												"sink2": {}
+												"sink1": {}
 											}
 										},
 										"staging": {},
@@ -1555,9 +1553,7 @@
 											"parameters": {},
 											"datasetParameters": {
 												"source1": {},
-												"source2": {},
-												"sink1": {},
-												"sink2": {}
+												"sink1": {}
 											}
 										},
 										"staging": {},
@@ -1576,7 +1572,7 @@
 									"type": "Copy",
 									"dependsOn": [
 										{
-											"activity": "Set Until Value",
+											"activity": "Move Temp file to Output folder",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -1662,6 +1658,43 @@
 											"type": "Expression"
 										}
 									}
+								},
+								{
+									"name": "Move Temp file to Output folder",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [
+										{
+											"activity": "Set Until Value",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "MoveTemptoOutput",
+											"type": "DataFlowReference",
+											"parameters": {},
+											"datasetParameters": {
+												"source1": {},
+												"sink1": {}
+											}
+										},
+										"staging": {},
+										"integrationRuntime": {
+											"referenceName": "WarmIntegrationRuntime",
+											"type": "IntegrationRuntimeReference"
+										},
+										"traceLevel": "Fine"
+									}
 								}
 							],
 							"timeout": "0.12:00:00"
@@ -1734,7 +1767,8 @@
 				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolSmall')]",
 				"[concat(variables('workspaceId'), '/pipelines/Archive_Analysis_Tables')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token')]",
-				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]"
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]",
+				"[concat(variables('workspaceId'), '/dataflows/MoveTemptoOutput')]"
 			]
 		},
 		{
@@ -8019,25 +8053,11 @@
 								"type": "DatasetReference"
 							},
 							"name": "source1"
-						},
-						{
-							"dataset": {
-								"referenceName": "Twitter_RawJSON_Temp",
-								"type": "DatasetReference"
-							},
-							"name": "source2"
 						}
 					],
 					"sinks": [
 						{
 							"name": "sink1"
-						},
-						{
-							"dataset": {
-								"referenceName": "Raw_Twitter_Outputs",
-								"type": "DatasetReference"
-							},
-							"name": "sink2"
 						}
 					],
 					"transformations": [
@@ -8054,15 +8074,6 @@
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
 						"     documentForm: 'documentPerLine') ~> source1",
-						"source(output(",
-						"          data as (edit_history_tweet_ids as string[], id as string, created_at as string, text as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), lang as string)[],",
-						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     purgeFiles: true,",
-						"     documentForm: 'documentPerLine') ~> source2",
 						"source1 derive(next_token = iif(hasPath('meta.next_token'),meta.next_token,'000')) ~> derivedColumn1",
 						"derivedColumn1 sink(validateSchema: false,",
 						"     skipDuplicateMapInputs: true,",
@@ -8073,22 +8084,12 @@
 						"     saveOrder: 1,",
 						"     mapColumn(",
 						"          next_token",
-						"     )) ~> sink1",
-						"source2 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     filePattern:(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.json')),",
-						"     umask: 0022,",
-						"     preCommands: [],",
-						"     postCommands: [],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     saveOrder: 2) ~> sink2"
+						"     )) ~> sink1"
 					]
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/Twitter_RawJSON_Temp')]",
-				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs')]"
+				"[concat(variables('workspaceId'), '/datasets/Twitter_RawJSON_Temp')]"
 			]
 		},
 		{
@@ -23288,6 +23289,58 @@
 			},
 			"dependsOn": [],
 			"location": "eastus2"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/MoveTemptoOutput')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Twitter_RawJSON_Temp",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Raw_Twitter_Outputs",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(output(",
+						"          data as (edit_history_tweet_ids as string[], id as string, created_at as string, text as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), lang as string)[],",
+						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     purgeFiles: true,",
+						"     documentForm: 'documentPerLine') ~> source1",
+						"source1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     filePattern:(concat('Twitter',toString(currentTimestamp(),'yyyyMMddHHmmss'),'.json')),",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Twitter_RawJSON_Temp')]",
+				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs')]"
+			]
 		}
 	]
 }
