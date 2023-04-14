@@ -703,7 +703,7 @@
 							"typeProperties": {
 								"variableName": "until",
 								"value": {
-									"value": "@activity('Extract result_count').output.runStatus.output.sink1.value[0].result_count",
+									"value": "@string(activity('Extract result_count').output.runStatus.output.sink1.value[0].result_count)",
 									"type": "Expression"
 								}
 							}
@@ -779,23 +779,9 @@
 			}
 		},
 		"variables": {
-			"Query": {
-				"type": "String"
-			},
-			"max_results": {
-				"type": "String"
-			},
-			"Tweet Fields": {
-				"type": "String"
-			},
-			"Number of Tweets to Pull": {
-				"type": "String"
-			},
-			"loops": {
-				"type": "String"
-			},
 			"until": {
-				"type": "String"
+				"type": "String",
+				"defaultValue": "100"
 			}
 		},
 		"annotations": []
