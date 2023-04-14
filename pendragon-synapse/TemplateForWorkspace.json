@@ -1549,7 +1549,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@not(equals(variables('until'), '100'))",
+								"value": "@not(equals(variables('until'), '000'))",
 								"type": "Expression"
 							},
 							"activities": [
@@ -1558,7 +1558,7 @@
 									"type": "ExecuteDataFlow",
 									"dependsOn": [
 										{
-											"activity": "Set result_count variable",
+											"activity": "Set Until Value",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -1668,11 +1668,11 @@
 									]
 								},
 								{
-									"name": "Set result_count variable",
+									"name": "Set Until Value",
 									"type": "SetVariable",
 									"dependsOn": [
 										{
-											"activity": "Extract result_count",
+											"activity": "Check if next_token exists",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -1682,13 +1682,13 @@
 									"typeProperties": {
 										"variableName": "until",
 										"value": {
-											"value": "@string(activity('Extract result_count').output.runStatus.output.sink1.value[0].result_count)",
+											"value": "@string(activity('Check if next_token exists').output.runStatus.output.sink1.value[0].next_token)",
 											"type": "Expression"
 										}
 									}
 								},
 								{
-									"name": "Extract result_count",
+									"name": "Check if next_token exists",
 									"type": "ExecuteDataFlow",
 									"dependsOn": [],
 									"policy": {
@@ -8237,7 +8237,7 @@
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
 						"     documentForm: 'documentPerLine') ~> source1",
-						"source1 derive(result_count = meta.result_count) ~> derivedColumn1",
+						"source1 derive(next_token = iif(hasPath(meta.next_token),meta.next_token,'000')) ~> derivedColumn1",
 						"derivedColumn1 sink(validateSchema: false,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
@@ -9181,7 +9181,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "SELECT * FROM [Archive].[NER]",
+					"query": "SELECT * FROM [dbo].[NATO_Tweets1]\nORDER BY created_at ASC",
 					"metadata": {
 						"language": "sql"
 					},
@@ -23311,18 +23311,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "eastus2"
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/SparkPoolSmall')]",
 			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
@@ -23342,6 +23330,18 @@
 				"sparkVersion": "3.3",
 				"isComputeIsolationEnabled": false,
 				"sessionLevelPackagesEnabled": true,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "eastus2"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
 				"annotations": []
 			},
 			"dependsOn": [],
