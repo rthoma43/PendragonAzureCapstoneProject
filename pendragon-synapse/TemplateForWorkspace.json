@@ -1521,7 +1521,7 @@
 						"type": "Until",
 						"dependsOn": [
 							{
-								"activity": "Initial GET Past 7 Days into Temp Folder",
+								"activity": "Set until variable",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1701,6 +1701,23 @@
 								}
 							],
 							"timeout": "0.12:00:00"
+						}
+					},
+					{
+						"name": "Set until variable",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Initial GET Past 7 Days into Temp Folder",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "until",
+							"value": "abcd"
 						}
 					}
 				],
