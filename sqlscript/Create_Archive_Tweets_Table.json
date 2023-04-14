@@ -2,7 +2,7 @@
 	"name": "Create_Archive_Tweets_Table",
 	"properties": {
 		"folder": {
-			"name": "Create_Tables"
+			"name": "Create_Tables/Archive"
 		},
 		"content": {
 			"query": "CREATE TABLE [archive].[NATO_Archive_Tweets]\n( \n\t[id] bigint  NOT NULL,\n\t[created_at] DATETIME2(7)  NULL,\n\t[text] NVARCHAR(4000)  NULL,\n\t[lang] nvarchar(10)  NULL,\n\t[retweet_count] INT  NULL,\n\t[reply_count] INT  NULL,\n\t[like_count] INT  NULL,\n\t[quote_count] INT  NULL,\n\t[impression_count] INT  NULL,\n    [query] NVARCHAR(20) NULL,\n    [pull_datetime] DATETIME2(7) NULL\n)\n\nGO",

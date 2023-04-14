@@ -2,7 +2,7 @@
 	"name": "SQL script 5",
 	"properties": {
 		"content": {
-			"query": "SELECT * FROM [dbo].[NATO_Tweets1]\nORDER BY created_at ASC",
+			"query": "SELECT * FROM [archive].[NATO_Archive_Tweets]\nORDER BY created_at ASC",
 			"metadata": {
 				"language": "sql"
 			},
