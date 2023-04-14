@@ -549,28 +549,11 @@
 				}
 			},
 			{
-				"name": "Set variable until",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Initial GET Past 7 Days into Temp Folder",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "until",
-					"value": "100"
-				}
-			},
-			{
 				"name": "Pull data until there is no next_token",
 				"type": "Until",
 				"dependsOn": [
 					{
-						"activity": "Set variable until",
+						"activity": "Initial GET Past 7 Days into Temp Folder",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -747,7 +730,7 @@
 		"variables": {
 			"until": {
 				"type": "String",
-				"defaultValue": "100"
+				"defaultValue": "abcd"
 			}
 		},
 		"annotations": []
