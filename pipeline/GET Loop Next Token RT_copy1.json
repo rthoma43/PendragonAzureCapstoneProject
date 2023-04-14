@@ -568,7 +568,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@or(equals(variables('until'), '000'), equals(variables('loopCountArray'), '2'))",
+						"value": "@or(equals(variables('until'), '000'), equals(length(variables('loopCountArray')), 2))",
 						"type": "Expression"
 					},
 					"activities": [
