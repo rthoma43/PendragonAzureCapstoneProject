@@ -557,12 +557,18 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
+					},
+					{
+						"activity": "Set loopCount variable",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@equals(variables('until'), '000')",
+						"value": "@or(equals(variables('until'), '000'), equals(, '100,000'))\n",
 						"type": "Expression"
 					},
 					"activities": [
@@ -717,6 +723,26 @@
 									"firstRowOnly": true
 								}
 							}
+						},
+						{
+							"name": "Append loopCount variable",
+							"type": "AppendVariable",
+							"dependsOn": [
+								{
+									"activity": "GET to Temp",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "loopCountArray",
+								"value": {
+									"value": "@string(add(int(variables('loopCount')), 1))",
+									"type": "Expression"
+								}
+							}
 						}
 					],
 					"timeout": "0.12:00:00"
@@ -737,6 +763,23 @@
 				"typeProperties": {
 					"variableName": "until",
 					"value": "abcd"
+				}
+			},
+			{
+				"name": "Set loopCount variable",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Initial GET Past 7 Days into Temp Folder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "loopCount",
+					"value": "0"
 				}
 			}
 		],
@@ -782,6 +825,12 @@
 			"until": {
 				"type": "String",
 				"defaultValue": "abcd"
+			},
+			"loopCount": {
+				"type": "String"
+			},
+			"loopCountArray": {
+				"type": "Array"
 			}
 		},
 		"annotations": []
