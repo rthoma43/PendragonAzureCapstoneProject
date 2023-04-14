@@ -563,12 +563,6 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
-					},
-					{
-						"activity": "Move Temp file to Output folder_1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
 					}
 				],
 				"userProperties": [],
@@ -792,40 +786,6 @@
 				"typeProperties": {
 					"variableName": "loopCount",
 					"value": "0"
-				}
-			},
-			{
-				"name": "Move Temp file to Output folder_1",
-				"type": "ExecuteDataFlow",
-				"dependsOn": [
-					{
-						"activity": "Initial GET Past 7 Days into Temp Folder",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataflow": {
-						"referenceName": "MoveTemptoOutput",
-						"type": "DataFlowReference"
-					},
-					"integrationRuntime": {
-						"referenceName": "WarmIntegrationRuntime",
-						"type": "IntegrationRuntimeReference"
-					},
-					"traceLevel": "None",
-					"cacheSinks": {
-						"firstRowOnly": true
-					}
 				}
 			}
 		],
