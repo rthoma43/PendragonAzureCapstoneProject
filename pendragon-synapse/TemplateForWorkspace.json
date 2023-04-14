@@ -1064,7 +1064,7 @@
 						"type": "Delete",
 						"dependsOn": [
 							{
-								"activity": "Until1",
+								"activity": "Pull data until there is no next_token",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1519,28 +1519,11 @@
 						}
 					},
 					{
-						"name": "Set variable until",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Initial GET Past 7 Days into Temp Folder",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "until",
-							"value": "100"
-						}
-					},
-					{
-						"name": "Until1",
+						"name": "Pull data until there is no next_token",
 						"type": "Until",
 						"dependsOn": [
 							{
-								"activity": "Set variable until",
+								"activity": "Initial GET Past 7 Days into Temp Folder",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1556,14 +1539,7 @@
 								{
 									"name": "Extract next_token",
 									"type": "ExecuteDataFlow",
-									"dependsOn": [
-										{
-											"activity": "Set Until Value",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
+									"dependsOn": [],
 									"policy": {
 										"timeout": "0.12:00:00",
 										"retry": 0,
@@ -1600,7 +1576,7 @@
 									"type": "Copy",
 									"dependsOn": [
 										{
-											"activity": "Extract next_token",
+											"activity": "Set Until Value",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -1672,7 +1648,7 @@
 									"type": "SetVariable",
 									"dependsOn": [
 										{
-											"activity": "Check if next_token exists",
+											"activity": "Extract next_token",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -1682,41 +1658,8 @@
 									"typeProperties": {
 										"variableName": "until",
 										"value": {
-											"value": "@string(activity('Check if next_token exists').output.runStatus.output.sink1.value[0].next_token)",
+											"value": "@activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token",
 											"type": "Expression"
-										}
-									}
-								},
-								{
-									"name": "Check if next_token exists",
-									"type": "ExecuteDataFlow",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"dataflow": {
-											"referenceName": "Get result_count",
-											"type": "DataFlowReference",
-											"parameters": {},
-											"datasetParameters": {
-												"source1": {},
-												"sink1": {}
-											}
-										},
-										"staging": {},
-										"integrationRuntime": {
-											"referenceName": "WarmIntegrationRuntime",
-											"type": "IntegrationRuntimeReference"
-										},
-										"traceLevel": "None",
-										"cacheSinks": {
-											"firstRowOnly": true
 										}
 									}
 								}
@@ -1770,7 +1713,7 @@
 				"variables": {
 					"until": {
 						"type": "String",
-						"defaultValue": "100"
+						"defaultValue": "abcd"
 					}
 				},
 				"annotations": []
@@ -1791,8 +1734,7 @@
 				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolSmall')]",
 				"[concat(variables('workspaceId'), '/pipelines/Archive_Analysis_Tables')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token')]",
-				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]",
-				"[concat(variables('workspaceId'), '/dataflows/Get result_count')]"
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]"
 			]
 		},
 		{
@@ -8121,7 +8063,7 @@
 						"     ignoreNoFilesFound: false,",
 						"     purgeFiles: true,",
 						"     documentForm: 'documentPerLine') ~> source2",
-						"source1 derive(next_token = meta.next_token) ~> derivedColumn1",
+						"source1 derive(next_token = iif(hasPath('meta.next_token'),meta.next_token,'000')) ~> derivedColumn1",
 						"derivedColumn1 sink(validateSchema: false,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
@@ -8237,7 +8179,7 @@
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
 						"     documentForm: 'documentPerLine') ~> source1",
-						"source1 derive(next_token = iif(hasPath(meta.next_token),meta.next_token,'000')) ~> derivedColumn1",
+						"source1 derive(next_token = iif(hasPath('meta.next_token'),meta.next_token,'000')) ~> derivedColumn1",
 						"derivedColumn1 sink(validateSchema: false,",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
