@@ -1,5 +1,5 @@
 {
-	"name": "GET Loop Next Token RT_copy1",
+	"name": "GET Until No Next Token or MaxTweets",
 	"properties": {
 		"activities": [
 			{
