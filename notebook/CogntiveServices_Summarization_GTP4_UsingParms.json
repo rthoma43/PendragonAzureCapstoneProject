@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "33d210e6-4b63-4c21-b576-446c9fdb68c9"
+				"spark.autotune.trackingId": "ef54aa6b-781f-48cc-a678-25dc0d5d46d5"
 			}
 		},
 		"metadata": {
@@ -95,7 +95,7 @@
 				"source": [
 					"pip install azure-ai-textanalytics==5.3.0b1"
 				],
-				"execution_count": 31
+				"execution_count": 1
 			},
 			{
 				"cell_type": "code",
@@ -113,7 +113,7 @@
 				"source": [
 					"!pip install openai"
 				],
-				"execution_count": null
+				"execution_count": 2
 			},
 			{
 				"cell_type": "markdown",
@@ -152,7 +152,7 @@
 					"#table = \"sum.Aithusa_Abstractive_Sum\"\n",
 					"#senttable = \"Sent.Aithusa_Sentiment\""
 				],
-				"execution_count": null
+				"execution_count": 3
 			},
 			{
 				"cell_type": "code",
@@ -181,7 +181,7 @@
 					"import openai\r\n",
 					"import time"
 				],
-				"execution_count": null
+				"execution_count": 4
 			},
 			{
 				"cell_type": "code",
@@ -220,7 +220,7 @@
 					"    )\r\n",
 					"    return(df)"
 				],
-				"execution_count": null
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -240,7 +240,7 @@
 					"key = \"a3028b5f7e7a462d8a3381e49b9c976d\"\r\n",
 					"endpoint = \"https://pendragon-language.cognitiveservices.azure.com/\""
 				],
-				"execution_count": null
+				"execution_count": 6
 			},
 			{
 				"cell_type": "code",
@@ -262,7 +262,7 @@
 					"openai.api_version = \"2022-12-01\"\r\n",
 					"openai.api_key = \"7c4b192d51f64c09a2ca680590ccae3f\""
 				],
-				"execution_count": null
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
@@ -292,7 +292,7 @@
 					"        result.append(current_batch)\r\n",
 					"    return result"
 				],
-				"execution_count": null
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
@@ -318,7 +318,7 @@
 					"\r\n",
 					"client = authenticate_client()"
 				],
-				"execution_count": null
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -358,7 +358,7 @@
 					"            #)\r\n",
 					"    return(\" \".join([sentence.text for sentence in extract_summary_result.sentences]))"
 				],
-				"execution_count": null
+				"execution_count": 10
 			},
 			{
 				"cell_type": "code",
@@ -399,7 +399,7 @@
 					"    # Extract the string that contains all tweets\r\n",
 					"    return input_string"
 				],
-				"execution_count": null
+				"execution_count": 11
 			},
 			{
 				"cell_type": "code",
@@ -421,7 +421,7 @@
 					"    StructField(\"abstractive_summary\", StringType(), True)\r\n",
 					"    ])"
 				],
-				"execution_count": null
+				"execution_count": 12
 			},
 			{
 				"cell_type": "markdown",
@@ -511,7 +511,7 @@
 					"    else:\r\n",
 					"        return(spark.createDataFrame([topic, 'No Data'], schema)) "
 				],
-				"execution_count": null
+				"execution_count": 13
 			},
 			{
 				"cell_type": "markdown",
@@ -543,7 +543,7 @@
 					"df_all = QueryDataSQLPool(\"select * from Sent.NATO_Sentiment\")\r\n",
 					"df_all.count()"
 				],
-				"execution_count": null
+				"execution_count": 14
 			},
 			{
 				"cell_type": "code",
@@ -582,7 +582,7 @@
 					"#topic_all_summary = Abstractive_Summarization(dataframe = df_all, topic=5)\r\n",
 					"display(topic_all_summary)"
 				],
-				"execution_count": null
+				"execution_count": 15
 			},
 			{
 				"cell_type": "markdown",

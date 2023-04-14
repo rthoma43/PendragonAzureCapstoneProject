@@ -757,10 +757,6 @@
 				"type": "string",
 				"defaultValue": "100"
 			},
-			"Loops": {
-				"type": "int",
-				"defaultValue": 3
-			},
 			"TopicWordsOutputTable": {
 				"type": "string",
 				"defaultValue": "Words.NATO_Topic_Words"
