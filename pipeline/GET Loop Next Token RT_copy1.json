@@ -568,7 +568,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@or(equals(variables('until'), '000'), equals(length(variables('loopCountArray')), 2))",
+						"value": "@or(equals(variables('until'), '000'), equals(length(variables('loopCountArray')), int(pipeline().parameters.MaximumTweetstoPull)))",
 						"type": "Expression"
 					},
 					"activities": [
@@ -819,6 +819,10 @@
 			"TopicOutputTable": {
 				"type": "string",
 				"defaultValue": "Topic.NATO_Topics"
+			},
+			"MaximumTweetstoPull": {
+				"type": "string",
+				"defaultValue": "2"
 			}
 		},
 		"variables": {
