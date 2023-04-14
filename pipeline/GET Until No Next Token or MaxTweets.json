@@ -568,7 +568,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@or(equals(variables('until'), '000'), equals(length(variables('loopCountArray')), int(pipeline().parameters.MaximumTweetstoPull)))",
+						"value": "@or(equals(variables('until'), '000'), equals(length(variables('loopCountArray')), div(int(pipeline().parameters.MaximumTweetstoPull),100)))",
 						"type": "Expression"
 					},
 					"activities": [
