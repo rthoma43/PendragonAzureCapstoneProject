@@ -2920,7 +2920,7 @@
 						"type": "Until",
 						"dependsOn": [
 							{
-								"activity": "Set until variable",
+								"activity": "Set until variable to false",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -2935,7 +2935,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@or(equals(variables('until'), '000'), equals(length(variables('loopCountArray')), div(int(pipeline().parameters.MaximumTweetstoPull),int(pipeline().parameters.MaxResults))))",
+								"value": "@or(equals(variables('until'), true), equals(length(variables('loopCountArray')), div(int(pipeline().parameters.MaximumTweetstoPull),int(pipeline().parameters.MaxResults))))",
 								"type": "Expression"
 							},
 							"activities": [
@@ -2973,80 +2973,8 @@
 									}
 								},
 								{
-									"name": "GET to Temp",
-									"type": "Copy",
-									"dependsOn": [
-										{
-											"activity": "Move Temp file to Output folder",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "RestSource",
-											"httpRequestTimeout": "00:01:40",
-											"requestInterval": "00.00:00:00.010",
-											"requestMethod": "GET",
-											"paginationRules": {
-												"supportRFC5988": "true"
-											}
-										},
-										"sink": {
-											"type": "JsonSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
-											},
-											"formatSettings": {
-												"type": "JsonWriteSettings"
-											}
-										},
-										"enableStaging": false
-									},
-									"inputs": [
-										{
-											"referenceName": "RestResource_Next_Token",
-											"type": "DatasetReference",
-											"parameters": {
-												"query": {
-													"value": "@pipeline().parameters.Query",
-													"type": "Expression"
-												},
-												"tweet_fields": {
-													"value": "@pipeline().parameters.TweetFields",
-													"type": "Expression"
-												},
-												"max_results": {
-													"value": "@pipeline().parameters.MaxResults",
-													"type": "Expression"
-												},
-												"next_token": {
-													"value": "@activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "Twitter_RawJSON_Temp",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									]
-								},
-								{
-									"name": "Set Until Value",
-									"type": "SetVariable",
+									"name": "If next_token exists",
+									"type": "IfCondition",
 									"dependsOn": [
 										{
 											"activity": "Extract next_token",
@@ -3057,71 +2985,149 @@
 									],
 									"userProperties": [],
 									"typeProperties": {
-										"variableName": "until",
-										"value": {
-											"value": "@activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token",
+										"expression": {
+											"value": "@not(equals(activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token, '000'))",
 											"type": "Expression"
-										}
-									}
-								},
-								{
-									"name": "Move Temp file to Output folder",
-									"type": "ExecuteDataFlow",
-									"dependsOn": [
-										{
-											"activity": "Set Until Value",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"dataflow": {
-											"referenceName": "MoveTemptoOutput",
-											"type": "DataFlowReference",
-											"parameters": {},
-											"datasetParameters": {
-												"source1": {},
-												"sink1": {}
+										},
+										"ifFalseActivities": [
+											{
+												"name": "Set until variable to true",
+												"type": "SetVariable",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"variableName": "until",
+													"value": true
+												}
 											}
-										},
-										"staging": {},
-										"integrationRuntime": {
-											"referenceName": "WarmIntegrationRuntime",
-											"type": "IntegrationRuntimeReference"
-										},
-										"traceLevel": "None",
-										"cacheSinks": {
-											"firstRowOnly": true
-										}
-									}
-								},
-								{
-									"name": "Append loopCount variable",
-									"type": "AppendVariable",
-									"dependsOn": [
-										{
-											"activity": "GET to Temp",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "loopCountArray",
-										"value": {
-											"value": "@string(add(int(variables('loopCount')), 1))",
-											"type": "Expression"
-										}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "Move Temp file to Output folder",
+												"type": "ExecuteDataFlow",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"dataflow": {
+														"referenceName": "MoveTemptoOutput",
+														"type": "DataFlowReference",
+														"parameters": {},
+														"datasetParameters": {
+															"source1": {},
+															"sink1": {}
+														}
+													},
+													"staging": {},
+													"integrationRuntime": {
+														"referenceName": "WarmIntegrationRuntime",
+														"type": "IntegrationRuntimeReference"
+													},
+													"traceLevel": "None",
+													"cacheSinks": {
+														"firstRowOnly": true
+													}
+												}
+											},
+											{
+												"name": "GET to Temp",
+												"type": "Copy",
+												"dependsOn": [
+													{
+														"activity": "Move Temp file to Output folder",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "RestSource",
+														"httpRequestTimeout": "00:01:40",
+														"requestInterval": "00.00:00:00.010",
+														"requestMethod": "GET",
+														"paginationRules": {
+															"supportRFC5988": "true"
+														}
+													},
+													"sink": {
+														"type": "JsonSink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														},
+														"formatSettings": {
+															"type": "JsonWriteSettings"
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "RestResource_Next_Token",
+														"type": "DatasetReference",
+														"parameters": {
+															"query": {
+																"value": "@pipeline().parameters.Query",
+																"type": "Expression"
+															},
+															"tweet_fields": {
+																"value": "@pipeline().parameters.TweetFields",
+																"type": "Expression"
+															},
+															"max_results": {
+																"value": "@pipeline().parameters.MaxResults",
+																"type": "Expression"
+															},
+															"next_token": {
+																"value": "@activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "Twitter_RawJSON_Temp",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												]
+											},
+											{
+												"name": "Append loopCount variable_copy1",
+												"type": "AppendVariable",
+												"dependsOn": [
+													{
+														"activity": "GET to Temp",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"userProperties": [],
+												"typeProperties": {
+													"variableName": "loopCountArray",
+													"value": {
+														"value": "@string(add(int(variables('loopCount')), 1))",
+														"type": "Expression"
+													}
+												}
+											}
+										]
 									}
 								}
 							],
@@ -3129,7 +3135,7 @@
 						}
 					},
 					{
-						"name": "Set until variable",
+						"name": "Set until variable to false",
 						"type": "SetVariable",
 						"dependsOn": [
 							{
@@ -3142,7 +3148,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "until",
-							"value": "abcd"
+							"value": false
 						}
 					},
 					{
@@ -3174,7 +3180,7 @@
 					},
 					"Query": {
 						"type": "string",
-						"defaultValue": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en -is:retweet -is:reply"
+						"defaultValue": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en -is:retweet -is:reply&start_time=2023-04-14T00:00:01.000Z&end_time=2023-04-14T00:07:01.000Z"
 					},
 					"TweetFields": {
 						"type": "string",
@@ -3211,14 +3217,17 @@
 				},
 				"variables": {
 					"until": {
-						"type": "String",
-						"defaultValue": "abcd"
+						"type": "Boolean",
+						"defaultValue": false
 					},
 					"loopCount": {
 						"type": "String"
 					},
 					"loopCountArray": {
 						"type": "Array"
+					},
+					"next_token": {
+						"type": "String"
 					}
 				},
 				"annotations": []
@@ -3239,8 +3248,8 @@
 				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolSmall')]",
 				"[concat(variables('workspaceId'), '/pipelines/Archive_Analysis_Tables')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token')]",
-				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]",
-				"[concat(variables('workspaceId'), '/dataflows/MoveTemptoOutput')]"
+				"[concat(variables('workspaceId'), '/dataflows/MoveTemptoOutput')]",
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]"
 			]
 		},
 		{
