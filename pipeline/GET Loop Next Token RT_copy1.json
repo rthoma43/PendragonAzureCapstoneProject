@@ -105,7 +105,7 @@
 				"type": "Delete",
 				"dependsOn": [
 					{
-						"activity": "Until1",
+						"activity": "Pull data until there is no next_token",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -566,7 +566,7 @@
 				}
 			},
 			{
-				"name": "Until1",
+				"name": "Pull data until there is no next_token",
 				"type": "Until",
 				"dependsOn": [
 					{
@@ -586,14 +586,7 @@
 						{
 							"name": "Extract next_token",
 							"type": "ExecuteDataFlow",
-							"dependsOn": [
-								{
-									"activity": "Set Until Value",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
+							"dependsOn": [],
 							"policy": {
 								"timeout": "0.12:00:00",
 								"retry": 0,
@@ -622,7 +615,7 @@
 							"type": "Copy",
 							"dependsOn": [
 								{
-									"activity": "Extract next_token",
+									"activity": "Set Until Value",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -693,7 +686,7 @@
 							"type": "SetVariable",
 							"dependsOn": [
 								{
-									"activity": "Check if next_token exists",
+									"activity": "Extract next_token",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -703,35 +696,8 @@
 							"typeProperties": {
 								"variableName": "until",
 								"value": {
-									"value": "@string(activity('Check if next_token exists').output.runStatus.output.sink1.value[0].next_token)",
+									"value": "@activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token",
 									"type": "Expression"
-								}
-							}
-						},
-						{
-							"name": "Check if next_token exists",
-							"type": "ExecuteDataFlow",
-							"dependsOn": [],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
-							"userProperties": [],
-							"typeProperties": {
-								"dataflow": {
-									"referenceName": "Get result_count",
-									"type": "DataFlowReference"
-								},
-								"integrationRuntime": {
-									"referenceName": "WarmIntegrationRuntime",
-									"type": "IntegrationRuntimeReference"
-								},
-								"traceLevel": "None",
-								"cacheSinks": {
-									"firstRowOnly": true
 								}
 							}
 						}
