@@ -675,7 +675,7 @@
 											"type": "Expression"
 										},
 										"next_token": {
-											"value": "@activity('Extract next_token').output.pipelineReturnValue.runStatus.output.sink1.value[0].next_token",
+											"value": "@activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token",
 											"type": "Expression"
 										}
 									}
