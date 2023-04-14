@@ -1532,7 +1532,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "until",
-							"value": "1"
+							"value": "100"
 						}
 					},
 					{
@@ -1549,14 +1549,21 @@
 						"userProperties": [],
 						"typeProperties": {
 							"expression": {
-								"value": "@equals(variables('until'),'')",
+								"value": "@less(variables('until'),100)",
 								"type": "Expression"
 							},
 							"activities": [
 								{
-									"name": "Extract Next Token_copy1",
+									"name": "Extract next_token",
 									"type": "ExecuteDataFlow",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "Set result_count variable",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"policy": {
 										"timeout": "0.12:00:00",
 										"retry": 0,
@@ -1589,11 +1596,11 @@
 									}
 								},
 								{
-									"name": "GET to Temp_copy1",
+									"name": "GET to Temp",
 									"type": "Copy",
 									"dependsOn": [
 										{
-											"activity": "Extract Next Token_copy1",
+											"activity": "Extract next_token",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -1646,7 +1653,7 @@
 													"type": "Expression"
 												},
 												"next_token": {
-													"value": "@activity('Extract Next Token_copy1').output.runStatus.output.sink1.value[0].next_token",
+													"value": "@activity('Extract next_token').output.pipelineReturnValue.runStatus.output.sink1.value[0].next_token",
 													"type": "Expression"
 												}
 											}
@@ -1661,11 +1668,11 @@
 									]
 								},
 								{
-									"name": "Set variable1",
+									"name": "Set result_count variable",
 									"type": "SetVariable",
 									"dependsOn": [
 										{
-											"activity": "Extract Next Token_copy1",
+											"activity": "Extract result_count",
 											"dependencyConditions": [
 												"Succeeded"
 											]
@@ -1675,8 +1682,41 @@
 									"typeProperties": {
 										"variableName": "until",
 										"value": {
-											"value": "@activity('Extract Next Token_copy1').output.runStatus.output.sink1.value[0].next_token",
+											"value": "@activity('Extract result_count').output.runStatus.output.sink1.value[0].result_count",
 											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Extract result_count",
+									"type": "ExecuteDataFlow",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataflow": {
+											"referenceName": "Get result_count",
+											"type": "DataFlowReference",
+											"parameters": {},
+											"datasetParameters": {
+												"source1": {},
+												"sink1": {}
+											}
+										},
+										"staging": {},
+										"compute": {
+											"coreCount": 8,
+											"computeType": "General"
+										},
+										"traceLevel": "None",
+										"cacheSinks": {
+											"firstRowOnly": true
 										}
 									}
 								}
@@ -1769,7 +1809,8 @@
 				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolSmall')]",
 				"[concat(variables('workspaceId'), '/pipelines/Archive_Analysis_Tables')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token')]",
-				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]"
+				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]",
+				"[concat(variables('workspaceId'), '/dataflows/Get result_count')]"
 			]
 		},
 		{
@@ -8177,6 +8218,56 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/datasets/json_Aithusa')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Get result_count')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Twitter_RawJSON_Temp",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumn1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          data as (edit_history_tweet_ids as string[], id as string, created_at as string, text as string, public_metrics as (retweet_count as integer, reply_count as integer, like_count as integer, quote_count as integer, impression_count as integer), lang as string)[],",
+						"          meta as (newest_id as string, oldest_id as string, result_count as integer, next_token as string)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> source1",
+						"source1 derive(result_count = meta.result_count) ~> derivedColumn1",
+						"derivedColumn1 sink(validateSchema: false,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     store: 'cache',",
+						"     format: 'inline',",
+						"     output: true,",
+						"     saveOrder: 1) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Twitter_RawJSON_Temp')]"
 			]
 		},
 		{
