@@ -562,7 +562,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"expression": {
-						"value": "@not(equals(variables('until'), '000'))",
+						"value": "@equals(variables('until'), '000')",
 						"type": "Expression"
 					},
 					"activities": [
