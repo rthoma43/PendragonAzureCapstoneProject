@@ -613,7 +613,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@not(equals(activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token, '000'))",
+									"value": "@not(equals(activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token, null))",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
@@ -701,7 +701,10 @@
 												"referenceName": "RestResource_Next_Token",
 												"type": "DatasetReference",
 												"parameters": {
-													"query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en -is:retweet -is:reply",
+													"query": {
+														"value": "@pipeline().parameters.Query",
+														"type": "Expression"
+													},
 													"tweet_fields": {
 														"value": "@pipeline().parameters.TweetFields",
 														"type": "Expression"
