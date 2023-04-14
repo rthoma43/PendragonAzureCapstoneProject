@@ -701,10 +701,7 @@
 												"referenceName": "RestResource_Next_Token",
 												"type": "DatasetReference",
 												"parameters": {
-													"query": {
-														"value": "@pipeline().parameters.Query",
-														"type": "Expression"
-													},
+													"query": "(\"NATO\"OR\"North Atlantic Treaty Organization\"OR%23NATO) lang:en -is:retweet -is:reply",
 													"tweet_fields": {
 														"value": "@pipeline().parameters.TweetFields",
 														"type": "Expression"
