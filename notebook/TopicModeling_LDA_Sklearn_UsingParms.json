@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "6aa26935-04e7-4662-82a8-16c255da8de3"
+				"spark.autotune.trackingId": "da77b17d-04b4-4bf9-ad66-60ba3e1e4930"
 			}
 		},
 		"metadata": {
@@ -367,7 +367,7 @@
 					"print(len(pandas_df))\r\n",
 					"\r\n",
 					"# Select rows where 'cleantext' column is empty string\r\n",
-					"pandas_df = pandas_df[(pandas_df[\"cleantext\"] != \"\") & (~pandas_df[\"cleantext\"].isnull())]\r\n",
+					"pandas_df = pandas_df[(pandas_df[\"cleanText\"] != \"\") & (~pandas_df[\"cleanText\"].isnull())]\r\n",
 					"print(len(pandas_df))"
 				],
 				"execution_count": null
