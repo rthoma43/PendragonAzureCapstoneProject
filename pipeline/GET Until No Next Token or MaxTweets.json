@@ -791,8 +791,7 @@
 		],
 		"parameters": {
 			"QueryName": {
-				"type": "string",
-				"defaultValue": "NATOTest001"
+				"type": "string"
 			},
 			"Query": {
 				"type": "string",
