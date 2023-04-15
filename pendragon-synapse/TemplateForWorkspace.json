@@ -3833,6 +3833,10 @@
 								}
 							},
 							"snapshot": true,
+							"sparkPool": {
+								"referenceName": "SparkPoolSmall",
+								"type": "BigDataPoolReference"
+							},
 							"executorSize": "Small",
 							"conf": {
 								"spark.dynamicAllocation.enabled": null,
@@ -3920,6 +3924,10 @@
 								}
 							},
 							"snapshot": true,
+							"sparkPool": {
+								"referenceName": "SparkPoolSmall",
+								"type": "BigDataPoolReference"
+							},
 							"executorSize": "Small",
 							"conf": {
 								"spark.dynamicAllocation.enabled": null,
@@ -14412,7 +14420,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "66c58568-a09e-46e0-8f50-dbddc48fab9a"
+						"spark.autotune.trackingId": "12e682f3-71c8-4720-9154-1164b385088c"
 					}
 				},
 				"metadata": {
@@ -14437,13 +14445,15 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
