@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "da77b17d-04b4-4bf9-ad66-60ba3e1e4930"
+				"spark.autotune.trackingId": "edc45693-08a8-4cfd-a656-bd051b5be9fd"
 			}
 		},
 		"metadata": {
@@ -90,7 +90,7 @@
 					"\r\n",
 					""
 				],
-				"execution_count": 1
+				"execution_count": 3
 			},
 			{
 				"cell_type": "markdown",
@@ -131,7 +131,7 @@
 					"#wordtable = \"Words.Aithusa_Topic_Words\"\r\n",
 					"#maintable = \"dbo.NATO_Tweets1_Aithusa\""
 				],
-				"execution_count": 2
+				"execution_count": 4
 			},
 			{
 				"cell_type": "code",
@@ -150,7 +150,7 @@
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *"
 				],
-				"execution_count": null
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -183,7 +183,7 @@
 					"                     .synapsesql()\n",
 					")"
 				],
-				"execution_count": null
+				"execution_count": 6
 			},
 			{
 				"cell_type": "markdown",
@@ -223,7 +223,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": null
+				"execution_count": 7
 			},
 			{
 				"cell_type": "markdown",
@@ -291,7 +291,7 @@
 					"\r\n",
 					"#display(df)"
 				],
-				"execution_count": null
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
@@ -327,7 +327,7 @@
 					"\r\n",
 					"display(df_removed)"
 				],
-				"execution_count": null
+				"execution_count": 9
 			},
 			{
 				"cell_type": "markdown",
@@ -366,11 +366,20 @@
 					"pandas_df = df_removed.toPandas()\r\n",
 					"print(len(pandas_df))\r\n",
 					"\r\n",
-					"# Select rows where 'cleantext' column is empty string\r\n",
-					"pandas_df = pandas_df[(pandas_df[\"cleanText\"] != \"\") & (~pandas_df[\"cleanText\"].isnull())]\r\n",
-					"print(len(pandas_df))"
+					"# create a subset dataframe where column1 has null or empty string values\r\n",
+					"pandas_df1 = pandas_df[pandas_df['cleanText'].isnull() | (pandas_df['cleanText'] == '')]\r\n",
+					"print(len(pandas_df1))\r\n",
+					"\r\n",
+					"# drop rows with empty strings\r\n",
+					"df2 = pandas_df[pandas_df['cleanText'] != '']\r\n",
+					"\r\n",
+					"# drop rows with null values\r\n",
+					"df2 = df2.dropna(subset=['cleanText'])\r\n",
+					"\r\n",
+					"# print the resulting dataframe\r\n",
+					"print(len(df2))"
 				],
-				"execution_count": null
+				"execution_count": 38
 			},
 			{
 				"cell_type": "code",
@@ -389,21 +398,22 @@
 				"source": [
 					"# Tokenize and vectorize the text data\r\n",
 					"count_vectorizer = CountVectorizer()\r\n",
-					"count_data = count_vectorizer.fit_transform(pandas_df[\"cleanText\"])\r\n",
+					"count_data = count_vectorizer.fit_transform(df2[\"cleanText\"])\r\n",
 					"\r\n",
 					"# Use LatentDirichletAllocation on Pandas DataFrame\r\n",
 					"lda = LatentDirichletAllocation(n_components=5, random_state=42)\r\n",
 					"lda.fit(count_data)\r\n",
 					"lda_output = lda.transform(count_data)\r\n",
+					"print(len(lda_output))\r\n",
 					"\r\n",
 					"# Convert output to Pandas DataFrame and merge with original data\r\n",
 					"lda_output_df = pd.DataFrame(lda_output, columns=[\"topic_0_confidence\", \"topic_1_confidence\",\"topic_2_confidence\",\"topic_3_confidence\",\"topic_4_confidence\"])\r\n",
-					"pandas_df = pd.concat([pandas_df, lda_output_df], axis=1)\r\n",
+					"df2 = pd.concat([df2, lda_output_df], axis=1)\r\n",
 					"\r\n",
-					"pandas_df['topic'] = lda_output.argmax(axis=1)\r\n",
+					"df2['topic'] = lda_output.argmax(axis=1)\r\n",
 					"\r\n",
 					"# Convert Pandas DataFrame back to Spark DataFrame\r\n",
-					"spark_df = spark.createDataFrame(pandas_df)\r\n",
+					"spark_df = spark.createDataFrame(df2)\r\n",
 					"\r\n",
 					"# Renaming the \"cleanText\" column to \"cleantext\"\r\n",
 					"spark_df = spark_df.withColumnRenamed(\"cleanText\", \"cleantext\")\r\n",
@@ -411,7 +421,43 @@
 					"# Display Spark DataFrame\r\n",
 					"#display(spark_df)"
 				],
-				"execution_count": null
+				"execution_count": 39
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"len(lda_output)"
+				],
+				"execution_count": 28
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"len(pandas_df1)"
+				],
+				"execution_count": 29
 			},
 			{
 				"cell_type": "markdown",
