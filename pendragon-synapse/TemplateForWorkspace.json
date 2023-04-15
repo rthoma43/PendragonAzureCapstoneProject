@@ -9265,7 +9265,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "SELECT * FROM [archive].[NATO_Archive_Tweets]\nORDER BY created_at ASC",
+					"query": "SELECT * FROM [Topic].[NATO_Topics]",
 					"metadata": {
 						"language": "sql"
 					},
@@ -14419,7 +14419,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "c17dd5a0-e3a1-4619-8f43-84c22b987ab8"
+						"spark.autotune.trackingId": "4cb752c1-7c15-4f25-bd88-0ae253b3fb7a"
 					}
 				},
 				"metadata": {
@@ -14444,15 +14444,13 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -22648,7 +22646,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "d9e51d91-aede-4ea5-a1e6-de341aaa0bb0"
+						"spark.autotune.trackingId": "78aff0cb-0c66-49cc-8839-b890fba68f74"
 					}
 				},
 				"metadata": {
@@ -22673,7 +22671,8 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -22780,7 +22779,7 @@
 							"from pyspark.sql.types import *"
 						],
 						"outputs": [],
-						"execution_count": 3
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -22814,26 +22813,7 @@
 							")"
 						],
 						"outputs": [],
-						"execution_count": 4
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"df.head(10)"
-						],
-						"outputs": [],
-						"execution_count": 9
+						"execution_count": null
 					},
 					{
 						"cell_type": "markdown",
@@ -22874,26 +22854,7 @@
 							"#df = df.limit(100)"
 						],
 						"outputs": [],
-						"execution_count": 5
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"df.tail(2)"
-						],
-						"outputs": [],
-						"execution_count": 10
+						"execution_count": null
 					},
 					{
 						"cell_type": "markdown",
@@ -22962,26 +22923,7 @@
 							"#display(df)"
 						],
 						"outputs": [],
-						"execution_count": 11
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"df.tail(2)"
-						],
-						"outputs": [],
-						"execution_count": 13
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -23018,7 +22960,7 @@
 							"display(df_removed)"
 						],
 						"outputs": [],
-						"execution_count": 12
+						"execution_count": null
 					},
 					{
 						"cell_type": "markdown",
@@ -23054,10 +22996,15 @@
 							"import pandas as pd\r\n",
 							"\r\n",
 							"# Convert Spark DataFrame to Pandas DataFrame\r\n",
-							"pandas_df = df_removed.toPandas()"
+							"pandas_df = df_removed.toPandas()\r\n",
+							"print(len(pandas_df))\r\n",
+							"\r\n",
+							"# Select rows where 'cleantext' column is empty string\r\n",
+							"pandas_df = pandas_df[(pandas_df[\"cleantext\"] != \"\") & (~pandas_df[\"cleantext\"].isnull())]\r\n",
+							"print(len(pandas_df))"
 						],
 						"outputs": [],
-						"execution_count": 14
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -23096,10 +23043,10 @@
 							"spark_df = spark_df.withColumnRenamed(\"cleanText\", \"cleantext\")\r\n",
 							"\r\n",
 							"# Display Spark DataFrame\r\n",
-							"display(spark_df)"
+							"#display(spark_df)"
 						],
 						"outputs": [],
-						"execution_count": 15
+						"execution_count": null
 					},
 					{
 						"cell_type": "markdown",
@@ -23141,7 +23088,7 @@
 							"print(top_N_words)"
 						],
 						"outputs": [],
-						"execution_count": 16
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -23170,10 +23117,10 @@
 							"df_words = spark.createDataFrame(df)\r\n",
 							"\r\n",
 							"# display the spark dataframe\r\n",
-							"display(df_words)"
+							"#display(df_words)"
 						],
 						"outputs": [],
-						"execution_count": 17
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -23189,10 +23136,10 @@
 							}
 						},
 						"source": [
-							"spark_df.printSchema"
+							"#spark_df.printSchema"
 						],
 						"outputs": [],
-						"execution_count": 18
+						"execution_count": null
 					},
 					{
 						"cell_type": "markdown",
@@ -23278,7 +23225,7 @@
 							"outputwordtable = \"SQLPoolTest.\" + wordtable"
 						],
 						"outputs": [],
-						"execution_count": 19
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -23315,7 +23262,7 @@
 							" .synapsesql(outputtopictable))"
 						],
 						"outputs": [],
-						"execution_count": 20
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -23331,10 +23278,10 @@
 							}
 						},
 						"source": [
-							"df_words.printSchema"
+							"#df_words.printSchema"
 						],
 						"outputs": [],
-						"execution_count": 21
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -23371,26 +23318,7 @@
 							" .synapsesql(outputwordtable))"
 						],
 						"outputs": [],
-						"execution_count": 22
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"maintable"
-						],
-						"outputs": [],
-						"execution_count": 24
+						"execution_count": null
 					}
 				]
 			},
