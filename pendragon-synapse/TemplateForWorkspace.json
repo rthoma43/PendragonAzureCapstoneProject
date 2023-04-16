@@ -16504,7 +16504,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "208be69a-bda2-4f00-a9e2-8ac22749ebae"
+						"spark.autotune.trackingId": "1d457bce-3926-4404-91a9-7219ce32dbbd"
 					}
 				},
 				"metadata": {
@@ -22806,7 +22806,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "2c83adf9-b617-4a06-859c-be5696c480e1"
+						"spark.autotune.trackingId": "81c03a59-c6ef-43b3-a5f8-bb5fb3353d63"
 					}
 				},
 				"metadata": {
@@ -23595,7 +23595,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "8ecd58c9-3ac1-4ee7-ba66-6eaf717f0092"
+						"spark.autotune.trackingId": "ebeb1acf-13db-4124-9d47-f64851aa4ccd"
 					}
 				},
 				"metadata": {
@@ -24257,7 +24257,7 @@
 							"\r\n",
 							"except Exception as e:\r\n",
 							"    error_message = str(e)\r\n",
-							"    topic_all_summary = spark.createDataFrame([(topic, error_message)], schema)\r\n",
+							"    topic0_summary = spark.createDataFrame([(topic, error_message)], schema)\r\n",
 							"    print(f\"An error occurred: {e}\")"
 						],
 						"outputs": [],
@@ -24338,7 +24338,7 @@
 							"\r\n",
 							"except Exception as e:\r\n",
 							"    error_message = str(e)\r\n",
-							"    topic_all_summary = spark.createDataFrame([(topic, error_message)], schema)\r\n",
+							"    topic1_summary = spark.createDataFrame([(topic, error_message)], schema)\r\n",
 							"    print(f\"An error occurred: {e}\")"
 						],
 						"outputs": [],
@@ -24406,7 +24406,7 @@
 							"\r\n",
 							"except Exception as e:\r\n",
 							"    error_message = str(e)\r\n",
-							"    topic_all_summary = spark.createDataFrame([(topic, error_message)], schema)\r\n",
+							"    topic2_summary = spark.createDataFrame([(topic, error_message)], schema)\r\n",
 							"    print(f\"An error occurred: {e}\")"
 						],
 						"outputs": [],
@@ -24487,7 +24487,7 @@
 							"\r\n",
 							"except Exception as e:\r\n",
 							"    error_message = str(e)\r\n",
-							"    topic_all_summary = spark.createDataFrame([(topic, error_message)], schema)\r\n",
+							"    topic3_summary = spark.createDataFrame([(topic, error_message)], schema)\r\n",
 							"    print(f\"An error occurred: {e}\")\r\n",
 							""
 						],
@@ -24569,7 +24569,7 @@
 							"\r\n",
 							"except Exception as e:\r\n",
 							"    error_message = str(e)\r\n",
-							"    topic_all_summary = spark.createDataFrame([(topic, error_message)], schema)\r\n",
+							"    topic4_summary = spark.createDataFrame([(topic, error_message)], schema)\r\n",
 							"    print(f\"An error occurred: {e}\")"
 						],
 						"outputs": [],
