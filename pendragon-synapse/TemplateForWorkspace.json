@@ -172,6 +172,79 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Check_Number_of_Files_in_Folder')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "Raw_Twitter_Outputs",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "JsonReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "numberoffiles",
+							"value": {
+								"value": "@string(length(activity('Get Metadata1').output.childItems))",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"numberoffiles": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/GET Loop Next Token RT')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -9265,7 +9338,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "SELECT * FROM [Topic].[NATO_Topics]",
+					"query": "SELECT count(*) FROM [dbo].[NATO_Tweets1]",
 					"metadata": {
 						"language": "sql"
 					},
@@ -22732,7 +22805,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "edc45693-08a8-4cfd-a656-bd051b5be9fd"
+						"spark.autotune.trackingId": "956e1deb-c7e8-4941-9754-6392d3c51e15"
 					}
 				},
 				"metadata": {
@@ -22757,7 +22830,8 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -22802,7 +22876,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 3
+						"execution_count": 1
 					},
 					{
 						"cell_type": "markdown",
@@ -22844,7 +22918,7 @@
 							"#maintable = \"dbo.NATO_Tweets1_Aithusa\""
 						],
 						"outputs": [],
-						"execution_count": 4
+						"execution_count": 2
 					},
 					{
 						"cell_type": "code",
@@ -22864,7 +22938,7 @@
 							"from pyspark.sql.types import *"
 						],
 						"outputs": [],
-						"execution_count": 5
+						"execution_count": 3
 					},
 					{
 						"cell_type": "code",
@@ -22898,7 +22972,7 @@
 							")"
 						],
 						"outputs": [],
-						"execution_count": 6
+						"execution_count": 4
 					},
 					{
 						"cell_type": "markdown",
@@ -22939,7 +23013,7 @@
 							"#df = df.limit(100)"
 						],
 						"outputs": [],
-						"execution_count": 7
+						"execution_count": 5
 					},
 					{
 						"cell_type": "markdown",
@@ -23008,7 +23082,7 @@
 							"#display(df)"
 						],
 						"outputs": [],
-						"execution_count": 8
+						"execution_count": 6
 					},
 					{
 						"cell_type": "code",
@@ -23045,7 +23119,7 @@
 							"display(df_removed)"
 						],
 						"outputs": [],
-						"execution_count": 9
+						"execution_count": 7
 					},
 					{
 						"cell_type": "markdown",
@@ -23094,11 +23168,14 @@
 							"# drop rows with null values\r\n",
 							"df2 = df2.dropna(subset=['cleanText'])\r\n",
 							"\r\n",
+							"# reset the indexes of the original data frames\r\n",
+							"df2 = df2.reset_index(drop=True)\r\n",
+							"\r\n",
 							"# print the resulting dataframe\r\n",
 							"print(len(df2))"
 						],
 						"outputs": [],
-						"execution_count": 38
+						"execution_count": 18
 					},
 					{
 						"cell_type": "code",
@@ -23123,7 +23200,6 @@
 							"lda = LatentDirichletAllocation(n_components=5, random_state=42)\r\n",
 							"lda.fit(count_data)\r\n",
 							"lda_output = lda.transform(count_data)\r\n",
-							"print(len(lda_output))\r\n",
 							"\r\n",
 							"# Convert output to Pandas DataFrame and merge with original data\r\n",
 							"lda_output_df = pd.DataFrame(lda_output, columns=[\"topic_0_confidence\", \"topic_1_confidence\",\"topic_2_confidence\",\"topic_3_confidence\",\"topic_4_confidence\"])\r\n",
@@ -23141,7 +23217,7 @@
 							"#display(spark_df)"
 						],
 						"outputs": [],
-						"execution_count": 39
+						"execution_count": 19
 					},
 					{
 						"cell_type": "code",
@@ -23458,6 +23534,18 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "eastus2"
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SparkPoolSmall')]",
 			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
@@ -23477,18 +23565,6 @@
 				"sparkVersion": "3.3",
 				"isComputeIsolationEnabled": false,
 				"sessionLevelPackagesEnabled": true,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "eastus2"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
 				"annotations": []
 			},
 			"dependsOn": [],
