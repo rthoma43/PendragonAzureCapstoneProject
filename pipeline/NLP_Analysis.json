@@ -249,7 +249,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"notebook": {
-						"referenceName": "CogntiveServices_Summarization_UsingParms",
+						"referenceName": "CogntiveServices_Summarization_UsingParms_v2",
 						"type": "NotebookReference"
 					},
 					"parameters": {
