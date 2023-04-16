@@ -9300,6 +9300,29 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 7')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "Create_Tables"
+				},
+				"content": {
+					"query": "CREATE TABLE [Topic].[NATO_Topics_NER_LEM]\n( \n\t[id] bigint  NULL,\n\t[created_at] DATETIME2(7)  NULL,\n\t[text] NVARCHAR(4000)  NULL,\n\t[lang] nvarchar(10)  NULL,\n\t[retweet_count] INT  NULL,\n\t[reply_count] INT  NULL,\n\t[like_count] INT  NULL,\n\t[quote_count] INT  NULL,\n\t[impression_count] INT  NULL,\n\t[cleantext] NVARCHAR(4000)  NULL,\n    [topic_0_confidence] FLOAT NULL,\n    [topic_1_confidence] FLOAT NULL,\n    [topic_2_confidence] FLOAT NULL,\n    [topic_3_confidence] FLOAT NULL,\n    [topic_4_confidence] FLOAT NULL,\n\t[topic] BIGINT NULL\n)\n\nGO\n\nCREATE TABLE [Words].[NATO_Topic_Words_NER_LEM]\n( \n\t[topic] bigint  NULL,\n\t[word_1] NVARCHAR(20)  NULL,\n\t[word_2] NVARCHAR(20)  NULL,\n    [word_3] NVARCHAR(20)  NULL,\n    [word_4] NVARCHAR(20)  NULL,\n    [word_5] NVARCHAR(20)  NULL,\n    [word_6] NVARCHAR(20)  NULL,\n    [word_7] NVARCHAR(20)  NULL,\n    [word_8] NVARCHAR(20)  NULL,\n    [word_9] NVARCHAR(20)  NULL,\n    [word_10] NVARCHAR(20)  NULL\n)\n\nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/ArchiveAnalysis')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
@@ -21837,7 +21860,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "48951c69-5840-403e-a9c2-db381beabf85"
+						"spark.autotune.trackingId": "228b63c7-0a7c-4ce1-9d88-5f2792a91e53"
 					}
 				},
 				"metadata": {
@@ -21862,7 +21885,8 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -21954,11 +21978,11 @@
 							]
 						},
 						"source": [
-							"topictable = \"Topic.NATO_Topics_NER\"\r\n",
-							"wordtable = \"Words.NATO_Topic_Words_NER\""
+							"topictable = \"Topic.NATO_Topics_NER_LEM\"\r\n",
+							"wordtable = \"Words.NATO_Topic_Words_NER_LEM\""
 						],
 						"outputs": [],
-						"execution_count": 3
+						"execution_count": 18
 					},
 					{
 						"cell_type": "code",
@@ -22159,7 +22183,7 @@
 							"from nltk.tokenize import sent_tokenize, word_tokenize"
 						],
 						"outputs": [],
-						"execution_count": 16
+						"execution_count": 8
 					},
 					{
 						"cell_type": "code",
@@ -22178,7 +22202,7 @@
 							"pandas_df = df_removed.toPandas()"
 						],
 						"outputs": [],
-						"execution_count": 30
+						"execution_count": 9
 					},
 					{
 						"cell_type": "code",
@@ -22198,7 +22222,7 @@
 							"pandas_df.head()"
 						],
 						"outputs": [],
-						"execution_count": 36
+						"execution_count": 10
 					},
 					{
 						"cell_type": "code",
@@ -22224,7 +22248,7 @@
 							"pandas_df.head()"
 						],
 						"outputs": [],
-						"execution_count": 37
+						"execution_count": 11
 					},
 					{
 						"cell_type": "code",
@@ -22244,7 +22268,7 @@
 							"pandas_df.head()"
 						],
 						"outputs": [],
-						"execution_count": 38
+						"execution_count": 12
 					},
 					{
 						"cell_type": "code",
@@ -22302,7 +22326,7 @@
 							"#pandas_df = df_removed.toPandas()"
 						],
 						"outputs": [],
-						"execution_count": 20
+						"execution_count": 13
 					},
 					{
 						"cell_type": "code",
@@ -22344,7 +22368,7 @@
 							"display(spark_df)"
 						],
 						"outputs": [],
-						"execution_count": 39
+						"execution_count": 14
 					},
 					{
 						"cell_type": "markdown",
@@ -22386,7 +22410,7 @@
 							"print(top_N_words)"
 						],
 						"outputs": [],
-						"execution_count": 40
+						"execution_count": 15
 					},
 					{
 						"cell_type": "code",
@@ -22418,7 +22442,7 @@
 							"display(df_words)"
 						],
 						"outputs": [],
-						"execution_count": 41
+						"execution_count": 16
 					},
 					{
 						"cell_type": "code",
@@ -22437,7 +22461,7 @@
 							"spark_df.printSchema"
 						],
 						"outputs": [],
-						"execution_count": 42
+						"execution_count": 17
 					},
 					{
 						"cell_type": "markdown",
@@ -22523,7 +22547,7 @@
 							"outputwordtable = \"SQLPoolTest.\" + wordtable"
 						],
 						"outputs": [],
-						"execution_count": 43
+						"execution_count": 19
 					},
 					{
 						"cell_type": "code",
@@ -22560,7 +22584,7 @@
 							" .synapsesql(outputtopictable))"
 						],
 						"outputs": [],
-						"execution_count": 44
+						"execution_count": 20
 					},
 					{
 						"cell_type": "code",
@@ -22579,7 +22603,7 @@
 							"df_words.printSchema"
 						],
 						"outputs": [],
-						"execution_count": 99
+						"execution_count": 21
 					},
 					{
 						"cell_type": "code",
@@ -22616,7 +22640,70 @@
 							" .synapsesql(outputwordtable))"
 						],
 						"outputs": [],
-						"execution_count": 45
+						"execution_count": 22
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"display(df_words)"
+						],
+						"outputs": [],
+						"execution_count": 23
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"display(spark_df)"
+						],
+						"outputs": [],
+						"execution_count": 24
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#!pip install spacy\n",
+							"# Perform standard imports\n",
+							"import spacy\n",
+							"spacy.load('en')\n",
+							"nlp = spacy.load('en_core_web_sm')"
+						],
+						"outputs": [],
+						"execution_count": 28
 					}
 				]
 			},
@@ -22646,7 +22733,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "288db9aa-81fe-4675-9e56-eb43fa6285d8"
+						"spark.autotune.trackingId": "edc45693-08a8-4cfd-a656-bd051b5be9fd"
 					}
 				},
 				"metadata": {
@@ -22671,8 +22758,7 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -22717,7 +22803,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 1
+						"execution_count": 3
 					},
 					{
 						"cell_type": "markdown",
@@ -22759,7 +22845,7 @@
 							"#maintable = \"dbo.NATO_Tweets1_Aithusa\""
 						],
 						"outputs": [],
-						"execution_count": 2
+						"execution_count": 4
 					},
 					{
 						"cell_type": "code",
@@ -22779,7 +22865,7 @@
 							"from pyspark.sql.types import *"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 5
 					},
 					{
 						"cell_type": "code",
@@ -22813,7 +22899,7 @@
 							")"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 6
 					},
 					{
 						"cell_type": "markdown",
@@ -22854,7 +22940,7 @@
 							"#df = df.limit(100)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 7
 					},
 					{
 						"cell_type": "markdown",
@@ -22923,7 +23009,7 @@
 							"#display(df)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 8
 					},
 					{
 						"cell_type": "code",
@@ -22960,7 +23046,7 @@
 							"display(df_removed)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 9
 					},
 					{
 						"cell_type": "markdown",
@@ -22999,12 +23085,21 @@
 							"pandas_df = df_removed.toPandas()\r\n",
 							"print(len(pandas_df))\r\n",
 							"\r\n",
-							"# Select rows where 'cleantext' column is empty string\r\n",
-							"pandas_df = pandas_df[(pandas_df[\"cleanText\"] != \"\") & (~pandas_df[\"cleanText\"].isnull())]\r\n",
-							"print(len(pandas_df))"
+							"# create a subset dataframe where column1 has null or empty string values\r\n",
+							"pandas_df1 = pandas_df[pandas_df['cleanText'].isnull() | (pandas_df['cleanText'] == '')]\r\n",
+							"print(len(pandas_df1))\r\n",
+							"\r\n",
+							"# drop rows with empty strings\r\n",
+							"df2 = pandas_df[pandas_df['cleanText'] != '']\r\n",
+							"\r\n",
+							"# drop rows with null values\r\n",
+							"df2 = df2.dropna(subset=['cleanText'])\r\n",
+							"\r\n",
+							"# print the resulting dataframe\r\n",
+							"print(len(df2))"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 38
 					},
 					{
 						"cell_type": "code",
@@ -23023,21 +23118,22 @@
 						"source": [
 							"# Tokenize and vectorize the text data\r\n",
 							"count_vectorizer = CountVectorizer()\r\n",
-							"count_data = count_vectorizer.fit_transform(pandas_df[\"cleanText\"])\r\n",
+							"count_data = count_vectorizer.fit_transform(df2[\"cleanText\"])\r\n",
 							"\r\n",
 							"# Use LatentDirichletAllocation on Pandas DataFrame\r\n",
 							"lda = LatentDirichletAllocation(n_components=5, random_state=42)\r\n",
 							"lda.fit(count_data)\r\n",
 							"lda_output = lda.transform(count_data)\r\n",
+							"print(len(lda_output))\r\n",
 							"\r\n",
 							"# Convert output to Pandas DataFrame and merge with original data\r\n",
 							"lda_output_df = pd.DataFrame(lda_output, columns=[\"topic_0_confidence\", \"topic_1_confidence\",\"topic_2_confidence\",\"topic_3_confidence\",\"topic_4_confidence\"])\r\n",
-							"pandas_df = pd.concat([pandas_df, lda_output_df], axis=1)\r\n",
+							"df2 = pd.concat([df2, lda_output_df], axis=1)\r\n",
 							"\r\n",
-							"pandas_df['topic'] = lda_output.argmax(axis=1)\r\n",
+							"df2['topic'] = lda_output.argmax(axis=1)\r\n",
 							"\r\n",
 							"# Convert Pandas DataFrame back to Spark DataFrame\r\n",
-							"spark_df = spark.createDataFrame(pandas_df)\r\n",
+							"spark_df = spark.createDataFrame(df2)\r\n",
 							"\r\n",
 							"# Renaming the \"cleanText\" column to \"cleantext\"\r\n",
 							"spark_df = spark_df.withColumnRenamed(\"cleanText\", \"cleantext\")\r\n",
@@ -23046,7 +23142,45 @@
 							"#display(spark_df)"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 39
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"len(lda_output)"
+						],
+						"outputs": [],
+						"execution_count": 28
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"len(pandas_df1)"
+						],
+						"outputs": [],
+						"execution_count": 29
 					},
 					{
 						"cell_type": "markdown",
@@ -23325,6 +23459,18 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "eastus2"
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SparkPoolSmall')]",
 			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
@@ -23344,18 +23490,6 @@
 				"sparkVersion": "3.3",
 				"isComputeIsolationEnabled": false,
 				"sessionLevelPackagesEnabled": true,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "eastus2"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/SQLPoolTest')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
 				"annotations": []
 			},
 			"dependsOn": [],
