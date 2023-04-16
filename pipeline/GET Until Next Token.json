@@ -585,7 +585,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "end_day",
-					"value": "07"
+					"value": "15"
 				}
 			},
 			{
@@ -663,7 +663,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"variableName": "start_day",
-					"value": "07"
+					"value": "15"
 				}
 			},
 			{
@@ -1281,7 +1281,7 @@
 		"parameters": {
 			"QueryName": {
 				"type": "string",
-				"defaultValue": "Aithusa"
+				"defaultValue": "AithusaTest001"
 			},
 			"TweetArchive": {
 				"type": "string",
