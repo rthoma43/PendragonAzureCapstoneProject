@@ -1,0 +1,20 @@
+{
+	"name": "SQL script 7",
+	"properties": {
+		"folder": {
+			"name": "Create_Tables"
+		},
+		"content": {
+			"query": "CREATE TABLE [Topic].[NATO_Topics_NER_LEM]\n( \n\t[id] bigint  NULL,\n\t[created_at] DATETIME2(7)  NULL,\n\t[text] NVARCHAR(4000)  NULL,\n\t[lang] nvarchar(10)  NULL,\n\t[retweet_count] INT  NULL,\n\t[reply_count] INT  NULL,\n\t[like_count] INT  NULL,\n\t[quote_count] INT  NULL,\n\t[impression_count] INT  NULL,\n\t[cleantext] NVARCHAR(4000)  NULL,\n    [topic_0_confidence] FLOAT NULL,\n    [topic_1_confidence] FLOAT NULL,\n    [topic_2_confidence] FLOAT NULL,\n    [topic_3_confidence] FLOAT NULL,\n    [topic_4_confidence] FLOAT NULL,\n\t[topic] BIGINT NULL\n)\n\nGO\n\nCREATE TABLE [Words].[NATO_Topic_Words_NER_LEM]\n( \n\t[topic] bigint  NULL,\n\t[word_1] NVARCHAR(20)  NULL,\n\t[word_2] NVARCHAR(20)  NULL,\n    [word_3] NVARCHAR(20)  NULL,\n    [word_4] NVARCHAR(20)  NULL,\n    [word_5] NVARCHAR(20)  NULL,\n    [word_6] NVARCHAR(20)  NULL,\n    [word_7] NVARCHAR(20)  NULL,\n    [word_8] NVARCHAR(20)  NULL,\n    [word_9] NVARCHAR(20)  NULL,\n    [word_10] NVARCHAR(20)  NULL\n)\n\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

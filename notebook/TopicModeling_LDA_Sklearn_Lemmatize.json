@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "48951c69-5840-403e-a9c2-db381beabf85"
+				"spark.autotune.trackingId": "e0aa9b39-497a-4ff9-8dfd-28fef0783203"
 			}
 		},
 		"metadata": {
@@ -137,10 +137,10 @@
 					]
 				},
 				"source": [
-					"topictable = \"Topic.NATO_Topics_NER\"\r\n",
-					"wordtable = \"Words.NATO_Topic_Words_NER\""
+					"topictable = \"Topic.NATO_Topics_NER_LEM\"\r\n",
+					"wordtable = \"Words.NATO_Topic_Words_NER_LEM\""
 				],
-				"execution_count": 3
+				"execution_count": 18
 			},
 			{
 				"cell_type": "code",
@@ -336,7 +336,7 @@
 					"nltk.download('punkt')\n",
 					"from nltk.tokenize import sent_tokenize, word_tokenize"
 				],
-				"execution_count": 16
+				"execution_count": 8
 			},
 			{
 				"cell_type": "code",
@@ -354,7 +354,7 @@
 				"source": [
 					"pandas_df = df_removed.toPandas()"
 				],
-				"execution_count": 30
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -373,7 +373,7 @@
 					"pandas_df['clean_text_tokens'] = pandas_df['cleanText'].apply(lambda x: word_tokenize(x))\n",
 					"pandas_df.head()"
 				],
-				"execution_count": 36
+				"execution_count": 10
 			},
 			{
 				"cell_type": "code",
@@ -398,7 +398,7 @@
 					"pandas_df['clean_text_tokens'] = pandas_df['clean_text_tokens'].apply(lambda x: word_lemmatizer(x))\n",
 					"pandas_df.head()"
 				],
-				"execution_count": 37
+				"execution_count": 11
 			},
 			{
 				"cell_type": "code",
@@ -417,7 +417,7 @@
 					"pandas_df['clean_text_tokens']= pandas_df['clean_text_tokens'].str.join(\" \")\n",
 					"pandas_df.head()"
 				],
-				"execution_count": 38
+				"execution_count": 12
 			},
 			{
 				"cell_type": "code",
@@ -473,7 +473,7 @@
 					"# Convert Spark DataFrame to Pandas DataFrame\r\n",
 					"#pandas_df = df_removed.toPandas()"
 				],
-				"execution_count": 20
+				"execution_count": 13
 			},
 			{
 				"cell_type": "code",
@@ -514,7 +514,7 @@
 					"# Display Spark DataFrame\r\n",
 					"display(spark_df)"
 				],
-				"execution_count": 39
+				"execution_count": 14
 			},
 			{
 				"cell_type": "markdown",
@@ -555,7 +555,7 @@
 					"\r\n",
 					"print(top_N_words)"
 				],
-				"execution_count": 40
+				"execution_count": 15
 			},
 			{
 				"cell_type": "code",
@@ -586,7 +586,7 @@
 					"# display the spark dataframe\r\n",
 					"display(df_words)"
 				],
-				"execution_count": 41
+				"execution_count": 16
 			},
 			{
 				"cell_type": "code",
@@ -604,7 +604,7 @@
 				"source": [
 					"spark_df.printSchema"
 				],
-				"execution_count": 42
+				"execution_count": 17
 			},
 			{
 				"cell_type": "markdown",
@@ -689,7 +689,7 @@
 					"outputtopictable = \"SQLPoolTest.\" + topictable\r\n",
 					"outputwordtable = \"SQLPoolTest.\" + wordtable"
 				],
-				"execution_count": 43
+				"execution_count": 19
 			},
 			{
 				"cell_type": "code",
@@ -725,7 +725,7 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(outputtopictable))"
 				],
-				"execution_count": 44
+				"execution_count": 20
 			},
 			{
 				"cell_type": "code",
@@ -743,7 +743,7 @@
 				"source": [
 					"df_words.printSchema"
 				],
-				"execution_count": 99
+				"execution_count": 21
 			},
 			{
 				"cell_type": "code",
@@ -779,7 +779,67 @@
 					" # Required parameter - Three-part table name to which data will be written\r\n",
 					" .synapsesql(outputwordtable))"
 				],
-				"execution_count": 45
+				"execution_count": 22
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(df_words)"
+				],
+				"execution_count": 23
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"display(spark_df)"
+				],
+				"execution_count": 24
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#!pip install spacy\n",
+					"# Perform standard imports\n",
+					"import spacy\n",
+					"spacy.load('en')\n",
+					"nlp = spacy.load('en_core_web_sm')"
+				],
+				"execution_count": 28
 			}
 		]
 	}
