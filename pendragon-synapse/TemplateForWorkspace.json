@@ -2947,7 +2947,7 @@
 						"type": "Until",
 						"dependsOn": [
 							{
-								"activity": "If Specific Date Range ",
+								"activity": "If Specific Date Range",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -3242,8 +3242,13 @@
 								"type": "BigDataPoolReference"
 							},
 							"executorSize": "Small",
-							"conf": {},
-							"driverSize": "Small"
+							"conf": {
+								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.minExecutors": null,
+								"spark.dynamicAllocation.maxExecutors": null
+							},
+							"driverSize": "Small",
+							"numExecutors": null
 						}
 					},
 					{
@@ -3572,8 +3577,8 @@
 				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolSmall')]",
 				"[concat(variables('workspaceId'), '/notebooks/ArchiveAnalysis')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token')]",
-				"[concat(variables('workspaceId'), '/datasets/RestResourceTwitter7days')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResourceTwitterPast7Days')]",
+				"[concat(variables('workspaceId'), '/datasets/RestResourceTwitter7days')]",
 				"[concat(variables('workspaceId'), '/dataflows/MoveTemptoOutput')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]"
 			]
@@ -6783,6 +6788,40 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/RestResourceTwitterPast7Days')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RestService_Twitter_7days",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"query": {
+						"type": "string"
+					},
+					"tweet_fields": {
+						"type": "string"
+					},
+					"max_results": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/RestService_Twitter_7days')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/RestResource_Aithusa')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -9704,7 +9743,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "bf23e06a-0479-4ad2-ae4e-18cd968e8c8f"
+						"spark.autotune.trackingId": "b321fa97-58b3-4587-99d4-0f78d022ce20"
 					}
 				},
 				"metadata": {
@@ -9729,8 +9768,7 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -24986,40 +25024,6 @@
 			},
 			"dependsOn": [],
 			"location": "eastus2"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/RestResourceTwitterPast7Days')]",
-			"type": "Microsoft.Synapse/workspaces/datasets",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "RestService_Twitter_7days",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"query": {
-						"type": "string"
-					},
-					"tweet_fields": {
-						"type": "string"
-					},
-					"max_results": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {
-					"relativeUrl": {
-						"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results)",
-						"type": "Expression"
-					}
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/RestService_Twitter_7days')]"
-			]
 		}
 	]
 }
