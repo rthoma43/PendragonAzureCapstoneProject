@@ -439,7 +439,7 @@
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "Execute Archive Analysis Pipeline",
+						"activity": "Archive Analysis",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -504,48 +504,6 @@
 					},
 					"driverSize": "Small",
 					"numExecutors": null
-				}
-			},
-			{
-				"name": "Execute Archive Analysis Pipeline",
-				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "NLP Analysis",
-						"dependencyConditions": [
-							"Completed"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"pipeline": {
-						"referenceName": "Archive_Analysis_Tables",
-						"type": "PipelineReference"
-					},
-					"waitOnCompletion": true,
-					"parameters": {
-						"queryname": {
-							"value": "@pipeline().parameters.QueryName",
-							"type": "Expression"
-						},
-						"TopicWordsOutputTable": {
-							"value": "@pipeline().parameters.TopicWordsOutputTable",
-							"type": "Expression"
-						},
-						"SentimentOutputTable": {
-							"value": "@pipeline().parameters.SentimentOutputTable",
-							"type": "Expression"
-						},
-						"NEROutputTable": {
-							"value": "@pipeline().parameters.NEROutputTable",
-							"type": "Expression"
-						},
-						"SummarizationOutputTable": {
-							"value": "@pipeline().parameters.SummarizationOutputTable",
-							"type": "Expression"
-						}
-					}
 				}
 			},
 			{
@@ -786,6 +744,70 @@
 				"typeProperties": {
 					"variableName": "loopCount",
 					"value": "0"
+				}
+			},
+			{
+				"name": "Archive Analysis",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "NLP Analysis",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "ArchiveAnalysis",
+						"type": "NotebookReference"
+					},
+					"parameters": {
+						"query": {
+							"value": {
+								"value": "@pipeline().parameters.QueryName",
+								"type": "Expression"
+							},
+							"type": "string"
+						},
+						"Sent_maintable": {
+							"value": {
+								"value": "@pipeline().parameters.SentimentOutputTable",
+								"type": "Expression"
+							},
+							"type": "string"
+						},
+						"TopicWords_maintable": {
+							"value": {
+								"value": "@pipeline().parameters.TopicWordsOutputTable",
+								"type": "Expression"
+							},
+							"type": "string"
+						},
+						"NamedEntity_maintable": {
+							"value": {
+								"value": "@pipeline().parameters.NEROutputTable",
+								"type": "Expression"
+							},
+							"type": "string"
+						},
+						"Abstract_maintable": {
+							"value": {
+								"value": "@pipeline().parameters.SummarizationOutputTable",
+								"type": "Expression"
+							},
+							"type": "string"
+						}
+					},
+					"snapshot": true
 				}
 			}
 		],
