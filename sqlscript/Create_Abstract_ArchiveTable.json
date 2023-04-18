@@ -5,7 +5,7 @@
 			"name": "Create_Tables/Archive"
 		},
 		"content": {
-			"query": "CREATE TABLE [Archive].[Abstractive_Sum]\n(\n    [abstractive_summary] NVARCHAR(4000) NULL,\n    [topic] SMALLINT NULL,\n    [query] NVARCHAR(20) NULL,\n    [pull_datetime] DATETIME2(7) NULL\n)\n\nGO",
+			"query": "CREATE TABLE [Archive].[Abstractive_Sum]\n(\n    [topic] SMALLINT NULL,\n    [abstractive_summary] NVARCHAR(4000) NULL,\n    [query] NVARCHAR(20) NULL,\n    [pull_datetime] DATETIME2(7) NULL\n)\n\nGO",
 			"metadata": {
 				"language": "sql"
 			},

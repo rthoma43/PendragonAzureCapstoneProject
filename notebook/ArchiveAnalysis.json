@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "fc168c1e-042a-4df8-80b5-235686a644fd"
+				"spark.autotune.trackingId": "b321fa97-58b3-4587-99d4-0f78d022ce20"
 			}
 		},
 		"metadata": {
@@ -221,14 +221,13 @@
 					"\r\n",
 					"    # show the new DataFrame\r\n",
 					"    #display(new_df)\r\n",
-					"    #print(\"Main table schema:\")\r\n",
-					"    #print(new_df.printSchema())\r\n",
+					"    print(\"Main table schema:\")\r\n",
+					"    print(new_df.printSchema())\r\n",
 					"\r\n",
 					"    outputtable = \"SQLPoolTest.\" + each[1]\r\n",
-					"    #print(\"Target table schema:\")\r\n",
-					"    #print(outputtable)\r\n",
-					"    #print(spark.read.synapsesql(outputtable).limit(0).printSchema())\r\n",
-					"    #print(outputtable)\r\n",
+					"    print(\"Target table schema:\")\r\n",
+					"    print(outputtable)\r\n",
+					"    print(spark.read.synapsesql(outputtable).limit(0).printSchema())\r\n",
 					"\r\n",
 					"\r\n",
 					"    # Write using AAD Auth to internal table\r\n",
@@ -251,7 +250,7 @@
 					"\r\n",
 					"    print(each[1],\" Archived\")"
 				],
-				"execution_count": 5
+				"execution_count": 7
 			}
 		]
 	}
