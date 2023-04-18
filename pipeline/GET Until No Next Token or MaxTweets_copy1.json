@@ -483,7 +483,7 @@
 							"type": "IfCondition",
 							"dependsOn": [
 								{
-									"activity": "If next_token exists",
+									"activity": "Extract next_token",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -778,34 +778,20 @@
 							}
 						},
 						{
-							"name": "If next_token exists",
-							"type": "IfCondition",
+							"name": "Set until variable to true",
+							"type": "SetVariable",
 							"dependsOn": [
 								{
 									"activity": "Extract next_token",
 									"dependencyConditions": [
-										"Succeeded"
+										"Failed"
 									]
 								}
 							],
 							"userProperties": [],
 							"typeProperties": {
-								"expression": {
-									"value": "@not(equals(activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token, null))",
-									"type": "Expression"
-								},
-								"ifFalseActivities": [
-									{
-										"name": "Set until variable to true",
-										"type": "SetVariable",
-										"dependsOn": [],
-										"userProperties": [],
-										"typeProperties": {
-											"variableName": "until",
-											"value": true
-										}
-									}
-								]
+								"variableName": "until",
+								"value": true
 							}
 						}
 					],
