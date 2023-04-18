@@ -2500,120 +2500,6 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Initial GET Past 7 Days into Temp Folder",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Delete Previous Output Files",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							},
-							{
-								"activity": "Delete Previous Merged Output files",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET",
-								"paginationRules": {
-									"supportRFC5988": "true"
-								}
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "RestResourceTwitter7days",
-								"type": "DatasetReference",
-								"parameters": {
-									"query": {
-										"value": "@pipeline().parameters.Query",
-										"type": "Expression"
-									},
-									"tweet_fields": {
-										"value": "@pipeline().parameters.TweetFields",
-										"type": "Expression"
-									},
-									"max_results": {
-										"value": "@pipeline().parameters.MaxResults",
-										"type": "Expression"
-									},
-									"EndYear": {
-										"value": "@pipeline().parameters.EndYear",
-										"type": "Expression"
-									},
-									"EndMonth": {
-										"value": "@pipeline().parameters.EndMonth",
-										"type": "Expression"
-									},
-									"EndDay": {
-										"value": "@pipeline().parameters.EndDay",
-										"type": "Expression"
-									},
-									"EndHour": {
-										"value": "@pipeline().parameters.EndHour",
-										"type": "Expression"
-									},
-									"EndMinute": {
-										"value": "@pipeline().parameters.EndMinute",
-										"type": "Expression"
-									},
-									"StartYear": {
-										"value": "@pipeline().parameters.StartYear",
-										"type": "Expression"
-									},
-									"StartMonth": {
-										"value": "@pipeline().parameters.StartMonth",
-										"type": "Expression"
-									},
-									"StartDay": {
-										"value": "@pipeline().parameters.StartDay",
-										"type": "Expression"
-									},
-									"StartHour": {
-										"value": "@pipeline().parameters.StartHour",
-										"type": "Expression"
-									},
-									"StartMinute": {
-										"value": "@pipeline().parameters.StartMinute",
-										"type": "Expression"
-									}
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "Twitter_RawJSON_Temp",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
 						"name": "Delete Previous Output Files",
 						"type": "Delete",
 						"dependsOn": [],
@@ -3280,7 +3166,7 @@
 						"type": "SetVariable",
 						"dependsOn": [
 							{
-								"activity": "Initial GET Past 7 Days into Temp Folder",
+								"activity": "If Specific Date Range ",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -3297,7 +3183,7 @@
 						"type": "SetVariable",
 						"dependsOn": [
 							{
-								"activity": "Initial GET Past 7 Days into Temp Folder",
+								"activity": "If Specific Date Range ",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -3378,6 +3264,199 @@
 							"executorSize": "Small",
 							"conf": {},
 							"driverSize": "Small"
+						}
+					},
+					{
+						"name": "If Specific Date Range",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "Delete Previous Output Files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Delete Previous Merged Output files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@pipeline().parameters.SpecifiDateRange",
+								"type": "Expression"
+							},
+							"ifFalseActivities": [
+								{
+									"name": "Initial GET Past 7 Days",
+									"description": "into Temp Folder",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "GET",
+											"paginationRules": {
+												"supportRFC5988": "true"
+											}
+										},
+										"sink": {
+											"type": "JsonSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "JsonWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "RestResourceTwitterPast7Days",
+											"type": "DatasetReference",
+											"parameters": {
+												"query": {
+													"value": "@pipeline().parameters.Query",
+													"type": "Expression"
+												},
+												"tweet_fields": {
+													"value": "@pipeline().parameters.TweetFields",
+													"type": "Expression"
+												},
+												"max_results": {
+													"value": "@pipeline().parameters.MaxResults",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "Twitter_RawJSON_Temp",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							],
+							"ifTrueActivities": [
+								{
+									"name": "Initial GET Specific Date Range",
+									"description": "into Temp Folder",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "GET",
+											"paginationRules": {
+												"supportRFC5988": "true"
+											}
+										},
+										"sink": {
+											"type": "JsonSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "JsonWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "RestResourceTwitter7days",
+											"type": "DatasetReference",
+											"parameters": {
+												"query": {
+													"value": "@pipeline().parameters.Query",
+													"type": "Expression"
+												},
+												"tweet_fields": {
+													"value": "@pipeline().parameters.TweetFields",
+													"type": "Expression"
+												},
+												"max_results": {
+													"value": "@pipeline().parameters.MaxResults",
+													"type": "Expression"
+												},
+												"EndYear": {
+													"value": "@pipeline().parameters.EndYear",
+													"type": "Expression"
+												},
+												"EndMonth": {
+													"value": "@pipeline().parameters.EndMonth",
+													"type": "Expression"
+												},
+												"EndDay": {
+													"value": "@pipeline().parameters.EndDay",
+													"type": "Expression"
+												},
+												"EndHour": {
+													"value": "@pipeline().parameters.EndHour",
+													"type": "Expression"
+												},
+												"EndMinute": {
+													"value": "@pipeline().parameters.EndMinute",
+													"type": "Expression"
+												},
+												"StartYear": {
+													"value": "@pipeline().parameters.StartYear",
+													"type": "Expression"
+												},
+												"StartMonth": {
+													"value": "@pipeline().parameters.StartMonth",
+													"type": "Expression"
+												},
+												"StartDay": {
+													"value": "@pipeline().parameters.StartDay",
+													"type": "Expression"
+												},
+												"StartHour": {
+													"value": "@pipeline().parameters.StartHour",
+													"type": "Expression"
+												},
+												"StartMinute": {
+													"value": "@pipeline().parameters.StartMinute",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "Twitter_RawJSON_Temp",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							]
 						}
 					}
 				],
@@ -3464,6 +3543,9 @@
 					"StartMinute": {
 						"type": "string",
 						"defaultValue": "01"
+					},
+					"SpecifiDateRange": {
+						"type": "bool"
 					}
 				},
 				"variables": {
@@ -3484,9 +3566,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/RestResourceTwitter7days')]",
-				"[concat(variables('workspaceId'), '/datasets/Twitter_RawJSON_Temp')]",
 				"[concat(variables('workspaceId'), '/datasets/Raw_Twitter_Outputs')]",
+				"[concat(variables('workspaceId'), '/datasets/Twitter_RawJSON_Temp')]",
 				"[concat(variables('workspaceId'), '/dataflows/Merge JSON to CSV')]",
 				"[concat(variables('workspaceId'), '/integrationRuntimes/WarmIntegrationRuntime')]",
 				"[concat(variables('workspaceId'), '/datasets/Merged_JSON_folder')]",
@@ -3499,6 +3580,8 @@
 				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolSmall')]",
 				"[concat(variables('workspaceId'), '/notebooks/ArchiveAnalysis')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token')]",
+				"[concat(variables('workspaceId'), '/datasets/RestResourceTwitter7days')]",
+				"[concat(variables('workspaceId'), '/datasets/RestResourceTwitterPast7Days')]",
 				"[concat(variables('workspaceId'), '/dataflows/MoveTemptoOutput')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResource_Next_Token')]"
 			]
@@ -24911,6 +24994,40 @@
 			},
 			"dependsOn": [],
 			"location": "eastus2"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/RestResourceTwitterPast7Days')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RestService_Twitter_7days",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"query": {
+						"type": "string"
+					},
+					"tweet_fields": {
+						"type": "string"
+					},
+					"max_results": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/RestService_Twitter_7days')]"
+			]
 		}
 	]
 }
