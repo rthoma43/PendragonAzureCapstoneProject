@@ -17,13 +17,44 @@
 			"max_results": {
 				"type": "string",
 				"defaultValue": "10"
+			},
+			"EndYear": {
+				"type": "string",
+				"defaultValue": "2023"
+			},
+			"EndMonth": {
+				"type": "string"
+			},
+			"EndDay": {
+				"type": "string"
+			},
+			"EndHour": {
+				"type": "string"
+			},
+			"EndMinute": {
+				"type": "string"
+			},
+			"StartYear": {
+				"type": "string"
+			},
+			"StartMonth": {
+				"type": "string"
+			},
+			"StartDay": {
+				"type": "string"
+			},
+			"StartHour": {
+				"type": "string"
+			},
+			"StartMinute": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
 		"type": "RestResource",
 		"typeProperties": {
 			"relativeUrl": {
-				"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results)",
+				"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&start_time=',dataset().StartYear,'-',dataset().StartMonth,'-',dataset().StartDay,'T',dataset().StartHour,':',dataset().StartMinute,':00.000Z','&end_time=',dataset().EndYear,'-',dataset().EndMonth,'-',dataset().EndDay,'T',dataset().EndHour,':',dataset().EndMinute,':00.000Z','&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results)",
 				"type": "Expression"
 			}
 		},

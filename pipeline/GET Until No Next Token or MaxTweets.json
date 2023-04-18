@@ -64,6 +64,46 @@
 							"max_results": {
 								"value": "@pipeline().parameters.MaxResults",
 								"type": "Expression"
+							},
+							"EndYear": {
+								"value": "@pipeline().parameters.EndYear",
+								"type": "Expression"
+							},
+							"EndMonth": {
+								"value": "@pipeline().parameters.EndMonth",
+								"type": "Expression"
+							},
+							"EndDay": {
+								"value": "@pipeline().parameters.EndDay",
+								"type": "Expression"
+							},
+							"EndHour": {
+								"value": "@pipeline().parameters.EndHour",
+								"type": "Expression"
+							},
+							"EndMinute": {
+								"value": "@pipeline().parameters.EndMinute",
+								"type": "Expression"
+							},
+							"StartYear": {
+								"value": "@pipeline().parameters.StartYear",
+								"type": "Expression"
+							},
+							"StartMonth": {
+								"value": "@pipeline().parameters.StartMonth",
+								"type": "Expression"
+							},
+							"StartDay": {
+								"value": "@pipeline().parameters.StartDay",
+								"type": "Expression"
+							},
+							"StartHour": {
+								"value": "@pipeline().parameters.StartHour",
+								"type": "Expression"
+							},
+							"StartMinute": {
+								"value": "@pipeline().parameters.StartMinute",
+								"type": "Expression"
 							}
 						}
 					}
@@ -856,6 +896,46 @@
 			"MaximumTweetstoPull": {
 				"type": "string",
 				"defaultValue": "100000"
+			},
+			"EndYear": {
+				"type": "string",
+				"defaultValue": "2023"
+			},
+			"EndMonth": {
+				"type": "string",
+				"defaultValue": "04"
+			},
+			"EndDay": {
+				"type": "string",
+				"defaultValue": "11"
+			},
+			"EndHour": {
+				"type": "string",
+				"defaultValue": "01"
+			},
+			"EndMinute": {
+				"type": "string",
+				"defaultValue": "01"
+			},
+			"StartYear": {
+				"type": "string",
+				"defaultValue": "2023"
+			},
+			"StartMonth": {
+				"type": "string",
+				"defaultValue": "04"
+			},
+			"StartDay": {
+				"type": "string",
+				"defaultValue": "10"
+			},
+			"StartHour": {
+				"type": "string",
+				"defaultValue": "01"
+			},
+			"StartMinute": {
+				"type": "string",
+				"defaultValue": "01"
 			}
 		},
 		"variables": {
