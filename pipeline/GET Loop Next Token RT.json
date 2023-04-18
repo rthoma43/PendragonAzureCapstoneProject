@@ -64,6 +64,46 @@
 							"max_results": {
 								"value": "@pipeline().parameters.MaxResults",
 								"type": "Expression"
+							},
+							"EndYear": {
+								"value": "@pipeline().parameters.EndYear",
+								"type": "Expression"
+							},
+							"EndMonth": {
+								"value": "@pipeline().parameters.EndMonth",
+								"type": "Expression"
+							},
+							"EndDay": {
+								"value": "@pipeline().parameters.EndDay",
+								"type": "Expression"
+							},
+							"EndHour": {
+								"value": "@pipeline().parameters.EndHour",
+								"type": "Expression"
+							},
+							"EndMinute": {
+								"value": "@pipeline().parameters.EndMinute",
+								"type": "Expression"
+							},
+							"StartYear": {
+								"value": "@pipeline().parameters.StartYear",
+								"type": "Expression"
+							},
+							"StartMonth": {
+								"value": "@pipeline().parameters.StartMonth",
+								"type": "Expression"
+							},
+							"StartDay": {
+								"value": "@pipeline().parameters.StartDay",
+								"type": "Expression"
+							},
+							"StartHour": {
+								"value": "@pipeline().parameters.StartHour",
+								"type": "Expression"
+							},
+							"StartMinute": {
+								"value": "@pipeline().parameters.StartMinute",
+								"type": "Expression"
 							}
 						}
 					}
@@ -709,6 +749,36 @@
 			"TopicOutputTable": {
 				"type": "string",
 				"defaultValue": "Topic.NATO_Topics"
+			},
+			"EndYear": {
+				"type": "string"
+			},
+			"EndMonth": {
+				"type": "string"
+			},
+			"EndDay": {
+				"type": "string"
+			},
+			"EndHour": {
+				"type": "string"
+			},
+			"EndMinute": {
+				"type": "string"
+			},
+			"StartYear": {
+				"type": "string"
+			},
+			"StartMonth": {
+				"type": "string"
+			},
+			"StartDay": {
+				"type": "string"
+			},
+			"StartHour": {
+				"type": "string"
+			},
+			"StartMinute": {
+				"type": "string"
 			}
 		},
 		"variables": {
