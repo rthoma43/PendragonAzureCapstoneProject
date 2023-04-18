@@ -1030,6 +1030,9 @@
 			},
 			"next_token": {
 				"type": "String"
+			},
+			"LoopCountArray": {
+				"type": "Array"
 			}
 		},
 		"annotations": []
