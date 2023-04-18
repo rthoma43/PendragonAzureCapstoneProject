@@ -8766,7 +8766,7 @@
 					"name": "Create_Tables/Archive"
 				},
 				"content": {
-					"query": "CREATE TABLE [Archive].[Abstractive_Sum]\n(\n    [abstractive_summary] NVARCHAR(4000) NULL,\n    [topic] SMALLINT NULL,\n    [query] NVARCHAR(20) NULL,\n    [pull_datetime] DATETIME2(7) NULL\n)\n\nGO",
+					"query": "CREATE TABLE [Archive].[Abstractive_Sum]\n(\n    [topic] SMALLINT NULL,\n    [abstractive_summary] NVARCHAR(4000) NULL,\n    [query] NVARCHAR(20) NULL,\n    [pull_datetime] DATETIME2(7) NULL\n)\n\nGO",
 					"metadata": {
 						"language": "sql"
 					},
@@ -9361,7 +9361,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "SELECT count(*) FROM [dbo].[NATO_Tweets1]",
+					"query": "SELECT count(*) FROM [Archive].[Abstractive_Sum]",
 					"metadata": {
 						"language": "sql"
 					},
@@ -9442,7 +9442,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "1c140944-793a-4b9d-a1a7-af1f98b28b85"
+						"spark.autotune.trackingId": "0eebe1c9-d1b6-4a1a-9547-56dfa15edb05"
 					}
 				},
 				"metadata": {
@@ -9647,14 +9647,13 @@
 							"\r\n",
 							"    # show the new DataFrame\r\n",
 							"    #display(new_df)\r\n",
-							"    #print(\"Main table schema:\")\r\n",
-							"    #print(new_df.printSchema())\r\n",
+							"    print(\"Main table schema:\")\r\n",
+							"    print(new_df.printSchema())\r\n",
 							"\r\n",
 							"    outputtable = \"SQLPoolTest.\" + each[1]\r\n",
-							"    #print(\"Target table schema:\")\r\n",
-							"    #print(outputtable)\r\n",
-							"    #print(spark.read.synapsesql(outputtable).limit(0).printSchema())\r\n",
-							"    #print(outputtable)\r\n",
+							"    print(\"Target table schema:\")\r\n",
+							"    print(outputtable)\r\n",
+							"    print(spark.read.synapsesql(outputtable).limit(0).printSchema())\r\n",
 							"\r\n",
 							"\r\n",
 							"    # Write using AAD Auth to internal table\r\n",
@@ -9678,7 +9677,7 @@
 							"    print(each[1],\" Archived\")"
 						],
 						"outputs": [],
-						"execution_count": 5
+						"execution_count": 7
 					}
 				]
 			},
