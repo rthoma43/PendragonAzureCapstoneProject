@@ -483,7 +483,7 @@
 							"type": "IfCondition",
 							"dependsOn": [
 								{
-									"activity": "Extract next_token",
+									"activity": "If Condition1",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -492,7 +492,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@not(equals(activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token, null))",
+									"value": "@pipeline().parameters.SpecifiDateRange",
 									"type": "Expression"
 								},
 								"ifFalseActivities": [
@@ -778,20 +778,34 @@
 							}
 						},
 						{
-							"name": "Set until variable to true",
-							"type": "SetVariable",
+							"name": "If Condition1",
+							"type": "IfCondition",
 							"dependsOn": [
 								{
 									"activity": "Extract next_token",
 									"dependencyConditions": [
-										"Failed"
+										"Succeeded"
 									]
 								}
 							],
 							"userProperties": [],
 							"typeProperties": {
-								"variableName": "until",
-								"value": true
+								"expression": {
+									"value": "@equals(activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token, null)",
+									"type": "Expression"
+								},
+								"ifTrueActivities": [
+									{
+										"name": "Set until variable to true",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "until",
+											"value": true
+										}
+									}
+								]
 							}
 						}
 					],
