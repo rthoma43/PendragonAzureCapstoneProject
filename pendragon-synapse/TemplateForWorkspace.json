@@ -312,6 +312,46 @@
 									"max_results": {
 										"value": "@pipeline().parameters.MaxResults",
 										"type": "Expression"
+									},
+									"EndYear": {
+										"value": "@pipeline().parameters.EndYear",
+										"type": "Expression"
+									},
+									"EndMonth": {
+										"value": "@pipeline().parameters.EndMonth",
+										"type": "Expression"
+									},
+									"EndDay": {
+										"value": "@pipeline().parameters.EndDay",
+										"type": "Expression"
+									},
+									"EndHour": {
+										"value": "@pipeline().parameters.EndHour",
+										"type": "Expression"
+									},
+									"EndMinute": {
+										"value": "@pipeline().parameters.EndMinute",
+										"type": "Expression"
+									},
+									"StartYear": {
+										"value": "@pipeline().parameters.StartYear",
+										"type": "Expression"
+									},
+									"StartMonth": {
+										"value": "@pipeline().parameters.StartMonth",
+										"type": "Expression"
+									},
+									"StartDay": {
+										"value": "@pipeline().parameters.StartDay",
+										"type": "Expression"
+									},
+									"StartHour": {
+										"value": "@pipeline().parameters.StartHour",
+										"type": "Expression"
+									},
+									"StartMinute": {
+										"value": "@pipeline().parameters.StartMinute",
+										"type": "Expression"
 									}
 								}
 							}
@@ -981,6 +1021,36 @@
 					"TopicOutputTable": {
 						"type": "string",
 						"defaultValue": "Topic.NATO_Topics"
+					},
+					"EndYear": {
+						"type": "string"
+					},
+					"EndMonth": {
+						"type": "string"
+					},
+					"EndDay": {
+						"type": "string"
+					},
+					"EndHour": {
+						"type": "string"
+					},
+					"EndMinute": {
+						"type": "string"
+					},
+					"StartYear": {
+						"type": "string"
+					},
+					"StartMonth": {
+						"type": "string"
+					},
+					"StartDay": {
+						"type": "string"
+					},
+					"StartHour": {
+						"type": "string"
+					},
+					"StartMinute": {
+						"type": "string"
 					}
 				},
 				"variables": {
@@ -2491,6 +2561,46 @@
 									"max_results": {
 										"value": "@pipeline().parameters.MaxResults",
 										"type": "Expression"
+									},
+									"EndYear": {
+										"value": "@pipeline().parameters.EndYear",
+										"type": "Expression"
+									},
+									"EndMonth": {
+										"value": "@pipeline().parameters.EndMonth",
+										"type": "Expression"
+									},
+									"EndDay": {
+										"value": "@pipeline().parameters.EndDay",
+										"type": "Expression"
+									},
+									"EndHour": {
+										"value": "@pipeline().parameters.EndHour",
+										"type": "Expression"
+									},
+									"EndMinute": {
+										"value": "@pipeline().parameters.EndMinute",
+										"type": "Expression"
+									},
+									"StartYear": {
+										"value": "@pipeline().parameters.StartYear",
+										"type": "Expression"
+									},
+									"StartMonth": {
+										"value": "@pipeline().parameters.StartMonth",
+										"type": "Expression"
+									},
+									"StartDay": {
+										"value": "@pipeline().parameters.StartDay",
+										"type": "Expression"
+									},
+									"StartHour": {
+										"value": "@pipeline().parameters.StartHour",
+										"type": "Expression"
+									},
+									"StartMinute": {
+										"value": "@pipeline().parameters.StartMinute",
+										"type": "Expression"
 									}
 								}
 							}
@@ -3261,7 +3371,13 @@
 								}
 							},
 							"snapshot": true,
-							"conf": {}
+							"sparkPool": {
+								"referenceName": "SparkPoolSmall",
+								"type": "BigDataPoolReference"
+							},
+							"executorSize": "Small",
+							"conf": {},
+							"driverSize": "Small"
 						}
 					}
 				],
@@ -3308,6 +3424,46 @@
 					"MaximumTweetstoPull": {
 						"type": "string",
 						"defaultValue": "100000"
+					},
+					"EndYear": {
+						"type": "string",
+						"defaultValue": "2023"
+					},
+					"EndMonth": {
+						"type": "string",
+						"defaultValue": "04"
+					},
+					"EndDay": {
+						"type": "string",
+						"defaultValue": "11"
+					},
+					"EndHour": {
+						"type": "string",
+						"defaultValue": "01"
+					},
+					"EndMinute": {
+						"type": "string",
+						"defaultValue": "01"
+					},
+					"StartYear": {
+						"type": "string",
+						"defaultValue": "2023"
+					},
+					"StartMonth": {
+						"type": "string",
+						"defaultValue": "04"
+					},
+					"StartDay": {
+						"type": "string",
+						"defaultValue": "10"
+					},
+					"StartHour": {
+						"type": "string",
+						"defaultValue": "01"
+					},
+					"StartMinute": {
+						"type": "string",
+						"defaultValue": "01"
 					}
 				},
 				"variables": {
@@ -6504,13 +6660,44 @@
 					"max_results": {
 						"type": "string",
 						"defaultValue": "10"
+					},
+					"EndYear": {
+						"type": "string",
+						"defaultValue": "2023"
+					},
+					"EndMonth": {
+						"type": "string"
+					},
+					"EndDay": {
+						"type": "string"
+					},
+					"EndHour": {
+						"type": "string"
+					},
+					"EndMinute": {
+						"type": "string"
+					},
+					"StartYear": {
+						"type": "string"
+					},
+					"StartMonth": {
+						"type": "string"
+					},
+					"StartDay": {
+						"type": "string"
+					},
+					"StartHour": {
+						"type": "string"
+					},
+					"StartMinute": {
+						"type": "string"
 					}
 				},
 				"annotations": [],
 				"type": "RestResource",
 				"typeProperties": {
 					"relativeUrl": {
-						"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results)",
+						"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&start_time=',dataset().StartYear,'-',dataset().StartMonth,'-',dataset().StartDay,'T',dataset().StartHour,':',dataset().StartMinute,':00.000Z','&end_time=',dataset().EndYear,'-',dataset().EndMonth,'-',dataset().EndDay,'T',dataset().EndHour,':',dataset().EndMinute,':00.000Z','&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results)",
 						"type": "Expression"
 					}
 				},
@@ -9442,7 +9629,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "0eebe1c9-d1b6-4a1a-9547-56dfa15edb05"
+						"spark.autotune.trackingId": "bf23e06a-0479-4ad2-ae4e-18cd968e8c8f"
 					}
 				},
 				"metadata": {
