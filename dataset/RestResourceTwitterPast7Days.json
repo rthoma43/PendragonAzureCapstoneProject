@@ -1,0 +1,29 @@
+{
+	"name": "RestResourceTwitterPast7Days",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RestService_Twitter_7days",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"query": {
+				"type": "string"
+			},
+			"tweet_fields": {
+				"type": "string"
+			},
+			"max_results": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@concat('/2/tweets/search/recent?query=',dataset().query,'&tweet.fields=',dataset().tweet_fields,'&max_results=',dataset().max_results)",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	}
+}
