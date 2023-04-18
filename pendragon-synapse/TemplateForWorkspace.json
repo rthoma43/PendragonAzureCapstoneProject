@@ -2947,13 +2947,7 @@
 						"type": "Until",
 						"dependsOn": [
 							{
-								"activity": "Set until variable to false",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							},
-							{
-								"activity": "Set loopCount variable",
+								"activity": "If Specific Date Range ",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -3164,14 +3158,7 @@
 					{
 						"name": "Set until variable to false",
 						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "If Specific Date Range ",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
+						"dependsOn": [],
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "until",
@@ -3181,14 +3168,7 @@
 					{
 						"name": "Set loopCount variable",
 						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "If Specific Date Range ",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
+						"dependsOn": [],
 						"userProperties": [],
 						"typeProperties": {
 							"variableName": "loopCount",
@@ -3278,6 +3258,18 @@
 							},
 							{
 								"activity": "Delete Previous Merged Output files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set loopCount variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set until variable to false",
 								"dependencyConditions": [
 									"Succeeded"
 								]
