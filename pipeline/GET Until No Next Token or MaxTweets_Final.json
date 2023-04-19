@@ -1,5 +1,5 @@
 {
-	"name": "GET Until No Next Token or MaxTweets_copy1",
+	"name": "GET Until No Next Token or MaxTweets_Final",
 	"properties": {
 		"activities": [
 			{
@@ -390,7 +390,7 @@
 				"type": "SynapseNotebook",
 				"dependsOn": [
 					{
-						"activity": "Copy data to Dedicated SQL Pool",
+						"activity": "NLP Analysis",
 						"dependencyConditions": [
 							"Succeeded"
 						]
