@@ -479,307 +479,8 @@
 							}
 						},
 						{
-							"name": "If Specific Date Range next_token",
-							"type": "IfCondition",
-							"dependsOn": [
-								{
-									"activity": "If Condition1",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"userProperties": [],
-							"typeProperties": {
-								"expression": {
-									"value": "@pipeline().parameters.SpecifiDateRange",
-									"type": "Expression"
-								},
-								"ifFalseActivities": [
-									{
-										"name": "Move Temp file to Output folder Past 7 days",
-										"type": "ExecuteDataFlow",
-										"dependsOn": [],
-										"policy": {
-											"timeout": "0.12:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"dataflow": {
-												"referenceName": "MoveTemptoOutput",
-												"type": "DataFlowReference"
-											},
-											"integrationRuntime": {
-												"referenceName": "WarmIntegrationRuntime",
-												"type": "IntegrationRuntimeReference"
-											},
-											"traceLevel": "None",
-											"cacheSinks": {
-												"firstRowOnly": true
-											}
-										}
-									},
-									{
-										"name": "GET to Temp Past 7 Days",
-										"type": "Copy",
-										"dependsOn": [
-											{
-												"activity": "Move Temp file to Output folder Past 7 days",
-												"dependencyConditions": [
-													"Succeeded"
-												]
-											}
-										],
-										"policy": {
-											"timeout": "0.12:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"source": {
-												"type": "RestSource",
-												"httpRequestTimeout": "00:01:40",
-												"requestInterval": "00.00:00:00.010",
-												"requestMethod": "GET",
-												"paginationRules": {
-													"supportRFC5988": "true"
-												}
-											},
-											"sink": {
-												"type": "JsonSink",
-												"storeSettings": {
-													"type": "AzureBlobFSWriteSettings"
-												},
-												"formatSettings": {
-													"type": "JsonWriteSettings"
-												}
-											},
-											"enableStaging": false
-										},
-										"inputs": [
-											{
-												"referenceName": "RestResource_Next_Token",
-												"type": "DatasetReference",
-												"parameters": {
-													"query": {
-														"value": "@pipeline().parameters.Query",
-														"type": "Expression"
-													},
-													"tweet_fields": {
-														"value": "@pipeline().parameters.TweetFields",
-														"type": "Expression"
-													},
-													"max_results": {
-														"value": "@pipeline().parameters.MaxResults",
-														"type": "Expression"
-													},
-													"next_token": {
-														"value": "@activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token",
-														"type": "Expression"
-													}
-												}
-											}
-										],
-										"outputs": [
-											{
-												"referenceName": "Twitter_RawJSON_Temp",
-												"type": "DatasetReference"
-											}
-										]
-									},
-									{
-										"name": "Append loopCount variable_past 7 days",
-										"type": "AppendVariable",
-										"dependsOn": [
-											{
-												"activity": "GET to Temp Past 7 Days",
-												"dependencyConditions": [
-													"Succeeded"
-												]
-											}
-										],
-										"userProperties": [],
-										"typeProperties": {
-											"variableName": "loopCountArray",
-											"value": {
-												"value": "@string(add(int(variables('loopCount')), 1))",
-												"type": "Expression"
-											}
-										}
-									}
-								],
-								"ifTrueActivities": [
-									{
-										"name": "Move Temp file to Output folder",
-										"type": "ExecuteDataFlow",
-										"dependsOn": [],
-										"policy": {
-											"timeout": "0.12:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"dataflow": {
-												"referenceName": "MoveTemptoOutput",
-												"type": "DataFlowReference"
-											},
-											"integrationRuntime": {
-												"referenceName": "WarmIntegrationRuntime",
-												"type": "IntegrationRuntimeReference"
-											},
-											"traceLevel": "None",
-											"cacheSinks": {
-												"firstRowOnly": true
-											}
-										}
-									},
-									{
-										"name": "GET to Temp Specific Time Range",
-										"type": "Copy",
-										"dependsOn": [
-											{
-												"activity": "Move Temp file to Output folder",
-												"dependencyConditions": [
-													"Succeeded"
-												]
-											}
-										],
-										"policy": {
-											"timeout": "0.12:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"source": {
-												"type": "RestSource",
-												"httpRequestTimeout": "00:01:40",
-												"requestInterval": "00.00:00:00.010",
-												"requestMethod": "GET",
-												"paginationRules": {
-													"supportRFC5988": "true"
-												}
-											},
-											"sink": {
-												"type": "JsonSink",
-												"storeSettings": {
-													"type": "AzureBlobFSWriteSettings"
-												},
-												"formatSettings": {
-													"type": "JsonWriteSettings"
-												}
-											},
-											"enableStaging": false
-										},
-										"inputs": [
-											{
-												"referenceName": "RestResource_Next_Token_Specific_Date",
-												"type": "DatasetReference",
-												"parameters": {
-													"query": {
-														"value": "@pipeline().parameters.Query",
-														"type": "Expression"
-													},
-													"tweet_fields": {
-														"value": "@pipeline().parameters.TweetFields",
-														"type": "Expression"
-													},
-													"max_results": {
-														"value": "@pipeline().parameters.MaxResults",
-														"type": "Expression"
-													},
-													"next_token": {
-														"value": "@activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token",
-														"type": "Expression"
-													},
-													"EndYear": {
-														"value": "@pipeline().parameters.EndYear",
-														"type": "Expression"
-													},
-													"EndMonth": {
-														"value": "@pipeline().parameters.EndMonth",
-														"type": "Expression"
-													},
-													"EndDay": {
-														"value": "@pipeline().parameters.EndDay",
-														"type": "Expression"
-													},
-													"EndHour": {
-														"value": "@pipeline().parameters.EndHour",
-														"type": "Expression"
-													},
-													"EndMinute": {
-														"value": "@pipeline().parameters.EndMinute",
-														"type": "Expression"
-													},
-													"StartYear": {
-														"value": "@pipeline().parameters.StartYear",
-														"type": "Expression"
-													},
-													"StartMonth": {
-														"value": "@pipeline().parameters.StartMonth",
-														"type": "Expression"
-													},
-													"StartDay": {
-														"value": "@pipeline().parameters.StartDay",
-														"type": "Expression"
-													},
-													"StartHour": {
-														"value": "@pipeline().parameters.StartHour",
-														"type": "Expression"
-													},
-													"StartMinute": {
-														"value": "@pipeline().parameters.StartMinute",
-														"type": "Expression"
-													}
-												}
-											}
-										],
-										"outputs": [
-											{
-												"referenceName": "Twitter_RawJSON_Temp",
-												"type": "DatasetReference"
-											}
-										]
-									},
-									{
-										"name": "Append loopCount variable_specific date range",
-										"type": "AppendVariable",
-										"dependsOn": [
-											{
-												"activity": "GET to Temp Specific Time Range",
-												"dependencyConditions": [
-													"Succeeded"
-												]
-											}
-										],
-										"userProperties": [],
-										"typeProperties": {
-											"variableName": "loopCountArray",
-											"value": {
-												"value": "@string(add(int(variables('loopCount')), 1))",
-												"type": "Expression"
-											}
-										}
-									}
-								]
-							}
-						},
-						{
-							"name": "If Condition1",
-							"type": "IfCondition",
+							"name": "If Specific Date Range and next_token",
+							"type": "Switch",
 							"dependsOn": [
 								{
 									"activity": "Extract next_token",
@@ -790,11 +491,299 @@
 							],
 							"userProperties": [],
 							"typeProperties": {
-								"expression": {
-									"value": "@equals(activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token, null)",
+								"on": {
+									"value": "@if(and(equals(pipeline().parameters.SpecifiDateRange, true), not(equals(activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token, null))), 'Case1',\n    if(and(equals(pipeline().parameters.SpecifiDateRange, false), not(equals(activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token, null))), 'Case2',\n        if(equals(activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token, null), 'Case3', 'Default')\n    )\n)",
 									"type": "Expression"
 								},
-								"ifTrueActivities": [
+								"cases": [
+									{
+										"value": "Case1",
+										"activities": [
+											{
+												"name": "Move Temp file to Output folder",
+												"type": "ExecuteDataFlow",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"dataflow": {
+														"referenceName": "MoveTemptoOutput",
+														"type": "DataFlowReference"
+													},
+													"integrationRuntime": {
+														"referenceName": "WarmIntegrationRuntime",
+														"type": "IntegrationRuntimeReference"
+													},
+													"traceLevel": "None",
+													"cacheSinks": {
+														"firstRowOnly": true
+													}
+												}
+											},
+											{
+												"name": "GET to Temp Specific Time Range",
+												"type": "Copy",
+												"dependsOn": [
+													{
+														"activity": "Move Temp file to Output folder",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "RestSource",
+														"httpRequestTimeout": "00:01:40",
+														"requestInterval": "00.00:00:00.010",
+														"requestMethod": "GET",
+														"paginationRules": {
+															"supportRFC5988": "true"
+														}
+													},
+													"sink": {
+														"type": "JsonSink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														},
+														"formatSettings": {
+															"type": "JsonWriteSettings"
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "RestResource_Next_Token_Specific_Date",
+														"type": "DatasetReference",
+														"parameters": {
+															"query": {
+																"value": "@pipeline().parameters.Query",
+																"type": "Expression"
+															},
+															"tweet_fields": {
+																"value": "@pipeline().parameters.TweetFields",
+																"type": "Expression"
+															},
+															"max_results": {
+																"value": "@pipeline().parameters.MaxResults",
+																"type": "Expression"
+															},
+															"next_token": {
+																"value": "@activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token",
+																"type": "Expression"
+															},
+															"EndYear": {
+																"value": "@pipeline().parameters.EndYear",
+																"type": "Expression"
+															},
+															"EndMonth": {
+																"value": "@pipeline().parameters.EndMonth",
+																"type": "Expression"
+															},
+															"EndDay": {
+																"value": "@pipeline().parameters.EndDay",
+																"type": "Expression"
+															},
+															"EndHour": {
+																"value": "@pipeline().parameters.EndHour",
+																"type": "Expression"
+															},
+															"EndMinute": {
+																"value": "@pipeline().parameters.EndMinute",
+																"type": "Expression"
+															},
+															"StartYear": {
+																"value": "@pipeline().parameters.StartYear",
+																"type": "Expression"
+															},
+															"StartMonth": {
+																"value": "@pipeline().parameters.StartMonth",
+																"type": "Expression"
+															},
+															"StartDay": {
+																"value": "@pipeline().parameters.StartDay",
+																"type": "Expression"
+															},
+															"StartHour": {
+																"value": "@pipeline().parameters.StartHour",
+																"type": "Expression"
+															},
+															"StartMinute": {
+																"value": "@pipeline().parameters.StartMinute",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "Twitter_RawJSON_Temp",
+														"type": "DatasetReference"
+													}
+												]
+											},
+											{
+												"name": "Append loopCount variable_specific date range",
+												"type": "AppendVariable",
+												"dependsOn": [
+													{
+														"activity": "GET to Temp Specific Time Range",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"userProperties": [],
+												"typeProperties": {
+													"variableName": "loopCountArray",
+													"value": {
+														"value": "@string(add(int(variables('loopCount')), 1))",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"value": "Case2",
+										"activities": [
+											{
+												"name": "Move Temp file to Output folder Past 7 days",
+												"type": "ExecuteDataFlow",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"dataflow": {
+														"referenceName": "MoveTemptoOutput",
+														"type": "DataFlowReference"
+													},
+													"integrationRuntime": {
+														"referenceName": "WarmIntegrationRuntime",
+														"type": "IntegrationRuntimeReference"
+													},
+													"traceLevel": "None",
+													"cacheSinks": {
+														"firstRowOnly": true
+													}
+												}
+											},
+											{
+												"name": "GET to Temp Past 7 Days",
+												"type": "Copy",
+												"dependsOn": [
+													{
+														"activity": "Move Temp file to Output folder Past 7 days",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "RestSource",
+														"httpRequestTimeout": "00:01:40",
+														"requestInterval": "00.00:00:00.010",
+														"requestMethod": "GET",
+														"paginationRules": {
+															"supportRFC5988": "true"
+														}
+													},
+													"sink": {
+														"type": "JsonSink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														},
+														"formatSettings": {
+															"type": "JsonWriteSettings"
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "RestResource_Next_Token",
+														"type": "DatasetReference",
+														"parameters": {
+															"query": {
+																"value": "@pipeline().parameters.Query",
+																"type": "Expression"
+															},
+															"tweet_fields": {
+																"value": "@pipeline().parameters.TweetFields",
+																"type": "Expression"
+															},
+															"max_results": {
+																"value": "@pipeline().parameters.MaxResults",
+																"type": "Expression"
+															},
+															"next_token": {
+																"value": "@activity('Extract next_token').output.runStatus.output.sink1.value[0].next_token",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "Twitter_RawJSON_Temp",
+														"type": "DatasetReference"
+													}
+												]
+											},
+											{
+												"name": "Append loopCount variable_past 7 days",
+												"type": "AppendVariable",
+												"dependsOn": [
+													{
+														"activity": "GET to Temp Past 7 Days",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"userProperties": [],
+												"typeProperties": {
+													"variableName": "loopCountArray",
+													"value": {
+														"value": "@string(add(int(variables('loopCount')), 1))",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									}
+								],
+								"defaultActivities": [
 									{
 										"name": "Set until variable to true",
 										"type": "SetVariable",
