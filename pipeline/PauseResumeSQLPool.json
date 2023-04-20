@@ -89,7 +89,7 @@
 									"type": "Expression"
 								},
 								"connectVia": {
-									"referenceName": "AutoResolveIntegrationRuntime",
+									"referenceName": "WarmIntegrationRuntime",
 									"type": "IntegrationRuntimeReference"
 								},
 								"method": "GET",
