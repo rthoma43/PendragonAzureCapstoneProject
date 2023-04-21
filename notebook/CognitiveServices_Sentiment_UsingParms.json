@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "93e631ff-8c61-4662-8b05-3306eaf12c9c"
+				"spark.autotune.trackingId": "20a52d00-6b4e-4516-b423-5a38a0fa0098"
 			}
 		},
 		"metadata": {
@@ -173,7 +173,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": null
+				"execution_count": 4
 			},
 			{
 				"cell_type": "code",
@@ -191,7 +191,7 @@
 				"source": [
 					"df.count()"
 				],
-				"execution_count": null
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -212,7 +212,7 @@
 					"filtered_df = df.filter(df['cleantext'].isNull() | (df['cleantext'] == ''))\r\n",
 					"filtered_df.count()"
 				],
-				"execution_count": null
+				"execution_count": 6
 			},
 			{
 				"cell_type": "code",
@@ -234,7 +234,7 @@
 					"filtered1_df.count()\r\n",
 					""
 				],
-				"execution_count": null
+				"execution_count": 7
 			},
 			{
 				"cell_type": "markdown",
@@ -267,7 +267,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": null
+				"execution_count": 8
 			},
 			{
 				"cell_type": "markdown",
@@ -298,7 +298,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": null
+				"execution_count": 9
 			},
 			{
 				"cell_type": "markdown",
@@ -413,7 +413,7 @@
 					"\r\n",
 					"\r\n",
 					"    # collect all rows of the batch DataFrame\r\n",
-					"    rows = batch.collect()\r\n",
+					"    rows = sent_batch_output.collect()\r\n",
 					"\r\n",
 					"    # iterate over rows and extract values from each column\r\n",
 					"    for row in rows:\r\n",
@@ -456,12 +456,15 @@
 					"            batch_neutral_scores.append(sentiment['document']['confidenceScores'].get(\"neutral\", 0.0))\r\n",
 					"            batch_mixed_scores.append(sentiment['document']['confidenceScores'].get(\"mixed\", 0.0))\r\n",
 					"        else:\r\n",
+					"            print(\"No Sentiment\")\r\n",
 					"            batch_sentiments.append(None)\r\n",
 					"            batch_negative_scores.append(0.0)\r\n",
 					"            batch_positive_scores.append(0.0)\r\n",
 					"            batch_neutral_scores.append(0.0)\r\n",
 					"            batch_mixed_scores.append(0.0)\r\n",
 					"    \r\n",
+					"    print(len(id_values))\r\n",
+					"    print(len(batch_sentiments))\r\n",
 					"    # create rows\r\n",
 					"    rows = [Row(id=id_values[i],\r\n",
 					"                created_at=created_at_values[i],\r\n",
@@ -496,7 +499,7 @@
 					"\r\n",
 					"#display(sentiment_output_df)"
 				],
-				"execution_count": null
+				"execution_count": 14
 			},
 			{
 				"cell_type": "markdown",
