@@ -7,20 +7,20 @@
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {
-			"referenceName": "SparkPoolLarge",
+			"referenceName": "SparkPoolSmall",
 			"type": "BigDataPoolReference"
 		},
 		"sessionProperties": {
-			"driverMemory": "112g",
-			"driverCores": 16,
-			"executorMemory": "112g",
-			"executorCores": 16,
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
 			"numExecutors": 2,
 			"conf": {
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "20a52d00-6b4e-4516-b423-5a38a0fa0098"
+				"spark.autotune.trackingId": "1da7ff65-2f86-4605-82dd-2b4f0f750e2b"
 			}
 		},
 		"metadata": {
@@ -34,18 +34,18 @@
 				"name": "python"
 			},
 			"a365ComputeOptions": {
-				"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolLarge",
-				"name": "SparkPoolLarge",
+				"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+				"name": "SparkPoolSmall",
 				"type": "Spark",
-				"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolLarge",
+				"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
 				"auth": {
 					"type": "AAD",
 					"authResource": "https://dev.azuresynapse.net"
 				},
 				"sparkVersion": "3.3",
-				"nodeCount": 10,
-				"cores": 16,
-				"memory": 112,
+				"nodeCount": 3,
+				"cores": 4,
+				"memory": 28,
 				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
@@ -446,11 +446,16 @@
 					"\r\n",
 					"    # Deserialize the JSON and extract the 'sentiment' field\r\n",
 					"    sentiments = [json.loads(x)[\"sentiment\"] for x in json_output]\r\n",
+					"    print(sentiments[0])\r\n",
 					"\r\n",
 					"    # Print the 'sentiment' field for each row\r\n",
 					"    for sentiment in sentiments:\r\n",
 					"        if 'document' in sentiment:\r\n",
-					"            batch_sentiments.append(sentiment['document']['sentiment'])\r\n",
+					"            try:\r\n",
+					"                batch_sentiments.append(sentiment['document']['sentiment'])\r\n",
+					"            except (ValueError, KeyError):\r\n",
+					"                print('No Sentiment')\r\n",
+					"                batch_sentiments.append('None')\r\n",
 					"            batch_negative_scores.append(sentiment['document']['confidenceScores'].get(\"negative\", 0.0))\r\n",
 					"            batch_positive_scores.append(sentiment['document']['confidenceScores'].get(\"positive\", 0.0))\r\n",
 					"            batch_neutral_scores.append(sentiment['document']['confidenceScores'].get(\"neutral\", 0.0))\r\n",
@@ -499,7 +504,7 @@
 					"\r\n",
 					"#display(sentiment_output_df)"
 				],
-				"execution_count": 14
+				"execution_count": 11
 			},
 			{
 				"cell_type": "markdown",
