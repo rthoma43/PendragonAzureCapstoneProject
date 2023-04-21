@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "1da7ff65-2f86-4605-82dd-2b4f0f750e2b"
+				"spark.autotune.trackingId": "ca82ee09-f9db-4571-9656-e5b1f246aa31"
 			}
 		},
 		"metadata": {
@@ -63,7 +63,7 @@
 					"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
 					"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")"
 				],
-				"execution_count": 1
+				"execution_count": 12
 			},
 			{
 				"cell_type": "markdown",
@@ -102,7 +102,7 @@
 					"#table = \"Sent.Aithusa_Sentiment\"\n",
 					"#topictable = \"Topic.Aithusa_Topics\""
 				],
-				"execution_count": 2
+				"execution_count": 13
 			},
 			{
 				"cell_type": "code",
@@ -134,7 +134,7 @@
 					"                     .synapsesql()\n",
 					")"
 				],
-				"execution_count": 3
+				"execution_count": 14
 			},
 			{
 				"cell_type": "markdown",
@@ -173,7 +173,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 4
+				"execution_count": 15
 			},
 			{
 				"cell_type": "code",
@@ -191,50 +191,7 @@
 				"source": [
 					"df.count()"
 				],
-				"execution_count": 5
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"collapsed": false
-				},
-				"source": [
-					"from pyspark.sql.functions import col\r\n",
-					"filtered_df = df.filter(df['cleantext'].isNull() | (df['cleantext'] == ''))\r\n",
-					"filtered_df.count()"
-				],
-				"execution_count": 6
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"from pyspark.sql.functions import col\r\n",
-					"\r\n",
-					"filtered1_df = df.filter(col('cleantext').isNotNull() & (col('cleantext') != ''))\r\n",
-					"filtered1_df.count()\r\n",
-					""
-				],
-				"execution_count": 7
+				"execution_count": 16
 			},
 			{
 				"cell_type": "markdown",
@@ -267,7 +224,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 8
+				"execution_count": 17
 			},
 			{
 				"cell_type": "markdown",
@@ -298,7 +255,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 9
+				"execution_count": 18
 			},
 			{
 				"cell_type": "markdown",
@@ -446,23 +403,19 @@
 					"\r\n",
 					"    # Deserialize the JSON and extract the 'sentiment' field\r\n",
 					"    sentiments = [json.loads(x)[\"sentiment\"] for x in json_output]\r\n",
-					"    print(sentiments[0])\r\n",
+					"    #print(sentiments[0])\r\n",
 					"\r\n",
 					"    # Print the 'sentiment' field for each row\r\n",
 					"    for sentiment in sentiments:\r\n",
 					"        if 'document' in sentiment:\r\n",
-					"            try:\r\n",
-					"                batch_sentiments.append(sentiment['document']['sentiment'])\r\n",
-					"            except (ValueError, KeyError):\r\n",
-					"                print('No Sentiment')\r\n",
-					"                batch_sentiments.append('None')\r\n",
+					"            batch_sentiments.append(sentiment['document'].get('sentiment', 'None'))\r\n",
 					"            batch_negative_scores.append(sentiment['document']['confidenceScores'].get(\"negative\", 0.0))\r\n",
 					"            batch_positive_scores.append(sentiment['document']['confidenceScores'].get(\"positive\", 0.0))\r\n",
 					"            batch_neutral_scores.append(sentiment['document']['confidenceScores'].get(\"neutral\", 0.0))\r\n",
 					"            batch_mixed_scores.append(sentiment['document']['confidenceScores'].get(\"mixed\", 0.0))\r\n",
 					"        else:\r\n",
 					"            print(\"No Sentiment\")\r\n",
-					"            batch_sentiments.append(None)\r\n",
+					"            batch_sentiments.append('None')\r\n",
 					"            batch_negative_scores.append(0.0)\r\n",
 					"            batch_positive_scores.append(0.0)\r\n",
 					"            batch_neutral_scores.append(0.0)\r\n",
@@ -504,7 +457,7 @@
 					"\r\n",
 					"#display(sentiment_output_df)"
 				],
-				"execution_count": 11
+				"execution_count": 21
 			},
 			{
 				"cell_type": "markdown",
