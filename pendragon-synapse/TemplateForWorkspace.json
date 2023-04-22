@@ -15082,7 +15082,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "861752d0-1e1d-44f8-a563-64a143d06761"
+						"spark.autotune.trackingId": "c1de3e6c-0ddb-40da-8bb1-24a005c6b194"
 					}
 				},
 				"metadata": {
@@ -15237,7 +15237,7 @@
 							"df = df.orderBy(desc(\"created_at\"))\r\n",
 							"\r\n",
 							"# select the first 100 records\r\n",
-							"df = df.limit(2000)"
+							"#df = df.limit(2000)"
 						],
 						"outputs": [],
 						"execution_count": 46
