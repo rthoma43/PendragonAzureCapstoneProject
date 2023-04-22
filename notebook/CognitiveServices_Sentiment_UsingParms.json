@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "705b81cf-4630-4814-b4f7-28dc860a8a97"
+				"spark.autotune.trackingId": "5b72c974-80d8-42da-836f-94edf42095a8"
 			}
 		},
 		"metadata": {
@@ -134,7 +134,7 @@
 					"                     .synapsesql()\n",
 					")"
 				],
-				"execution_count": 3
+				"execution_count": 45
 			},
 			{
 				"cell_type": "markdown",
@@ -171,9 +171,9 @@
 					"df = df.orderBy(desc(\"created_at\"))\r\n",
 					"\r\n",
 					"# select the first 100 records\r\n",
-					"#df = df.limit(100)"
+					"df = df.limit(2000)"
 				],
-				"execution_count": 4
+				"execution_count": 46
 			},
 			{
 				"cell_type": "code",
@@ -191,7 +191,7 @@
 				"source": [
 					"df.count()"
 				],
-				"execution_count": 5
+				"execution_count": 47
 			},
 			{
 				"cell_type": "markdown",
@@ -288,7 +288,7 @@
 					"# import required libraries\r\n",
 					"import json\r\n",
 					"from pyspark.sql.types import *\r\n",
-					"from pyspark.sql.functions import col\r\n",
+					"from pyspark.sql.functions import col, when, coalesce, lit\r\n",
 					"import pyspark.sql.functions as F\r\n",
 					"import collections\r\n",
 					"\r\n",
@@ -306,7 +306,6 @@
 					"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
 					"df_batches = df.randomSplit([1.0]*num_batches, seed=42)\r\n",
 					"\r\n",
-					"from pyspark.sql.types import *\r\n",
 					"schema = StructType([\r\n",
 					"    StructField(\"id\",  LongType(), True),\r\n",
 					"    StructField(\"created_at\", TimestampType(), True),\r\n",
@@ -348,64 +347,25 @@
 					"\r\n",
 					"    sent_batch_output = sent.transform(batch)\r\n",
 					"\r\n",
-					"    #sent_batch_output = sent_batch_output.filter(col(\"error\").isNull())\r\n",
+					"    # Remove rows with error\r\n",
+					"    sent_batch_output = sent_batch_output.filter(col(\"error\").isNull())\r\n",
 					"\r\n",
-					"    # Create arrays for new column values\r\n",
-					"    batch_sentiments = []\r\n",
-					"    batch_negative_scores = []\r\n",
-					"    batch_positive_scores = []\r\n",
-					"    batch_neutral_scores = []\r\n",
-					"    batch_mixed_scores = []\r\n",
 					"\r\n",
-					"    # Extract the 'sentiment' column and convert it to JSON\r\n",
-					"    json_output = sent_batch_output.select(\"sentiment\").toJSON().collect()\r\n",
+					"    #Create new columns based on response JSON\r\n",
+					"    sent_batch_output = sent_batch_output.withColumn(\"sentiment1\", col(\"sentiment.document.sentiment\"))\r\n",
+					"    sent_batch_output = sent_batch_output.withColumn(\"negative_score\", coalesce(col(\"sentiment.document.confidenceScores.negative\"), lit(0.0)))\r\n",
+					"    sent_batch_output = sent_batch_output.withColumn(\"positive_score\", coalesce(col(\"sentiment.document.confidenceScores.positive\"), lit(0.0)))\r\n",
+					"    sent_batch_output = sent_batch_output.withColumn(\"neutral_score\", coalesce(col(\"sentiment.document.confidenceScores.neutral\"), lit(0.0)))\r\n",
+					"    sent_batch_output = sent_batch_output.withColumn(\"mixed_score\", lit(0.0))\r\n",
 					"\r\n",
-					"    # Deserialize the JSON and extract the 'sentiment' field\r\n",
-					"    sentiments = [json.loads(x)[\"sentiment\"] for x in json_output]\r\n",
-					"    print(\"Number of Sentiment responses: \", len(sentiments))\r\n",
-					"\r\n",
-					"    # Print the 'sentiment' field for each row\r\n",
-					"    for sentiment in sentiments:\r\n",
-					"        if 'document' in sentiment:\r\n",
-					"            batch_sentiments.append(sentiment['document'].get('sentiment', 'None'))\r\n",
-					"            batch_negative_scores.append(sentiment['document']['confidenceScores'].get(\"negative\", 0.0))\r\n",
-					"            batch_positive_scores.append(sentiment['document']['confidenceScores'].get(\"positive\", 0.0))\r\n",
-					"            batch_neutral_scores.append(sentiment['document']['confidenceScores'].get(\"neutral\", 0.0))\r\n",
-					"            batch_mixed_scores.append(sentiment['document']['confidenceScores'].get(\"mixed\", 0.0))\r\n",
-					"        else:\r\n",
-					"            print(\"No Sentiment\")\r\n",
-					"            batch_sentiments.append('None')\r\n",
-					"            batch_negative_scores.append(0.0)\r\n",
-					"            batch_positive_scores.append(0.0)\r\n",
-					"            batch_neutral_scores.append(0.0)\r\n",
-					"            batch_mixed_scores.append(0.0)\r\n",
-					"\r\n",
+					"    # Remove output columns\r\n",
 					"    sent_batch_output = sent_batch_output.drop(\"sentiment\")\r\n",
 					"    sent_batch_output = sent_batch_output.drop(\"error\")\r\n",
+					"    # Renamed sentiment column\r\n",
+					"    sent_batch_output = sent_batch_output.withColumnRenamed(\"sentiment1\", \"sentiment\")\r\n",
 					"\r\n",
-					"    print(\"Dataframe length: \", sent_batch_output.count())\r\n",
-					"    print(\"Sentiment count: \", len(batch_sentiments))\r\n",
-					"    print(\"Negative count: \", len(batch_negative_scores))\r\n",
-					"    print(\"Positive count: \", len(batch_positive_scores))\r\n",
-					"    print(\"Nuetral count: \", len(batch_neutral_scores))\r\n",
-					"    print(\"Mixed count: \", len(batch_mixed_scores))\r\n",
-					"\r\n",
-					"    # Convert to pandas df\r\n",
-					"    pandas_df = sent_batch_output.toPandas()\r\n",
-					"    print(\"Length of pandas df: \", len(pandas_df))\r\n",
-					"\r\n",
-					"    pandas_df['sentiment'] = batch_sentiments\r\n",
-					"    pandas_df['negative_score'] = batch_negative_scores\r\n",
-					"    pandas_df['positive_score'] =  batch_positive_scores\r\n",
-					"    pandas_df['neutral_score'] =  batch_neutral_scores\r\n",
-					"    pandas_df['mixed_score'] =  batch_mixed_scores\r\n",
-					"    #print(pandas_df.head())\r\n",
-					"\r\n",
-					"    \r\n",
-					"    # Convert the Pandas DataFrame to a Spark DataFrame\r\n",
-					"    sdf = spark.createDataFrame(pandas_df)\r\n",
-					"    sdf = sdf.drop(\"index\")\r\n",
-					"    #print(sdf.printSchema)\r\n",
+					"    #print(sent_batch_output.printSchema)\r\n",
+					"    #display(sent_batch_output)\r\n",
 					"\r\n",
 					"    # Append the batch results dataframe to the main output dataframe\r\n",
 					"    sentiment_output_df = sentiment_output_df.union(sdf)\r\n",
@@ -414,7 +374,7 @@
 					"\r\n",
 					"display(sentiment_output_df)"
 				],
-				"execution_count": 19
+				"execution_count": 48
 			},
 			{
 				"cell_type": "code",
