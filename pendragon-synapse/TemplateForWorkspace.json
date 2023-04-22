@@ -15082,7 +15082,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "c1de3e6c-0ddb-40da-8bb1-24a005c6b194"
+						"spark.autotune.trackingId": "e83134f3-bb3b-4501-9d31-92d6a5399784"
 					}
 				},
 				"metadata": {
@@ -15438,7 +15438,7 @@
 							"    #display(sent_batch_output)\r\n",
 							"\r\n",
 							"    # Append the batch results dataframe to the main output dataframe\r\n",
-							"    sentiment_output_df = sentiment_output_df.union(sdf)\r\n",
+							"    sentiment_output_df = sentiment_output_df.union(sent_batch_output)\r\n",
 							"    print('Batch', num, 'succeeded!')\r\n",
 							"    num = num + 1\r\n",
 							"\r\n",
