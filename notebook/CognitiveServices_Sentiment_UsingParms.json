@@ -7,20 +7,20 @@
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {
-			"referenceName": "SparkPoolLarge",
+			"referenceName": "SparkPoolSmall",
 			"type": "BigDataPoolReference"
 		},
 		"sessionProperties": {
-			"driverMemory": "112g",
-			"driverCores": 16,
-			"executorMemory": "112g",
-			"executorCores": 16,
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
 			"numExecutors": 2,
 			"conf": {
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "5e145830-192f-4f1e-b514-3f81b83f3284"
+				"spark.autotune.trackingId": "705b81cf-4630-4814-b4f7-28dc860a8a97"
 			}
 		},
 		"metadata": {
@@ -34,18 +34,18 @@
 				"name": "python"
 			},
 			"a365ComputeOptions": {
-				"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolLarge",
-				"name": "SparkPoolLarge",
+				"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+				"name": "SparkPoolSmall",
 				"type": "Spark",
-				"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolLarge",
+				"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
 				"auth": {
 					"type": "AAD",
 					"authResource": "https://dev.azuresynapse.net"
 				},
 				"sparkVersion": "3.3",
-				"nodeCount": 10,
-				"cores": 16,
-				"memory": 112,
+				"nodeCount": 3,
+				"cores": 4,
+				"memory": 28,
 				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
@@ -63,7 +63,7 @@
 					"# Database can be specified as a Spark Config or as a Constant - Constants.DATABASE\r\n",
 					"spark.conf.set(\"spark.sqlanalyticsconnector.dw.database\", \"SQLPoolTest\")"
 				],
-				"execution_count": 11
+				"execution_count": 1
 			},
 			{
 				"cell_type": "markdown",
@@ -102,7 +102,7 @@
 					"#table = \"Sent.Aithusa_Sentiment\"\n",
 					"#topictable = \"Topic.Aithusa_Topics\""
 				],
-				"execution_count": 12
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -134,7 +134,7 @@
 					"                     .synapsesql()\n",
 					")"
 				],
-				"execution_count": 13
+				"execution_count": 3
 			},
 			{
 				"cell_type": "markdown",
@@ -173,7 +173,7 @@
 					"# select the first 100 records\r\n",
 					"#df = df.limit(100)"
 				],
-				"execution_count": 14
+				"execution_count": 4
 			},
 			{
 				"cell_type": "code",
@@ -191,7 +191,7 @@
 				"source": [
 					"df.count()"
 				],
-				"execution_count": 15
+				"execution_count": 5
 			},
 			{
 				"cell_type": "markdown",
@@ -224,7 +224,7 @@
 					"from synapse.ml.cognitive import *\r\n",
 					"from pyspark.sql.functions import col"
 				],
-				"execution_count": 16
+				"execution_count": 6
 			},
 			{
 				"cell_type": "markdown",
@@ -255,7 +255,7 @@
 				"source": [
 					"linked_service_name = \"CognitiveService1\""
 				],
-				"execution_count": 17
+				"execution_count": 7
 			},
 			{
 				"cell_type": "markdown",
@@ -348,7 +348,7 @@
 					"\r\n",
 					"    sent_batch_output = sent.transform(batch)\r\n",
 					"\r\n",
-					"    sent_batch_output = sent_batch_output.filter(col(\"error\").isNull())\r\n",
+					"    #sent_batch_output = sent_batch_output.filter(col(\"error\").isNull())\r\n",
 					"\r\n",
 					"    # Create arrays for new column values\r\n",
 					"    batch_sentiments = []\r\n",
@@ -362,7 +362,7 @@
 					"\r\n",
 					"    # Deserialize the JSON and extract the 'sentiment' field\r\n",
 					"    sentiments = [json.loads(x)[\"sentiment\"] for x in json_output]\r\n",
-					"    print(\"# of Sentiments: \", len(sentiments))\r\n",
+					"    print(\"Number of Sentiment responses: \", len(sentiments))\r\n",
 					"\r\n",
 					"    # Print the 'sentiment' field for each row\r\n",
 					"    for sentiment in sentiments:\r\n",
@@ -383,30 +383,75 @@
 					"    sent_batch_output = sent_batch_output.drop(\"sentiment\")\r\n",
 					"    sent_batch_output = sent_batch_output.drop(\"error\")\r\n",
 					"\r\n",
+					"    print(\"Dataframe length: \", sent_batch_output.count())\r\n",
+					"    print(\"Sentiment count: \", len(batch_sentiments))\r\n",
+					"    print(\"Negative count: \", len(batch_negative_scores))\r\n",
+					"    print(\"Positive count: \", len(batch_positive_scores))\r\n",
+					"    print(\"Nuetral count: \", len(batch_neutral_scores))\r\n",
+					"    print(\"Mixed count: \", len(batch_mixed_scores))\r\n",
+					"\r\n",
+					"    # Convert to pandas df\r\n",
 					"    pandas_df = sent_batch_output.toPandas()\r\n",
+					"    print(\"Length of pandas df: \", len(pandas_df))\r\n",
+					"\r\n",
 					"    pandas_df['sentiment'] = batch_sentiments\r\n",
 					"    pandas_df['negative_score'] = batch_negative_scores\r\n",
 					"    pandas_df['positive_score'] =  batch_positive_scores\r\n",
 					"    pandas_df['neutral_score'] =  batch_neutral_scores\r\n",
 					"    pandas_df['mixed_score'] =  batch_mixed_scores\r\n",
-					"    print(pandas_df.head())\r\n",
+					"    #print(pandas_df.head())\r\n",
 					"\r\n",
 					"    \r\n",
 					"    # Convert the Pandas DataFrame to a Spark DataFrame\r\n",
 					"    sdf = spark.createDataFrame(pandas_df)\r\n",
-					"    print(sdf.printSchema)\r\n",
-					"\r\n",
-					"    # create batch dataframe\r\n",
-					"    #batch_df = spark.createDataFrame(rows, schema)\r\n",
+					"    sdf = sdf.drop(\"index\")\r\n",
+					"    #print(sdf.printSchema)\r\n",
 					"\r\n",
 					"    # Append the batch results dataframe to the main output dataframe\r\n",
-					"    sentiment_output_df = sentiment_output_df.union(batch_df)\r\n",
+					"    sentiment_output_df = sentiment_output_df.union(sdf)\r\n",
 					"    print('Batch', num, 'succeeded!')\r\n",
 					"    num = num + 1\r\n",
 					"\r\n",
-					"#display(sentiment_output_df)"
+					"display(sentiment_output_df)"
 				],
-				"execution_count": 21
+				"execution_count": 19
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"len(pandas_df)"
+				],
+				"execution_count": 15
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"f = pandas_df.reset_index(drop=True)\r\n",
+					"len(f)"
+				],
+				"execution_count": 16
 			},
 			{
 				"cell_type": "markdown",
