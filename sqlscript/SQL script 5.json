@@ -2,7 +2,7 @@
 	"name": "SQL script 5",
 	"properties": {
 		"content": {
-			"query": "SELECT count(*) FROM [Archive].[Abstractive_Sum]",
+			"query": "select * FROM [Sent].[NATO_Sentiment]",
 			"metadata": {
 				"language": "sql"
 			},
