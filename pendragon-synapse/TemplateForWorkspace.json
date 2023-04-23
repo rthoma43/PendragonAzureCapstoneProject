@@ -9906,7 +9906,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "SELECT count(*) FROM [Archive].[Abstractive_Sum]",
+					"query": "select * FROM [Sent].[NATO_Sentiment]",
 					"metadata": {
 						"language": "sql"
 					},
@@ -9987,7 +9987,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "24e46bbf-e78d-4cc2-b4f8-ed57b54f5e41"
+						"spark.autotune.trackingId": "532066eb-e534-4cd9-a021-d2a287e54b87"
 					}
 				},
 				"metadata": {
@@ -10214,7 +10214,7 @@
 							"    # Choose a save mode that is apt for your use case.\r\n",
 							"    # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
 							"    # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
-							"    .mode(\"overwrite\")\r\n",
+							"    .mode(\"append\")\r\n",
 							"    # Required parameter - Three-part table name to which data will be written\r\n",
 							"    .synapsesql(outputtable))\r\n",
 							"\r\n",
@@ -10251,7 +10251,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "db4ea07d-1ad3-45e0-8fd5-c0040b460f0a"
+						"spark.autotune.trackingId": "2161cab0-8af2-43b9-a808-2550e753cb25"
 					}
 				},
 				"metadata": {
@@ -10276,7 +10276,8 @@
 						"sparkVersion": "3.3",
 						"nodeCount": 10,
 						"cores": 16,
-						"memory": 112
+						"memory": 112,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -10501,7 +10502,7 @@
 							" # Choose a save mode that is apt for your use case.\r\n",
 							" # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
 							" # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
-							" .mode(\"overwrite\")\r\n",
+							" .mode(\"append\")\r\n",
 							" # Required parameter - Three-part table name to which data will be written\r\n",
 							" .synapsesql(outputtable))"
 						],
@@ -15069,20 +15070,20 @@
 				"nbformat": 4,
 				"nbformat_minor": 2,
 				"bigDataPool": {
-					"referenceName": "SparkPoolLarge",
+					"referenceName": "SparkPoolSmall",
 					"type": "BigDataPoolReference"
 				},
 				"sessionProperties": {
-					"driverMemory": "112g",
-					"driverCores": 16,
-					"executorMemory": "112g",
-					"executorCores": 16,
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
 					"numExecutors": 2,
 					"conf": {
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "5275718e-37ee-4e92-8d0a-4313f8fb86b5"
+						"spark.autotune.trackingId": "7679c15b-27bb-46d4-88f5-3d0fe906eba3"
 					}
 				},
 				"metadata": {
@@ -15096,26 +15097,24 @@
 						"name": "python"
 					},
 					"a365ComputeOptions": {
-						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolLarge",
-						"name": "SparkPoolLarge",
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+						"name": "SparkPoolSmall",
 						"type": "Spark",
-						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolLarge",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
 						"auth": {
 							"type": "AAD",
 							"authResource": "https://dev.azuresynapse.net"
 						},
 						"sparkVersion": "3.3",
-						"nodeCount": 10,
-						"cores": 16,
-						"memory": 112,
-						"automaticScaleJobs": false
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -15200,7 +15199,7 @@
 							")"
 						],
 						"outputs": [],
-						"execution_count": 45
+						"execution_count": 3
 					},
 					{
 						"cell_type": "markdown",
@@ -15240,7 +15239,7 @@
 							"#df = df.limit(2000)"
 						],
 						"outputs": [],
-						"execution_count": 46
+						"execution_count": 4
 					},
 					{
 						"cell_type": "code",
@@ -15259,7 +15258,7 @@
 							"df.count()"
 						],
 						"outputs": [],
-						"execution_count": 47
+						"execution_count": 5
 					},
 					{
 						"cell_type": "markdown",
@@ -15328,6 +15327,48 @@
 						"execution_count": 7
 					},
 					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from pyspark.sql.types import *\r\n",
+							"schema = StructType([\r\n",
+							"    StructField(\"id\",  LongType(), True),\r\n",
+							"    StructField(\"created_at\", TimestampType(), True),\r\n",
+							"    StructField(\"text\", StringType(), True),\r\n",
+							"    StructField(\"lang\", StringType(), True),\r\n",
+							"    StructField(\"retweet_count\", IntegerType(), True),\r\n",
+							"    StructField(\"reply_count\", IntegerType(), True),\r\n",
+							"    StructField(\"like_count\", IntegerType(), True),\r\n",
+							"    StructField(\"quote_count\", IntegerType(), True),\r\n",
+							"    StructField(\"impression_count\", IntegerType(), True),\r\n",
+							"    StructField(\"cleantext\", StringType(), True),\r\n",
+							"    StructField(\"topic_0_confidence\", FloatType(), True),\r\n",
+							"    StructField(\"topic_1_confidence\", FloatType(), True),\r\n",
+							"    StructField(\"topic_2_confidence\", FloatType(), True),\r\n",
+							"    StructField(\"topic_3_confidence\", FloatType(), True),\r\n",
+							"    StructField(\"topic_4_confidence\", FloatType(), True),\r\n",
+							"    StructField(\"topic\", ShortType(), True),\r\n",
+							"    StructField(\"sentiment\", StringType(), True),\r\n",
+							"    StructField(\"negative_score\", FloatType(), True),\r\n",
+							"    StructField(\"positive_score\", FloatType(), True),\r\n",
+							"    StructField(\"neutral_score\", FloatType(), True),\r\n",
+							"    StructField(\"mixed_score\", FloatType(), True)\r\n",
+							"])"
+						],
+						"outputs": [],
+						"execution_count": 24
+					},
+					{
 						"cell_type": "markdown",
 						"metadata": {
 							"nteract": {
@@ -15357,7 +15398,6 @@
 						"source": [
 							"# import required libraries\r\n",
 							"import json\r\n",
-							"from pyspark.sql.types import *\r\n",
 							"from pyspark.sql.functions import col, when, coalesce, lit\r\n",
 							"import pyspark.sql.functions as F\r\n",
 							"import collections\r\n",
@@ -15375,30 +15415,6 @@
 							"\r\n",
 							"# Then, use randomSplit to split the DataFrame into smaller DataFrames of equal size\r\n",
 							"df_batches = df.randomSplit([1.0]*num_batches, seed=42)\r\n",
-							"\r\n",
-							"schema = StructType([\r\n",
-							"    StructField(\"id\",  LongType(), True),\r\n",
-							"    StructField(\"created_at\", TimestampType(), True),\r\n",
-							"    StructField(\"text\", StringType(), True),\r\n",
-							"    StructField(\"cleantext\", StringType(), True),\r\n",
-							"    StructField(\"lang\", StringType(), True),\r\n",
-							"    StructField(\"retweet_count\", IntegerType(), True),\r\n",
-							"    StructField(\"reply_count\", IntegerType(), True),\r\n",
-							"    StructField(\"like_count\", IntegerType(), True),\r\n",
-							"    StructField(\"quote_count\", IntegerType(), True),\r\n",
-							"    StructField(\"impression_count\", IntegerType(), True),\r\n",
-							"    StructField(\"topic\", ShortType(), True),\r\n",
-							"    StructField(\"topic_0_confidence\", FloatType(), True),\r\n",
-							"    StructField(\"topic_1_confidence\", FloatType(), True),\r\n",
-							"    StructField(\"topic_2_confidence\", FloatType(), True),\r\n",
-							"    StructField(\"topic_3_confidence\", FloatType(), True),\r\n",
-							"    StructField(\"topic_4_confidence\", FloatType(), True),\r\n",
-							"    StructField(\"sentiment\", StringType(), True),\r\n",
-							"    StructField(\"negative_score\", FloatType(), True),\r\n",
-							"    StructField(\"positive_score\", FloatType(), True),\r\n",
-							"    StructField(\"neutral_score\", FloatType(), True),\r\n",
-							"    StructField(\"mixed_score\", FloatType(), True)\r\n",
-							"])\r\n",
 							"\r\n",
 							"# create a DataFrame\r\n",
 							"sentiment_output_df =  spark.createDataFrame([], schema)\r\n",
@@ -15442,10 +15458,62 @@
 							"    print('Batch', num, 'succeeded!')\r\n",
 							"    num = num + 1\r\n",
 							"\r\n",
-							"display(sentiment_output_df)"
+							"#display(sentiment_output_df)"
 						],
 						"outputs": [],
-						"execution_count": 48
+						"execution_count": 25
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# change the data types\r\n",
+							"sentiment_output_df = sentiment_output_df.withColumn(\"impression_count\", col(\"impression_count\").cast(\"int\"))\r\n",
+							"sentiment_output_df = sentiment_output_df.withColumn(\"topic\", col(\"topic\").cast(\"smallint\"))\r\n",
+							"sentiment_output_df = sentiment_output_df.withColumn(\"topic_0_confidence\", col(\"topic_0_confidence\").cast(\"float\"))\r\n",
+							"sentiment_output_df = sentiment_output_df.withColumn(\"topic_1_confidence\", col(\"topic_1_confidence\").cast(\"float\"))\r\n",
+							"sentiment_output_df = sentiment_output_df.withColumn(\"topic_2_confidence\", col(\"topic_2_confidence\").cast(\"float\"))\r\n",
+							"sentiment_output_df = sentiment_output_df.withColumn(\"topic_3_confidence\", col(\"topic_3_confidence\").cast(\"float\"))\r\n",
+							"sentiment_output_df = sentiment_output_df.withColumn(\"topic_4_confidence\", col(\"topic_4_confidence\").cast(\"float\"))\r\n",
+							"sentiment_output_df = sentiment_output_df.withColumn(\"negative_score\", col(\"negative_score\").cast(\"float\"))\r\n",
+							"sentiment_output_df = sentiment_output_df.withColumn(\"positive_score\", col(\"positive_score\").cast(\"float\"))\r\n",
+							"sentiment_output_df = sentiment_output_df.withColumn(\"neutral_score\", col(\"neutral_score\").cast(\"float\"))\r\n",
+							"sentiment_output_df = sentiment_output_df.withColumn(\"mixed_score\", col(\"mixed_score\").cast(\"float\"))"
+						],
+						"outputs": [],
+						"execution_count": 26
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Reorder columns to match SQL table column order\r\n",
+							"from pyspark.sql.functions import col\r\n",
+							"# Reorder columns and column data\r\n",
+							"sentiment_output_df = sentiment_output_df.select(col(\"id\"), col(\"created_at\"), col(\"text\"), col(\"cleantext\"), col(\"lang\"), col(\"retweet_count\"), col(\"reply_count\"), col(\"like_count\"), col(\"quote_count\"), col(\"impression_count\"), col(\"topic\"), col(\"topic_0_confidence\"), col(\"topic_1_confidence\"), col(\"topic_2_confidence\"), col(\"topic_3_confidence\"), col(\"topic_4_confidence\"), col(\"sentiment\"), col(\"negative_score\"), col(\"positive_score\"), col(\"neutral_score\"), col(\"mixed_score\"))"
+						],
+						"outputs": [],
+						"execution_count": 28
 					},
 					{
 						"cell_type": "markdown",
@@ -15518,7 +15586,7 @@
 							"outputtable = \"SQLPoolTest.\" + table"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 12
 					},
 					{
 						"cell_type": "code",
@@ -15555,45 +15623,7 @@
 							" .synapsesql(outputtable))"
 						],
 						"outputs": [],
-						"execution_count": null
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"outputtable"
-						],
-						"outputs": [],
-						"execution_count": null
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							""
-						],
-						"outputs": [],
-						"execution_count": null
+						"execution_count": 29
 					}
 				]
 			},
