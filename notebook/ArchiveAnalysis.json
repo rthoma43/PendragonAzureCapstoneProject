@@ -20,7 +20,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "24e46bbf-e78d-4cc2-b4f8-ed57b54f5e41"
+				"spark.autotune.trackingId": "532066eb-e534-4cd9-a021-d2a287e54b87"
 			}
 		},
 		"metadata": {
@@ -244,7 +244,7 @@
 					"    # Choose a save mode that is apt for your use case.\r\n",
 					"    # Options for save modes are \"error\" or \"errorifexists\" (default), \"overwrite\", \"append\", \"ignore\".\r\n",
 					"    # refer to https://spark.apache.org/docs/latest/sql-data-sources-load-save-functions.html#save-modes\r\n",
-					"    .mode(\"overwrite\")\r\n",
+					"    .mode(\"append\")\r\n",
 					"    # Required parameter - Three-part table name to which data will be written\r\n",
 					"    .synapsesql(outputtable))\r\n",
 					"\r\n",
