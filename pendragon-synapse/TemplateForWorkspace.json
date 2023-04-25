@@ -2929,16 +2929,16 @@
 							},
 							"snapshot": true,
 							"sparkPool": {
-								"referenceName": "SparkPoolLarge",
+								"referenceName": "SparkPoolSmall",
 								"type": "BigDataPoolReference"
 							},
-							"executorSize": "Large",
+							"executorSize": "Small",
 							"conf": {
-								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.enabled": true,
 								"spark.dynamicAllocation.minExecutors": null,
 								"spark.dynamicAllocation.maxExecutors": null
 							},
-							"driverSize": "Large",
+							"driverSize": "Small",
 							"numExecutors": null
 						}
 					},
@@ -3413,16 +3413,16 @@
 							},
 							"snapshot": true,
 							"sparkPool": {
-								"referenceName": "SparkPoolLarge",
+								"referenceName": "SparkPoolSmall",
 								"type": "BigDataPoolReference"
 							},
-							"executorSize": "Large",
+							"executorSize": "Small",
 							"conf": {
-								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.enabled": true,
 								"spark.dynamicAllocation.minExecutors": null,
 								"spark.dynamicAllocation.maxExecutors": null
 							},
-							"driverSize": "Large",
+							"driverSize": "Small",
 							"numExecutors": null
 						}
 					},
@@ -3749,7 +3749,7 @@
 				"[concat(variables('workspaceId'), '/pipelines/PauseResumeSQLPool')]",
 				"[concat(variables('workspaceId'), '/pipelines/NLP_Analysis')]",
 				"[concat(variables('workspaceId'), '/notebooks/ArchiveTweets')]",
-				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolLarge')]",
+				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolSmall')]",
 				"[concat(variables('workspaceId'), '/notebooks/ArchiveAnalysis')]",
 				"[concat(variables('workspaceId'), '/dataflows/Get Next Token')]",
 				"[concat(variables('workspaceId'), '/datasets/RestResourceTwitterPast7Days')]",
@@ -4249,16 +4249,16 @@
 							},
 							"snapshot": true,
 							"sparkPool": {
-								"referenceName": "SparkPoolLarge",
+								"referenceName": "SparkPoolSmall",
 								"type": "BigDataPoolReference"
 							},
-							"executorSize": "Large",
+							"executorSize": "Small",
 							"conf": {
-								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.enabled": true,
 								"spark.dynamicAllocation.minExecutors": null,
 								"spark.dynamicAllocation.maxExecutors": null
 							},
-							"driverSize": "Large",
+							"driverSize": "Small",
 							"numExecutors": null
 						}
 					},
@@ -4341,16 +4341,16 @@
 							},
 							"snapshot": true,
 							"sparkPool": {
-								"referenceName": "SparkPoolLarge",
+								"referenceName": "SparkPoolSmall",
 								"type": "BigDataPoolReference"
 							},
-							"executorSize": "Large",
+							"executorSize": "Small",
 							"conf": {
-								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.enabled": true,
 								"spark.dynamicAllocation.minExecutors": null,
 								"spark.dynamicAllocation.maxExecutors": null
 							},
-							"driverSize": "Large",
+							"driverSize": "Small",
 							"numExecutors": null
 						}
 					},
@@ -4432,16 +4432,16 @@
 							},
 							"snapshot": true,
 							"sparkPool": {
-								"referenceName": "SparkPoolLarge",
+								"referenceName": "SparkPoolSmall",
 								"type": "BigDataPoolReference"
 							},
-							"executorSize": "Large",
+							"executorSize": "Small",
 							"conf": {
-								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.enabled": true,
 								"spark.dynamicAllocation.minExecutors": null,
 								"spark.dynamicAllocation.maxExecutors": null
 							},
-							"driverSize": "Large",
+							"driverSize": "Small",
 							"numExecutors": null
 						}
 					},
@@ -4523,16 +4523,16 @@
 							},
 							"snapshot": true,
 							"sparkPool": {
-								"referenceName": "SparkPoolLarge",
+								"referenceName": "SparkPoolSmall",
 								"type": "BigDataPoolReference"
 							},
-							"executorSize": "Large",
+							"executorSize": "Small",
 							"conf": {
-								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.enabled": true,
 								"spark.dynamicAllocation.minExecutors": null,
 								"spark.dynamicAllocation.maxExecutors": null
 							},
-							"driverSize": "Large",
+							"driverSize": "Small",
 							"numExecutors": null
 						}
 					},
@@ -4635,7 +4635,7 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/sqlPools/SQLPoolTest')]",
 				"[concat(variables('workspaceId'), '/notebooks/TopicModeling_LDA_Sklearn_UsingParms')]",
-				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolLarge')]",
+				"[concat(variables('workspaceId'), '/bigDataPools/SparkPoolSmall')]",
 				"[concat(variables('workspaceId'), '/notebooks/CognitiveServices_Sentiment_UsingParms')]",
 				"[concat(variables('workspaceId'), '/notebooks/CogntiveServices_Summarization_UsingParms_v2')]",
 				"[concat(variables('workspaceId'), '/notebooks/CognitiveServices_NamedEntityRecog_UsingParms')]"
@@ -8616,8 +8616,8 @@
 					"computeProperties": {
 						"location": "AutoResolve",
 						"dataFlowProperties": {
-							"computeType": "MemoryOptimized",
-							"coreCount": 32,
+							"computeType": "General",
+							"coreCount": 8,
 							"timeToLive": 10,
 							"cleanup": false,
 							"customProperties": []
@@ -9974,20 +9974,20 @@
 				"nbformat": 4,
 				"nbformat_minor": 2,
 				"bigDataPool": {
-					"referenceName": "SparkPoolLarge",
+					"referenceName": "SparkPoolSmall",
 					"type": "BigDataPoolReference"
 				},
 				"sessionProperties": {
-					"driverMemory": "112g",
-					"driverCores": 16,
-					"executorMemory": "112g",
-					"executorCores": 16,
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
 					"numExecutors": 2,
 					"conf": {
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "532066eb-e534-4cd9-a021-d2a287e54b87"
+						"spark.autotune.trackingId": "36ea0ee7-a72d-48c7-8de5-a74072d6e92a"
 					}
 				},
 				"metadata": {
@@ -10001,18 +10001,19 @@
 						"name": "python"
 					},
 					"a365ComputeOptions": {
-						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolLarge",
-						"name": "SparkPoolLarge",
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+						"name": "SparkPoolSmall",
 						"type": "Spark",
-						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolLarge",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
 						"auth": {
 							"type": "AAD",
 							"authResource": "https://dev.azuresynapse.net"
 						},
 						"sparkVersion": "3.3",
-						"nodeCount": 10,
-						"cores": 16,
-						"memory": 112
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -10238,20 +10239,20 @@
 				"nbformat": 4,
 				"nbformat_minor": 2,
 				"bigDataPool": {
-					"referenceName": "SparkPoolLarge",
+					"referenceName": "SparkPoolSmall",
 					"type": "BigDataPoolReference"
 				},
 				"sessionProperties": {
-					"driverMemory": "112g",
-					"driverCores": 16,
-					"executorMemory": "112g",
-					"executorCores": 16,
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
 					"numExecutors": 2,
 					"conf": {
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "2161cab0-8af2-43b9-a808-2550e753cb25"
+						"spark.autotune.trackingId": "977427f1-1313-4428-aaac-79435df3c886"
 					}
 				},
 				"metadata": {
@@ -10265,18 +10266,18 @@
 						"name": "python"
 					},
 					"a365ComputeOptions": {
-						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolLarge",
-						"name": "SparkPoolLarge",
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+						"name": "SparkPoolSmall",
 						"type": "Spark",
-						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolLarge",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
 						"auth": {
 							"type": "AAD",
 							"authResource": "https://dev.azuresynapse.net"
 						},
 						"sparkVersion": "3.3",
-						"nodeCount": 10,
-						"cores": 16,
-						"memory": 112,
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
 						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
@@ -12463,20 +12464,20 @@
 				"nbformat": 4,
 				"nbformat_minor": 2,
 				"bigDataPool": {
-					"referenceName": "SparkPoolLarge",
+					"referenceName": "SparkPoolSmall",
 					"type": "BigDataPoolReference"
 				},
 				"sessionProperties": {
-					"driverMemory": "112g",
-					"driverCores": 16,
-					"executorMemory": "112g",
-					"executorCores": 16,
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
 					"numExecutors": 2,
 					"conf": {
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "3a0e5316-ace0-4064-a3d5-87c43a37ead5"
+						"spark.autotune.trackingId": "c296f6b1-380b-41d9-ad37-c59922ae2249"
 					}
 				},
 				"metadata": {
@@ -12490,24 +12491,26 @@
 						"name": "python"
 					},
 					"a365ComputeOptions": {
-						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolLarge",
-						"name": "SparkPoolLarge",
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+						"name": "SparkPoolSmall",
 						"type": "Spark",
-						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolLarge",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
 						"auth": {
 							"type": "AAD",
 							"authResource": "https://dev.azuresynapse.net"
 						},
 						"sparkVersion": "3.3",
-						"nodeCount": 10,
-						"cores": 16,
-						"memory": 112
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"# Add required imports\r\n",
 							"import com.microsoft.spark.sqlanalytics\r\n",
@@ -15070,20 +15073,20 @@
 				"nbformat": 4,
 				"nbformat_minor": 2,
 				"bigDataPool": {
-					"referenceName": "SparkPoolLarge",
+					"referenceName": "SparkPoolSmall",
 					"type": "BigDataPoolReference"
 				},
 				"sessionProperties": {
-					"driverMemory": "112g",
-					"driverCores": 16,
-					"executorMemory": "112g",
-					"executorCores": 16,
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
 					"numExecutors": 2,
 					"conf": {
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "4940dad0-f64f-4efa-8b1c-baadb0406f3c"
+						"spark.autotune.trackingId": "c4958baf-552b-423a-b6c1-9d383ca09237"
 					}
 				},
 				"metadata": {
@@ -15097,18 +15100,18 @@
 						"name": "python"
 					},
 					"a365ComputeOptions": {
-						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolLarge",
-						"name": "SparkPoolLarge",
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+						"name": "SparkPoolSmall",
 						"type": "Spark",
-						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolLarge",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
 						"auth": {
 							"type": "AAD",
 							"authResource": "https://dev.azuresynapse.net"
 						},
 						"sparkVersion": "3.3",
-						"nodeCount": 10,
-						"cores": 16,
-						"memory": 112,
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
 						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
@@ -19138,20 +19141,20 @@
 				"nbformat": 4,
 				"nbformat_minor": 2,
 				"bigDataPool": {
-					"referenceName": "SparkPoolLarge",
+					"referenceName": "SparkPoolSmall",
 					"type": "BigDataPoolReference"
 				},
 				"sessionProperties": {
-					"driverMemory": "112g",
-					"driverCores": 16,
-					"executorMemory": "112g",
-					"executorCores": 16,
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
 					"numExecutors": 2,
 					"conf": {
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "7a825331-f66c-49c0-9ca2-655895fb8085"
+						"spark.autotune.trackingId": "4aaaf83c-915a-45fe-8ce7-047d8b1a0942"
 					}
 				},
 				"metadata": {
@@ -19165,18 +19168,19 @@
 						"name": "python"
 					},
 					"a365ComputeOptions": {
-						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolLarge",
-						"name": "SparkPoolLarge",
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+						"name": "SparkPoolSmall",
 						"type": "Spark",
-						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolLarge",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
 						"auth": {
 							"type": "AAD",
 							"authResource": "https://dev.azuresynapse.net"
 						},
 						"sparkVersion": "3.3",
-						"nodeCount": 10,
-						"cores": 16,
-						"memory": 112
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -24402,20 +24406,20 @@
 				"nbformat": 4,
 				"nbformat_minor": 2,
 				"bigDataPool": {
-					"referenceName": "SparkPoolLarge",
+					"referenceName": "SparkPoolSmall",
 					"type": "BigDataPoolReference"
 				},
 				"sessionProperties": {
-					"driverMemory": "112g",
-					"driverCores": 16,
-					"executorMemory": "112g",
-					"executorCores": 16,
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
 					"numExecutors": 2,
 					"conf": {
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "a0503adf-5f0c-4189-acba-1fb56bd74588"
+						"spark.autotune.trackingId": "65742c21-e5d5-40d1-8991-4ac8ec2e4c61"
 					}
 				},
 				"metadata": {
@@ -24429,18 +24433,19 @@
 						"name": "python"
 					},
 					"a365ComputeOptions": {
-						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolLarge",
-						"name": "SparkPoolLarge",
+						"id": "/subscriptions/57cd2ff8-9306-41d0-9cad-c2052a0a8381/resourceGroups/Spring2023-TeamPendragon/providers/Microsoft.Synapse/workspaces/pendragon-synapse/bigDataPools/SparkPoolSmall",
+						"name": "SparkPoolSmall",
 						"type": "Spark",
-						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolLarge",
+						"endpoint": "https://pendragon-synapse.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPoolSmall",
 						"auth": {
 							"type": "AAD",
 							"authResource": "https://dev.azuresynapse.net"
 						},
 						"sparkVersion": "3.3",
-						"nodeCount": 10,
-						"cores": 16,
-						"memory": 112
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
