@@ -87,16 +87,16 @@
 					},
 					"snapshot": true,
 					"sparkPool": {
-						"referenceName": "SparkPoolSmall",
+						"referenceName": "SparkPoolLarge",
 						"type": "BigDataPoolReference"
 					},
-					"executorSize": "Small",
+					"executorSize": "Large",
 					"conf": {
 						"spark.dynamicAllocation.enabled": true,
 						"spark.dynamicAllocation.minExecutors": null,
 						"spark.dynamicAllocation.maxExecutors": null
 					},
-					"driverSize": "Small",
+					"driverSize": "Large",
 					"numExecutors": null
 				}
 			},
@@ -179,16 +179,16 @@
 					},
 					"snapshot": true,
 					"sparkPool": {
-						"referenceName": "SparkPoolSmall",
+						"referenceName": "SparkPoolLarge",
 						"type": "BigDataPoolReference"
 					},
-					"executorSize": "Small",
+					"executorSize": "Large",
 					"conf": {
 						"spark.dynamicAllocation.enabled": true,
 						"spark.dynamicAllocation.minExecutors": null,
 						"spark.dynamicAllocation.maxExecutors": null
 					},
-					"driverSize": "Small",
+					"driverSize": "Large",
 					"numExecutors": null
 				}
 			},
@@ -270,16 +270,16 @@
 					},
 					"snapshot": true,
 					"sparkPool": {
-						"referenceName": "SparkPoolSmall",
+						"referenceName": "SparkPoolLarge",
 						"type": "BigDataPoolReference"
 					},
-					"executorSize": "Small",
+					"executorSize": "Large",
 					"conf": {
 						"spark.dynamicAllocation.enabled": true,
 						"spark.dynamicAllocation.minExecutors": null,
 						"spark.dynamicAllocation.maxExecutors": null
 					},
-					"driverSize": "Small",
+					"driverSize": "Large",
 					"numExecutors": null
 				}
 			},
@@ -361,16 +361,16 @@
 					},
 					"snapshot": true,
 					"sparkPool": {
-						"referenceName": "SparkPoolSmall",
+						"referenceName": "SparkPoolLarge",
 						"type": "BigDataPoolReference"
 					},
-					"executorSize": "Small",
+					"executorSize": "Large",
 					"conf": {
 						"spark.dynamicAllocation.enabled": true,
 						"spark.dynamicAllocation.minExecutors": null,
 						"spark.dynamicAllocation.maxExecutors": null
 					},
-					"driverSize": "Small",
+					"driverSize": "Large",
 					"numExecutors": null
 				}
 			},
