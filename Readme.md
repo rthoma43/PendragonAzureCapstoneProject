@@ -6,7 +6,7 @@ Team:
   Kathleen Hill - khill29@gmu.edu - SCRUM Master,
   Enkhjin Tsagaandash - etsagaan@gmu.edu - Product Owner,
   Daniel Miller - dmille46@gmu.edu - Developer,
-  Andrew Simpson - dmille46@gmu.edu - Developer,
+  Andrew Simpson - asimps4@gmu.edu - Developer,
   Ryan Thomas - rthoma43@gmu.edu - Developer
 
 Background:
